@@ -929,6 +929,8 @@ C 0x7FF5 limites del cursor: 0x28 x 0x08
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
 D 0x605F 0x6067 tabla_605F  4 destinos del despachador p00:4099 (call en p01:605C, el indice en A): 6067, 609F, 60C2, 6077; lo leen p01:605C (8 bytes)
 F 0x605F w4
+D 0x6445 0x644A anchos_6445  5 bytes, uno por tipo de cosa (1-5, desde 0x6444: la entrada 0 cae en el codigo de delante): su ancho en casillas del mapa (p01:63ED); lo leen p01:63E3 (5 bytes)
+F 0x6445 5
 D 0x64A4 0x64AE tabla_64A4  5 destinos del despachador p00:4099 (call en p01:64A1, el indice en A): BA85, BBB0, BCC0, BD21, 93F3; lo leen p01:64A1 (10 bytes)
 F 0x64A4 w5
 D 0x65FE 0x6608 tabla_65FE  5 destinos del despachador p00:4099 (call en p01:65FB, el indice en A): AD80, AE23, B2AA, B68E, 662D; lo leen p01:65FB (10 bytes)

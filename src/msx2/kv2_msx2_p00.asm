@@ -20,7 +20,7 @@ DATA_resto_4000:
 	defb 0e2h,000h,000h,000h,000h,000h,000h,000h,081h,001h,001h,000h,080h,0f6h	; 4020  ..............
 
 ; ======================================================================
-; CODIGO 0x402e..0x41a6  (376 bytes)
+; CODIGO 0x402e..0x43a4  (886 bytes)
 ; ======================================================================
 
 
@@ -243,40 +243,26 @@ L_418D:
 	pop af			;41a3
 	ei			;41a4
 	ret			;41a5
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x41a6..0x41ab  (5 bytes)
-DATA_41A6:
-	defb 0f5h,03eh,004h,018h,0e2h	; 41a6
-
-; ======================================================================
-; CODIGO 0x41ab..0x41ba  (15 bytes)
-; ======================================================================
-
-
+L_41A6:
+	push af			;41a6
+	ld a,004h		;41a7
+	jr L_418D		;41a9
 L_41AB:
 	push af			;41ab   ; pone los bancos 7-8-9
 	ld a,007h		;41ac
-	jr $-33		;41ae
+	jr L_418D		;41ae
 L_41B0:
 	push af			;41b0   ; pone los bancos 10-11-12
 	ld a,00ah		;41b1
-	jr $-38		;41b3
+	jr L_418D		;41b3
 L_41B5:
 	push af			;41b5   ; pone el banco 12 en 0xA000
 	ld a,00ch		;41b6
-	jr $+10		;41b8
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x41ba..0x41bf  (5 bytes)
-DATA_41BA:
-	defb 0f5h,03eh,00fh,018h,003h	; 41ba
-
-; ======================================================================
-; CODIGO 0x41bf..0x41e5  (38 bytes)
-; ======================================================================
-
-
+	jr L_41C2		;41b8
+L_41BA:
+	push af			;41ba
+	ld a,00fh		;41bb
+	jr L_41C2		;41bd
 L_41BF:
 	push af			;41bf   ; pone el banco 13 en 0xA000
 	ld a,00dh		;41c0
@@ -302,31 +288,15 @@ L_41CC:
 L_41E0:
 	ld a,001h		;41e0   ; pide el sonido 1
 	jp L_4326		;41e2
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x41e5..0x41ea  (5 bytes)
-DATA_41E5:
-	defb 03eh,002h,0c3h,026h,043h	; 41e5
-
-; ======================================================================
-; CODIGO 0x41ea..0x41ef  (5 bytes)
-; ======================================================================
-
-
+L_41E5:
+	ld a,002h		;41e5
+	jp L_4326		;41e7
 L_41EA:
 	ld a,003h		;41ea   ; pide el sonido 3
 	jp L_4326		;41ec
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x41ef..0x41f4  (5 bytes)
-DATA_41EF:
-	defb 03eh,004h,0c3h,026h,043h	; 41ef
-
-; ======================================================================
-; CODIGO 0x41f4..0x4324  (304 bytes)
-; ======================================================================
-
-
+L_41EF:
+	ld a,004h		;41ef
+	jp L_4326		;41f1
 L_41F4:
 	ld a,005h		;41f4   ; pide el sonido 5
 	jp L_4326		;41f6
@@ -434,109 +404,100 @@ L_429E:
 	jp L_4326		;42a0
 L_42A3:
 	ld a,028h		;42a3   ; pide el sonido 0x28
-	jr $+129		;42a5
+	jr L_4326		;42a5
 L_42A7:
 	ld a,029h		;42a7   ; pide el sonido 0x29
-	jr $+125		;42a9
+	jr L_4326		;42a9
 L_42AB:
 	ld a,02ah		;42ab   ; pide el sonido 0x2A
-	jr $+121		;42ad
+	jr L_4326		;42ad
 L_42AF:
 	ld a,02bh		;42af
-	jr $+117		;42b1
+	jr L_4326		;42b1
 L_42B3:
 	ld a,02ch		;42b3
-	jr $+113		;42b5
+	jr L_4326		;42b5
 L_42B7:
 	ld a,02dh		;42b7   ; pide el sonido 0x2D
-	jr $+109		;42b9
+	jr L_4326		;42b9
 L_42BB:
 	ld a,02eh		;42bb   ; pide el sonido 0x2E
-	jr $+105		;42bd
+	jr L_4326		;42bd
 L_42BF:
 	ld a,02fh		;42bf
-	jr $+101		;42c1
+	jr L_4326		;42c1
 L_42C3:
 	ld a,030h		;42c3   ; pide el sonido 0x30
-	jr $+97		;42c5
+	jr L_4326		;42c5
 L_42C7:
 	ld a,031h		;42c7
-	jr $+93		;42c9
+	jr L_4326		;42c9
 L_42CB:
 	ld a,032h		;42cb   ; pide el sonido 0x32
-	jr $+89		;42cd
+	jr L_4326		;42cd
 L_42CF:
 	ld a,033h		;42cf
-	jr $+85		;42d1
+	jr L_4326		;42d1
 L_42D3:
 	ld a,034h		;42d3
-	jr $+81		;42d5
+	jr L_4326		;42d5
 L_42D7:
 	ld a,035h		;42d7   ; pide el sonido 0x35
-	jr $+77		;42d9
+	jr L_4326		;42d9
 L_42DB:
 	ld a,036h		;42db   ; pide el sonido 0x36
-	jr $+73		;42dd
+	jr L_4326		;42dd
 L_42DF:
 	ld a,037h		;42df   ; pide el sonido 0x37
-	jr $+69		;42e1
+	jr L_4326		;42e1
 L_42E3:
 	ld a,038h		;42e3   ; pide el sonido 0x38
-	jr $+65		;42e5
+	jr L_4326		;42e5
 L_42E7:
 	ld a,039h		;42e7   ; pide el sonido 0x39
-	jr $+61		;42e9
+	jr L_4326		;42e9
 L_42EB:
 	ld a,03ah		;42eb   ; pide el sonido 0x3A
-	jr $+57		;42ed
+	jr L_4326		;42ed
 L_42EF:
 	ld a,03bh		;42ef   ; pide el sonido 0x3B
-	jr $+53		;42f1
+	jr L_4326		;42f1
 L_42F3:
 	ld a,03ch		;42f3   ; pide el sonido 0x3C
-	jr $+49		;42f5
+	jr L_4326		;42f5
 L_42F7:
 	ld a,03dh		;42f7   ; pide el sonido 0x3D
-	jr $+45		;42f9
+	jr L_4326		;42f9
 L_42FB:
 	ld a,03eh		;42fb   ; pide el sonido 0x3E
-	jr $+41		;42fd
+	jr L_4326		;42fd
 L_42FF:
 	ld a,03fh		;42ff
-	jr $+37		;4301
+	jr L_4326		;4301
 L_4303:
 	ld a,040h		;4303   ; pide el sonido 0x40
-	jr $+33		;4305
+	jr L_4326		;4305
 L_4307:
 	ld a,041h		;4307
-	jr $+29		;4309
+	jr L_4326		;4309
 L_430B:
 	ld a,080h		;430b   ; orden 0x80 al motor de sonido (p04:61E4)
-	jr $+25		;430d
+	jr L_4326		;430d
 L_430F:
 	ld a,081h		;430f   ; orden 0x81 al motor (p04:6248)
-	jr $+21		;4311
+	jr L_4326		;4311
 L_4313:
 	xor a			;4313   ; orden 0x82 (p04:61BB), con 0xE21A a cero
 	ld (0e21ah),a		;4314   ; guarda una cuenta atras que para la musica al llegar a 1
 	ld a,082h		;4317
-	jr $+13		;4319
+	jr L_4326		;4319
 L_431B:
 	ld a,0ffh		;431b   ; orden 0x83 (p04:61C2), con 0xE21A a 0xFF
 	ld (0e21ah),a		;431d   ; guarda una cuenta atras que para la musica al llegar a 1
 	ld a,083h		;4320
-	jr $+4		;4322
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4324..0x4326  (2 bytes)
-DATA_4324:
-	defb 03eh,084h	; 4324
-
-; ======================================================================
-; CODIGO 0x4326..0x43a4  (126 bytes)
-; ======================================================================
-
-
+	jr L_4326		;4322
+L_4324:
+	ld a,084h		;4324
 L_4326:
 	di			;4326   ; pide al motor de sonido lo que diga A (p04:603D), con los bancos 4-5-6 y sin tocar registros
 	push hl			;4327
@@ -1863,7 +1824,7 @@ DATA_resto_4C1A:
 	defb 001h,001h,001h,000h,000h,003h	; 4c1a
 
 ; ======================================================================
-; CODIGO 0x4c20..0x4deb  (459 bytes)
+; CODIGO 0x4c20..0x5413  (2035 bytes)
 ; ======================================================================
 
 
@@ -2142,17 +2103,24 @@ L_4DD7:
 	pop bc			;4de7
 	djnz L_4DD7		;4de8
 	ret			;4dea
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4deb..0x4dfb  (16 bytes)
-DATA_4DEB:
-	defb 07ah,02fh,057h,07bh,02fh,05fh,013h,0c9h,07ch,02fh,067h,07dh,02fh,06fh,023h,0c9h	; 4deb  z/W{/_..|/g}/o#.
-
-; ======================================================================
-; CODIGO 0x4dfb..0x4e58  (93 bytes)
-; ======================================================================
-
-
+L_4DEB:
+	ld a,d			;4deb
+	cpl			;4dec
+	ld d,a			;4ded
+	ld a,e			;4dee
+	cpl			;4def
+	ld e,a			;4df0
+	inc de			;4df1
+	ret			;4df2
+L_4DF3:
+	ld a,h			;4df3
+	cpl			;4df4
+	ld h,a			;4df5
+	ld a,l			;4df6
+	cpl			;4df7
+	ld l,a			;4df8
+	inc hl			;4df9
+	ret			;4dfa
 L_4DFB:
 	push hl			;4dfb   ; lee B C bytes de la VRAM (LDIRMV) sin tocar registros
 	push de			;4dfc
@@ -2187,6 +2155,7 @@ L_4E19:
 	ret			;4e1e
 L_4E1F:
 	ld c,000h		;4e1f   ; rachas a la VRAM: [destino] y rachas; [n < 0x80] repite el byte siguiente n veces; [0x80 + n] copia n; [0x80] trae otro destino; 0 acaba
+L_4E21:
 	ex de,hl			;4e21
 	ld e,(hl)			;4e22
 	inc hl			;4e23
@@ -2229,17 +2198,12 @@ L_4E4C:
 L_4E54:
 	ld c,000h		;4e54   ; lo mismo con el destino en HL
 	jr L_4E27		;4e56
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4e58..0x4e60  (8 bytes)
-DATA_4E58:
-	defb 00eh,001h,018h,0c5h,00eh,001h,018h,0c7h	; 4e58  ........
-
-; ======================================================================
-; CODIGO 0x4e60..0x5413  (1459 bytes)
-; ======================================================================
-
-
+L_4E58:
+	ld c,001h		;4e58
+	jr L_4E21		;4e5a
+L_4E5C:
+	ld c,001h		;4e5c
+	jr L_4E27		;4e5e
 L_4E60:
 	call L_4E6C		;4e60   ; copia C bloques de 16 bytes de HL a DE en la VRAM dandoles la vuelta (espejo)
 	ld a,020h		;4e63
@@ -3270,7 +3234,7 @@ DATA_resto_5413:
 	defb 001h,062h,005h,0efh,006h,01fh,00bh,001h	; 5413  .b......
 
 ; ======================================================================
-; CODIGO 0x541b..0x5aa4  (1673 bytes)
+; CODIGO 0x541b..0x5e43  (2600 bytes)
 ; ======================================================================
 
 
@@ -4174,17 +4138,8 @@ L_5A8C:
 	ld hl,0fe80h		;5a9b
 	call L_4E54		;5a9e   ; lo mismo con el destino en HL
 	jp L_418A		;5aa1
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5aa4..0x5aa5  (1 bytes)
-DATA_5AA4:
-	defb 0c9h	; 5aa4
-
-; ======================================================================
-; CODIGO 0x5aa5..0x5b34  (143 bytes)
-; ======================================================================
-
-
+L_5AA4:
+	ret			;5aa4
 L_5AA5:
 	call L_41CC		;5aa5   ; los sprites de 0xAB59, 0x86D4, 0x8FD9, 0xAE08 y 0xA9F6
 	ld de,0ab59h		;5aa8
@@ -4236,18 +4191,17 @@ L_5B16:
 	ld bc,0050ah		;5b2b
 	call L_514C		;5b2e   ; pinta B caracteres de la fuente de DE
 	jp L_418A		;5b31
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5b34..0x5b52  (30 bytes)
-DATA_5B34:
-	defb 0cdh,0b0h,041h,011h,030h,080h,021h,029h,0aah,001h,00ch,02ah,0cdh,04ch,051h,011h	; 5b34  ..A.0.!)...*.LQ.
-	defb 038h,0b8h,021h,079h,0abh,001h,00ch,005h,0cdh,04ch,051h,0c3h,08ah,041h	; 5b44  8.!y.....LQ..A
-
-; ======================================================================
-; CODIGO 0x5b52..0x5e43  (753 bytes)
-; ======================================================================
-
-
+L_5B34:
+	call L_41B0		;5b34   ; pone los bancos 10-11-12
+	ld de,08030h		;5b37
+	ld hl,0aa29h		;5b3a
+	ld bc,02a0ch		;5b3d
+	call L_514C		;5b40   ; pinta B caracteres de la fuente de DE
+	ld de,0b838h		;5b43
+	ld hl,0ab79h		;5b46
+	ld bc,0050ch		;5b49
+	call L_514C		;5b4c   ; pinta B caracteres de la fuente de DE
+	jp L_418A		;5b4f
 L_5B52:
 	call L_41CC		;5b52   ; la paleta de 0xA7FF
 	ld hl,0a7ffh		;5b55

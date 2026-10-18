@@ -886,6 +886,10 @@ D 0x95F6 0x9602 tabla_95F6  6 destinos del despachador p00:409E (call en p02:95F
 F 0x95F6 w6
 D 0x9C44 0x9C4C tabla_9C44  4 destinos del despachador p00:409E (call en p02:9C41, el indice en A): 9C4C, 9C59, 9C6E, 9C83; lo leen p02:9C41 (8 bytes)
 F 0x9C44 w4
+D 0x9E65 0x9E67 diskve_9E65  la direccion de una rutina de error de disco (0x9E67): el juego pone 0x9E65 en 0xF323 (DISKVE) y la BIOS de disco salta a lo que hay aqui; lo leen p00:4168 (2 bytes)
+F 0x9E65 w8
+D 0x9ED0 0x9ED2 diskve_9ED0  la direccion de una rutina de error de disco (0x9ED2): el juego pone 0x9ED0 en 0xF323 (DISKVE) y la BIOS de disco salta a lo que hay aqui; lo leen p03:A016 (2 bytes)
+F 0x9ED0 w8
 D 0x8295 0x82E7 resto_8295  lo apuntan con el banco puesto p01:7608 (0x8295), p01:760D (0x82A1), p01:7D67 (0x82AD), p01:7ECE (0x82B5), p02:80CE (0x82B5), p02:81A1 (0x82B5); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p01:7608, p01:760D, p01:7D67, p01:7ECE, p02:80CE, p02:81A1 (82 bytes)
 F 0x8295 16
 D 0x86F9 0x8711 resto_86F9  lo apuntan con el banco puesto p02:86E5 (0x86F9); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p02:86E5 (24 bytes)
@@ -902,10 +906,6 @@ D 0x94C6 0x94CE resto_94C6  lo apuntan con el banco puesto p02:94AF (0x94C6), p0
 F 0x94C6 16
 D 0x9C6A 0x9C6E resto_9C6A  lo apuntan con el banco puesto p02:9C5E (0x9C6A); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p02:9C5E (4 bytes)
 F 0x9C6A 16
-D 0x9E65 0x9E97 resto_9E65  lo apuntan con el banco puesto p00:4165 (0x9E65), p03:A135 (0x9E65); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:4165, p03:A135 (50 bytes)
-F 0x9E65 16
-D 0x9ED0 0x9EEB resto_9ED0  lo apuntan con el banco puesto p03:A013 (0x9ED0); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p03:A013 (27 bytes)
-F 0x9ED0 16
 # --- fin de los bloques de bloques.py ---
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
@@ -1307,6 +1307,10 @@ C 0x9280 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 C 0x9283 lee la x de la cosa
 C 0x9286 lee la y de la cosa
 C 0x9298 apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
+C 0x929E 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+C 0x92AB lee la x de la cosa
+C 0x92AE lee la y de la cosa
+C 0x92B1 lee la pantalla de la cosa
 C 0x92BD lee la y de la cosa
 C 0x92C0 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x92C3 lee la pantalla de la cosa
@@ -1326,6 +1330,9 @@ C 0x9331 lee la pantalla de la cosa
 C 0x9337 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 C 0x9343 lee la pantalla de la cosa
 C 0x9349 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0x934F devuelve el fondo del bloque donde estaba
+C 0x9361 lee la pantalla de la fase (desde 1)
+C 0x9368 guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
 C 0x938B lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0x9391 pasa la posicion de caracter de HL a direccion de la VRAM
 C 0x9399 suma A a DE (DE = DE + A)
@@ -1611,6 +1618,8 @@ C 0x9E57 guarda el dibujo de la cosa en vuelo
 C 0x9E5A guarda el paso de la velocidad de la cosa
 C 0x9E5D guarda la cuenta de la cosa
 C 0x9E60 guarda el lado de la cosa
+C 0x9E68 la deja como estaba
+C 0x9E70 lee el slot de este cartucho
 C 0x9EA1 pone el banco 12 en 0xA000
 C 0x9EAD borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 C 0x9EB1 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
@@ -1618,6 +1627,9 @@ C 0x9EB7 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF ac
 C 0x9EBA pone los bancos 1-2-3 (el juego)
 C 0x9EBD 256 veces la de 0xF0EA
 C 0x9EC8 guarda el resultado de grabar o cargar (0 bien, 2 error)
+C 0x9ED2 la deja como estaba
+C 0x9ED5 lee el slot de este cartucho
+C 0x9EDD 256 veces la de 0xF0EA
 C 0x9F0A el tamano de registro a 1 y el registro actual a 0
 C 0x9F2A lee HL registros (orden 0x27); error 0 si falla
 C 0x9F38 lee HL registros (orden 0x27); error 0 si falla

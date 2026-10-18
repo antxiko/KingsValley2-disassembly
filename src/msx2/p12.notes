@@ -473,8 +473,12 @@ D 0xAA29 0xAB79 fuente_AA29  42 caracteres de 1 bit por punto: la fuente del mar
 F 0xAA29 8
 D 0xAB79 0xABA1 fuente_AB79  5 caracteres de 1 bit por punto; lo leen p00:5155 (40 bytes)
 F 0xAB79 8
+D 0xABA1 0xABC1 car_ABA1  2 caracteres (16 bytes de patrones y 16 de colores), los mismos que el cartucho de MSX1 copia en p00:5A58 y p00:5A7A; en este no los lee nadie; lo leen nadie (32 bytes)
+F 0xABA1 8
 D 0xABC1 0xAC01 car_ABC1  2 caracteres ya de 4 bits (32 bytes cada uno); lo leen p00:51A2 (64 bytes)
 F 0xABC1 16
+D 0xAC01 0xAC13 letrero_AC01  letrero (DO YOUR BEST): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:6963 (18 bytes)
+F 0xAC01 16
 D 0xAC13 0xAC1D letreros_AC13  5 punteros a los letreros de cada piramide acabada (de la 1 a la 5: la 6 va al final) (piramide - 1); lo leen p01:71AF (10 bytes)
 F 0xAC13 w8
 D 0xAC1D 0xAC2A letrero_AC1D  letrero (de cada piramide acabada (de la 1 a la 5: la 6 va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (13 bytes)
@@ -487,6 +491,14 @@ D 0xAC7C 0xAC9F letrero_AC7C  letrero (de cada piramide acabada (de la 1 a la 5:
 F 0xAC7C 16
 D 0xAC9F 0xACC3 letrero_AC9F  letrero (de cada piramide acabada (de la 1 a la 5: la 6 va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (36 bytes)
 F 0xAC9F 16
+D 0xACC3 0xAD12 letrero_ACC3  letrero (CONGRATULATIONS (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:73F8 (79 bytes)
+F 0xACC3 16
+D 0xAD12 0xAD58 letrero_AD12  letrero (ALL YOU HAVE TO DO NOW (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:744D (70 bytes)
+F 0xAD12 16
+D 0xAD58 0xAD69 letrero_AD58  letrero (PUSH SPACE KEY (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7569 (17 bytes)
+F 0xAD58 16
+D 0xAD69 0xAD76 letrero_AD69  letrero (DANGER !!! (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7550 (13 bytes)
+F 0xAD69 16
 D 0xAD76 0xAD88 letreros_AD76  9 punteros a los letreros del final (paso 0xEDCF); lo leen p01:772E (18 bytes)
 F 0xAD76 w8
 D 0xAD88 0xAD92 letrero_AD88  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (10 bytes)
@@ -507,9 +519,13 @@ D 0xAE78 0xAEC5 letrero_AE78  letrero (del final): [x][y] y caracteres, 0xFE [x]
 F 0xAE78 16
 D 0xAEC5 0xAEDD letrero_AEC5  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (24 bytes)
 F 0xAEC5 16
+D 0xAEDD 0xAF21 letrero_AEDD  letrero (THANKS TO YOUR COURAGE (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:75D1 (68 bytes)
+F 0xAEDD 16
+D 0xAF21 0xAF37 letrero_AF21  letrero (CONGRATULATIONS !!! (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7651 (22 bytes)
+F 0xAF21 16
 D 0xAF37 0xAF52 estrellas_final  9 caracteres del final de 3 bytes [x][y][caracter], uno cada 8 cuadros; lo leen p01:74FD (27 bytes)
 F 0xAF37 3
-D 0xAF52 0xAF5C letreros_AF52  5 punteros a los letreros de los errores de disco (error); lo leen p02:976E (10 bytes)
+D 0xAF52 0xAF60 letreros_AF52  7 punteros a los letreros de los errores de disco (error: p02:975E recibe del 0 al 4; el 5, TOO MANNY FILES, y el 6, DATATYPEERROR, no los pide nadie); lo leen p02:976E (14 bytes)
 F 0xAF52 w8
 D 0xAF60 0xAF6D letrero_AF60  letrero (de error de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p02:977E (13 bytes)
 F 0xAF60 16
@@ -523,6 +539,10 @@ D 0xAF9A 0xAFAB letrero_AF9A  letrero (de los errores de disco): [x][y] y caract
 F 0xAF9A 16
 D 0xAFAB 0xAFBB letrero_AFAB  letrero (de los errores de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (16 bytes)
 F 0xAFAB 16
+D 0xAFBB 0xAFCD letrero_AFBB  letrero (de los errores de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (18 bytes)
+F 0xAFBB 16
+D 0xAFCD 0xAFDD letrero_AFCD  letrero (de los errores de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (16 bytes)
+F 0xAFCD 16
 D 0xAFDD 0xB185 fuente_AFDD  53 caracteres de 1 bit por punto: la fuente; lo leen p00:5155 (424 bytes)
 F 0xAFDD 8
 D 0xB185 0xB1B6 letrero_B185  letrero (del menu de grabar): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:6787 (49 bytes)
@@ -535,6 +555,8 @@ D 0xB256 0xB284 letrero_B256  letrero (de la fase): [x][y] y caracteres, 0xFE [x
 F 0xB256 16
 D 0xB284 0xB2AB letrero_B284  letrero (del menu): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:482C (39 bytes)
 F 0xB284 16
+D 0xB2AB 0xB400 relleno_B2AB  341 bytes a 0xFF: relleno; lo leen nadie (341 bytes)
+F 0xB2AB 16
 D 0xB42F 0xB437 tabla_B42F  4 destinos del despachador p00:4099 (call en p12:B42C, el indice en A): B437, B462, B46C, B48F; lo leen p12:B42C (8 bytes)
 F 0xB42F w4
 D 0xB4F8 0xB4FC sitio_dibujo  2 x 2 caracteres del sitio escondido; lo leen p12:B4F5 (4 bytes)
@@ -573,8 +595,22 @@ D 0xB9FA 0xBA0D musicas_flecha  19 bytes: donde va la flecha de cada musica; lo 
 F 0xB9FA 19
 D 0xBA0D 0xBA11 colores_flecha  los colores de los 4 sprites de la flecha; lo leen p12:B9ED (4 bytes)
 F 0xBA0D 4
-D 0xBA94 0xBAA0 mandos_demo  6 punteros, uno por piramide (0xE241, desde 0xBA92): el mando grabado de su demostracion; lo leen p12:BA88 (12 bytes)
+D 0xBA3B 0xBA41 fases_demo  las fases de las 6 demostraciones (0xE219, de 1 a 6, desde 0xBA3A: la entrada 0 cae en el codigo de delante); lo leen p12:BA21 (6 bytes)
+F 0xBA3B 6
+D 0xBA94 0xBAA0 mandos_demo  6 punteros, uno por piramide (0xE241, desde 0xBA92: la entrada 0 cae en el codigo de delante): el mando grabado de su demostracion; lo leen p12:BA88 (12 bytes)
 F 0xBA94 w8
+D 0xBAA0 0xBAD6 mando_1  el mando grabado de la demostracion de la piramide 1: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (54 bytes)
+F 0xBAA0 2
+D 0xBAD6 0xBB14 mando_2  el mando grabado de la demostracion de la piramide 2: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (62 bytes)
+F 0xBAD6 2
+D 0xBB14 0xBB5A mando_3  el mando grabado de la demostracion de la piramide 3: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (70 bytes)
+F 0xBB14 2
+D 0xBB5A 0xBBBA mando_4  el mando grabado de la demostracion de la piramide 4: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (96 bytes)
+F 0xBB5A 2
+D 0xBBBA 0xBC16 mando_5  el mando grabado de la demostracion de la piramide 5: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (92 bytes)
+F 0xBBBA 2
+D 0xBC16 0xBC6E mando_6  el mando grabado de la demostracion de la piramide 6: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (88 bytes)
+F 0xBC16 2
 D 0xBD97 0xBDB7 estrellas_x  16 velocidades en x de las estrellas; lo leen p12:BD8A (32 bytes)
 F 0xBD97 w8
 D 0xBDB7 0xBDD7 estrellas_y  16 velocidades en y de las estrellas; lo leen p12:BD78 (32 bytes)

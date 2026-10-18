@@ -926,6 +926,8 @@ C 0x7FFC Z si ya hay una columna en el cursor
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
 D 0x6000 0x6002 partida_6000  los 2 ultimos bytes de la instruccion de p00:5FFF (3A 43 E2), que empieza en el banco 0; lo leen p00:5FFF (2 bytes)
 F 0x6000 2
+D 0x624F 0x6254 anchos_624F  5 bytes, uno por tipo de cosa (1-5, desde 0x624E: la entrada 0 cae en el codigo de delante): su ancho en casillas del mapa (p01:61F7); lo leen p01:61ED (5 bytes)
+F 0x624F 5
 D 0x62AE 0x62B8 tabla_62AE  5 destinos del despachador p00:409E (call en p01:62AB, el indice en A): B800, B92B, BA3B, BA9C, 910C; lo leen p01:62AB (10 bytes)
 F 0x62AE w5
 D 0x6408 0x6412 tabla_6408  5 destinos del despachador p00:409E (call en p01:6405, el indice en A): AAFB, AB9E, B025, B409, 6437; lo leen p01:6405 (10 bytes)
@@ -944,6 +946,8 @@ D 0x7A9A 0x7AAC tabla_7A9A  9 destinos del despachador p00:409E (call en p01:7A9
 F 0x7A9A w8
 D 0x7E25 0x7E2F tabla_7E25  5 destinos del despachador p00:409E (call en p01:7E22, el indice en A): 7E4A, 7E60, 7E7D, BB3B, 936B; lo leen p01:7E22 (10 bytes)
 F 0x7E25 w5
+D 0x7ED4 0x7ED9 anchos_7ED4  5 bytes, uno por tipo de cosa (1-5, desde 0x7ED3: la entrada 0 cae en el codigo de delante): su ancho en caracteres (p00:53CF); lo leen p01:7EC7 (5 bytes)
+F 0x7ED4 5
 D 0x7EF3 0x7F01 tabla_7EF3  7 destinos del despachador p00:409E (call en p01:7EF0, el indice en A): 7F01, 7F2F, 7F01, 7F33, 7F27, 7F1D, 7F22; lo leen p01:7EF0 (14 bytes)
 F 0x7EF3 w7
 D 0x60D5 0x60E1 resto_60D5  lo apuntan con el banco puesto p01:60B3 (0x60D5); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p01:60B3 (12 bytes)

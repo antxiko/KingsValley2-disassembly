@@ -213,17 +213,21 @@ DATA_canal_nuevo:
 	defb 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 618c  ................
 	defb 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 619c  ..............
 
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x61aa..0x61bb  (17 bytes)
-DATA_61AA:
-	defb 000h,021h,0cbh,0e1h,0cbh,0e6h,0cbh,086h,021h,0e1h,0e1h,036h,000h,023h,036h,009h	; 61aa  .!......!..6.#6.
-	defb 0c9h	; 61ba
-
 ; ======================================================================
-; CODIGO 0x61bb..0x6480  (709 bytes)
+; CODIGO 0x61aa..0x6480  (726 bytes)
 ; ======================================================================
 
 
+L_61AA:
+	nop			;61aa
+	ld hl,0e1cbh		;61ab   ; sin llamador: 0xE1CB con el bit 4 y sin el 0, y 0xE1E1/0xE1E2 = 0/9
+	set 4,(hl)		;61ae
+	res 0,(hl)		;61b0
+	ld hl,0e1e1h		;61b2
+	ld (hl),000h		;61b5
+	inc hl			;61b7
+	ld (hl),009h		;61b8
+	ret			;61ba
 L_61BB:
 	ld hl,0e1cbh		;61bb   ; orden 0x82: para (bit 0 de 0xE1CB a cero)
 	res 0,(hl)		;61be

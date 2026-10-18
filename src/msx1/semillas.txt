@@ -45,3 +45,33 @@ p00 0x42D7 1 2 3   # pide el sonido 0x33
 p00 0x42DB 1 2 3   # pide el sonido 0x34
 p00 0x4307 1 2 3   # pide el sonido 0x3F
 p00 0x430F 1 2 3   # pide el sonido 0x41
+#
+# Codigo al que se llega por tablas que el trazador no sigue, y codigo huerfano
+# (2026-10-18). Huerfano = el trazado no entra y ninguna instruccion salta,
+# llama o carga su direccion; tampoco sale como palabra en una tabla.
+p04 0x61AA 4 5 6   # huerfano: pone el bit 4 de 0xE1CB (el volumen vuelve poco a poco, p04:6835); nadie lo llama
+p03 0xB8BE 1 2 3   # tipo 1 de las tablas p01:62D9 (repintar) y p01:62E3 (pintar): la puerta giratoria
+p03 0xB9CB 1 2 3   # tipo 2 de las tablas p01:62D9 y p01:62E3: la puerta de tipo 2
+p03 0xBA5D 1 2 3   # tipo 3 de la tabla p01:62D9 (repintar)
+p03 0xBB25 1 2 3   # tipo 4 de la tabla p01:62E3 (pintar): el suelo que se rompe
+p02 0x934F 1 2 3   # tipo 5 de la tabla p01:62D9 (repintar): el bloque
+p00 0x41AE 1 2 3   # huerfano: pone los bancos 4-5-6 (como p00:41B3); nadie lo llama
+p00 0x41ED 1 2 3   # huerfano: pide el sonido 2; nadie lo llama
+p00 0x41F7 1 2 3   # huerfano: pide el sonido 4; nadie lo llama
+p00 0x432C 1 2 3   # huerfano: pide la orden 0x84 (sigue en p00:432E); nadie lo llama
+p00 0x4DEC 1 2 3   # huerfano: DE = -DE; nadie lo llama
+p00 0x4DF4 1 2 3   # huerfano: HL = -HL; nadie lo llama
+p00 0x4E1A 1 2 3   # huerfano: WRTVDP sin tocar BC; nadie lo llama
+p00 0x4E59 1 2 3   # huerfano: C = 1 y salta; nadie lo llama
+p00 0x4E5D 1 2 3   # huerfano: C = 1 y salta; nadie lo llama
+p00 0x4EF5 1 2 3   # huerfano: R#8 = 0xFFE7 con el bit 1 (cosa de MSX2, aqui sin usar); nadie lo llama
+p00 0x4F00 1 2 3   # huerfano: el otro de R#8; nadie lo llama
+p00 0x5088 1 2 3   # huerfano: 278 bytes de rutinas con su tabla de saltos; nadie llama a 0x5088
+p00 0x56CF 1 2 3   # huerfano: los graficos de la lista 0x8166 (bancos 7-8-9); nadie lo llama
+p03 0xA078 1 2 3   # huerfano: guarda HL en 0xD0E0 y sigue en p03:A07B; nadie lo llama
+p03 0xAEB8 1 2 3   # huerfano: llama a p03:AECB y sigue en p03:AEBE; nadie lo llama
+p03 0xAF83 1 2 3   # huerfano: A = 4 y sigue en p03:AF85; nadie lo llama
+p03 0xB544 1 2 3   # huerfano: 22 bytes que acaban en ret; nadie lo llama
+p02 0x9E67 1 2 3   # rutina de error de disco del juego: la BIOS de disco salta por 0xF323 (DISKVE) -> 0x9E65 -> aqui (p00:4165, p03:A135)
+p02 0x9ED2 1 2 3   # rutina de error de disco mientras se lee la lista: 0xF323 -> 0x9ED0 -> aqui (p03:A013)
+p02 0x9E95 1 2 3   # huerfano: C = 6 (el letrero DATATYPEERROR) y sigue en el error de disco p02:9E97; nadie salta aqui

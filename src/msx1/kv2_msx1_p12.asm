@@ -1927,8 +1927,11 @@ L_BA13:
 	jp 04390h		;ba1e
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xba21..0xba27  (6 bytes)
-DATA_BA21:
+; DATOS fases_demo: las fases de las 6 demostraciones (0xE219, de 1 a 6, desde
+;   0xBA20: la entrada 0 cae en el codigo de delante); lo leen p12:BA07 (6
+;   bytes)
+;   0xba21..0xba27  (6 bytes)
+DATA_fases_demo:
 	defb 002h,012h,01ah,028h,030h,035h	; ba21
 
 ; ======================================================================
@@ -1987,38 +1990,279 @@ L_BA78:
 	ret			;ba79
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xba7a..0xbc54  (474 bytes)
-DATA_BA7A:
-	defb 086h,0bah,0bch,0bah,0fah,0bah,040h,0bbh,0a0h,0bbh,0fch,0bbh,02eh,000h,00fh,008h	; ba7a  ......@.........
-	defb 010h,000h,00dh,004h,011h,000h,037h,008h,01bh,000h,019h,008h,011h,000h,010h,008h	; ba8a  ......7.........
-	defb 00dh,000h,043h,008h,00ch,000h,058h,004h,013h,000h,003h,008h,008h,000h,009h,010h	; ba9a  ..C...X.........
-	defb 012h,000h,039h,008h,015h,000h,01fh,004h,047h,000h,010h,004h,00eh,000h,009h,008h	; baaa  ..9.....G.......
-	defb 000h,0ffh,029h,000h,090h,004h,01bh,000h,0adh,008h,01ah,000h,003h,008h,00bh,000h	; baba  ..).............
-	defb 018h,001h,00ah,000h,019h,008h,008h,000h,023h,001h,006h,000h,004h,004h,00dh,000h	; baca  ........#.......
-	defb 00dh,010h,033h,000h,00eh,008h,00ah,000h,01eh,004h,008h,000h,017h,001h,004h,000h	; bada  ..3.............
-	defb 00dh,004h,00dh,000h,01eh,010h,02fh,000h,06ch,004h,042h,000h,030h,004h,000h,0ffh	; baea  ....../.l.B.0...
-	defb 036h,000h,02dh,004h,008h,014h,01ah,004h,010h,000h,02dh,008h,002h,009h,033h,001h	; bafa  6.-.......-...3.
-	defb 001h,009h,072h,008h,014h,000h,032h,002h,011h,000h,01ah,008h,00ah,018h,01eh,008h	; bb0a  ..r...2.........
-	defb 006h,000h,032h,004h,007h,000h,008h,008h,00dh,000h,008h,010h,037h,000h,051h,008h	; bb1a  ..2.........7.Q.
-	defb 002h,009h,024h,001h,008h,000h,012h,008h,002h,018h,016h,008h,001h,009h,028h,001h	; bb2a  ..$...........(.
-	defb 001h,005h,0a0h,004h,000h,0ffh,041h,000h,040h,004h,001h,000h,0a4h,008h,002h,00ah	; bb3a  ......A.@.......
-	defb 015h,002h,006h,000h,01eh,004h,001h,006h,00bh,002h,001h,006h,00fh,004h,001h,006h	; bb4a  ................
-	defb 00ch,002h,001h,006h,00fh,004h,001h,006h,00ch,002h,002h,006h,00eh,004h,001h,006h	; bb5a  ................
-	defb 00bh,002h,002h,006h,015h,004h,001h,006h,00eh,002h,001h,006h,016h,004h,00fh,000h	; bb6a  ................
-	defb 013h,004h,007h,000h,001h,004h,003h,000h,002h,004h,01fh,000h,01eh,004h,01dh,000h	; bb7a  ................
-	defb 005h,004h,009h,014h,001h,004h,00eh,000h,006h,014h,05eh,004h,013h,000h,037h,008h	; bb8a  ..........^...7.
-	defb 002h,018h,012h,010h,000h,0ffh,036h,000h,051h,004h,033h,000h,006h,010h,02eh,000h	; bb9a  ......6.Q.3.....
-	defb 084h,004h,00dh,000h,007h,010h,012h,000h,00eh,008h,009h,000h,019h,001h,00ch,008h	; bbaa  ................
-	defb 018h,001h,005h,000h,008h,004h,001h,005h,014h,001h,002h,000h,008h,008h,001h,000h	; bbba  ................
-	defb 015h,001h,032h,004h,00ah,000h,019h,004h,007h,000h,00dh,010h,022h,000h,012h,004h	; bbca  ..2........."...
-	defb 00eh,000h,012h,004h,004h,014h,00dh,004h,004h,014h,007h,004h,00fh,000h,00fh,008h	; bbda  ................
-	defb 007h,018h,00dh,008h,01dh,000h,015h,008h,043h,000h,00fh,004h,001h,000h,025h,008h	; bbea  ........C.....%.
-	defb 000h,0ffh,040h,000h,032h,008h,004h,000h,013h,004h,00ah,000h,04dh,002h,003h,000h	; bbfa  ..@.2.......M...
-	defb 009h,004h,00bh,000h,026h,004h,00bh,014h,01bh,004h,006h,014h,010h,004h,005h,014h	; bc0a  ....&...........
-	defb 00dh,004h,01dh,000h,008h,004h,004h,014h,028h,004h,007h,014h,013h,004h,028h,000h	; bc1a  ........(.....(.
-	defb 045h,004h,00eh,000h,004h,004h,00eh,000h,01dh,004h,00bh,000h,014h,010h,01ch,000h	; bc2a  E...............
-	defb 029h,004h,005h,014h,00bh,004h,005h,014h,019h,004h,003h,014h,022h,004h,006h,014h	; bc3a  )..........."...
-	defb 005h,004h,033h,000h,00bh,018h,008h,008h,000h,0ffh	; bc4a  ..3.......
+; DATOS mandos_demo: 6 punteros, uno por piramide (0xE241, desde 0xBA78: la
+;   entrada 0 cae en el codigo de delante): el mando grabado de su
+;   demostracion; lo leen p12:BA6E (12 bytes)
+;   0xba7a..0xba86  (12 bytes)
+DATA_mandos_demo:
+	defw 0ba86h,0babch,0bafah,0bb40h,0bba0h,0bbfch	; ba7a
+
+; ----------------------------------------------------------------------
+; DATOS mando_1: el mando grabado de la demostracion de la piramide 1: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (54 bytes)
+;   0xba86..0xbabc  (54 bytes)
+DATA_mando_1:
+	defb 02eh,000h	; ba86
+	defb 00fh,008h	; ba88
+	defb 010h,000h	; ba8a
+	defb 00dh,004h	; ba8c
+	defb 011h,000h	; ba8e
+	defb 037h,008h	; ba90
+	defb 01bh,000h	; ba92
+	defb 019h,008h	; ba94
+	defb 011h,000h	; ba96
+	defb 010h,008h	; ba98
+	defb 00dh,000h	; ba9a
+	defb 043h,008h	; ba9c
+	defb 00ch,000h	; ba9e
+	defb 058h,004h	; baa0
+	defb 013h,000h	; baa2
+	defb 003h,008h	; baa4
+	defb 008h,000h	; baa6
+	defb 009h,010h	; baa8
+	defb 012h,000h	; baaa
+	defb 039h,008h	; baac
+	defb 015h,000h	; baae
+	defb 01fh,004h	; bab0
+	defb 047h,000h	; bab2
+	defb 010h,004h	; bab4
+	defb 00eh,000h	; bab6
+	defb 009h,008h	; bab8
+	defb 000h,0ffh	; baba
+
+; ----------------------------------------------------------------------
+; DATOS mando_2: el mando grabado de la demostracion de la piramide 2: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (62 bytes)
+;   0xbabc..0xbafa  (62 bytes)
+DATA_mando_2:
+	defb 029h,000h	; babc
+	defb 090h,004h	; babe
+	defb 01bh,000h	; bac0
+	defb 0adh,008h	; bac2
+	defb 01ah,000h	; bac4
+	defb 003h,008h	; bac6
+	defb 00bh,000h	; bac8
+	defb 018h,001h	; baca
+	defb 00ah,000h	; bacc
+	defb 019h,008h	; bace
+	defb 008h,000h	; bad0
+	defb 023h,001h	; bad2
+	defb 006h,000h	; bad4
+	defb 004h,004h	; bad6
+	defb 00dh,000h	; bad8
+	defb 00dh,010h	; bada
+	defb 033h,000h	; badc
+	defb 00eh,008h	; bade
+	defb 00ah,000h	; bae0
+	defb 01eh,004h	; bae2
+	defb 008h,000h	; bae4
+	defb 017h,001h	; bae6
+	defb 004h,000h	; bae8
+	defb 00dh,004h	; baea
+	defb 00dh,000h	; baec
+	defb 01eh,010h	; baee
+	defb 02fh,000h	; baf0
+	defb 06ch,004h	; baf2
+	defb 042h,000h	; baf4
+	defb 030h,004h	; baf6
+	defb 000h,0ffh	; baf8
+
+; ----------------------------------------------------------------------
+; DATOS mando_3: el mando grabado de la demostracion de la piramide 3: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (70 bytes)
+;   0xbafa..0xbb40  (70 bytes)
+DATA_mando_3:
+	defb 036h,000h	; bafa
+	defb 02dh,004h	; bafc
+	defb 008h,014h	; bafe
+	defb 01ah,004h	; bb00
+	defb 010h,000h	; bb02
+	defb 02dh,008h	; bb04
+	defb 002h,009h	; bb06
+	defb 033h,001h	; bb08
+	defb 001h,009h	; bb0a
+	defb 072h,008h	; bb0c
+	defb 014h,000h	; bb0e
+	defb 032h,002h	; bb10
+	defb 011h,000h	; bb12
+	defb 01ah,008h	; bb14
+	defb 00ah,018h	; bb16
+	defb 01eh,008h	; bb18
+	defb 006h,000h	; bb1a
+	defb 032h,004h	; bb1c
+	defb 007h,000h	; bb1e
+	defb 008h,008h	; bb20
+	defb 00dh,000h	; bb22
+	defb 008h,010h	; bb24
+	defb 037h,000h	; bb26
+	defb 051h,008h	; bb28
+	defb 002h,009h	; bb2a
+	defb 024h,001h	; bb2c
+	defb 008h,000h	; bb2e
+	defb 012h,008h	; bb30
+	defb 002h,018h	; bb32
+	defb 016h,008h	; bb34
+	defb 001h,009h	; bb36
+	defb 028h,001h	; bb38
+	defb 001h,005h	; bb3a
+	defb 0a0h,004h	; bb3c
+	defb 000h,0ffh	; bb3e
+
+; ----------------------------------------------------------------------
+; DATOS mando_4: el mando grabado de la demostracion de la piramide 4: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (96 bytes)
+;   0xbb40..0xbba0  (96 bytes)
+DATA_mando_4:
+	defb 041h,000h	; bb40
+	defb 040h,004h	; bb42
+	defb 001h,000h	; bb44
+	defb 0a4h,008h	; bb46
+	defb 002h,00ah	; bb48
+	defb 015h,002h	; bb4a
+	defb 006h,000h	; bb4c
+	defb 01eh,004h	; bb4e
+	defb 001h,006h	; bb50
+	defb 00bh,002h	; bb52
+	defb 001h,006h	; bb54
+	defb 00fh,004h	; bb56
+	defb 001h,006h	; bb58
+	defb 00ch,002h	; bb5a
+	defb 001h,006h	; bb5c
+	defb 00fh,004h	; bb5e
+	defb 001h,006h	; bb60
+	defb 00ch,002h	; bb62
+	defb 002h,006h	; bb64
+	defb 00eh,004h	; bb66
+	defb 001h,006h	; bb68
+	defb 00bh,002h	; bb6a
+	defb 002h,006h	; bb6c
+	defb 015h,004h	; bb6e
+	defb 001h,006h	; bb70
+	defb 00eh,002h	; bb72
+	defb 001h,006h	; bb74
+	defb 016h,004h	; bb76
+	defb 00fh,000h	; bb78
+	defb 013h,004h	; bb7a
+	defb 007h,000h	; bb7c
+	defb 001h,004h	; bb7e
+	defb 003h,000h	; bb80
+	defb 002h,004h	; bb82
+	defb 01fh,000h	; bb84
+	defb 01eh,004h	; bb86
+	defb 01dh,000h	; bb88
+	defb 005h,004h	; bb8a
+	defb 009h,014h	; bb8c
+	defb 001h,004h	; bb8e
+	defb 00eh,000h	; bb90
+	defb 006h,014h	; bb92
+	defb 05eh,004h	; bb94
+	defb 013h,000h	; bb96
+	defb 037h,008h	; bb98
+	defb 002h,018h	; bb9a
+	defb 012h,010h	; bb9c
+	defb 000h,0ffh	; bb9e
+
+; ----------------------------------------------------------------------
+; DATOS mando_5: el mando grabado de la demostracion de la piramide 5: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (92 bytes)
+;   0xbba0..0xbbfc  (92 bytes)
+DATA_mando_5:
+	defb 036h,000h	; bba0
+	defb 051h,004h	; bba2
+	defb 033h,000h	; bba4
+	defb 006h,010h	; bba6
+	defb 02eh,000h	; bba8
+	defb 084h,004h	; bbaa
+	defb 00dh,000h	; bbac
+	defb 007h,010h	; bbae
+	defb 012h,000h	; bbb0
+	defb 00eh,008h	; bbb2
+	defb 009h,000h	; bbb4
+	defb 019h,001h	; bbb6
+	defb 00ch,008h	; bbb8
+	defb 018h,001h	; bbba
+	defb 005h,000h	; bbbc
+	defb 008h,004h	; bbbe
+	defb 001h,005h	; bbc0
+	defb 014h,001h	; bbc2
+	defb 002h,000h	; bbc4
+	defb 008h,008h	; bbc6
+	defb 001h,000h	; bbc8
+	defb 015h,001h	; bbca
+	defb 032h,004h	; bbcc
+	defb 00ah,000h	; bbce
+	defb 019h,004h	; bbd0
+	defb 007h,000h	; bbd2
+	defb 00dh,010h	; bbd4
+	defb 022h,000h	; bbd6
+	defb 012h,004h	; bbd8
+	defb 00eh,000h	; bbda
+	defb 012h,004h	; bbdc
+	defb 004h,014h	; bbde
+	defb 00dh,004h	; bbe0
+	defb 004h,014h	; bbe2
+	defb 007h,004h	; bbe4
+	defb 00fh,000h	; bbe6
+	defb 00fh,008h	; bbe8
+	defb 007h,018h	; bbea
+	defb 00dh,008h	; bbec
+	defb 01dh,000h	; bbee
+	defb 015h,008h	; bbf0
+	defb 043h,000h	; bbf2
+	defb 00fh,004h	; bbf4
+	defb 001h,000h	; bbf6
+	defb 025h,008h	; bbf8
+	defb 000h,0ffh	; bbfa
+
+; ----------------------------------------------------------------------
+; DATOS mando_6: el mando grabado de la demostracion de la piramide 6: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (88 bytes)
+;   0xbbfc..0xbc54  (88 bytes)
+DATA_mando_6:
+	defb 040h,000h	; bbfc
+	defb 032h,008h	; bbfe
+	defb 004h,000h	; bc00
+	defb 013h,004h	; bc02
+	defb 00ah,000h	; bc04
+	defb 04dh,002h	; bc06
+	defb 003h,000h	; bc08
+	defb 009h,004h	; bc0a
+	defb 00bh,000h	; bc0c
+	defb 026h,004h	; bc0e
+	defb 00bh,014h	; bc10
+	defb 01bh,004h	; bc12
+	defb 006h,014h	; bc14
+	defb 010h,004h	; bc16
+	defb 005h,014h	; bc18
+	defb 00dh,004h	; bc1a
+	defb 01dh,000h	; bc1c
+	defb 008h,004h	; bc1e
+	defb 004h,014h	; bc20
+	defb 028h,004h	; bc22
+	defb 007h,014h	; bc24
+	defb 013h,004h	; bc26
+	defb 028h,000h	; bc28
+	defb 045h,004h	; bc2a
+	defb 00eh,000h	; bc2c
+	defb 004h,004h	; bc2e
+	defb 00eh,000h	; bc30
+	defb 01dh,004h	; bc32
+	defb 00bh,000h	; bc34
+	defb 014h,010h	; bc36
+	defb 01ch,000h	; bc38
+	defb 029h,004h	; bc3a
+	defb 005h,014h	; bc3c
+	defb 00bh,004h	; bc3e
+	defb 005h,014h	; bc40
+	defb 019h,004h	; bc42
+	defb 003h,014h	; bc44
+	defb 022h,004h	; bc46
+	defb 006h,014h	; bc48
+	defb 005h,004h	; bc4a
+	defb 033h,000h	; bc4c
+	defb 00bh,018h	; bc4e
+	defb 008h,008h	; bc50
+	defb 000h,0ffh	; bc52
 
 ; ======================================================================
 ; CODIGO 0xbc54..0xbd72  (286 bytes)

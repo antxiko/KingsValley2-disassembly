@@ -638,9 +638,13 @@ DATA_graf_9043:
 	defb 0ffh	; 9057
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x9058..0x9063  (11 bytes)
-DATA_9058:
-	defb 014h,058h,03fh,07fh,090h,014h,097h,019h,067h,096h,0ffh	; 9058  .X?.....g..
+; DATOS graf_9058: una lista de graficos igual, byte a byte, que la de 0x9063
+;   (el final): esta no la pide nadie; lo leen nadie (11 bytes)
+;   0x9058..0x9063  (11 bytes)
+DATA_graf_9058:
+	defb 014h,058h,03fh,07fh	; 9058
+	defb 090h,014h,097h,019h	; 905c
+	defb 067h,096h,0ffh	; 9060
 
 ; ----------------------------------------------------------------------
 ; DATOS graf_9063: 1 fichas de graficos (el final) de 5 bytes [modo][sitio en

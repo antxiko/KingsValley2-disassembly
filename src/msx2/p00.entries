@@ -12,13 +12,18 @@
 #
 # Este fichero lo regenera `make semillas` (tools/bancos.py escribe).
 0x402E   # gancho de interrupcion que pone el arranque
-0x4094   # p01:7792 call
+0x4094   # p02:9680 call
 0x409A   # p01:64CC jp
 0x40A3   # cabecera AB: INIT
 0x40B5   # gancho H.STKE (0xFEDA) que pone INIT
-0x41B5   # p01:7725 call
+0x418A   # p02:9781 call
+0x41A6   # huerfano: pone los bancos 4-5-6 (como p00:41AB); nadie lo llama
+0x41B5   # p02:9768 call
+0x41BA   # huerfano: pone el banco 15 en 0xA000; nadie lo llama
 0x41BF   # p02:8B63 call
+0x41E5   # huerfano: pide el sonido 2; nadie lo llama
 0x41EA   # p12:B987 entrada 0 de la tabla de 0xB98A (call 0x4099 en 0xB987)
+0x41EF   # huerfano: pide el sonido 4; nadie lo llama
 0x41F4   # p12:B987 entrada 1 de la tabla de 0xB98A (call 0x4099 en 0xB987)
 0x41F9   # p12:B987 entrada 2 de la tabla de 0xB98A (call 0x4099 en 0xB987)
 0x41FE   # p12:B987 entrada 3 de la tabla de 0xB98A (call 0x4099 en 0xB987)
@@ -79,6 +84,7 @@
 0x4303   # p03:BECD jp
 0x4307   # pide el sonido 0x41
 0x431B   # p01:70EB call
+0x4324   # huerfano: pide la orden 0x84 (sigue en p00:4326); nadie lo llama
 0x4358   # p12:BA47 call
 0x4360   # p12:BA35 call
 0x4369   # p12:BA63 jp
@@ -116,10 +122,15 @@
 0x4BAF   # p00:46EA entrada 13 de la tabla de 0x46ED (call 0x4099 en 0x46EA)
 0x4C20   # p02:9B79 call
 0x4D1F   # p01:7328 call
-0x4D7B   # p01:63F4 call
+0x4D7B   # p02:9678 call
+0x4DEB   # huerfano: DE = -DE; nadie lo llama
+0x4DF3   # huerfano: HL = -HL; nadie lo llama
 0x4E19   # p01:6F8A call
+0x4E58   # huerfano: C = 1 y salta; nadie lo llama
+0x4E5C   # huerfano: C = 1 y salta; nadie lo llama
+0x4E98   # p02:9774 call
 0x50BE   # p01:759D call
-0x51D0   # p01:6000 call
+0x51D0   # p02:9778 call
 0x51D4   # p12:B894 call
 0x51FA   # p01:62FE jp
 0x5434   # p12:BA7D jp
@@ -130,8 +141,10 @@
 0x56AA   # p12:B6D0 call
 0x56C5   # p12:B52F jp cc
 0x56DC   # p03:BE92 call cc
+0x56DE   # p03:BB5F call
 0x5722   # p02:9683 jp
 0x5737   # p12:B7F7 jp
+0x573B   # p02:965E jp
 0x578D   # p12:B929 call
 0x57AC   # p12:B923 call
 0x57CA   # p12:B6D3 call
@@ -152,9 +165,11 @@
 0x5A5C   # p01:6FA2 call
 0x5A74   # p01:7087 call
 0x5A8C   # p01:6FBB call
+0x5AA4   # huerfano: un ret suelto; nadie lo llama
 0x5AA5   # p01:7420 call
 0x5AD8   # p01:6816 call
 0x5B16   # p01:73ED call
+0x5B34   # huerfano: las fuentes de 0xAA29 y 0xAB79 con el banco 12; nadie lo llama
 0x5B52   # p01:6813 call
 0x5B5E   # p01:752F call
 0x5D32   # p01:6411 call

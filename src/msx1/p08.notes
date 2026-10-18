@@ -13,19 +13,33 @@ D 0x8125 0x814B rachas_8125  rachas a la VRAM (un paso del caracter animado de l
 F 0x8125 16
 D 0x814B 0x8158 graf_814B  2 fichas de 6 bytes [tercios][colores][caracter][patrones] (la entrada), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (13 bytes)
 F 0x814B 6
-D 0x8158 0x81AB fundido_8158  lista de fundido: fichas de 4 bytes [tercios][caracter][cuantos bytes], un 0 acaba (se borran en la VRAM poco a poco); se solapan 5 bloques: (graf_815F 815F-8166) (fundido_8166 8166-81AB) (fundido_816E 816E-81AB) (graf_8175 8175-8182); lo leen p00:5571, p00:5033 (83 bytes)
-F 0x8158 4
+D 0x8158 0x815F graf_8158  1 fichas de 6 bytes [tercios][colores][caracter][patrones] (el fundido de entrada 1), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:54A7 (7 bytes)
+F 0x8158 6
+D 0x815F 0x8166 graf_815F  1 fichas de 6 bytes [tercios][colores][caracter][patrones] (el final), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (7 bytes)
+F 0x815F 6
+D 0x8166 0x816D graf_8166  1 fichas de 6 bytes [tercios][colores][caracter][patrones] (el fundido de entrada 0), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:54A7 (7 bytes)
+F 0x8166 6
+D 0x816D 0x816E cero_816D  un 0 suelto entre graf_8166 y graf_816E: ninguna instruccion ni tabla apunta aqui; lo leen nadie (1 bytes)
+F 0x816D 1
+D 0x816E 0x8175 graf_816E  1 fichas de 6 bytes [tercios][colores][caracter][patrones] (el fundido de entrada 2), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:54A7 (7 bytes)
+F 0x816E 6
+D 0x8175 0x8182 graf_8175  2 fichas de 6 bytes [tercios][colores][caracter][patrones] (el final), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (13 bytes)
+F 0x8175 6
+D 0x8182 0x82DD rachas_8182  rachas a la VRAM (colores de el fundido de entrada 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:54A7 (347 bytes)
+F 0x8182 16
+D 0x82DD 0x8382 rachas_82DD  rachas a la VRAM (patrones de el fundido de entrada 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:54A7 (165 bytes)
+F 0x82DD 16
 D 0x8382 0x8757 rachas_8382  rachas a la VRAM (colores de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (981 bytes)
 F 0x8382 16
 D 0x8757 0x8934 rachas_8757  rachas a la VRAM (patrones de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (477 bytes)
 F 0x8757 16
-D 0x8934 0x8BAA rachas_8934  rachas a la VRAM (colores de el final): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033, p00:5289 (630 bytes)
+D 0x8934 0x8BAA rachas_8934  rachas a la VRAM (colores de el final): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033, p00:5289, p00:54A7 (630 bytes)
 F 0x8934 16
-D 0x8BAA 0x8D35 rachas_8BAA  rachas a la VRAM (patrones de el final): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033, p00:5292 (395 bytes)
+D 0x8BAA 0x8D35 rachas_8BAA  rachas a la VRAM (patrones de el final): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033, p00:5292, p00:54A7 (395 bytes)
 F 0x8BAA 16
-D 0x8D35 0x8EDE rachas_8D35  rachas a la VRAM (colores de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (425 bytes)
+D 0x8D35 0x8EDE rachas_8D35  rachas a la VRAM (colores de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033, p00:54A7 (425 bytes)
 F 0x8D35 16
-D 0x8EDE 0x9015 rachas_8EDE  rachas a la VRAM (patrones de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (311 bytes)
+D 0x8EDE 0x9015 rachas_8EDE  rachas a la VRAM (patrones de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033, p00:54A7 (311 bytes)
 F 0x8EDE 16
 D 0x9015 0x91AC rachas_9015  rachas a la VRAM (colores de el final): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (407 bytes)
 F 0x9015 16
@@ -35,14 +49,26 @@ D 0x926A 0x93C3 rachas_926A  rachas a la VRAM (las musicas): [n < 0x80] repite e
 F 0x926A 16
 D 0x93C3 0x9422 rachas_93C3  rachas a la VRAM (las musicas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:55F0 (95 bytes)
 F 0x93C3 16
-D 0x9434 0x9438 fundidos_lista  2 punteros (desde 0x9432, por A): listas de fundido de 4 bytes [tercios][caracter][cuantos bytes], un 0 acaba; lo leen p00:5416 (4 bytes)
-F 0x9434 w8
+D 0x9422 0x942C fundidos_salida  2 listas de fundido de salida (0x9422 + 5 x A; A = 0 en p01:70FE y p01:71CD, 1 en p01:6735 y p01:734A): una ficha [tercios][caracter][cuantos bytes, 2] y el 0 (se borran en la VRAM poco a poco); lo leen p00:53FC (10 bytes)
+F 0x9422 5
+D 0x942C 0x9432 fundido_942C  6 bytes detras de las dos listas de fundido de salida: serian la de A = 2, pero p00:53F9 solo se llama con A = 0 o 1; lo leen nadie (6 bytes)
+F 0x942C 6
+D 0x9432 0x9438 fundidos_entrada  3 punteros (por A: 0 en p01:70B5, 1 en p01:7147, 2 en p01:72B9): listas de graficos que aparecen con el fundido de entrada; lo leen p00:5416 (6 bytes)
+F 0x9432 w8
 D 0x9438 0x9625 rachas_9438  rachas a la VRAM (el titulo (japones: 0x002B de la BIOS)): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52A5 (493 bytes)
 F 0x9438 16
 D 0x9625 0x9756 rachas_9625  rachas a la VRAM (el titulo (no japones)): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:529B (305 bytes)
 F 0x9625 16
 D 0x9756 0x97AB rachas_9756  rachas a la VRAM (el titulo (japones)): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52B8 (85 bytes)
 F 0x9756 16
+D 0x97AB 0x9800 rachas_97AB  rachas a la VRAM (un paso con la BIOS japonesa): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52F7 (85 bytes)
+F 0x97AB 16
+D 0x9800 0x9855 rachas_9800  rachas a la VRAM (un paso con la BIOS japonesa): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52F7 (85 bytes)
+F 0x9800 16
+D 0x9855 0x98AA rachas_9855  rachas a la VRAM (un paso con la BIOS japonesa): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52F7 (85 bytes)
+F 0x9855 16
+D 0x98AA 0x98FF rachas_98AA  rachas a la VRAM (un paso con la BIOS japonesa): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52F7 (85 bytes)
+F 0x98AA 16
 D 0x98FF 0x99E9 rachas_98FF  rachas a la VRAM (el titulo (no japones)): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52AE (234 bytes)
 F 0x98FF 16
 D 0x99E9 0x9A54 letrero_99E9  letrero (del titulo (japones)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:52E8 (107 bytes)
@@ -51,26 +77,26 @@ D 0x9A54 0x9A8F letrero_9A54  letrero (del titulo (no japones)): [x][y] y caract
 F 0x9A54 16
 D 0x9A8F 0x9BDA rachas_9A8F  rachas a la VRAM (la tabla de nombres): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:55D8 (331 bytes)
 F 0x9A8F 16
-D 0x9BDA 0x9BE6 plano_mapas  6 punteros: rachas que se desempaquetan en la RAM (0xE900) para el plano; lo leen p00:5A11 (12 bytes)
+D 0x9BDA 0x9BE6 presentacion_trozos  6 punteros: los trozos del dibujo de la presentacion, en rachas que se desempaquetan en la RAM (0xE900); lo leen p00:5A11 (12 bytes)
 F 0x9BDA w8
-D 0x9BF2 0x9D54 rachas_9BF2  rachas a la VRAM (el plano) con su destino delante (2 bytes); lo leen p00:4E23 (354 bytes)
+D 0x9BF2 0x9D54 rachas_9BF2  rachas a la VRAM (la presentacion) con su destino delante (2 bytes); lo leen p00:4E23 (354 bytes)
 F 0x9BF2 16
-D 0x9D71 0x9D76 plano_0  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+D 0x9D54 0x9D71 rachas_9D54  rachas que suman 0x3F0 bytes, lo que miden los patrones del dibujo de la presentacion (p00:599B): con la forma de sus colores; ninguna instruccion carga 0x9D54 ni sale como palabra en la ROM; lo leen nadie (29 bytes)
+F 0x9D54 16
+D 0x9D71 0x9D76 presentacion_0  un trozo del dibujo de la presentacion: rachas a la RAM (p00:5A21); lo leen p00:5A21 (5 bytes)
 F 0x9D71 16
-D 0x9D76 0x9D7B plano_1  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+D 0x9D76 0x9D7B presentacion_1  un trozo del dibujo de la presentacion: rachas a la RAM (p00:5A21); lo leen p00:5A21 (5 bytes)
 F 0x9D76 16
-D 0x9D7B 0x9D82 plano_2  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (7 bytes)
+D 0x9D7B 0x9D82 presentacion_2  un trozo del dibujo de la presentacion: rachas a la RAM (p00:5A21); lo leen p00:5A21 (7 bytes)
 F 0x9D7B 16
-D 0x9D82 0x9D89 plano_3  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (7 bytes)
+D 0x9D82 0x9D89 presentacion_3  un trozo del dibujo de la presentacion: rachas a la RAM (p00:5A21); lo leen p00:5A21 (7 bytes)
 F 0x9D82 16
-D 0x9D89 0x9D8E plano_4  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+D 0x9D89 0x9D8E presentacion_4  un trozo del dibujo de la presentacion: rachas a la RAM (p00:5A21); lo leen p00:5A21 (5 bytes)
 F 0x9D89 16
-D 0x9D8E 0x9D93 plano_5  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+D 0x9D8E 0x9D93 presentacion_5  un trozo del dibujo de la presentacion: rachas a la RAM (p00:5A21); lo leen p00:5A21 (5 bytes)
 F 0x9D8E 16
 D 0x9D93 0xA000 relleno_ff  621 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (621 bytes)
 F 0x9D93 16
-D 0x9422 0x9434 resto_9422  lo apuntan con el banco puesto p00:53FC (0x9422), p00:5413 (0x9432); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:53FC, p00:5413 (18 bytes)
-F 0x9422 16
 D 0x9BE6 0x9BF2 resto_9BE6  lo apuntan con el banco puesto p00:59CF (0x9BE6); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:59CF (12 bytes)
 F 0x9BE6 16
 # --- fin de los bloques de bloques.py ---

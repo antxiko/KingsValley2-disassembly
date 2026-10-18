@@ -21,7 +21,7 @@ DATA_resto_4000:
 	defb 0e2h,000h,000h,000h,000h,000h,000h,000h,080h,000h,001h,000h,0ffh,0ffh	; 4020  ..............
 
 ; ======================================================================
-; CODIGO 0x402e..0x41ae  (384 bytes)
+; CODIGO 0x402e..0x43ac  (894 bytes)
 ; ======================================================================
 
 
@@ -249,25 +249,18 @@ L_4195:
 	pop af			;41ab
 	ei			;41ac
 	ret			;41ad
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x41ae..0x41b3  (5 bytes)
-DATA_41AE:
-	defb 0f5h,03eh,004h,018h,0e2h	; 41ae
-
-; ======================================================================
-; CODIGO 0x41b3..0x41ed  (58 bytes)
-; ======================================================================
-
-
+L_41AE:
+	push af			;41ae
+	ld a,004h		;41af
+	jr L_4195		;41b1
 L_41B3:
 	push af			;41b3   ; pone los bancos 7-8-9
 	ld a,007h		;41b4
-	jr $-33		;41b6
+	jr L_4195		;41b6
 L_41B8:
 	push af			;41b8   ; pone los bancos 10-11-12
 	ld a,00ah		;41b9
-	jr $-38		;41bb
+	jr L_4195		;41bb
 L_41BD:
 	push af			;41bd   ; pone el banco 12 en 0xA000
 	ld a,00ch		;41be
@@ -301,31 +294,15 @@ L_41D4:
 L_41E8:
 	ld a,001h		;41e8   ; pide el sonido 1
 	jp L_432E		;41ea
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x41ed..0x41f2  (5 bytes)
-DATA_41ED:
-	defb 03eh,002h,0c3h,02eh,043h	; 41ed
-
-; ======================================================================
-; CODIGO 0x41f2..0x41f7  (5 bytes)
-; ======================================================================
-
-
+L_41ED:
+	ld a,002h		;41ed
+	jp L_432E		;41ef
 L_41F2:
 	ld a,003h		;41f2   ; pide el sonido 3
 	jp L_432E		;41f4
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x41f7..0x41fc  (5 bytes)
-DATA_41F7:
-	defb 03eh,004h,0c3h,02eh,043h	; 41f7
-
-; ======================================================================
-; CODIGO 0x41fc..0x432c  (304 bytes)
-; ======================================================================
-
-
+L_41F7:
+	ld a,004h		;41f7
+	jp L_432E		;41f9
 L_41FC:
 	ld a,005h		;41fc   ; pide el sonido 5
 	jp L_432E		;41fe
@@ -433,109 +410,100 @@ L_42A6:
 	jp L_432E		;42a8
 L_42AB:
 	ld a,028h		;42ab   ; pide el sonido 0x28
-	jr $+129		;42ad
+	jr L_432E		;42ad
 L_42AF:
 	ld a,029h		;42af   ; pide el sonido 0x29
-	jr $+125		;42b1
+	jr L_432E		;42b1
 L_42B3:
 	ld a,02ah		;42b3   ; pide el sonido 0x2A
-	jr $+121		;42b5
+	jr L_432E		;42b5
 L_42B7:
 	ld a,02bh		;42b7
-	jr $+117		;42b9
+	jr L_432E		;42b9
 L_42BB:
 	ld a,02ch		;42bb
-	jr $+113		;42bd
+	jr L_432E		;42bd
 L_42BF:
 	ld a,02dh		;42bf   ; pide el sonido 0x2D
-	jr $+109		;42c1
+	jr L_432E		;42c1
 L_42C3:
 	ld a,02eh		;42c3   ; pide el sonido 0x2E
-	jr $+105		;42c5
+	jr L_432E		;42c5
 L_42C7:
 	ld a,02fh		;42c7
-	jr $+101		;42c9
+	jr L_432E		;42c9
 L_42CB:
 	ld a,030h		;42cb   ; pide el sonido 0x30
-	jr $+97		;42cd
+	jr L_432E		;42cd
 L_42CF:
 	ld a,031h		;42cf
-	jr $+93		;42d1
+	jr L_432E		;42d1
 L_42D3:
 	ld a,032h		;42d3   ; pide el sonido 0x32
-	jr $+89		;42d5
+	jr L_432E		;42d5
 L_42D7:
 	ld a,033h		;42d7
-	jr $+85		;42d9
+	jr L_432E		;42d9
 L_42DB:
 	ld a,034h		;42db
-	jr $+81		;42dd
+	jr L_432E		;42dd
 L_42DF:
 	ld a,035h		;42df   ; pide el sonido 0x35
-	jr $+77		;42e1
+	jr L_432E		;42e1
 L_42E3:
 	ld a,036h		;42e3   ; pide el sonido 0x36
-	jr $+73		;42e5
+	jr L_432E		;42e5
 L_42E7:
 	ld a,037h		;42e7   ; pide el sonido 0x37
-	jr $+69		;42e9
+	jr L_432E		;42e9
 L_42EB:
 	ld a,038h		;42eb   ; pide el sonido 0x38
-	jr $+65		;42ed
+	jr L_432E		;42ed
 L_42EF:
 	ld a,039h		;42ef   ; pide el sonido 0x39
-	jr $+61		;42f1
+	jr L_432E		;42f1
 L_42F3:
 	ld a,03ah		;42f3   ; pide el sonido 0x3A
-	jr $+57		;42f5
+	jr L_432E		;42f5
 L_42F7:
 	ld a,03bh		;42f7   ; pide el sonido 0x3B
-	jr $+53		;42f9
+	jr L_432E		;42f9
 L_42FB:
 	ld a,03ch		;42fb   ; pide el sonido 0x3C
-	jr $+49		;42fd
+	jr L_432E		;42fd
 L_42FF:
 	ld a,03dh		;42ff   ; pide el sonido 0x3D
-	jr $+45		;4301
+	jr L_432E		;4301
 L_4303:
 	ld a,03eh		;4303   ; pide el sonido 0x3E
-	jr $+41		;4305
+	jr L_432E		;4305
 L_4307:
 	ld a,03fh		;4307
-	jr $+37		;4309
+	jr L_432E		;4309
 L_430B:
 	ld a,040h		;430b   ; pide el sonido 0x40
-	jr $+33		;430d
+	jr L_432E		;430d
 L_430F:
 	ld a,041h		;430f
-	jr $+29		;4311
+	jr L_432E		;4311
 L_4313:
 	ld a,080h		;4313   ; orden 0x80 al motor de sonido (p04:61E4)
-	jr $+25		;4315
+	jr L_432E		;4315
 L_4317:
 	ld a,081h		;4317   ; orden 0x81 al motor (p04:6248)
-	jr $+21		;4319
+	jr L_432E		;4319
 L_431B:
 	xor a			;431b   ; orden 0x82 (p04:61BB), con 0xE21A a cero
 	ld (0e21ah),a		;431c   ; guarda una cuenta atras que para la musica al llegar a 1
 	ld a,082h		;431f
-	jr $+13		;4321
+	jr L_432E		;4321
 L_4323:
 	ld a,0ffh		;4323   ; orden 0x83 (p04:61C2), con 0xE21A a 0xFF
 	ld (0e21ah),a		;4325   ; guarda una cuenta atras que para la musica al llegar a 1
 	ld a,083h		;4328
-	jr $+4		;432a
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x432c..0x432e  (2 bytes)
-DATA_432C:
-	defb 03eh,084h	; 432c
-
-; ======================================================================
-; CODIGO 0x432e..0x43ac  (126 bytes)
-; ======================================================================
-
-
+	jr L_432E		;432a
+L_432C:
+	ld a,084h		;432c
 L_432E:
 	di			;432e   ; pide al motor de sonido lo que diga A (p04:603D), con los bancos 4-5-6 y sin tocar registros
 	push hl			;432f
@@ -1856,7 +1824,7 @@ DATA_resto_4C1B:
 	defb 001h,001h,001h,000h,000h,003h	; 4c1b
 
 ; ======================================================================
-; CODIGO 0x4c21..0x4dec  (459 bytes)
+; CODIGO 0x4c21..0x4fa7  (902 bytes)
 ; ======================================================================
 
 
@@ -2135,17 +2103,24 @@ L_4DD8:
 	pop bc			;4de8
 	djnz L_4DD8		;4de9
 	ret			;4deb
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4dec..0x4dfc  (16 bytes)
-DATA_4DEC:
-	defb 07ah,02fh,057h,07bh,02fh,05fh,013h,0c9h,07ch,02fh,067h,07dh,02fh,06fh,023h,0c9h	; 4dec  z/W{/_..|/g}/o#.
-
-; ======================================================================
-; CODIGO 0x4dfc..0x4e1a  (30 bytes)
-; ======================================================================
-
-
+L_4DEC:
+	ld a,d			;4dec
+	cpl			;4ded
+	ld d,a			;4dee
+	ld a,e			;4def
+	cpl			;4df0
+	ld e,a			;4df1
+	inc de			;4df2
+	ret			;4df3
+L_4DF4:
+	ld a,h			;4df4
+	cpl			;4df5
+	ld h,a			;4df6
+	ld a,l			;4df7
+	cpl			;4df8
+	ld l,a			;4df9
+	inc hl			;4dfa
+	ret			;4dfb
 L_4DFC:
 	push hl			;4dfc   ; lee B C bytes de la VRAM (LDIRMV) sin tocar registros
 	push de			;4dfd
@@ -2173,19 +2148,14 @@ L_4E10:
 	pop af			;4e17
 	pop de			;4e18
 	ret			;4e19
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4e1a..0x4e20  (6 bytes)
-DATA_4E1A:
-	defb 0c5h,0cdh,047h,000h,0c1h,0c9h	; 4e1a
-
-; ======================================================================
-; CODIGO 0x4e20..0x4e59  (57 bytes)
-; ======================================================================
-
-
+L_4E1A:
+	push bc			;4e1a
+	call 00047h		;4e1b   ; BIOS WRTVDP - Writes data in the VDP-register
+	pop bc			;4e1e
+	ret			;4e1f
 L_4E20:
 	ld c,000h		;4e20   ; rachas a la VRAM: [destino] y rachas; [n < 0x80] repite el byte siguiente n veces; [0x80 + n] copia n; [0x80] trae otro destino; 0 acaba
+L_4E22:
 	ex de,hl			;4e22
 	ld e,(hl)			;4e23
 	inc hl			;4e24
@@ -2228,17 +2198,12 @@ L_4E4D:
 L_4E55:
 	ld c,000h		;4e55   ; lo mismo con el destino en HL
 	jr L_4E28		;4e57
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4e59..0x4e61  (8 bytes)
-DATA_4E59:
-	defb 00eh,001h,018h,0c5h,00eh,001h,018h,0c7h	; 4e59  ........
-
-; ======================================================================
-; CODIGO 0x4e61..0x4ef5  (148 bytes)
-; ======================================================================
-
-
+L_4E59:
+	ld c,001h		;4e59
+	jr L_4E22		;4e5b
+L_4E5D:
+	ld c,001h		;4e5d
+	jr L_4E28		;4e5f
 L_4E61:
 	call L_4E6D		;4e61   ; copia C bloques de 16 bytes de HL a DE en la VRAM dandoles la vuelta (espejo)
 	ld a,020h		;4e64
@@ -2340,18 +2305,18 @@ L_4EEA:
 	ld bc,00080h		;4eed
 	ld a,0e0h		;4ef0
 	jp L_4E10		;4ef2
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4ef5..0x4f0b  (22 bytes)
-DATA_4EF5:
-	defb 03ah,0e7h,0ffh,0f6h,002h,047h,00eh,008h,0c3h,047h,000h,03ah,0e7h,0ffh,0e6h,0fdh	; 4ef5  :....G...G.:....
-	defb 047h,00eh,008h,0c3h,047h,000h	; 4f05
-
-; ======================================================================
-; CODIGO 0x4f0b..0x4fa7  (156 bytes)
-; ======================================================================
-
-
+L_4EF5:
+	ld a,(0ffe7h)		;4ef5
+	or 002h		;4ef8
+	ld b,a			;4efa
+	ld c,008h		;4efb
+	jp 00047h		;4efd   ; BIOS WRTVDP - Writes data in the VDP-register
+L_4F00:
+	ld a,(0ffe7h)		;4f00
+	and 0fdh		;4f03
+	ld b,a			;4f05
+	ld c,008h		;4f06
+	jp 00047h		;4f08   ; BIOS WRTVDP - Writes data in the VDP-register
 L_4F0B:
 	ld c,0ffh		;4f0b   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	jr L_4F11		;4f0d
@@ -2466,7 +2431,7 @@ DATA_resto_4FA7:
 	defb 002h,0e2h,00eh,07fh,007h,076h,003h,0efh	; 4fa7  .....v..
 
 ; ======================================================================
-; CODIGO 0x4faf..0x5088  (217 bytes)
+; CODIGO 0x4faf..0x5377  (968 bytes)
 ; ======================================================================
 
 
@@ -2601,34 +2566,154 @@ L_505A:
 	call L_4E55		;5082   ; lo mismo con el destino en HL
 	pop ix		;5085
 	ret			;5087
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5088..0x519e  (278 bytes)
-DATA_5088:
-	defb 0ddh,07eh,000h,0a7h,0c8h,0ddh,05eh,002h,0afh,0cbh,013h,017h,032h,0c0h,0efh,0ddh	; 5088  .~....^.....2...
-	defb 06eh,003h,07dh,032h,0c3h,0efh,0cdh,0a8h,050h,011h,004h,000h,0ddh,019h,018h,0e0h	; 5098  n.}2....P.......
-	defb 026h,000h,029h,029h,029h,022h,0c1h,0efh,0cdh,04fh,051h,03ah,0c0h,0efh,0a7h,0f5h	; 50a8  &.)))"...OQ:....
-	defb 0cch,0efh,050h,0f1h,0c4h,0c2h,050h,0c3h,005h,051h,021h,000h,0e8h,011h,007h,0e8h	; 50b8  ..P...P..Q!.....
-	defb 0cdh,0d1h,050h,021h,000h,0eah,011h,007h,0eah,0d9h,03ah,0c3h,0efh,047h,0d9h,006h	; 50c8  ..P!......:..G..
-	defb 004h,04eh,01ah,077h,079h,012h,023h,01bh,010h,0f7h,023h,023h,023h,023h,03eh,00ch	; 50d8  .N.wy.#...####>.
-	defb 0cdh,099h,040h,0d9h,010h,0e8h,0c9h,021h,000h,0e8h,0edh,05bh,0c1h,0efh,006h,008h	; 50e8  ..@....!...[....
-	defb 0cbh,01eh,08fh,010h,0fbh,077h,023h,01bh,07ah,0b3h,020h,0f2h,0c9h,0ddh,0cbh,002h	; 50f8  .....w#.z. .....
-	defb 05eh,011h,000h,010h,0c4h,021h,051h,0ddh,0cbh,002h,066h,011h,000h,008h,0c4h,021h	; 5108  ^....!Q...f....!
-	defb 051h,0ddh,0cbh,002h,06eh,011h,000h,000h,0c8h,0ddh,0e5h,0ddh,06eh,001h,026h,000h	; 5118  Q...n.......n.&.
-	defb 029h,029h,029h,019h,0e5h,011h,000h,020h,019h,011h,000h,0e8h,0ebh,0edh,04bh,0c1h	; 5128  ))).... ......K.
-	defb 0efh,0cdh,006h,04eh,0e1h,011h,000h,000h,019h,011h,000h,0eah,0ebh,0edh,04bh,0c1h	; 5138  ...N..........K.
-	defb 0efh,0cdh,006h,04eh,0ddh,0e1h,0c9h,0edh,04bh,0c1h,0efh,0ddh,06eh,000h,026h,000h	; 5148  ...N....K...n.&.
-	defb 029h,029h,029h,0e5h,011h,000h,020h,0ddh,0cbh,002h,056h,020h,00ah,016h,028h,0ddh	; 5158  )))... ...V ..(.
-	defb 0cbh,002h,04eh,020h,002h,016h,030h,019h,011h,000h,0e8h,0ddh,0e5h,0cdh,059h,000h	; 5168  ..N ..0.......Y.
-	defb 0ddh,0e1h,0e1h,011h,000h,000h,0ddh,0cbh,002h,056h,020h,00ah,016h,008h,0ddh,0cbh	; 5178  .........V .....
-	defb 002h,04eh,020h,002h,016h,010h,019h,011h,000h,0eah,0edh,04bh,0c1h,0efh,0ddh,0e5h	; 5188  .N ........K....
-	defb 0cdh,059h,000h,0ddh,0e1h,0c9h	; 5198
-
-; ======================================================================
-; CODIGO 0x519e..0x5377  (473 bytes)
-; ======================================================================
-
-
+L_5088:
+	ld a,(ix+000h)		;5088
+	and a			;508b
+	ret z			;508c
+	ld e,(ix+002h)		;508d
+	xor a			;5090
+	rl e		;5091
+	rla			;5093
+	ld (0efc0h),a		;5094   ; guarda un dato de paso de la rutina en curso
+	ld l,(ix+003h)		;5097
+	ld a,l			;509a
+	ld (0efc3h),a		;509b   ; guarda la marca de apuntar en 0xE7C0 las columnas al leer el mapa
+	call L_50A8		;509e
+	ld de,00004h		;50a1
+	add ix,de		;50a4
+	jr L_5088		;50a6
+L_50A8:
+	ld h,000h		;50a8
+	add hl,hl			;50aa
+	add hl,hl			;50ab
+	add hl,hl			;50ac
+	ld (0efc1h),hl		;50ad
+	call L_514F		;50b0
+	ld a,(0efc0h)		;50b3   ; lee un dato de paso de la rutina en curso
+	and a			;50b6
+	push af			;50b7
+	call z,L_50EF		;50b8
+	pop af			;50bb
+	call nz,L_50C2		;50bc
+	jp L_5105		;50bf
+L_50C2:
+	ld hl,0e800h		;50c2   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ld de,0e807h		;50c5
+	call L_50D1		;50c8
+	ld hl,0ea00h		;50cb
+	ld de,0ea07h		;50ce
+L_50D1:
+	exx			;50d1
+	ld a,(0efc3h)		;50d2   ; lee la marca de apuntar en 0xE7C0 las columnas al leer el mapa
+	ld b,a			;50d5
+L_50D6:
+	exx			;50d6
+	ld b,004h		;50d7
+L_50D9:
+	ld c,(hl)			;50d9
+	ld a,(de)			;50da
+	ld (hl),a			;50db
+	ld a,c			;50dc
+	ld (de),a			;50dd
+	inc hl			;50de
+	dec de			;50df
+	djnz L_50D9		;50e0
+	inc hl			;50e2
+	inc hl			;50e3
+	inc hl			;50e4
+	inc hl			;50e5
+	ld a,00ch		;50e6
+	call L_4099		;50e8   ; suma A a DE (DE = DE + A)
+	exx			;50eb
+	djnz L_50D6		;50ec
+	ret			;50ee
+L_50EF:
+	ld hl,0e800h		;50ef   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ld de,(0efc1h)		;50f2
+L_50F6:
+	ld b,008h		;50f6
+L_50F8:
+	rr (hl)		;50f8
+	adc a,a			;50fa
+	djnz L_50F8		;50fb
+	ld (hl),a			;50fd
+	inc hl			;50fe
+	dec de			;50ff
+	ld a,d			;5100
+	or e			;5101
+	jr nz,L_50F6		;5102
+	ret			;5104
+L_5105:
+	bit 3,(ix+002h)		;5105
+	ld de,01000h		;5109
+	call nz,L_5121		;510c
+	bit 4,(ix+002h)		;510f
+	ld de,00800h		;5113
+	call nz,L_5121		;5116
+	bit 5,(ix+002h)		;5119
+	ld de,00000h		;511d
+	ret z			;5120
+L_5121:
+	push ix		;5121
+	ld l,(ix+001h)		;5123
+	ld h,000h		;5126
+	add hl,hl			;5128
+	add hl,hl			;5129
+	add hl,hl			;512a
+	add hl,de			;512b
+	push hl			;512c
+	ld de,02000h		;512d
+	add hl,de			;5130
+	ld de,0e800h		;5131   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ex de,hl			;5134
+	ld bc,(0efc1h)		;5135
+	call L_4E06		;5139   ; escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
+	pop hl			;513c
+	ld de,00000h		;513d
+	add hl,de			;5140
+	ld de,0ea00h		;5141
+	ex de,hl			;5144
+	ld bc,(0efc1h)		;5145
+	call L_4E06		;5149   ; escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
+	pop ix		;514c
+	ret			;514e
+L_514F:
+	ld bc,(0efc1h)		;514f
+	ld l,(ix+000h)		;5153
+	ld h,000h		;5156
+	add hl,hl			;5158
+	add hl,hl			;5159
+	add hl,hl			;515a
+	push hl			;515b
+	ld de,02000h		;515c
+	bit 2,(ix+002h)		;515f
+	jr nz,L_516F		;5163
+	ld d,028h		;5165
+	bit 1,(ix+002h)		;5167
+	jr nz,L_516F		;516b
+	ld d,030h		;516d
+L_516F:
+	add hl,de			;516f
+	ld de,0e800h		;5170   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	push ix		;5173
+	call 00059h		;5175   ; BIOS LDIRMV - Block transfers to memory from VRAM
+	pop ix		;5178
+	pop hl			;517a
+	ld de,00000h		;517b
+	bit 2,(ix+002h)		;517e
+	jr nz,L_518E		;5182
+	ld d,008h		;5184
+	bit 1,(ix+002h)		;5186
+	jr nz,L_518E		;518a
+	ld d,010h		;518c
+L_518E:
+	add hl,de			;518e
+	ld de,0ea00h		;518f
+	ld bc,(0efc1h)		;5192
+	push ix		;5196
+	call 00059h		;5198   ; BIOS LDIRMV - Block transfers to memory from VRAM
+	pop ix		;519b
+	ret			;519d
 L_519E:
 	ld a,(ix+000h)		;519e   ; copia sprites a la VRAM: [n x 32 bytes][dibujo][puntero], 0 acaba
 	and a			;51a1
@@ -2867,7 +2952,7 @@ DATA_resto_5377:
 	defb 05dh,05eh,05fh,08ch	; 5377
 
 ; ======================================================================
-; CODIGO 0x537b..0x56cf  (852 bytes)
+; CODIGO 0x537b..0x5930  (1461 bytes)
 ; ======================================================================
 
 
@@ -3343,25 +3428,18 @@ L_56C2:
 L_56C9:
 	call L_5033		;56c9   ; carga graficos: fichas de 6 bytes [tercios][colores][caracter][patrones], un 0 acaba
 	jp L_4192		;56cc
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x56cf..0x56d8  (9 bytes)
-DATA_56CF:
-	defb 0cdh,0b3h,041h,0ddh,021h,066h,081h,018h,0f1h	; 56cf  ..A.!f...
-
-; ======================================================================
-; CODIGO 0x56d8..0x5930  (600 bytes)
-; ======================================================================
-
-
+L_56CF:
+	call L_41B3		;56cf   ; pone los bancos 7-8-9
+	ld ix,08166h		;56d2
+	jr L_56C9		;56d6
 L_56D8:
 	call L_41B3		;56d8   ; los de la lista 0x8175
 	ld ix,08175h		;56db
-	jr $-22		;56df
+	jr L_56C9		;56df
 L_56E1:
 	call L_41B3		;56e1   ; los de la lista 0x815F
 	ld ix,0815fh		;56e4
-	jr $-31		;56e8
+	jr L_56C9		;56e8
 L_56EA:
 	ld de,01818h		;56ea   ; 12 x 12 caracteres de 0xAB57 en (0x18, 0x18)
 L_56ED:
@@ -4244,17 +4322,24 @@ L_5E02:
 	ret			;5e1b
 
 ; ----------------------------------------------------------------------
-; DATOS resto_5E1C: lo apuntan con el banco puesto p00:5DF6 (0x5E1C), p00:5DBF
-;   (0x5E24), p00:5E05 (0x5E34); el tamano es lo que hay hasta lo siguiente,
-;   no sale de recorrerlo; lo leen p00:5DF6, p00:5DBF, p00:5E05 (84 bytes)
-;   0x5e1c..0x5e70  (84 bytes)
-DATA_resto_5E1C:
-	defb 0aah,098h,055h,098h,000h,098h,0abh,097h,014h,048h,000h,00ah,014h,058h,004h,00ah	; 5e1c  ..U......H...X..
-	defb 014h,068h,008h,00ah,014h,078h,00ch,00ah,030h,080h,0b0h,0b1h,0b1h,0b1h,0b1h,0b1h	; 5e2c  .h...x..0.......
-	defb 0b1h,0b1h,0b2h,0feh,030h,088h,0b7h,000h,000h,000h,000h,000h,000h,000h,0b3h,0feh	; 5e3c  ....0...........
-	defb 030h,090h,0b7h,000h,000h,000h,000h,000h,000h,000h,0b3h,0feh,030h,098h,0b7h,000h	; 5e4c  0...........0...
-	defb 000h,000h,000h,000h,000h,000h,0b3h,0feh,030h,0a0h,0b6h,0b5h,0b5h,0b5h,0b5h,0b5h	; 5e5c  ........0.......
-	defb 0b5h,0b5h,0b4h,0ffh	; 5e6c
+; DATOS pasos_japones: 4 punteros (por 0xE216 - 1, de 3 a 0): rachas que van
+;   al caracter 1 (0x0008) de los tres tercios, una cada 0x30 cuadros; solo
+;   con la BIOS japonesa (0x002B = 0, p00:5DD5); lo leen p00:5DF9 (8 bytes)
+;   0x5e1c..0x5e24  (8 bytes)
+DATA_pasos_japones:
+	defw 098aah,09855h,09800h,097abh	; 5e1c
+
+; ----------------------------------------------------------------------
+; DATOS resto_5E24: lo apuntan con el banco puesto p00:5DBF (0x5E24), p00:5E05
+;   (0x5E34); el tamano es lo que hay hasta lo siguiente, no sale de
+;   recorrerlo; lo leen p00:5DBF, p00:5E05 (76 bytes)
+;   0x5e24..0x5e70  (76 bytes)
+DATA_resto_5E24:
+	defb 014h,048h,000h,00ah,014h,058h,004h,00ah,014h,068h,008h,00ah,014h,078h,00ch,00ah	; 5e24  .H...X...h...x..
+	defb 030h,080h,0b0h,0b1h,0b1h,0b1h,0b1h,0b1h,0b1h,0b1h,0b2h,0feh,030h,088h,0b7h,000h	; 5e34  0...........0...
+	defb 000h,000h,000h,000h,000h,000h,0b3h,0feh,030h,090h,0b7h,000h,000h,000h,000h,000h	; 5e44  ........0.......
+	defb 000h,000h,0b3h,0feh,030h,098h,0b7h,000h,000h,000h,000h,000h,000h,000h,0b3h,0feh	; 5e54  ....0...........
+	defb 030h,0a0h,0b6h,0b5h,0b5h,0b5h,0b5h,0b5h,0b5h,0b5h,0b4h,0ffh	; 5e64  0...........
 
 ; ======================================================================
 ; CODIGO 0x5e70..0x5e76  (6 bytes)

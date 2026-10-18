@@ -1501,6 +1501,9 @@ C 0x5B05 lo mismo con el destino en HL
 C 0x5B10 copia C bloques de 16 bytes de HL a DE en la VRAM dandoles la vuelta (espejo)
 C 0x5B22 pinta B caracteres de la fuente de DE
 C 0x5B2E pinta B caracteres de la fuente de DE
+C 0x5B34 pone los bancos 10-11-12
+C 0x5B40 pinta B caracteres de la fuente de DE
+C 0x5B4C pinta B caracteres de la fuente de DE
 C 0x5B58 la paleta de la lista de HL: [color][D][E], 0xFF acaba
 C 0x5B64 la paleta de la lista de HL: [color][D][E], 0xFF acaba
 C 0x5B6D apaga la pantalla (bit 6 de R#1 a cero)

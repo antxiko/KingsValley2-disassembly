@@ -17,9 +17,11 @@ DATA_colores_6000:
 	defw 0600ch,0600eh,06012h,06016h,0601ah	; 6000
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x600a..0x600c  (2 bytes)
-DATA_600A:
-	defb 022h,060h	; 600a
+; DATOS colores_6000_6: sexto puntero de la tabla de colores 0x6000 (el modo /
+;   8 = 5): ninguna ficha de la lista 0x602A lo pide; lo leen nadie (2 bytes)
+;   0x600a..0x600c  (2 bytes)
+DATA_colores_6000_6:
+	defw 06022h	; 600a  -> DATA_col_6022
 
 ; ----------------------------------------------------------------------
 ; DATOS col_600C: 2 colores (de 4 bits) para los graficos de 1 bits por punto;
@@ -57,8 +59,10 @@ DATA_col_601A:
 	defb 000h,007h,008h,009h,00ah,00bh,00ch,00fh	; 601a  ........
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6022..0x602a  (8 bytes)
-DATA_6022:
+; DATOS col_6022: 8 colores (de 4 bits) para 3 bits por punto, los del sexto
+;   puntero: no los pide nadie; lo leen nadie (8 bytes)
+;   0x6022..0x602a  (8 bytes)
+DATA_col_6022:
 	defb 006h,008h,00ch,00fh,000h,000h,000h,000h	; 6022  ........
 
 ; ----------------------------------------------------------------------
@@ -545,8 +549,10 @@ DATA_car_646C:
 	defb 0e4h,01ch,0fah,0c6h,03eh,032h,00ch,00ch	; 6514  ....>2..
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x651c..0x656c  (80 bytes)
-DATA_651C:
+; DATOS car_651C: 80 bytes de caracteres entre car_646C y car_656C que ninguna
+;   ficha de la lista 0x602A pide; lo leen nadie (80 bytes)
+;   0x651c..0x656c  (80 bytes)
+DATA_car_651C:
 	defb 0c1h,081h,0c1h,09fh,0cdh,09fh,0c9h,09bh,0c9h,09bh,0c9h,09bh,0c1h,093h,0c3h,0dfh	; 651c  ................
 	defb 0e1h,081h,0c1h,09fh,0cdh,09fh,0c9h,09bh,0c9h,09bh,0c9h,09bh,0c1h,093h,0c3h,0dfh	; 652c  ................
 	defb 0ffh,080h,0c0h,080h,0c0h,080h,0c0h,080h,0c0h,080h,0c0h,080h,080h,080h,0c0h,0ffh	; 653c  ................

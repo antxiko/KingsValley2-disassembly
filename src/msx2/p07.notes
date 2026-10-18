@@ -3,6 +3,8 @@
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
 D 0x6000 0x600A colores_6000  5 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (10 bytes)
 F 0x6000 w8
+D 0x600A 0x600C colores_6000_6  sexto puntero de la tabla de colores 0x6000 (el modo / 8 = 5): ninguna ficha de la lista 0x602A lo pide; lo leen nadie (2 bytes)
+F 0x600A w8
 D 0x600C 0x600E col_600C  2 colores (de 4 bits) para los graficos de 1 bits por punto; lo leen p00:54AC (2 bytes)
 F 0x600C 2
 D 0x600E 0x6012 col_600E  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
@@ -13,6 +15,8 @@ D 0x6016 0x601A col_6016  4 colores (de 4 bits) para los graficos de 2 bits por 
 F 0x6016 4
 D 0x601A 0x6022 col_601A  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
 F 0x601A 8
+D 0x6022 0x602A col_6022  8 colores (de 4 bits) para 3 bits por punto, los del sexto puntero: no los pide nadie; lo leen nadie (8 bytes)
+F 0x6022 8
 D 0x602A 0x6067 graf_602A  12 fichas de graficos (comunes a las piramides) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x6000; lo leen p00:54A0 (61 bytes)
 F 0x602A 5
 D 0x6067 0x6073 colores_piramides  6 punteros, uno por piramide (0xE241, desde 0x6065): su tabla de colores; lo leen p00:5647 (12 bytes)
@@ -109,6 +113,8 @@ D 0x640C 0x646C car_640C  6 caracteres de 2 bits por punto (16 bytes cada uno), 
 F 0x640C 8
 D 0x646C 0x651C car_646C  11 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (176 bytes)
 F 0x646C 8
+D 0x651C 0x656C car_651C  80 bytes de caracteres entre car_646C y car_656C que ninguna ficha de la lista 0x602A pide; lo leen nadie (80 bytes)
+F 0x651C 16
 D 0x656C 0x659C car_656C  3 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (48 bytes)
 F 0x656C 8
 D 0x659C 0x68E4 car_659C  35 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (840 bytes)

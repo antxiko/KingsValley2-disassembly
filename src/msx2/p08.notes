@@ -33,6 +33,8 @@ D 0x902E 0x9043 graf_902E  4 fichas de graficos (la entrada) de 5 bytes [modo][s
 F 0x902E 5
 D 0x9043 0x9058 graf_9043  4 fichas de graficos (la entrada) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x8FFC; lo leen p00:54A0 (21 bytes)
 F 0x9043 5
+D 0x9058 0x9063 graf_9058  una lista de graficos igual, byte a byte, que la de 0x9063 (el final): esta no la pide nadie; lo leen nadie (11 bytes)
+F 0x9058 4
 D 0x9063 0x9069 graf_9063  1 fichas de graficos (el final) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x8FFC; lo leen p00:54A0 (6 bytes)
 F 0x9063 5
 D 0x9069 0x9074 graf_9069  2 fichas de graficos (el final) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x8FFC; lo leen p00:54A0 (11 bytes)

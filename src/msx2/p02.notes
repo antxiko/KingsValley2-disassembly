@@ -893,6 +893,8 @@ D 0x8000 0x8001 partida_8000  los 1 ultimos bytes de la instruccion de p01:7FFE 
 F 0x8000 1
 D 0x8241 0x824B tabla_8241  5 destinos del despachador p00:4099 (call en p02:823E, el indice en A): 8266, 827F, 829C, BDC0, 9652; lo leen p02:823E (10 bytes)
 F 0x8241 w5
+D 0x82F3 0x82F8 anchos_82F3  5 bytes, uno por tipo de cosa (1-5, desde 0x82F2: la entrada 0 cae en el codigo de delante): su ancho en caracteres (p00:5737); lo leen p02:82E6 (5 bytes)
+F 0x82F3 5
 D 0x8312 0x8320 tabla_8312  7 destinos del despachador p00:4099 (call en p02:830F, el indice en A): 8320, 834D, 8320, 8351, 8346, 833C, 8341; lo leen p02:830F (14 bytes)
 F 0x8312 w7
 D 0x88B2 0x88BE tabla_88B2  6 destinos del despachador p00:4099 (call en p02:88AF, el indice en A): 88BE, 8917, 89E9, 8A54, 8B43, 8B88; lo leen p02:88AF (12 bytes)
@@ -903,6 +905,10 @@ D 0x8EE1 0x8EF1 tabla_8EE1  8 destinos del despachador p00:4099 (call en p02:8ED
 F 0x8EE1 w8
 D 0x93F9 0x93FF tabla_93F9  3 destinos del despachador p00:4099 (call en p02:93F6, el indice en A): 93FF, 9469, 94FF; lo leen p02:93F6 (6 bytes)
 F 0x93F9 w3
+D 0x972C 0x972E diskve_972C  la direccion de una rutina de error de disco (0x972E): el juego pone 0x972C en 0xF323 (DISKVE) y la BIOS de disco salta a lo que hay aqui; lo leen p00:4165 (2 bytes)
+F 0x972C w8
+D 0x9797 0x9799 diskve_9797  la direccion de una rutina de error de disco (0x9799): el juego pone 0x9797 en 0xF323 (DISKVE) y la BIOS de disco salta a lo que hay aqui; lo leen p02:9CC1 (2 bytes)
+F 0x9797 w8
 D 0x9807 0x980F tabla_9807  4 destinos del despachador p00:4099 (call en p02:9804, el indice en A): 980F, 981C, 9831, 9846; lo leen p02:9804 (8 bytes)
 F 0x9807 w4
 D 0x9A6A 0x9A72 tabla_9A6A  4 destinos del despachador p00:4099 (call en p02:9A67, el indice en A): 9A72, 9A7F, 9A8A, 9A72; lo leen p02:9A67 (8 bytes)
@@ -919,10 +925,6 @@ D 0x92F7 0x92FF resto_92F7  lo apuntan con el banco puesto p02:92CA (0x92F7); el
 F 0x92F7 16
 D 0x9324 0x93BE resto_9324  lo apuntan con el banco puesto p01:653D (0x9324), p02:85BA (0x9324), p02:8537 (0x9328), p02:9121 (0x9328), p01:7DD9 (0x9340), p02:8601 (0x9340); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p01:653D, p02:85BA, p02:8537, p02:9121, p01:7DD9, p02:8601 (154 bytes)
 F 0x9324 16
-D 0x972C 0x975E resto_972C  lo apuntan con el banco puesto p00:4162 (0x972C), p02:9DE0 (0x972C); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:4162, p02:9DE0 (50 bytes)
-F 0x972C 16
-D 0x9797 0x97B2 resto_9797  lo apuntan con el banco puesto p02:9CBE (0x9797); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p02:9CBE (27 bytes)
-F 0x9797 16
 D 0x982D 0x9831 resto_982D  lo apuntan con el banco puesto p02:9821 (0x982D); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p02:9821 (4 bytes)
 F 0x982D 16
 D 0x9E9D 0x9EA8 resto_9E9D  lo apuntan con el banco puesto p02:9EB8 (0x9E9D); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p02:9EB8 (11 bytes)
@@ -1389,6 +1391,10 @@ C 0x9567 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 C 0x956A lee la x de la cosa
 C 0x956D lee la y de la cosa
 C 0x957F apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
+C 0x9585 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+C 0x9592 lee la x de la cosa
+C 0x9595 lee la y de la cosa
+C 0x9598 lee la pantalla de la cosa
 C 0x95A4 lee la y de la cosa
 C 0x95A7 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x95AA lee la pantalla de la cosa
@@ -1408,6 +1414,14 @@ C 0x9618 lee la pantalla de la cosa
 C 0x961E marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 C 0x962A lee la pantalla de la cosa
 C 0x9630 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0x9636 devuelve el fondo del bloque donde estaba
+C 0x9639 lee la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
+C 0x963C lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
+C 0x963F lee la x de la cosa
+C 0x9642 lee la y de la cosa
+C 0x9648 lee la pantalla de la fase (desde 1)
+C 0x964B compara con la pantalla de la cosa al empezar
+C 0x964F guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
 C 0x9672 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0x9678 pasa la posicion de caracter de HL a direccion de la VRAM
 C 0x9680 suma A a DE (DE = DE + A)
@@ -1421,6 +1435,8 @@ C 0x96F9 guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en l
 C 0x9706 lee el tipo de la cosa (0: libre)
 C 0x9717 lee la pantalla de la fase (desde 1)
 C 0x971E 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+C 0x972F la deja como estaba
+C 0x9737 lee el slot de este cartucho
 C 0x9768 pone el banco 12 en 0xA000
 C 0x9774 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0x9778 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
@@ -1428,6 +1444,9 @@ C 0x977E pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF ac
 C 0x9781 pone los bancos 1-2-3 (el juego)
 C 0x9784 256 veces la de 0xF0EA
 C 0x978F guarda el resultado de grabar o cargar (0 bien, 2 error)
+C 0x9799 la deja como estaba
+C 0x979C lee el slot de este cartucho
+C 0x97A4 256 veces la de 0xF0EA
 C 0x97B5 la palabra (fase - 1)
 C 0x97C2 lee la fase (1-60)
 C 0x97C6 HL = la palabra A de la tabla de HL

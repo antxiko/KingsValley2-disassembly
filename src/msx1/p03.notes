@@ -971,6 +971,7 @@ C 0xAE9D Z si en el mapa del enemigo la casilla es escalera (1)
 C 0xAEA3 NC si puede avanzar hacia donde mira
 C 0xAEAD lee el mapa de la pantalla del enemigo (alto)
 C 0xAEB1 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
+C 0xAEB8 Z si a su altura hay escalera
 C 0xAECE Z si en el mapa del enemigo la casilla es escalera (1)
 C 0xAEE3 el sitio al que iria con su velocidad (C si se sale de la pantalla)
 C 0xAEE7 lee el mapa de la pantalla del enemigo (bajo)
@@ -1167,6 +1168,11 @@ C 0xB52C se centra en la casilla en la direccion en la que va
 C 0xB531 lo mismo con el mapa de DE
 C 0xB537 se marca en el mapa; si choca con algo, se va
 C 0xB53D compara con la pantalla del enemigo
+C 0xB544 la marca de enemigo en movimiento = 0x00
+C 0xB54B la velocidad en x
+C 0xB54E la velocidad en y
+C 0xB551 la espera del enemigo = 0x3C
+C 0xB555 el paso del enemigo = 0x01
 C 0xB55D lee la x del enemigo
 C 0xB560 el sitio al que iria con su velocidad (C si se sale de la pantalla)
 C 0xB565 apunta a los enemigos (8 x 32 bytes)
@@ -1276,6 +1282,11 @@ C 0xB8AD pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su 
 C 0xB8B1 baja el giro o paso del dibujo de la cosa
 C 0xB8B6 guarda el paso de la cosa
 C 0xB8B9 pone a cero el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+C 0xB8BE lee la pantalla de la fase (desde 1)
+C 0xB8C1 compara con la pantalla de la cosa
+C 0xB8CF lee el alto de la cosa
+C 0xB8D4 lee la x de la cosa
+C 0xB8D7 lee la y de la cosa
 C 0xB8E1 guarda la pantalla que se lee del mapa y el byte siguiente (16 bits)
 C 0xB8E9 lee la x de la cosa
 C 0xB8EC lee la y de la cosa
@@ -1316,6 +1327,9 @@ C 0xB9B8 la cuenta de la cosa = 0x08
 C 0xB9BF pide el sonido 0x22
 C 0xB9C3 guarda el giro o paso del dibujo de la cosa
 C 0xB9C6 guarda el paso de la cosa
+C 0xB9CB lee la pantalla de la fase (desde 1)
+C 0xB9CE compara con la pantalla de la cosa
+C 0xB9D2 lee las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 C 0xB9F5 lee el tipo de la cosa (0: libre)
 C 0xBA04 lee el paso de la cosa
 C 0xBA0A C si el personaje esta en su pantalla, a menos de 8 pixeles en x y dentro de su alto
@@ -1333,6 +1347,18 @@ C 0xBA4C lee el giro o paso del dibujo de la cosa
 C 0xBA4F compara con el alto de la cosa
 C 0xBA54 sube el giro o paso del dibujo de la cosa
 C 0xBA58 el tipo de la cosa (0: libre) = 0x00
+C 0xBA5D lee el giro o paso del dibujo de la cosa
+C 0xBA65 lee la x de la cosa
+C 0xBA68 le suma la y de la cosa
+C 0xBA6C lee la pantalla de la cosa
+C 0xBA75 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0xBA79 lee la pantalla de la fase (desde 1)
+C 0xBA7C compara con la pantalla de la cosa
+C 0xBA80 lee la x de la cosa
+C 0xBA83 lee la y de la cosa
+C 0xBA8B las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xBA91 escribe el caracter A en la posicion D, E de la tabla de nombres
+C 0xBA94 las de la lista, al reves: guarda el fondo y pinta la cosa
 C 0xBA9F compara con la pantalla de la cosa
 C 0xBAA3 lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
 C 0xBAA6 guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
@@ -1355,9 +1381,18 @@ C 0xBB01 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0xBB09 suma A a HL (HL = HL + A)
 C 0xBB0F un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 C 0xBB21 en este cartucho no hace nada: aqui iria el pintor de caracteres de MSX2
+C 0xBB26 guarda la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
+C 0xBB29 guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
+C 0xBB31 ...1 fila de 4 casillas
+C 0xBB34 lee la pantalla de la fase (desde 1)
+C 0xBB37 compara con la pantalla de la cosa
 C 0xBB3E lee la y de la cosa
 C 0xBB44 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0xBB4E escribe el caracter A en la posicion D, E de la tabla de nombres
+C 0xBB5F lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xBB65 pasa la posicion de caracter de HL a direccion de la VRAM
+C 0xBB6D suma A a DE (DE = DE + A)
+C 0xBB8C en este cartucho no hace nada: aqui iria el pintor de caracteres de MSX2
 C 0xBB95 lee la pantalla de la fase (desde 1)
 C 0xBB9B el personaje sobre la columna: dentro de su alto y a menos de 16 pixeles en x
 C 0xBBA1 suma A a HL (HL = HL + A)

@@ -912,10 +912,15 @@ DATA_fuente_AB79:
 	defb 0feh,030h,030h,030h,030h,030h,030h,0feh	; ab99  .000000.
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xaba1..0xabc1  (32 bytes)
-DATA_ABA1:
-	defb 002h,002h,02ah,0aah,02ah,002h,002h,002h,000h,000h,0feh,001h,0feh,000h,000h,000h	; aba1  ..*.*...........
-	defb 091h,081h,081h,081h,081h,081h,061h,011h,051h,051h,051h,0f7h,0f1h,0f1h,0f1h,0f1h	; abb1  ......a.QQQ.....
+; DATOS car_ABA1: 2 caracteres (16 bytes de patrones y 16 de colores), los
+;   mismos que el cartucho de MSX1 copia en p00:5A58 y p00:5A7A; en este no
+;   los lee nadie; lo leen nadie (32 bytes)
+;   0xaba1..0xabc1  (32 bytes)
+DATA_car_ABA1:
+	defb 002h,002h,02ah,0aah,02ah,002h,002h,002h	; aba1  ..*.*...
+	defb 000h,000h,0feh,001h,0feh,000h,000h,000h	; aba9  ........
+	defb 091h,081h,081h,081h,081h,081h,061h,011h	; abb1  ......a.
+	defb 051h,051h,051h,0f7h,0f1h,0f1h,0f1h,0f1h	; abb9  QQQ.....
 
 ; ----------------------------------------------------------------------
 ; DATOS car_ABC1: 2 caracteres ya de 4 bits (32 bytes cada uno); lo leen
@@ -928,8 +933,10 @@ DATA_car_ABC1:
 	defb 0bbh,0bbh,0bbh,0f0h,0ffh,0ffh,0ffh,000h,000h,000h,000h,000h,000h,000h,000h,000h	; abf1  ................
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xac01..0xac13  (18 bytes)
-DATA_AC01:
+; DATOS letrero_AC01: letrero (DO YOUR BEST): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p01:6963 (18 bytes)
+;   0xac01..0xac13  (18 bytes)
+DATA_letrero_AC01:
 	defb 048h,020h,0e4h,0efh,000h,0f9h,0efh,0f5h,0f2h,000h,0e2h,0e5h,0f3h,0f4h,000h,0dbh	; ac01  H ..............
 	defb 0dbh,0ffh	; ac11
 
@@ -989,20 +996,44 @@ DATA_letrero_AC9F:
 	defb 0ebh,0f3h,0eah,0ffh	; acbf
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xacc3..0xad76  (179 bytes)
-DATA_ACC3:
+; DATOS letrero_ACC3: letrero (CONGRATULATIONS (el final)): [x][y] y
+;   caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:73F8 (79
+;   bytes)
+;   0xacc3..0xad12  (79 bytes)
+DATA_letrero_ACC3:
 	defb 048h,048h,0dfh,0ebh,0eah,0e3h,0eeh,0ddh,0f0h,0f1h,0e8h,0ddh,0f0h,0e5h,0ebh,0eah	; acc3  HH..............
 	defb 0efh,0feh,040h,058h,0f0h,0ebh,000h,0f2h,0e5h,0dfh,0e7h,000h,0f4h,0fah,0fbh,000h	; acd3  ..@X............
 	defb 0dbh,0feh,048h,068h,0f5h,0ebh,0f1h,000h,0e4h,0e1h,0eeh,0ebh,0e5h,0dfh,0ddh,0e8h	; ace3  ..Hh............
 	defb 0e8h,0f5h,0feh,040h,078h,0f1h,0eah,0efh,0e1h,0ddh,0e8h,0e1h,0e0h,000h,0ddh,0e8h	; acf3  ...@x...........
-	defb 0e8h,000h,0f0h,0e4h,0e1h,0feh,040h,088h,0e8h,0ebh,0dfh,0e7h,0efh,0f7h,0ffh,028h	; ad03  ......@........(
-	defb 080h,0ddh,0e8h,0e8h,000h,0f5h,0ebh,0f1h,000h,0e4h,0ddh,0f2h,0e1h,000h,0f0h,0ebh	; ad13  ................
-	defb 000h,0e0h,0ebh,000h,0eah,0ebh,0f3h,0feh,028h,090h,0e5h,0efh,000h,0f0h,0f1h,0eeh	; ad23  ........(.......
-	defb 0eah,000h,0ebh,0e2h,0e2h,000h,0f0h,0e4h,0e1h,000h,0efh,0f3h,0e5h,0dfh,0e4h,0feh	; ad33  ................
-	defb 028h,0a0h,0f0h,0ebh,000h,0efh,0ddh,0f2h,0e1h,000h,0f0h,0e4h,0e1h,000h,0f3h,0ebh	; ad43  (...............
-	defb 0eeh,0e8h,0e0h,0f7h,0ffh,048h,0a0h,0ech,0f1h,0efh,0e4h,000h,0efh,0ech,0ddh,0dfh	; ad53  .....H..........
-	defb 0e1h,000h,0e7h,0e1h,0f5h,0ffh,060h,0a0h,0e0h,0ddh,0eah,0e3h,0e1h,0eeh,000h,0dbh	; ad63  ......`.........
-	defb 0dbh,0dbh,0ffh	; ad73
+	defb 0e8h,000h,0f0h,0e4h,0e1h,0feh,040h,088h,0e8h,0ebh,0dfh,0e7h,0efh,0f7h,0ffh	; ad03  ......@........
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AD12: letrero (ALL YOU HAVE TO DO NOW (el final)): [x][y] y
+;   caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:744D (70
+;   bytes)
+;   0xad12..0xad58  (70 bytes)
+DATA_letrero_AD12:
+	defb 028h,080h,0ddh,0e8h,0e8h,000h,0f5h,0ebh,0f1h,000h,0e4h,0ddh,0f2h,0e1h,000h,0f0h	; ad12  (...............
+	defb 0ebh,000h,0e0h,0ebh,000h,0eah,0ebh,0f3h,0feh,028h,090h,0e5h,0efh,000h,0f0h,0f1h	; ad22  .........(......
+	defb 0eeh,0eah,000h,0ebh,0e2h,0e2h,000h,0f0h,0e4h,0e1h,000h,0efh,0f3h,0e5h,0dfh,0e4h	; ad32  ................
+	defb 0feh,028h,0a0h,0f0h,0ebh,000h,0efh,0ddh,0f2h,0e1h,000h,0f0h,0e4h,0e1h,000h,0f3h	; ad42  .(..............
+	defb 0ebh,0eeh,0e8h,0e0h,0f7h,0ffh	; ad52
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AD58: letrero (PUSH SPACE KEY (el final)): [x][y] y
+;   caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7569 (17
+;   bytes)
+;   0xad58..0xad69  (17 bytes)
+DATA_letrero_AD58:
+	defb 048h,0a0h,0ech,0f1h,0efh,0e4h,000h,0efh,0ech,0ddh,0dfh,0e1h,000h,0e7h,0e1h,0f5h	; ad58  H...............
+	defb 0ffh	; ad68
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AD69: letrero (DANGER !!! (el final)): [x][y] y caracteres,
+;   0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7550 (13 bytes)
+;   0xad69..0xad76  (13 bytes)
+DATA_letrero_AD69:
+	defb 060h,0a0h,0e0h,0ddh,0eah,0e3h,0e1h,0eeh,000h,0dbh,0dbh,0dbh,0ffh	; ad69  `............
 
 ; ----------------------------------------------------------------------
 ; DATOS letreros_AD76: 9 punteros a los letreros del final (paso 0xEDCF); lo
@@ -1093,14 +1124,25 @@ DATA_letrero_AEC5:
 	defb 050h,0e7h,0ebh,0eah,0ddh,0e9h,0e5h,0ffh	; aed5  P.......
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xaedd..0xaf37  (90 bytes)
-DATA_AEDD:
+; DATOS letrero_AEDD: letrero (THANKS TO YOUR COURAGE (el final)): [x][y] y
+;   caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:75D1 (68
+;   bytes)
+;   0xaedd..0xaf21  (68 bytes)
+DATA_letrero_AEDD:
 	defb 030h,030h,0f0h,0e4h,0ddh,0eah,0e7h,0efh,000h,0f0h,0ebh,000h,0f5h,0ebh,0f1h,0eeh	; aedd  00..............
 	defb 000h,0dfh,0ebh,0f1h,0eeh,0ddh,0e3h,0e1h,0feh,010h,050h,0f0h,0e4h,0e1h,000h,0f3h	; aeed  ..........P.....
 	defb 0ebh,0eeh,0e8h,0e0h,000h,0e4h,0ddh,0efh,000h,0deh,0e1h,0e1h,0eah,000h,0efh,0ddh	; aefd  ................
 	defb 0f2h,0e1h,0e0h,000h,0dbh,0dbh,0feh,058h,070h,0f3h,0e1h,0e8h,0e8h,000h,0e0h,0ebh	; af0d  .......Xp.......
-	defb 0eah,0e1h,0f7h,0ffh,038h,010h,0dfh,0ebh,0eah,0e3h,0eeh,0ddh,0f0h,0f1h,0e8h,0ddh	; af1d  ....8...........
-	defb 0f0h,0e5h,0ebh,0eah,0efh,000h,0dbh,0dbh,0dbh,0ffh	; af2d  ..........
+	defb 0eah,0e1h,0f7h,0ffh	; af1d
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AF21: letrero (CONGRATULATIONS !!! (el final)): [x][y] y
+;   caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7651 (22
+;   bytes)
+;   0xaf21..0xaf37  (22 bytes)
+DATA_letrero_AF21:
+	defb 038h,010h,0dfh,0ebh,0eah,0e3h,0eeh,0ddh,0f0h,0f1h,0e8h,0ddh,0f0h,0e5h,0ebh,0eah	; af21  8...............
+	defb 0efh,000h,0dbh,0dbh,0dbh,0ffh	; af31
 
 ; ----------------------------------------------------------------------
 ; DATOS estrellas_final: 9 caracteres del final de 3 bytes [x][y][caracter],
@@ -1118,16 +1160,12 @@ DATA_estrellas_final:
 	defb 098h,0a0h,0f8h	; af4f
 
 ; ----------------------------------------------------------------------
-; DATOS letreros_AF52: 5 punteros a los letreros de los errores de disco
-;   (error); lo leen p02:976E (10 bytes)
-;   0xaf52..0xaf5c  (10 bytes)
+; DATOS letreros_AF52: 7 punteros a los letreros de los errores de disco
+;   (error: p02:975E recibe del 0 al 4; el 5, TOO MANNY FILES, y el 6,
+;   DATATYPEERROR, no los pide nadie); lo leen p02:976E (14 bytes)
+;   0xaf52..0xaf60  (14 bytes)
 DATA_letreros_AF52:
-	defw 0af6dh,0af7dh,0af8eh,0af9ah,0afabh	; af52
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0xaf5c..0xaf60  (4 bytes)
-DATA_AF5C:
-	defb 0bbh,0afh,0cdh,0afh	; af5c
+	defw 0af6dh,0af7dh,0af8eh,0af9ah,0afabh,0afbbh,0afcdh	; af52
 
 ; ----------------------------------------------------------------------
 ; DATOS letrero_AF60: letrero (de error de disco): [x][y] y caracteres, 0xFE
@@ -1174,11 +1212,19 @@ DATA_letrero_AFAB:
 	defb 048h,09ch,0f7h,0f2h,0e9h,0f4h,0e5h,000h,0f0h,0f2h,0efh,0f4h,0e5h,0e3h,0f4h,0ffh	; afab  H...............
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xafbb..0xafdd  (34 bytes)
-DATA_AFBB:
+; DATOS letrero_AFBB: letrero (de los errores de disco): [x][y] y caracteres,
+;   0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (18 bytes)
+;   0xafbb..0xafcd  (18 bytes)
+DATA_letrero_AFBB:
 	defb 048h,09ch,0f4h,0efh,0efh,000h,0edh,0e1h,0eeh,0eeh,0f9h,000h,0e6h,0e9h,0ech,0e5h	; afbb  H...............
-	defb 0f3h,0ffh,048h,09ch,0e4h,0e1h,0f4h,0e1h,0f4h,0f9h,0f0h,0e5h,0e5h,0f2h,0f2h,0efh	; afcb  ..H.............
-	defb 0f2h,0ffh	; afdb
+	defb 0f3h,0ffh	; afcb
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AFCD: letrero (de los errores de disco): [x][y] y caracteres,
+;   0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (16 bytes)
+;   0xafcd..0xafdd  (16 bytes)
+DATA_letrero_AFCD:
+	defb 048h,09ch,0e4h,0e1h,0f4h,0e1h,0f4h,0f9h,0f0h,0e5h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh	; afcd  H...............
 
 ; ----------------------------------------------------------------------
 ; DATOS fuente_AFDD: 53 caracteres de 1 bit por punto: la fuente; lo leen
@@ -1298,8 +1344,9 @@ DATA_letrero_B284:
 	defb 0f9h,0fdh,0fdh,0fdh,0fdh,0fdh,0ffh	; b2a4
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xb2ab..0xb400  (341 bytes)
-DATA_B2AB:
+; DATOS relleno_B2AB: 341 bytes a 0xFF: relleno; lo leen nadie (341 bytes)
+;   0xb2ab..0xb400  (341 bytes)
+DATA_relleno_B2AB:
 	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2ab  ................
 	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2bb  ................
 	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2cb  ................
@@ -2257,8 +2304,11 @@ L_BA2D:
 	jp 04388h		;ba38
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xba3b..0xba41  (6 bytes)
-DATA_BA3B:
+; DATOS fases_demo: las fases de las 6 demostraciones (0xE219, de 1 a 6, desde
+;   0xBA3A: la entrada 0 cae en el codigo de delante); lo leen p12:BA21 (6
+;   bytes)
+;   0xba3b..0xba41  (6 bytes)
+DATA_fases_demo:
 	defb 002h,012h,01ah,028h,030h,035h	; ba3b
 
 ; ======================================================================
@@ -2317,44 +2367,279 @@ L_BA92:
 	ret			;ba93
 
 ; ----------------------------------------------------------------------
-; DATOS mandos_demo: 6 punteros, uno por piramide (0xE241, desde 0xBA92): el
-;   mando grabado de su demostracion; lo leen p12:BA88 (12 bytes)
+; DATOS mandos_demo: 6 punteros, uno por piramide (0xE241, desde 0xBA92: la
+;   entrada 0 cae en el codigo de delante): el mando grabado de su
+;   demostracion; lo leen p12:BA88 (12 bytes)
 ;   0xba94..0xbaa0  (12 bytes)
 DATA_mandos_demo:
 	defw 0baa0h,0bad6h,0bb14h,0bb5ah,0bbbah,0bc16h	; ba94
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xbaa0..0xbc6e  (462 bytes)
-DATA_BAA0:
-	defb 02eh,000h,00fh,008h,010h,000h,00dh,004h,011h,000h,037h,008h,01bh,000h,019h,008h	; baa0  ..........7.....
-	defb 011h,000h,010h,008h,00dh,000h,043h,008h,00ch,000h,058h,004h,013h,000h,003h,008h	; bab0  ......C...X.....
-	defb 008h,000h,009h,010h,012h,000h,039h,008h,015h,000h,01fh,004h,047h,000h,010h,004h	; bac0  ......9.....G...
-	defb 00eh,000h,009h,008h,000h,0ffh,029h,000h,090h,004h,01bh,000h,0adh,008h,01ah,000h	; bad0  ......).........
-	defb 003h,008h,00bh,000h,018h,001h,00ah,000h,019h,008h,008h,000h,023h,001h,006h,000h	; bae0  ............#...
-	defb 004h,004h,00dh,000h,00dh,010h,033h,000h,00eh,008h,00ah,000h,01eh,004h,008h,000h	; baf0  ......3.........
-	defb 017h,001h,004h,000h,00dh,004h,00dh,000h,01eh,010h,02fh,000h,06ch,004h,042h,000h	; bb00  ........../.l.B.
-	defb 030h,004h,000h,0ffh,036h,000h,02dh,004h,008h,014h,01ah,004h,010h,000h,02dh,008h	; bb10  0...6.-.......-.
-	defb 002h,009h,033h,001h,001h,009h,072h,008h,014h,000h,032h,002h,011h,000h,01ah,008h	; bb20  ..3...r...2.....
-	defb 00ah,018h,01eh,008h,006h,000h,032h,004h,007h,000h,008h,008h,00dh,000h,008h,010h	; bb30  ......2.........
-	defb 037h,000h,051h,008h,002h,009h,024h,001h,008h,000h,012h,008h,002h,018h,016h,008h	; bb40  7.Q...$.........
-	defb 001h,009h,028h,001h,001h,005h,0a0h,004h,000h,0ffh,041h,000h,040h,004h,001h,000h	; bb50  ..(.......A.@...
-	defb 0a4h,008h,002h,00ah,015h,002h,006h,000h,01eh,004h,001h,006h,00bh,002h,001h,006h	; bb60  ................
-	defb 00fh,004h,001h,006h,00ch,002h,001h,006h,00fh,004h,001h,006h,00ch,002h,002h,006h	; bb70  ................
-	defb 00eh,004h,001h,006h,00bh,002h,002h,006h,015h,004h,001h,006h,00eh,002h,001h,006h	; bb80  ................
-	defb 016h,004h,00fh,000h,013h,004h,007h,000h,001h,004h,003h,000h,002h,004h,01fh,000h	; bb90  ................
-	defb 01eh,004h,01dh,000h,005h,004h,009h,014h,001h,004h,00eh,000h,006h,014h,05eh,004h	; bba0  ..............^.
-	defb 013h,000h,037h,008h,002h,018h,012h,010h,000h,0ffh,036h,000h,051h,004h,033h,000h	; bbb0  ..7.......6.Q.3.
-	defb 006h,010h,02eh,000h,084h,004h,00dh,000h,007h,010h,012h,000h,00eh,008h,009h,000h	; bbc0  ................
-	defb 019h,001h,00ch,008h,018h,001h,005h,000h,008h,004h,001h,005h,014h,001h,002h,000h	; bbd0  ................
-	defb 008h,008h,001h,000h,015h,001h,032h,004h,00ah,000h,019h,004h,007h,000h,00dh,010h	; bbe0  ......2.........
-	defb 022h,000h,012h,004h,00eh,000h,012h,004h,004h,014h,00dh,004h,004h,014h,007h,004h	; bbf0  "...............
-	defb 00fh,000h,00fh,008h,007h,018h,00dh,008h,01dh,000h,015h,008h,043h,000h,00fh,004h	; bc00  ............C...
-	defb 001h,000h,025h,008h,000h,0ffh,040h,000h,032h,008h,004h,000h,013h,004h,00ah,000h	; bc10  ..%...@.2.......
-	defb 04dh,002h,003h,000h,009h,004h,00bh,000h,026h,004h,00bh,014h,01bh,004h,006h,014h	; bc20  M.......&.......
-	defb 010h,004h,005h,014h,00dh,004h,01dh,000h,008h,004h,004h,014h,028h,004h,007h,014h	; bc30  ............(...
-	defb 013h,004h,028h,000h,045h,004h,00eh,000h,004h,004h,00eh,000h,01dh,004h,00bh,000h	; bc40  ..(.E...........
-	defb 014h,010h,01ch,000h,029h,004h,005h,014h,00bh,004h,005h,014h,019h,004h,003h,014h	; bc50  ....)...........
-	defb 022h,004h,006h,014h,005h,004h,033h,000h,00bh,018h,008h,008h,000h,0ffh	; bc60  ".....3.......
+; DATOS mando_1: el mando grabado de la demostracion de la piramide 1: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (54 bytes)
+;   0xbaa0..0xbad6  (54 bytes)
+DATA_mando_1:
+	defb 02eh,000h	; baa0
+	defb 00fh,008h	; baa2
+	defb 010h,000h	; baa4
+	defb 00dh,004h	; baa6
+	defb 011h,000h	; baa8
+	defb 037h,008h	; baaa
+	defb 01bh,000h	; baac
+	defb 019h,008h	; baae
+	defb 011h,000h	; bab0
+	defb 010h,008h	; bab2
+	defb 00dh,000h	; bab4
+	defb 043h,008h	; bab6
+	defb 00ch,000h	; bab8
+	defb 058h,004h	; baba
+	defb 013h,000h	; babc
+	defb 003h,008h	; babe
+	defb 008h,000h	; bac0
+	defb 009h,010h	; bac2
+	defb 012h,000h	; bac4
+	defb 039h,008h	; bac6
+	defb 015h,000h	; bac8
+	defb 01fh,004h	; baca
+	defb 047h,000h	; bacc
+	defb 010h,004h	; bace
+	defb 00eh,000h	; bad0
+	defb 009h,008h	; bad2
+	defb 000h,0ffh	; bad4
+
+; ----------------------------------------------------------------------
+; DATOS mando_2: el mando grabado de la demostracion de la piramide 2: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (62 bytes)
+;   0xbad6..0xbb14  (62 bytes)
+DATA_mando_2:
+	defb 029h,000h	; bad6
+	defb 090h,004h	; bad8
+	defb 01bh,000h	; bada
+	defb 0adh,008h	; badc
+	defb 01ah,000h	; bade
+	defb 003h,008h	; bae0
+	defb 00bh,000h	; bae2
+	defb 018h,001h	; bae4
+	defb 00ah,000h	; bae6
+	defb 019h,008h	; bae8
+	defb 008h,000h	; baea
+	defb 023h,001h	; baec
+	defb 006h,000h	; baee
+	defb 004h,004h	; baf0
+	defb 00dh,000h	; baf2
+	defb 00dh,010h	; baf4
+	defb 033h,000h	; baf6
+	defb 00eh,008h	; baf8
+	defb 00ah,000h	; bafa
+	defb 01eh,004h	; bafc
+	defb 008h,000h	; bafe
+	defb 017h,001h	; bb00
+	defb 004h,000h	; bb02
+	defb 00dh,004h	; bb04
+	defb 00dh,000h	; bb06
+	defb 01eh,010h	; bb08
+	defb 02fh,000h	; bb0a
+	defb 06ch,004h	; bb0c
+	defb 042h,000h	; bb0e
+	defb 030h,004h	; bb10
+	defb 000h,0ffh	; bb12
+
+; ----------------------------------------------------------------------
+; DATOS mando_3: el mando grabado de la demostracion de la piramide 3: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (70 bytes)
+;   0xbb14..0xbb5a  (70 bytes)
+DATA_mando_3:
+	defb 036h,000h	; bb14
+	defb 02dh,004h	; bb16
+	defb 008h,014h	; bb18
+	defb 01ah,004h	; bb1a
+	defb 010h,000h	; bb1c
+	defb 02dh,008h	; bb1e
+	defb 002h,009h	; bb20
+	defb 033h,001h	; bb22
+	defb 001h,009h	; bb24
+	defb 072h,008h	; bb26
+	defb 014h,000h	; bb28
+	defb 032h,002h	; bb2a
+	defb 011h,000h	; bb2c
+	defb 01ah,008h	; bb2e
+	defb 00ah,018h	; bb30
+	defb 01eh,008h	; bb32
+	defb 006h,000h	; bb34
+	defb 032h,004h	; bb36
+	defb 007h,000h	; bb38
+	defb 008h,008h	; bb3a
+	defb 00dh,000h	; bb3c
+	defb 008h,010h	; bb3e
+	defb 037h,000h	; bb40
+	defb 051h,008h	; bb42
+	defb 002h,009h	; bb44
+	defb 024h,001h	; bb46
+	defb 008h,000h	; bb48
+	defb 012h,008h	; bb4a
+	defb 002h,018h	; bb4c
+	defb 016h,008h	; bb4e
+	defb 001h,009h	; bb50
+	defb 028h,001h	; bb52
+	defb 001h,005h	; bb54
+	defb 0a0h,004h	; bb56
+	defb 000h,0ffh	; bb58
+
+; ----------------------------------------------------------------------
+; DATOS mando_4: el mando grabado de la demostracion de la piramide 4: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (96 bytes)
+;   0xbb5a..0xbbba  (96 bytes)
+DATA_mando_4:
+	defb 041h,000h	; bb5a
+	defb 040h,004h	; bb5c
+	defb 001h,000h	; bb5e
+	defb 0a4h,008h	; bb60
+	defb 002h,00ah	; bb62
+	defb 015h,002h	; bb64
+	defb 006h,000h	; bb66
+	defb 01eh,004h	; bb68
+	defb 001h,006h	; bb6a
+	defb 00bh,002h	; bb6c
+	defb 001h,006h	; bb6e
+	defb 00fh,004h	; bb70
+	defb 001h,006h	; bb72
+	defb 00ch,002h	; bb74
+	defb 001h,006h	; bb76
+	defb 00fh,004h	; bb78
+	defb 001h,006h	; bb7a
+	defb 00ch,002h	; bb7c
+	defb 002h,006h	; bb7e
+	defb 00eh,004h	; bb80
+	defb 001h,006h	; bb82
+	defb 00bh,002h	; bb84
+	defb 002h,006h	; bb86
+	defb 015h,004h	; bb88
+	defb 001h,006h	; bb8a
+	defb 00eh,002h	; bb8c
+	defb 001h,006h	; bb8e
+	defb 016h,004h	; bb90
+	defb 00fh,000h	; bb92
+	defb 013h,004h	; bb94
+	defb 007h,000h	; bb96
+	defb 001h,004h	; bb98
+	defb 003h,000h	; bb9a
+	defb 002h,004h	; bb9c
+	defb 01fh,000h	; bb9e
+	defb 01eh,004h	; bba0
+	defb 01dh,000h	; bba2
+	defb 005h,004h	; bba4
+	defb 009h,014h	; bba6
+	defb 001h,004h	; bba8
+	defb 00eh,000h	; bbaa
+	defb 006h,014h	; bbac
+	defb 05eh,004h	; bbae
+	defb 013h,000h	; bbb0
+	defb 037h,008h	; bbb2
+	defb 002h,018h	; bbb4
+	defb 012h,010h	; bbb6
+	defb 000h,0ffh	; bbb8
+
+; ----------------------------------------------------------------------
+; DATOS mando_5: el mando grabado de la demostracion de la piramide 5: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (92 bytes)
+;   0xbbba..0xbc16  (92 bytes)
+DATA_mando_5:
+	defb 036h,000h	; bbba
+	defb 051h,004h	; bbbc
+	defb 033h,000h	; bbbe
+	defb 006h,010h	; bbc0
+	defb 02eh,000h	; bbc2
+	defb 084h,004h	; bbc4
+	defb 00dh,000h	; bbc6
+	defb 007h,010h	; bbc8
+	defb 012h,000h	; bbca
+	defb 00eh,008h	; bbcc
+	defb 009h,000h	; bbce
+	defb 019h,001h	; bbd0
+	defb 00ch,008h	; bbd2
+	defb 018h,001h	; bbd4
+	defb 005h,000h	; bbd6
+	defb 008h,004h	; bbd8
+	defb 001h,005h	; bbda
+	defb 014h,001h	; bbdc
+	defb 002h,000h	; bbde
+	defb 008h,008h	; bbe0
+	defb 001h,000h	; bbe2
+	defb 015h,001h	; bbe4
+	defb 032h,004h	; bbe6
+	defb 00ah,000h	; bbe8
+	defb 019h,004h	; bbea
+	defb 007h,000h	; bbec
+	defb 00dh,010h	; bbee
+	defb 022h,000h	; bbf0
+	defb 012h,004h	; bbf2
+	defb 00eh,000h	; bbf4
+	defb 012h,004h	; bbf6
+	defb 004h,014h	; bbf8
+	defb 00dh,004h	; bbfa
+	defb 004h,014h	; bbfc
+	defb 007h,004h	; bbfe
+	defb 00fh,000h	; bc00
+	defb 00fh,008h	; bc02
+	defb 007h,018h	; bc04
+	defb 00dh,008h	; bc06
+	defb 01dh,000h	; bc08
+	defb 015h,008h	; bc0a
+	defb 043h,000h	; bc0c
+	defb 00fh,004h	; bc0e
+	defb 001h,000h	; bc10
+	defb 025h,008h	; bc12
+	defb 000h,0ffh	; bc14
+
+; ----------------------------------------------------------------------
+; DATOS mando_6: el mando grabado de la demostracion de la piramide 6: parejas
+;   [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA90 (88 bytes)
+;   0xbc16..0xbc6e  (88 bytes)
+DATA_mando_6:
+	defb 040h,000h	; bc16
+	defb 032h,008h	; bc18
+	defb 004h,000h	; bc1a
+	defb 013h,004h	; bc1c
+	defb 00ah,000h	; bc1e
+	defb 04dh,002h	; bc20
+	defb 003h,000h	; bc22
+	defb 009h,004h	; bc24
+	defb 00bh,000h	; bc26
+	defb 026h,004h	; bc28
+	defb 00bh,014h	; bc2a
+	defb 01bh,004h	; bc2c
+	defb 006h,014h	; bc2e
+	defb 010h,004h	; bc30
+	defb 005h,014h	; bc32
+	defb 00dh,004h	; bc34
+	defb 01dh,000h	; bc36
+	defb 008h,004h	; bc38
+	defb 004h,014h	; bc3a
+	defb 028h,004h	; bc3c
+	defb 007h,014h	; bc3e
+	defb 013h,004h	; bc40
+	defb 028h,000h	; bc42
+	defb 045h,004h	; bc44
+	defb 00eh,000h	; bc46
+	defb 004h,004h	; bc48
+	defb 00eh,000h	; bc4a
+	defb 01dh,004h	; bc4c
+	defb 00bh,000h	; bc4e
+	defb 014h,010h	; bc50
+	defb 01ch,000h	; bc52
+	defb 029h,004h	; bc54
+	defb 005h,014h	; bc56
+	defb 00bh,004h	; bc58
+	defb 005h,014h	; bc5a
+	defb 019h,004h	; bc5c
+	defb 003h,014h	; bc5e
+	defb 022h,004h	; bc60
+	defb 006h,014h	; bc62
+	defb 005h,004h	; bc64
+	defb 033h,000h	; bc66
+	defb 00bh,018h	; bc68
+	defb 008h,008h	; bc6a
+	defb 000h,0ffh	; bc6c
 
 ; ======================================================================
 ; CODIGO 0xbc6e..0xbd97  (297 bytes)

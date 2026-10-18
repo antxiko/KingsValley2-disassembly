@@ -121,7 +121,7 @@ D 0xA6FD 0xA72E coger_59  Lo que hay que coger para abrir la salida de la fase 5
 F 0xA6FD 16
 D 0xA72E 0xA75F coger_60  Lo que hay que coger para abrir la salida de la fase 60; lo leen msx1 p01:630C, msx2 p01:6502 (49 bytes)
 F 0xA72E 16
-D 0xA75F 0xA7D7 joyas  60 punteros, uno por fase (se lee con la fase, de 1 a 60, desde 0xA75D: la entrada 0 no la lee nadie y sus dos bytes son lo ultimo de lo que va delante): lo que hay que coger para abrir la salida: fichas de 3 bytes [tipo | pantalla][x][y], 0 acaba; lo leen msx1 p01:630C, msx2 p01:6502 (120 bytes)
+D 0xA75F 0xA7D7 joyas  60 punteros, uno por fase (se lee con la fase, de 1 a 60, desde 0xA75D: la entrada 0 no la lee nadie y sus dos bytes son lo ultimo de lo que va delante): lo que hay que coger para abrir la salida: fichas de 3 bytes [tipo | pantalla][y][x], 0 acaba; lo leen msx1 p01:630C, msx2 p01:6502 (120 bytes)
 F 0xA75F w8
 D 0xA7D7 0xA7D8 cosas_01  Las cosas de la fase de la fase 1; lo leen msx1 p01:614D, msx2 p01:6343 (1 bytes)
 F 0xA7D7 16
@@ -241,7 +241,7 @@ D 0xAAA4 0xAAAD cosas_59  Las cosas de la fase de la fase 59; lo leen msx1 p01:6
 F 0xAAA4 16
 D 0xAAAD 0xAAE2 cosas_60  Las cosas de la fase de la fase 60; lo leen msx1 p01:614D, msx2 p01:6343 (53 bytes)
 F 0xAAAD 16
-D 0xAAE2 0xAB5A cosas  60 punteros, uno por fase (se lee con la fase, de 1 a 60, desde 0xAAE0: la entrada 0 no la lee nadie y sus dos bytes son lo ultimo de lo que va delante): las cosas de la fase (puertas, bloques, suelos): fichas de 4 bytes [tipo | pantalla][x][y][alto | variante], 0 acaba; lo leen msx1 p01:614D, msx2 p01:6343 (120 bytes)
+D 0xAAE2 0xAB5A cosas  60 punteros, uno por fase (se lee con la fase, de 1 a 60, desde 0xAAE0: la entrada 0 no la lee nadie y sus dos bytes son lo ultimo de lo que va delante): las cosas de la fase (puertas, bloques, suelos): fichas de 4 bytes [tipo | pantalla][y][x][alto | variante], 0 acaba; lo leen msx1 p01:614D, msx2 p01:6343 (120 bytes)
 F 0xAAE2 w8
 D 0xAB5A 0xAD3A rejillas  la rejilla de pantallas de cada fase: 8 bytes por fase (con fase - 1), un bit por casilla de una rejilla de 8 de ancho; lo leen msx1 p00:5BC9, msx2 p00:5DD2 (480 bytes)
 F 0xAB5A 8
@@ -327,7 +327,7 @@ D 0xAEC1 0xAF39 saltos_aebf  60 punteros, uno por fase (se lee con la fase, de 1
 F 0xAEC1 w8
 D 0xAF39 0xAFB1 saltos_af37  60 punteros, uno por fase (se lee con la fase, de 1 a 60, desde 0xAF37: la entrada 0 no la lee nadie y sus dos bytes son lo ultimo de lo que va delante): los saltos al salir por la derecha (parejas [de][a], 0xFF acaba); lo leen msx1 p00:5CDC, msx2 p00:5EE5 (120 bytes)
 F 0xAF39 w8
-D 0xAFB1 0xB029 herramientas  60 punteros, uno por fase (se lee con la fase - 1): las cosas que se cogen y se llevan: fichas de 3 bytes [pantalla | tipo][x][y], 0xFF acaba; lo leen msx1 p02:9E38, msx2 p02:97D4 (120 bytes)
+D 0xAFB1 0xB029 herramientas  60 punteros, uno por fase (se lee con la fase - 1): las cosas que se cogen y se llevan: fichas de 3 bytes [pantalla | tipo][y][x], 0xFF acaba; lo leen msx1 p02:9E38, msx2 p02:97D4 (120 bytes)
 F 0xAFB1 w8
 D 0xB029 0xB033 herramientas_01  Las cosas que se cogen y se llevan de la fase 1; lo leen msx1 p02:9E38, msx2 p02:97D4 (10 bytes)
 F 0xB029 16
@@ -695,4 +695,6 @@ D 0xBF36 0xBFC6 fuente_BF36  18 caracteres de 1 bit por punto (los letreros del 
 F 0xBF36 8
 D 0xBFC6 0xBFF6 fuente_BFC6  6 caracteres de 1 bit por punto; lo leen msx1 p00:5155, msx2 p00:5155 (48 bytes)
 F 0xBFC6 8
+D 0xBFF6 0xC000 relleno_BFF6  10 bytes a 0xFF al final del banco 13: relleno; lo leen nadie (10 bytes)
+F 0xBFF6 10
 # --- fin de los bloques de bloques.py ---

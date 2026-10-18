@@ -566,9 +566,12 @@ DATA_pal_A926:
 	defb 000h,000h	; a944
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xa946..0xa948  (2 bytes)
-DATA_A946:
-	defb 048h,0a9h	; a946
+; DATOS dir_A946: la direccion de la paleta que va detras (0xA948); los
+;   fundidos de 0xA792 apuntan a la paleta, esto no lo lee nadie; lo leen
+;   nadie (2 bytes)
+;   0xa946..0xa948  (2 bytes)
+DATA_dir_A946:
+	defw 0a948h	; a946  -> DATA_pal_A948
 
 ; ----------------------------------------------------------------------
 ; DATOS pal_A948: 16 colores de paleta (2 bytes cada uno); lo leen p01:77FE
@@ -593,9 +596,12 @@ DATA_pal_A948:
 	defb 000h,000h	; a966
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xa968..0xa96a  (2 bytes)
-DATA_A968:
-	defb 06ah,0a9h	; a968
+; DATOS dir_A968: la direccion de la paleta que va detras (0xA96A); los
+;   fundidos de 0xA792 apuntan a la paleta, esto no lo lee nadie; lo leen
+;   nadie (2 bytes)
+;   0xa968..0xa96a  (2 bytes)
+DATA_dir_A968:
+	defw 0a96ah	; a968  -> DATA_pal_A96A
 
 ; ----------------------------------------------------------------------
 ; DATOS pal_A96A: 16 colores de paleta (2 bytes cada uno); lo leen p01:77FE

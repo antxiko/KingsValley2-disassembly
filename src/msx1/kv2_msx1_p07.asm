@@ -619,13 +619,26 @@ DATA_rachas_7438:
 	defb 051h,006h,0c1h,000h	; 7458
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x745c..0x74a4  (72 bytes)
-DATA_745C:
+; DATOS rachas_745C: rachas a la VRAM (un paso mas del caracter animado de la
+;   piramide 3; su tabla (0x5954) repite 0x7414 y 0x7438 y este no lo pide
+;   nadie): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80]
+;   otro destino, 0 acaba; lo leen nadie (36 bytes)
+;   0x745c..0x7480  (36 bytes)
+DATA_rachas_745C:
 	defb 084h,071h,0c1h,0c1h,0cch,004h,0c2h,006h,0c1h,002h,071h,005h,0c1h,081h,071h,003h	; 745c  .q........q...q.
 	defb 072h,081h,071h,004h,0c1h,006h,0c2h,002h,0c1h,002h,071h,081h,0c7h,005h,0c1h,004h	; 746c  r.q.......q.....
-	defb 071h,006h,0c1h,000h,084h,0f1h,0c1h,0c1h,0cch,004h,0c2h,006h,0c1h,002h,0f1h,005h	; 747c  q...............
-	defb 0c1h,081h,0f1h,003h,0f2h,081h,0f1h,004h,0c1h,006h,0c2h,002h,0c1h,002h,0f1h,081h	; 748c  ................
-	defb 0cfh,005h,0c1h,004h,0f1h,006h,0c1h,000h	; 749c  ........
+	defb 071h,006h,0c1h,000h	; 747c
+
+; ----------------------------------------------------------------------
+; DATOS rachas_7480: rachas a la VRAM (un paso mas del caracter animado de la
+;   piramide 3; su tabla (0x5954) repite 0x7414 y 0x7438 y este no lo pide
+;   nadie): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80]
+;   otro destino, 0 acaba; lo leen nadie (36 bytes)
+;   0x7480..0x74a4  (36 bytes)
+DATA_rachas_7480:
+	defb 084h,0f1h,0c1h,0c1h,0cch,004h,0c2h,006h,0c1h,002h,0f1h,005h,0c1h,081h,0f1h,003h	; 7480  ................
+	defb 0f2h,081h,0f1h,004h,0c1h,006h,0c2h,002h,0c1h,002h,0f1h,081h,0cfh,005h,0c1h,004h	; 7490  ................
+	defb 0f1h,006h,0c1h,000h	; 74a0
 
 ; ----------------------------------------------------------------------
 ; DATOS rachas_74A4: rachas a la VRAM (colores de la piramide 4): [n < 0x80]

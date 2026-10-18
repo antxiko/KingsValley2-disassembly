@@ -2557,7 +2557,7 @@ DATA_tabla_9112:
 	defw 09118h,09182h,09218h	; 9112  -> L_9118 L_9182 L_9218
 
 ; ======================================================================
-; CODIGO 0x9118..0x929e  (390 bytes)
+; CODIGO 0x9118..0x9451  (825 bytes)
 ; ======================================================================
 
 
@@ -2759,22 +2759,23 @@ L_928A:
 	add hl,de			;929b
 	ex de,hl			;929c
 	ret			;929d
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x929e..0x92ba  (28 bytes)
-DATA_929E:
-	defb 0cdh,0f3h,092h,0d5h,0cdh,01ah,093h,0e1h,0cdh,0c3h,092h,03eh,003h,0ddh,066h,003h	; 929e  ...........>..f.
-	defb 0ddh,06eh,002h,0ddh,056h,004h,001h,002h,002h,0c3h,0f7h,061h	; 92ae  .n..V......a
-
-; ======================================================================
-; CODIGO 0x92ba..0x934f  (149 bytes)
-; ======================================================================
-
-
+L_929E:
+	call L_92F3		;929e   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+	push de			;92a1
+	call L_931A		;92a2
+	pop hl			;92a5
+	call L_92C3		;92a6
+	ld a,003h		;92a9
+	ld h,(ix+003h)		;92ab   ; lee la x de la cosa
+	ld l,(ix+002h)		;92ae   ; lee la y de la cosa
+	ld d,(ix+004h)		;92b1   ; lee la pantalla de la cosa
+	ld bc,00202h		;92b4
+	jp 061f7h		;92b7
 L_92BA:
 	ld h,(ix+003h)		;92ba   ; guarda las casillas que tapa el bloque (en 0xEF40)
 	ld l,(ix+002h)		;92bd   ; lee la y de la cosa
 	call L_92F3		;92c0   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+L_92C3:
 	ld a,(ix+004h)		;92c3   ; lee la pantalla de la cosa
 	ld (ix+009h),a		;92c6   ; guarda la pantalla de la cosa al empezar
 	ld bc,(0e2feh)		;92c9
@@ -2858,18 +2859,17 @@ L_932E:
 	pop de			;934c
 	inc de			;934d
 	ret			;934e
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x934f..0x936b  (28 bytes)
-DATA_934F:
-	defb 0cdh,0b3h,093h,0ddh,066h,00bh,0ddh,06eh,00ah,0ddh,056h,003h,0ddh,05eh,002h,0cdh	; 934f  ....f..n..V..^..
-	defb 09eh,092h,03ah,043h,0e2h,0ddh,0beh,009h,0c0h,0cdh,07fh,093h	; 935f  ..:C........
-
-; ======================================================================
-; CODIGO 0x936b..0x9451  (230 bytes)
-; ======================================================================
-
-
+L_934F:
+	call L_93B3		;934f   ; devuelve el fondo del bloque donde estaba
+	ld h,(ix+00bh)		;9352
+	ld l,(ix+00ah)		;9355
+	ld d,(ix+003h)		;9358
+	ld e,(ix+002h)		;935b
+	call L_929E		;935e
+	ld a,(0e243h)		;9361   ; lee la pantalla de la fase (desde 1)
+	cp (ix+009h)		;9364
+	ret nz			;9367
+	call L_937F		;9368   ; guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
 L_936B:
 	ld hl,09089h		;936b   ; pinta el bloque: 2 x 2 de 0x9089
 	ld d,(ix+003h)		;936e
@@ -4573,25 +4573,53 @@ L_9E38:
 	ret			;9e64
 
 ; ----------------------------------------------------------------------
-; DATOS resto_9E65: lo apuntan con el banco puesto p00:4165 (0x9E65), p03:A135
-;   (0x9E65); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p00:4165, p03:A135 (50 bytes)
-;   0x9e65..0x9e97  (50 bytes)
-DATA_resto_9E65:
-	defb 067h,09eh,0c5h,0cdh,04fh,0a1h,03eh,001h,032h,0e6h,0f0h,03ah,0e9h,0f0h,026h,040h	; 9e65  g...O.>.2..:..&@
-	defb 0cdh,024h,000h,0c1h,079h,0e6h,00eh,00fh,0feh,002h,038h,006h,0feh,006h,038h,00bh	; 9e75  .$..y.....8...8.
-	defb 018h,005h,00eh,004h,00fh,030h,006h,00eh,003h,018h,002h,00eh,000h,0c3h,09ch,09eh	; 9e85  .....0..........
-	defb 00eh,006h	; 9e95
+; DATOS diskve_9E65: la direccion de una rutina de error de disco (0x9E67): el
+;   juego pone 0x9E65 en 0xF323 (DISKVE) y la BIOS de disco salta a lo que hay
+;   aqui; lo leen p00:4168 (2 bytes)
+;   0x9e65..0x9e67  (2 bytes)
+DATA_diskve_9E65:
+	defw 09e67h	; 9e65  -> L_9E67
 
 ; ======================================================================
-; CODIGO 0x9e97..0x9ed0  (57 bytes)
+; CODIGO 0x9e67..0x9ed0  (105 bytes)
 ; ======================================================================
 
 
+L_9E67:
+	push bc			;9e67
+	call 0a14fh		;9e68   ; la deja como estaba
+	ld a,001h		;9e6b
+	ld (0f0e6h),a		;9e6d
+	ld a,(0f0e9h)		;9e70   ; lee el slot de este cartucho
+	ld h,040h		;9e73
+	call 00024h		;9e75   ; BIOS ENASLT - Switches to specified slot and page definitively
+	pop bc			;9e78
+	ld a,c			;9e79
+	and 00eh		;9e7a
+	rrca			;9e7c
+	cp 002h		;9e7d
+	jr c,L_9E87		;9e7f
+	cp 006h		;9e81
+	jr c,L_9E90		;9e83
+	jr L_9E8C		;9e85
+L_9E87:
+	ld c,004h		;9e87
+	rrca			;9e89
+	jr nc,L_9E92		;9e8a
+L_9E8C:
+	ld c,003h		;9e8c
+	jr L_9E92		;9e8e
+L_9E90:
+	ld c,000h		;9e90
+L_9E92:
+	jp L_9E9C		;9e92
+L_9E95:
+	ld c,006h		;9e95
 L_9E97:
 	push bc			;9e97   ; error de disco: el letrero del error C (tabla 0xAF52) y se vuelve con la pila de 0xF0E2
 	call 0a14fh		;9e98   ; la RAM del juego a su sitio
 	pop bc			;9e9b
+L_9E9C:
 	ld b,000h		;9e9c   ; el letrero del error C (0-4)
 	ld a,c			;9e9e
 	add a,a			;9e9f
@@ -4619,19 +4647,28 @@ L_9E97:
 	ret			;9ecf
 
 ; ----------------------------------------------------------------------
-; DATOS resto_9ED0: lo apuntan con el banco puesto p03:A013 (0x9ED0); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p03:A013 (27 bytes)
-;   0x9ed0..0x9eeb  (27 bytes)
-DATA_resto_9ED0:
-	defb 0d2h,09eh,0cdh,04fh,0a1h,03ah,0e9h,0f0h,026h,040h,0cdh,024h,000h,0cdh,096h,0a1h	; 9ed0  ...O.:..&@.$....
-	defb 03ah,0e4h,0f0h,032h,09ah,0fdh,0edh,07bh,0e2h,0f0h,0c9h	; 9ee0  :..2...{...
+; DATOS diskve_9ED0: la direccion de una rutina de error de disco (0x9ED2): el
+;   juego pone 0x9ED0 en 0xF323 (DISKVE) y la BIOS de disco salta a lo que hay
+;   aqui; lo leen p03:A016 (2 bytes)
+;   0x9ed0..0x9ed2  (2 bytes)
+DATA_diskve_9ED0:
+	defw 09ed2h	; 9ed0  -> L_9ED2
 
 ; ======================================================================
-; CODIGO 0x9eeb..0xa000  (277 bytes)
+; CODIGO 0x9ed2..0xa000  (302 bytes)
 ; ======================================================================
 
 
+L_9ED2:
+	call 0a14fh		;9ed2   ; la deja como estaba
+	ld a,(0f0e9h)		;9ed5   ; lee el slot de este cartucho
+	ld h,040h		;9ed8
+	call 00024h		;9eda   ; BIOS ENASLT - Switches to specified slot and page definitively
+	call 0a196h		;9edd   ; 256 veces la de 0xF0EA
+	ld a,(0f0e4h)		;9ee0
+	ld (0fd9ah),a		;9ee3
+	ld sp,(0f0e2h)		;9ee6
+	ret			;9eea
 L_9EEB:
 	di			;9eeb
 	ld a,(0fd9ah)		;9eec

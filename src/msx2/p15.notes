@@ -99,8 +99,12 @@ D 0xA906 0xA926 pal_A906  16 colores de paleta (2 bytes cada uno); lo leen p01:7
 F 0xA906 2
 D 0xA926 0xA946 pal_A926  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
 F 0xA926 2
+D 0xA946 0xA948 dir_A946  la direccion de la paleta que va detras (0xA948); los fundidos de 0xA792 apuntan a la paleta, esto no lo lee nadie; lo leen nadie (2 bytes)
+F 0xA946 w8
 D 0xA948 0xA968 pal_A948  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
 F 0xA948 2
+D 0xA968 0xA96A dir_A968  la direccion de la paleta que va detras (0xA96A); los fundidos de 0xA792 apuntan a la paleta, esto no lo lee nadie; lo leen nadie (2 bytes)
+F 0xA968 w8
 D 0xA96A 0xA98A pal_A96A  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
 F 0xA96A 2
 D 0xA98A 0xA9B6 pal_A98A  16 colores de paleta (2 bytes cada uno); se solapan 5 bloques: (pal_A996 A996-A9B6) (pal_A996 A996-A9B6) (pal_A996 A996-A9B6) (pal_A996 A996-A9B6); lo leen p01:77FE (44 bytes)

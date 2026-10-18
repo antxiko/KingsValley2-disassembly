@@ -73,6 +73,10 @@ D 0x7414 0x7438 rachas_7414  rachas a la VRAM (un paso del caracter animado de l
 F 0x7414 16
 D 0x7438 0x745C rachas_7438  rachas a la VRAM (un paso del caracter animado de la piramide 3): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (36 bytes)
 F 0x7438 16
+D 0x745C 0x7480 rachas_745C  rachas a la VRAM (un paso mas del caracter animado de la piramide 3; su tabla (0x5954) repite 0x7414 y 0x7438 y este no lo pide nadie): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen nadie (36 bytes)
+F 0x745C 16
+D 0x7480 0x74A4 rachas_7480  rachas a la VRAM (un paso mas del caracter animado de la piramide 3; su tabla (0x5954) repite 0x7414 y 0x7438 y este no lo pide nadie): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen nadie (36 bytes)
+F 0x7480 16
 D 0x74A4 0x765B rachas_74A4  rachas a la VRAM (colores de la piramide 4): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (439 bytes)
 F 0x74A4 16
 D 0x765B 0x777C rachas_765B  rachas a la VRAM (patrones de la piramide 4): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (289 bytes)

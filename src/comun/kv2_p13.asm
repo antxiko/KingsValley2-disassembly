@@ -519,7 +519,7 @@ DATA_coger_60:
 ; DATOS joyas: 60 punteros, uno por fase (se lee con la fase, de 1 a 60, desde
 ;   0xA75D: la entrada 0 no la lee nadie y sus dos bytes son lo ultimo de lo
 ;   que va delante): lo que hay que coger para abrir la salida: fichas de 3
-;   bytes [tipo | pantalla][x][y], 0 acaba; lo leen msx1 p01:630C, msx2
+;   bytes [tipo | pantalla][y][x], 0 acaba; lo leen msx1 p01:630C, msx2
 ;   p01:6502 (120 bytes)
 ;   0xa75f..0xa7d7  (120 bytes)
 DATA_joyas:
@@ -975,7 +975,7 @@ DATA_cosas_60:
 ; DATOS cosas: 60 punteros, uno por fase (se lee con la fase, de 1 a 60, desde
 ;   0xAAE0: la entrada 0 no la lee nadie y sus dos bytes son lo ultimo de lo
 ;   que va delante): las cosas de la fase (puertas, bloques, suelos): fichas
-;   de 4 bytes [tipo | pantalla][x][y][alto | variante], 0 acaba; lo leen msx1
+;   de 4 bytes [tipo | pantalla][y][x][alto | variante], 0 acaba; lo leen msx1
 ;   p01:614D, msx2 p01:6343 (120 bytes)
 ;   0xaae2..0xab5a  (120 bytes)
 DATA_cosas:
@@ -1392,7 +1392,7 @@ DATA_saltos_af37:
 
 ; ----------------------------------------------------------------------
 ; DATOS herramientas: 60 punteros, uno por fase (se lee con la fase - 1): las
-;   cosas que se cogen y se llevan: fichas de 3 bytes [pantalla | tipo][x][y],
+;   cosas que se cogen y se llevan: fichas de 3 bytes [pantalla | tipo][y][x],
 ;   0xFF acaba; lo leen msx1 p02:9E38, msx2 p02:97D4 (120 bytes)
 ;   0xafb1..0xb029  (120 bytes)
 DATA_herramientas:
@@ -3100,6 +3100,8 @@ DATA_fuente_BFC6:
 	defb 008h,00ch,07eh,07fh,07fh,07eh,00ch,008h	; bfee  ..~..~..
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xbff6..0xc000  (10 bytes)
-DATA_BFF6:
+; DATOS relleno_BFF6: 10 bytes a 0xFF al final del banco 13: relleno; lo leen
+;   nadie (10 bytes)
+;   0xbff6..0xc000  (10 bytes)
+DATA_relleno_BFF6:
 	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; bff6  ..........

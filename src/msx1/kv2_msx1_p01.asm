@@ -435,8 +435,11 @@ L_624E:
 	ret			;624e
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x624f..0x6254  (5 bytes)
-DATA_624F:
+; DATOS anchos_624F: 5 bytes, uno por tipo de cosa (1-5, desde 0x624E: la
+;   entrada 0 cae en el codigo de delante): su ancho en casillas del mapa
+;   (p01:61F7); lo leen p01:61ED (5 bytes)
+;   0x624f..0x6254  (5 bytes)
+DATA_anchos_624F:
 	defb 002h,001h,001h,004h,002h	; 624f
 
 ; ======================================================================
@@ -4598,8 +4601,11 @@ L_7EB9:
 	jp 053d6h		;7ed1
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7ed4..0x7ed9  (5 bytes)
-DATA_7ED4:
+; DATOS anchos_7ED4: 5 bytes, uno por tipo de cosa (1-5, desde 0x7ED3: la
+;   entrada 0 cae en el codigo de delante): su ancho en caracteres (p00:53CF);
+;   lo leen p01:7EC7 (5 bytes)
+;   0x7ed4..0x7ed9  (5 bytes)
+DATA_anchos_7ED4:
 	defb 002h,002h,001h,004h,002h	; 7ed4
 
 ; ======================================================================

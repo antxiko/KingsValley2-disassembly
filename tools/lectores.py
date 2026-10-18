@@ -757,13 +757,22 @@ def graficos_msx2_resto():
                         (0xAF7D, "sin ficheros", "p02:8D23"), (0xB585, "de las musicas", "p12:B935"),
                         (0xB5B8, "del puzle", "p12:B746"), (0xB5C7, "del puzle resuelto", "p12:B89A"),
                         (0xB8AF, "del puzle", "p12:B6E9"), (0xB8BE, "del puzle", "p12:B6FE"),
+                        (0xAC01, "DO YOUR BEST", "p01:6963"),
+                        (0xACC3, "CONGRATULATIONS (el final)", "p01:73F8"),
+                        (0xAEDD, "THANKS TO YOUR COURAGE (el final)", "p01:75D1"),
+                        (0xAD12, "ALL YOU HAVE TO DO NOW (el final)", "p01:744D"),
+                        (0xAD58, "PUSH SPACE KEY (el final)", "p01:7569"),
+                        (0xAD69, "DANGER !!! (el final)", "p01:7550"),
+                        (0xAF21, "CONGRATULATIONS !!! (el final)", "p01:7651"),
                         (0xBE67, "de la cinta", "p12:BE78"), (0xBE6E, "de la cinta", "p12:BEB6"),
                         (0xBF0E, "de error de cinta", "p12:BF05"), (0xBF94, "de error de cinta",
                                                                   "p12:BF8B")):
         letrero(v12, a, "letrero_%04X" % a, que, tr(lec))
     for t, n, que, lec, idx in ((0xAC13, 5, "de cada piramide acabada (de la 1 a la 5: la 6 va al final)", "p01:71AF", "piramide - 1"),
                                 (0xAD76, 9, "del final", "p01:772E", "paso 0xEDCF"),
-                                (0xAF52, 5, "de los errores de disco", "p02:976E", "error")):
+                                (0xAF52, 7, "de los errores de disco", "p02:976E",
+                                 "error: p02:975E recibe del 0 al 4; el 5, TOO MANNY FILES, y el 6, "
+                                 "DATATYPEERROR, no los pide nadie")):
         B.declara(v12, t, t + 2 * n, "letreros_%04X" % t, "%d punteros a los letreros %s (%s)"
                   % (n, que, idx), tr(lec), F="w8")
         for k in range(n):
@@ -794,15 +803,6 @@ def graficos_msx2_resto():
               tr("p12:B9CB"), F=19)
     B.declara(v12, 0xBA0D, 0xBA11, "colores_flecha", "los colores de los 4 sprites de la flecha",
               tr("p12:B9ED"), F=4)
-    B.declara(v12, 0xBA3A, 0xBA40, "fases_demo", "las 6 fases de la demostracion", tr("p12:BA21"),
-              F=6)
-
-    def mando(v_, a, nom, k):
-        B.declara(v_, a, lista_fichas_ff(v_, a, 2), nom, "el mando grabado de la demostracion "
-                  "de la piramide %d: parejas [teclas][cuadros], 0xFF acaba" % k, tr("p12:BA8C"),
-                  F=2)
-    lista_n(v12, 0xBA92, 7, "mandos_demo", "6 punteros, uno por piramide (0xE241, desde 0xBA92): "
-            "el mando grabado de su demostracion", tr("p12:BA88"), mando, "mando", base=1)
     B.declara(v12, 0xBD97, 0xBDB7, "estrellas_x", "16 velocidades en x de las estrellas",
               tr("p12:BD8A"), F="w8")
     B.declara(v12, 0xBDB7, 0xBDD7, "estrellas_y", "16 velocidades en y de las estrellas",
@@ -915,16 +915,18 @@ def graficos_msx1():
                         (0x9A8F, "la tabla de nombres", "p00:55D8")):
         rachas(v, a, "rachas_%04X" % a, que, lec)
     rachas_destino(v, 0x9BF2, "rachas_9BF2", "la presentacion", "p00:4E23")
-    B.declara(v, 0x9434, 0x9438, "fundidos_lista", "2 punteros (desde 0x9432, por A): listas de "
-              "fundido de 4 bytes [tercios][caracter][cuantos bytes], un 0 acaba", "p00:5416", F="w8")
+    # el fundido de salida (p00:53F9): A = 0 o 1, listas de una ficha desde 0x9422 + 5 x A
+    B.declara(v, 0x9422, 0x942C, "fundidos_salida", "2 listas de fundido de salida (0x9422 + 5 x "
+              "A; A = 0 en p01:70FE y p01:71CD, 1 en p01:6735 y p01:734A): una ficha [tercios]"
+              "[caracter][cuantos bytes, 2] y el 0 (se borran en la VRAM poco a poco)", "p00:53FC",
+              F=5)
+    # el fundido de entrada (p00:5410): A = 0, 1 o 2, listas de graficos de 6 bytes
+    B.declara(v, 0x9432, 0x9438, "fundidos_entrada", "3 punteros (por A: 0 en p01:70B5, 1 en "
+              "p01:7147, 2 en p01:72B9): listas de graficos que aparecen con el fundido de entrada",
+              "p00:5416", F="w8")
     for k in range(3):
         a = v.w(0x9432 + 2 * k)
-        x = a
-        while v(x):
-            x += 4
-        B.declara(v, a, x + 1, "fundido_%04X" % a, "lista de fundido: fichas de 4 bytes [tercios]"
-                  "[caracter][cuantos bytes], un 0 acaba (se borran en la VRAM poco a poco)",
-                  "p00:5571", F=4)
+        lista_tercios(v, a, "graf_%04X" % a, "el fundido de entrada %d" % k, "p00:54A7")
     # los caracteres que cambian solos (p00:5915 y p00:58C5), tablas del banco 0
     w0 = B.Ventana((7, 8, 9))
     B.declara(w0, 0x5930, 0x5940, "animados_comunes", "8 punteros (por 0xEF06 & 7): rachas de "
@@ -1006,6 +1008,85 @@ def graficos_msx1():
                   "a la VRAM en los tres tercios" % (n, n // 8), lec, F=8)
 
 
+def restos():
+    """Lo ultimo: tablas que se leen con un indice, sobras y relleno."""
+    v = actual()
+    v1 = B.Ventana((1, 2, 3))
+    v12 = B.Ventana((1, 2, 12))
+    # el ancho de cada tipo de cosa (1-5): en casillas del mapa y en caracteres
+    for b0, lec, que in {"msx2": ((0x6444, "p01:63E3", "casillas del mapa (p01:63ED)"),
+                                  (0x82F2, "p02:82E6", "caracteres (p00:5737)")),
+                         "msx1": ((0x624E, "p01:61ED", "casillas del mapa (p01:61F7)"),
+                                  (0x7ED3, "p01:7EC7", "caracteres (p00:53CF)"))}[v]:
+        B.declara(v1, b0 + 1, b0 + 6, "anchos_%04X" % (b0 + 1), "5 bytes, uno por tipo de cosa "
+                  "(1-5, desde 0x%04X: la entrada 0 cae en el codigo de delante): su ancho en %s"
+                  % (b0, que), lec, F=5)
+    # la demostracion (p12:BA11): la fase y el mando grabado de cada una
+    fb, flec, mb, mlec, llec = {"msx2": (0xBA3A, "p12:BA21", 0xBA92, "p12:BA88", "p12:BA90"),
+                                "msx1": (0xBA20, "p12:BA07", 0xBA78, "p12:BA6E", "p12:BA76")}[v]
+    B.declara(v12, fb + 1, fb + 7, "fases_demo", "las fases de las 6 demostraciones (0xE219, de 1 "
+              "a 6, desde 0x%04X: la entrada 0 cae en el codigo de delante)" % fb, flec, F=6)
+    B.declara(v12, mb + 2, mb + 14, "mandos_demo", "6 punteros, uno por piramide (0xE241, desde "
+              "0x%04X: la entrada 0 cae en el codigo de delante): el mando grabado de su "
+              "demostracion" % mb, mlec, F="w8")
+    for k in range(1, 7):
+        a = x = v12.w(mb + 2 * k)
+        while v12(x + 1) != 0xFF:
+            x += 2
+        B.declara(v12, a, x + 2, "mando_%d" % k, "el mando grabado de la demostracion de la "
+                  "piramide %d: parejas [cuadros][teclas]; unas teclas 0xFF acaban" % k, llec, F=2)
+    # los punteros a las rutinas de error de disco: 0xF323 (DISKVE) apunta aqui y la BIOS de
+    # disco salta a la direccion que hay dentro
+    for a, rut, lec in {"msx2": ((0x972C, 0x972E, "p00:4165"), (0x9797, 0x9799, "p02:9CC1")),
+                        "msx1": ((0x9E65, 0x9E67, "p00:4168"), (0x9ED0, 0x9ED2, "p03:A016"))}[v]:
+        B.declara(v1, a, a + 2, "diskve_%04X" % a, "la direccion de una rutina de error de disco "
+                  "(0x%04X): el juego pone 0x%04X en 0xF323 (DISKVE) y la BIOS de disco salta a lo "
+                  "que hay aqui" % (rut, a), lec, F="w8")
+    # relleno
+    B.declara(B.Ventana((1, 2, 13)), 0xBFF6, 0xC000, "relleno_BFF6", "10 bytes a 0xFF al final "
+              "del banco 13: relleno", "nadie", F=10)
+    if v == "msx2":
+        B.declara(v12, 0xB2AB, 0xB400, "relleno_B2AB", "341 bytes a 0xFF: relleno", "nadie", F=16)
+        B.declara(v12, 0xABA1, 0xABC1, "car_ABA1", "2 caracteres (16 bytes de patrones y 16 de "
+                  "colores), los mismos que el cartucho de MSX1 copia en p00:5A58 y p00:5A7A; en "
+                  "este no los lee nadie", "nadie", F=8)
+        v7 = B.Ventana((7, 8, 9))
+        B.declara(v7, 0x600A, 0x600C, "colores_6000_6", "sexto puntero de la tabla de colores "
+                  "0x6000 (el modo / 8 = 5): ninguna ficha de la lista 0x602A lo pide", "nadie",
+                  F="w8")
+        B.declara(v7, 0x6022, 0x602A, "col_6022", "8 colores (de 4 bits) para 3 bits por punto, "
+                  "los del sexto puntero: no los pide nadie", "nadie", F=8)
+        B.declara(v7, 0x651C, 0x656C, "car_651C", "80 bytes de caracteres entre car_646C y "
+                  "car_656C que ninguna ficha de la lista 0x602A pide", "nadie", F=16)
+        B.declara(v7, 0x9058, 0x9063, "graf_9058", "una lista de graficos igual, byte a byte, que "
+                  "la de 0x9063 (el final): esta no la pide nadie", "nadie", F=4)
+        v15 = B.Ventana((1, 14, 15))
+        for a in (0xA946, 0xA968):
+            B.declara(v15, a, a + 2, "dir_%04X" % a, "la direccion de la paleta que va detras "
+                      "(0x%04X); los fundidos de 0xA792 apuntan a la paleta, esto no lo lee nadie"
+                      % (a + 2), "nadie", F="w8")
+    else:
+        w0 = B.Ventana((7, 8, 9))
+        B.declara(w0, 0x5E1C, 0x5E24, "pasos_japones", "4 punteros (por 0xE216 - 1, de 3 a 0): "
+                  "rachas que van al caracter 1 (0x0008) de los tres tercios, una cada 0x30 "
+                  "cuadros; solo con la BIOS japonesa (0x002B = 0, p00:5DD5)", "p00:5DF9", F="w8")
+        for k in range(4):
+            r = w0.w(0x5E1C + 2 * k)
+            rachas(w0, r, "rachas_%04X" % r, "un paso con la BIOS japonesa", "p00:52F7")
+        B.declara(w0, 0x9D54, 0x9D71, "rachas_9D54", "rachas que suman 0x3F0 bytes, lo que miden "
+                  "los patrones del dibujo de la presentacion (p00:599B): con la forma de sus "
+                  "colores; ninguna instruccion carga 0x9D54 ni sale como palabra en la ROM",
+                  "nadie", F=16)
+        B.declara(w0, 0x942C, 0x9432, "fundido_942C", "6 bytes detras de las dos listas de "
+                  "fundido de salida: serian la de A = 2, pero p00:53F9 solo se llama con A = 0 o 1",
+                  "nadie", F=6)
+        B.declara(w0, 0x816D, 0x816E, "cero_816D", "un 0 suelto entre graf_8166 y graf_816E: "
+                  "ninguna instruccion ni tabla apunta aqui", "nadie", F=1)
+        for a in (0x745C, 0x7480):
+            rachas(w0, a, "rachas_%04X" % a, "un paso mas del caracter animado de la piramide 3; "
+                   "su tabla (0x5954) repite 0x7414 y 0x7438 y este no lo pide nadie", "nadie")
+
+
 def todo():
     """Declara los bloques de los dos cartuchos (B.declara ...)."""
     sonido()
@@ -1014,3 +1095,4 @@ def todo():
     graficos_msx2()
     graficos_msx2_resto()
     graficos_msx1()
+    restos()

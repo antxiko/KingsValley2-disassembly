@@ -16,6 +16,7 @@
 0x6000   # msx1 p00:4F74 call | msx2 p00:53C3 call
 0x6003   # msx1 p00:4344 call | msx2 p00:433C call
 0x6006   # msx1 p00:4062 call | msx2 p00:4060 call
+0x61AA   # msx1 huerfano: pone el bit 4 de 0xE1CB (el volumen vuelve poco a poco, p04:6835); nadie lo llama | msx2 huerfano: pone el bit 4 de 0xE1CB (el volumen vuelve poco a poco, p04:6835); nadie lo llama
 0x68E1   # msx1 ordenes 0xE0/0xE2 de la tabla p04:68A3 | msx2 ordenes 0xE0/0xE2 de la tabla p04:68A3
 0x68F7   # msx1 ordenes 0xE1/0xE3 de la tabla p04:68A3 | msx2 ordenes 0xE1/0xE3 de la tabla p04:68A3
 0x6914   # msx1 orden 0xE4 de la tabla p04:68A3 | msx2 orden 0xE4 de la tabla p04:68A3

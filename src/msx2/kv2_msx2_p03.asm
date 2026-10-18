@@ -2538,7 +2538,7 @@ DATA_resto_B0F1:
 	defb 010h,000h,0f0h,000h,000h,010h,000h,0f0h	; b0f1  ........
 
 ; ======================================================================
-; CODIGO 0xb0f9..0xb13d  (68 bytes)
+; CODIGO 0xb0f9..0xb2b0  (439 bytes)
 ; ======================================================================
 
 
@@ -2587,17 +2587,10 @@ L_B12F:
 	and a			;b13a
 	dec a			;b13b
 	ret			;b13c
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0xb13d..0xb143  (6 bytes)
-DATA_B13D:
-	defb 0cdh,050h,0b1h,00eh,000h,0c8h	; b13d
-
-; ======================================================================
-; CODIGO 0xb143..0xb208  (197 bytes)
-; ======================================================================
-
-
+L_B13D:
+	call L_B150		;b13d   ; Z si a su altura hay escalera
+	ld c,000h		;b140
+	ret z			;b142
 L_B143:
 	call L_B21C		;b143   ; Z si debajo hay escalera
 	ld a,010h		;b146
@@ -2727,17 +2720,8 @@ L_B200:
 	ld d,a			;b205
 	inc de			;b206
 	ret			;b207
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0xb208..0xb20a  (2 bytes)
-DATA_B208:
-	defb 03eh,004h	; b208
-
-; ======================================================================
-; CODIGO 0xb20a..0xb2b0  (166 bytes)
-; ======================================================================
-
-
+L_B208:
+	ld a,004h		;b208
 L_B20A:
 	inc (ix+00eh)		;b20a   ; sube la cuenta IX+0E y la compara con A
 	cp (ix+00eh)		;b20d   ; compara con una cuenta del enemigo
@@ -3379,7 +3363,7 @@ DATA_resto_B6AF:
 	defb 01bh,01bh,01ch,01ch,01dh,01dh,0ffh,018h,019h,018h,019h,018h,019h,0ffh	; b6af  ..............
 
 ; ======================================================================
-; CODIGO 0xb6bd..0xb7c9  (268 bytes)
+; CODIGO 0xb6bd..0xb926  (617 bytes)
 ; ======================================================================
 
 
@@ -3507,18 +3491,14 @@ L_B7BF:
 	cp (ix+010h)		;b7c2   ; compara con la pantalla del enemigo
 	ret nz			;b7c5
 	jp 0428fh		;b7c6
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0xb7c9..0xb7df  (22 bytes)
-DATA_B7C9:
-	defb 0ddh,036h,006h,000h,011h,000h,000h,0cdh,09ch,0b2h,0cdh,0a3h,0b2h,0ddh,036h,014h	; b7c9  .6............6.
-	defb 03ch,0ddh,036h,001h,001h,0c9h	; b7d9
-
-; ======================================================================
-; CODIGO 0xb7df..0xb926  (327 bytes)
-; ======================================================================
-
-
+L_B7C9:
+	ld (ix+006h),000h		;b7c9   ; la marca de enemigo en movimiento = 0x00
+	ld de,00000h		;b7cd
+	call L_B29C		;b7d0   ; la velocidad en x
+	call L_B2A3		;b7d3   ; la velocidad en y
+	ld (ix+014h),03ch		;b7d6   ; la espera del enemigo = 0x3C
+	ld (ix+001h),001h		;b7da   ; el paso del enemigo = 0x01
+	ret			;b7de
 L_B7DF:
 	ld l,(ix+003h)		;b7df   ; C si choca con otro enemigo de tipo 4 de su pantalla
 	ld h,(ix+005h)		;b7e2   ; lee la x del enemigo
@@ -3686,7 +3666,7 @@ DATA_resto_B926:
 	defb 000h,001h	; b936
 
 ; ======================================================================
-; CODIGO 0xb938..0xbb43  (523 bytes)
+; CODIGO 0xb938..0xbee5  (1453 bytes)
 ; ======================================================================
 
 
@@ -3978,18 +3958,21 @@ L_BB2B:
 	ld (ix+001h),a		;bb3b   ; guarda el paso de la cosa
 	res 1,(ix+007h)		;bb3e   ; pone a cero el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	ret			;bb42
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0xbb43..0xbb63  (32 bytes)
-DATA_BB43:
-	defb 03ah,043h,0e2h,0ddh,0beh,004h,0c0h,021h,074h,093h,011h,074h,093h,001h,074h,093h	; bb43  :C.....!t..t..t.
-	defb 0d9h,0ddh,046h,008h,00eh,002h,0ddh,056h,003h,0ddh,05eh,002h,0cdh,0deh,056h,0d9h	; bb53  ..F....V..^...V.
-
-; ======================================================================
-; CODIGO 0xbb63..0xbc50  (237 bytes)
-; ======================================================================
-
-
+L_BB43:
+	ld a,(0e243h)		;bb43   ; lee la pantalla de la fase (desde 1)
+	cp (ix+004h)		;bb46   ; compara con la pantalla de la cosa
+	ret nz			;bb49
+	ld hl,09374h		;bb4a
+	ld de,09374h		;bb4d
+	ld bc,09374h		;bb50
+L_BB53:
+	exx			;bb53
+	ld b,(ix+008h)		;bb54   ; lee el alto de la cosa
+	ld c,002h		;bb57
+	ld d,(ix+003h)		;bb59   ; lee la x de la cosa
+	ld e,(ix+002h)		;bb5c   ; lee la y de la cosa
+	call 056deh		;bb5f
+	exx			;bb62
 L_BB63:
 	ld (0efc0h),hl		;bb63   ; pinta la puerta: la parte de arriba (HL), la del medio (DE) repetida y la de abajo (BC)
 	ld (0efc2h),de		;bb66   ; guarda la pantalla que se lee del mapa y el byte siguiente (16 bits)
@@ -4112,19 +4095,21 @@ L_BC2F:
 	ld (ix+005h),a		;bc48   ; guarda el giro o paso del dibujo de la cosa
 	ld (ix+001h),a		;bc4b   ; guarda el paso de la cosa
 	jr L_BC10		;bc4e
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0xbc50..0xbc74  (36 bytes)
-DATA_BC50:
-	defb 03ah,043h,0e2h,0ddh,0beh,004h,0c0h,0ddh,07eh,007h,01fh,01fh,021h,07ch,093h,011h	; bc50  :C......~...!|..
-	defb 084h,093h,001h,08ch,093h,0d2h,053h,0bbh,021h,094h,093h,011h,09ch,093h,001h,0a4h	; bc60  ......S.!.......
-	defb 093h,0c3h,053h,0bbh	; bc70
-
-; ======================================================================
-; CODIGO 0xbc74..0xbce2  (110 bytes)
-; ======================================================================
-
-
+L_BC50:
+	ld a,(0e243h)		;bc50   ; lee la pantalla de la fase (desde 1)
+	cp (ix+004h)		;bc53   ; compara con la pantalla de la cosa
+	ret nz			;bc56
+	ld a,(ix+007h)		;bc57   ; lee las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+	rra			;bc5a
+	rra			;bc5b
+	ld hl,0937ch		;bc5c
+	ld de,09384h		;bc5f
+	ld bc,0938ch		;bc62
+	jp nc,L_BB53		;bc65
+	ld hl,09394h		;bc68
+	ld de,0939ch		;bc6b
+	ld bc,093a4h		;bc6e
+	jp L_BB53		;bc71
 L_BC74:
 	ld ix,0e600h		;bc74   ; las cosas de tipo 3 de 0xE600: si el personaje pasa por su columna, empiezan a moverse
 	ld b,010h		;bc78
@@ -4183,20 +4168,38 @@ L_BCC0:
 L_BCDD:
 	ld (ix+000h),000h		;bcdd   ; el tipo de la cosa (0: libre) = 0x00
 	ret			;bce1
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0xbce2..0xbd21  (63 bytes)
-DATA_BCE2:
-	defb 0ddh,07eh,005h,03dh,087h,087h,087h,05fh,0ddh,066h,003h,0ddh,086h,002h,06fh,0ddh	; bce2  .~.=..._.f....o.
-	defb 056h,004h,001h,001h,001h,03eh,002h,0d5h,0cdh,0edh,063h,0d1h,03ah,043h,0e2h,0ddh	; bcf2  V....>....c.:C..
-	defb 0beh,004h,0c0h,0ddh,056h,003h,0ddh,07eh,002h,083h,05fh,0ddh,0e5h,0d5h,0cdh,0abh	; bd02  ....V..~.._.....
-	defb 090h,0d1h,03eh,005h,0cdh,067h,057h,0cdh,0f7h,090h,0ddh,0e1h,0c3h,0c7h,042h	; bd12  ..>..gW.......B
-
-; ======================================================================
-; CODIGO 0xbd21..0xbdaa  (137 bytes)
-; ======================================================================
-
-
+L_BCE2:
+	ld a,(ix+005h)		;bce2   ; lee el giro o paso del dibujo de la cosa
+	dec a			;bce5
+	add a,a			;bce6
+	add a,a			;bce7
+	add a,a			;bce8
+	ld e,a			;bce9
+	ld h,(ix+003h)		;bcea   ; lee la x de la cosa
+	add a,(ix+002h)		;bced   ; le suma la y de la cosa
+	ld l,a			;bcf0
+	ld d,(ix+004h)		;bcf1   ; lee la pantalla de la cosa
+	ld bc,00101h		;bcf4
+	ld a,002h		;bcf7
+	push de			;bcf9
+	call 063edh		;bcfa   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+	pop de			;bcfd
+	ld a,(0e243h)		;bcfe   ; lee la pantalla de la fase (desde 1)
+	cp (ix+004h)		;bd01   ; compara con la pantalla de la cosa
+	ret nz			;bd04
+	ld d,(ix+003h)		;bd05   ; lee la x de la cosa
+	ld a,(ix+002h)		;bd08   ; lee la y de la cosa
+	add a,e			;bd0b
+	ld e,a			;bd0c
+	push ix		;bd0d
+	push de			;bd0f
+	call 090abh		;bd10   ; las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+	pop de			;bd13
+	ld a,005h		;bd14
+	call 05767h		;bd16   ; pinta el caracter A sin su color 0 (p00:5219)
+	call 090f7h		;bd19   ; las de la lista, al reves: guarda el fondo y pinta la cosa
+	pop ix		;bd1c
+	jp 042c7h		;bd1e
 L_BD21:
 	ld a,(0e243h)		;bd21   ; una cosa de tipo 4 (suelo que se rompe): mira si el personaje esta encima
 	cp (ix+004h)		;bd24   ; compara con la pantalla de la cosa
@@ -4228,6 +4231,7 @@ L_BD46:
 	ld (ix+000h),000h		;bd5d   ; se quita: su dibujo y sus 4 casillas del mapa a 0
 	call L_BD7A		;bd61   ; el sonido 0x27 y se repinta el fondo (MSX1 de la ficha, MSX2 de la pagina 1)
 	xor a			;bd64   ; el valor 0...
+L_BD65:
 	ld bc,00104h		;bd65   ; ...1 fila de 4 casillas
 	ld h,(ix+003h)		;bd68   ; lee la x de la cosa
 	ld l,(ix+002h)		;bd6b   ; lee la y de la cosa
@@ -4263,18 +4267,16 @@ L_BDA1:
 	ld a,001h		;bda4
 	call 05029h		;bda6   ; copia un rectangulo de la VRAM (orden HMMM): de (H, L) a (D, E), paginas de A
 	ret			;bda9
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0xbdaa..0xbdc0  (22 bytes)
-DATA_BDAA:
-	defb 0afh,0ddh,077h,00ah,0ddh,077h,00bh,0cdh,0deh,0bdh,03eh,003h,0cdh,065h,0bdh,03ah	; bdaa  ..w..w....>..e.:
-	defb 043h,0e2h,0ddh,0beh,004h,0c0h	; bdba
-
-; ======================================================================
-; CODIGO 0xbdc0..0xbdde  (30 bytes)
-; ======================================================================
-
-
+L_BDAA:
+	xor a			;bdaa
+	ld (ix+00ah),a		;bdab   ; guarda la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
+	ld (ix+00bh),a		;bdae   ; guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
+	call L_BDDE		;bdb1
+	ld a,003h		;bdb4
+	call L_BD65		;bdb6   ; ...1 fila de 4 casillas
+	ld a,(0e243h)		;bdb9   ; lee la pantalla de la fase (desde 1)
+	cp (ix+004h)		;bdbc   ; compara con la pantalla de la cosa
+	ret nz			;bdbf
 L_BDC0:
 	ld d,(ix+003h)		;bdc0   ; pinta una fila de 4 caracteres (0xAD en MSX2, 0x61 en MSX1)
 	ld e,(ix+002h)		;bdc3   ; lee la y de la cosa
@@ -4294,20 +4296,39 @@ L_BDD3:
 	ld d,a			;bdda
 	djnz L_BDC8		;bddb
 	ret			;bddd
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0xbdde..0xbe15  (55 bytes)
-DATA_BDDE:
-	defb 0ddh,066h,003h,0ddh,06eh,002h,03ah,0f4h,0f0h,0a7h,020h,016h,0cdh,07bh,04dh,0ddh	; bdde  .f..n.:... ..{M.
-	defb 0e5h,0d1h,03eh,00ch,0cdh,094h,040h,006h,004h,0cdh,074h,001h,012h,023h,013h,010h	; bdee  ..>...@...t..#..
-	defb 0f8h,0c9h,0ddh,0e5h,0d1h,07bh,087h,057h,01eh,040h,030h,002h,01eh,050h,001h,008h	; bdfe  .....{.W.@0..P..
-	defb 020h,03eh,004h,0cdh,029h,050h,0c9h	; be0e
-
-; ======================================================================
-; CODIGO 0xbe15..0xbee5  (208 bytes)
-; ======================================================================
-
-
+L_BDDE:
+	ld h,(ix+003h)		;bdde   ; lee la x de la cosa
+	ld l,(ix+002h)		;bde1   ; lee la y de la cosa
+	ld a,(0f0f4h)		;bde4   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+	and a			;bde7
+	jr nz,L_BE00		;bde8
+	call 04d7bh		;bdea   ; pasa la posicion de caracter de HL a direccion de la VRAM
+	push ix		;bded
+	pop de			;bdef
+	ld a,00ch		;bdf0
+	call 04094h		;bdf2   ; suma A a DE (DE = DE + A)
+	ld b,004h		;bdf5
+L_BDF7:
+	call 00174h		;bdf7   ; BIOS NRDVRM - Reads VRAM like in RDVRM (with 16-bit VRAM-address)
+	ld (de),a			;bdfa
+	inc hl			;bdfb
+	inc de			;bdfc
+	djnz L_BDF7		;bdfd
+	ret			;bdff
+L_BE00:
+	push ix		;be00
+	pop de			;be02
+	ld a,e			;be03
+	add a,a			;be04
+	ld d,a			;be05
+	ld e,040h		;be06
+	jr nc,L_BE0C		;be08
+	ld e,050h		;be0a
+L_BE0C:
+	ld bc,02008h		;be0c
+	ld a,004h		;be0f
+	call 05029h		;be11   ; copia un rectangulo de la VRAM (orden HMMM): de (H, L) a (D, E), paginas de A
+	ret			;be14
 L_BE15:
 	ld hl,0e7c0h		;be15   ; las columnas de 0xE7C0 de esta pantalla
 	ld b,010h		;be18

@@ -494,8 +494,11 @@ L_82D8:
 	jp 05737h		;82f0
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x82f3..0x82f8  (5 bytes)
-DATA_82F3:
+; DATOS anchos_82F3: 5 bytes, uno por tipo de cosa (1-5, desde 0x82F2: la
+;   entrada 0 cae en el codigo de delante): su ancho en caracteres (p00:5737);
+;   lo leen p02:82E6 (5 bytes)
+;   0x82f3..0x82f8  (5 bytes)
+DATA_anchos_82F3:
 	defb 002h,002h,001h,004h,002h	; 82f3
 
 ; ======================================================================
@@ -3070,7 +3073,7 @@ DATA_tabla_93F9:
 	defw 093ffh,09469h,094ffh	; 93f9  -> L_93FF L_9469 L_94FF
 
 ; ======================================================================
-; CODIGO 0x93ff..0x9585  (390 bytes)
+; CODIGO 0x93ff..0x972c  (813 bytes)
 ; ======================================================================
 
 
@@ -3272,22 +3275,23 @@ L_9571:
 	add hl,de			;9582
 	ex de,hl			;9583
 	ret			;9584
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x9585..0x95a1  (28 bytes)
-DATA_9585:
-	defb 0cdh,0dah,095h,0d5h,0cdh,001h,096h,0e1h,0cdh,0aah,095h,03eh,003h,0ddh,066h,003h	; 9585  ...........>..f.
-	defb 0ddh,06eh,002h,0ddh,056h,004h,001h,002h,002h,0c3h,0edh,063h	; 9595  .n..V......c
-
-; ======================================================================
-; CODIGO 0x95a1..0x9636  (149 bytes)
-; ======================================================================
-
-
+L_9585:
+	call L_95DA		;9585   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+	push de			;9588
+	call L_9601		;9589
+	pop hl			;958c
+	call L_95AA		;958d
+	ld a,003h		;9590
+	ld h,(ix+003h)		;9592   ; lee la x de la cosa
+	ld l,(ix+002h)		;9595   ; lee la y de la cosa
+	ld d,(ix+004h)		;9598   ; lee la pantalla de la cosa
+	ld bc,00202h		;959b
+	jp 063edh		;959e
 L_95A1:
 	ld h,(ix+003h)		;95a1   ; guarda las casillas que tapa el bloque (en 0xEF40)
 	ld l,(ix+002h)		;95a4   ; lee la y de la cosa
 	call L_95DA		;95a7   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+L_95AA:
 	ld a,(ix+004h)		;95aa   ; lee la pantalla de la cosa
 	ld (ix+009h),a		;95ad   ; guarda la pantalla de la cosa al empezar
 	ld bc,(0e2feh)		;95b0
@@ -3371,18 +3375,17 @@ L_9615:
 	pop de			;9633
 	inc de			;9634
 	ret			;9635
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x9636..0x9652  (28 bytes)
-DATA_9636:
-	defb 0cdh,09ah,096h,0ddh,066h,00bh,0ddh,06eh,00ah,0ddh,056h,003h,0ddh,05eh,002h,0cdh	; 9636  ....f..n..V..^..
-	defb 085h,095h,03ah,043h,0e2h,0ddh,0beh,009h,0c0h,0cdh,066h,096h	; 9646  ..:C......f.
-
-; ======================================================================
-; CODIGO 0x9652..0x972c  (218 bytes)
-; ======================================================================
-
-
+L_9636:
+	call L_969A		;9636   ; devuelve el fondo del bloque donde estaba
+	ld h,(ix+00bh)		;9639   ; lee la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
+	ld l,(ix+00ah)		;963c   ; lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
+	ld d,(ix+003h)		;963f   ; lee la x de la cosa
+	ld e,(ix+002h)		;9642   ; lee la y de la cosa
+	call L_9585		;9645
+	ld a,(0e243h)		;9648   ; lee la pantalla de la fase (desde 1)
+	cp (ix+009h)		;964b   ; compara con la pantalla de la cosa al empezar
+	ret nz			;964e
+	call L_9666		;964f   ; guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
 L_9652:
 	ld hl,09370h		;9652   ; pinta el bloque: 2 x 2 de 0x9370
 	ld d,(ix+003h)		;9655
@@ -3497,25 +3500,53 @@ L_9717:
 	jp L_96A0		;9729
 
 ; ----------------------------------------------------------------------
-; DATOS resto_972C: lo apuntan con el banco puesto p00:4162 (0x972C), p02:9DE0
-;   (0x972C); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p00:4162, p02:9DE0 (50 bytes)
-;   0x972c..0x975e  (50 bytes)
-DATA_resto_972C:
-	defb 02eh,097h,0c5h,0cdh,0e7h,09dh,03eh,001h,032h,0e6h,0f0h,03ah,0e9h,0f0h,026h,040h	; 972c  ......>.2..:..&@
-	defb 0cdh,024h,000h,0c1h,079h,0e6h,00eh,00fh,0feh,002h,038h,006h,0feh,006h,038h,00bh	; 973c  .$..y.....8...8.
-	defb 018h,005h,00eh,004h,00fh,030h,006h,00eh,003h,018h,002h,00eh,000h,0c3h,063h,097h	; 974c  .....0........c.
-	defb 00eh,006h	; 975c
+; DATOS diskve_972C: la direccion de una rutina de error de disco (0x972E): el
+;   juego pone 0x972C en 0xF323 (DISKVE) y la BIOS de disco salta a lo que hay
+;   aqui; lo leen p00:4165 (2 bytes)
+;   0x972c..0x972e  (2 bytes)
+DATA_diskve_972C:
+	defw 0972eh	; 972c  -> L_972E
 
 ; ======================================================================
-; CODIGO 0x975e..0x9797  (57 bytes)
+; CODIGO 0x972e..0x9797  (105 bytes)
 ; ======================================================================
 
 
+L_972E:
+	push bc			;972e
+	call L_9DE7		;972f   ; la deja como estaba
+	ld a,001h		;9732
+	ld (0f0e6h),a		;9734
+	ld a,(0f0e9h)		;9737   ; lee el slot de este cartucho
+	ld h,040h		;973a
+	call 00024h		;973c   ; BIOS ENASLT - Switches to specified slot and page definitively
+	pop bc			;973f
+	ld a,c			;9740
+	and 00eh		;9741
+	rrca			;9743
+	cp 002h		;9744
+	jr c,L_974E		;9746
+	cp 006h		;9748
+	jr c,L_9757		;974a
+	jr L_9753		;974c
+L_974E:
+	ld c,004h		;974e
+	rrca			;9750
+	jr nc,L_9759		;9751
+L_9753:
+	ld c,003h		;9753
+	jr L_9759		;9755
+L_9757:
+	ld c,000h		;9757
+L_9759:
+	jp L_9763		;9759
+L_975C:
+	ld c,006h		;975c
 L_975E:
 	push bc			;975e   ; error de disco: el letrero del error C (tabla 0xAF52) y se vuelve con la pila de 0xF0E2
 	call L_9DE7		;975f   ; la RAM del juego a su sitio
 	pop bc			;9762
+L_9763:
 	ld b,000h		;9763   ; el letrero del error C (0-4)
 	ld a,c			;9765
 	add a,a			;9766
@@ -3543,19 +3574,28 @@ L_975E:
 	ret			;9796
 
 ; ----------------------------------------------------------------------
-; DATOS resto_9797: lo apuntan con el banco puesto p02:9CBE (0x9797); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p02:9CBE (27 bytes)
-;   0x9797..0x97b2  (27 bytes)
-DATA_resto_9797:
-	defb 099h,097h,0cdh,0e7h,09dh,03ah,0e9h,0f0h,026h,040h,0cdh,024h,000h,0cdh,01dh,09eh	; 9797  .....:..&@.$....
-	defb 03ah,0e4h,0f0h,032h,09fh,0fdh,0edh,07bh,0e2h,0f0h,0c9h	; 97a7  :..2...{...
+; DATOS diskve_9797: la direccion de una rutina de error de disco (0x9799): el
+;   juego pone 0x9797 en 0xF323 (DISKVE) y la BIOS de disco salta a lo que hay
+;   aqui; lo leen p02:9CC1 (2 bytes)
+;   0x9797..0x9799  (2 bytes)
+DATA_diskve_9797:
+	defw 09799h	; 9797  -> L_9799
 
 ; ======================================================================
-; CODIGO 0x97b2..0x9807  (85 bytes)
+; CODIGO 0x9799..0x9807  (110 bytes)
 ; ======================================================================
 
 
+L_9799:
+	call L_9DE7		;9799   ; la deja como estaba
+	ld a,(0f0e9h)		;979c   ; lee el slot de este cartucho
+	ld h,040h		;979f
+	call 00024h		;97a1   ; BIOS ENASLT - Switches to specified slot and page definitively
+	call L_9E1D		;97a4   ; 256 veces la de 0xF0EA
+	ld a,(0f0e4h)		;97a7
+	ld (0fd9fh),a		;97aa
+	ld sp,(0f0e2h)		;97ad
+	ret			;97b1
 L_97B2:
 	call 041bfh		;97b2   ; las cosas que se cogen de la fase (tabla 0xAFB1 del banco 13) a 0xE300
 	call L_97BB		;97b5   ; la palabra (fase - 1)
@@ -4020,7 +4060,7 @@ DATA_tabla_9A6A:
 	defw 09a72h,09a7fh,09a8ah,09a72h	; 9a6a  -> L_9A72 L_9A7F L_9A8A L_9A72
 
 ; ======================================================================
-; CODIGO 0x9a72..0x9d23  (689 bytes)
+; CODIGO 0x9a72..0x9e9d  (1067 bytes)
 ; ======================================================================
 
 
@@ -4336,17 +4376,8 @@ L_9D15:
 	ld bc,00024h		;9d1d
 	ldir		;9d20
 	ret			;9d22
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x9d23..0x9d26  (3 bytes)
-DATA_9D23:
-	defb 022h,0e0h,0d0h	; 9d23
-
-; ======================================================================
-; CODIGO 0x9d26..0x9e9d  (375 bytes)
-; ======================================================================
-
-
+L_9D23:
+	ld (0d0e0h),hl		;9d23
 L_9D26:
 	ld hl,(0d0e0h)		;9d26   ; el tamano de registro a 1 y el registro actual a 0
 	ld bc,0000ch		;9d29   ; en la FCB: el bloque actual a 0

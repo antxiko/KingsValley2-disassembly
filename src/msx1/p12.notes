@@ -460,6 +460,22 @@ D 0xB7A1 0xB7A9 tabla_B7A1  4 destinos del despachador p00:409E (call en p12:B79
 F 0xB7A1 w4
 D 0xB97C 0xB9A2 tabla_B97C  19 destinos del despachador p00:409E (call en p12:B979, el indice en A): 41F2, 41FC, 4201, 4206, 420B, 4210, 4215, 421A, 421F, 4224, 4229, 422E, 4233, 4238, 423D, 4251, 42A6, 42AB, 4274; lo leen p12:B979 (38 bytes)
 F 0xB97C w8
+D 0xBA21 0xBA27 fases_demo  las fases de las 6 demostraciones (0xE219, de 1 a 6, desde 0xBA20: la entrada 0 cae en el codigo de delante); lo leen p12:BA07 (6 bytes)
+F 0xBA21 6
+D 0xBA7A 0xBA86 mandos_demo  6 punteros, uno por piramide (0xE241, desde 0xBA78: la entrada 0 cae en el codigo de delante): el mando grabado de su demostracion; lo leen p12:BA6E (12 bytes)
+F 0xBA7A w8
+D 0xBA86 0xBABC mando_1  el mando grabado de la demostracion de la piramide 1: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (54 bytes)
+F 0xBA86 2
+D 0xBABC 0xBAFA mando_2  el mando grabado de la demostracion de la piramide 2: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (62 bytes)
+F 0xBABC 2
+D 0xBAFA 0xBB40 mando_3  el mando grabado de la demostracion de la piramide 3: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (70 bytes)
+F 0xBAFA 2
+D 0xBB40 0xBBA0 mando_4  el mando grabado de la demostracion de la piramide 4: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (96 bytes)
+F 0xBB40 2
+D 0xBBA0 0xBBFC mando_5  el mando grabado de la demostracion de la piramide 5: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (92 bytes)
+F 0xBBA0 2
+D 0xBBFC 0xBC54 mando_6  el mando grabado de la demostracion de la piramide 6: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (88 bytes)
+F 0xBBFC 2
 D 0xBF50 0xC000 relleno_ff  176 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (176 bytes)
 F 0xBF50 16
 D 0xABC1 0xAFDD resto_ABC1  lo apuntan con el banco puesto p01:6FA4 (0xAC13), p01:73FD (0xAD76), p01:7190 (0xAF37), p02:9EA4 (0xAF52), p02:9EB4 (0xAF60), p02:892A (0xAF7D); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p01:6FA4, p01:73FD, p01:7190, p02:9EA4, p02:9EB4, p02:892A (1052 bytes)

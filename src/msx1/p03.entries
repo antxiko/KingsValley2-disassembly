@@ -15,13 +15,14 @@
 0xA038   # p02:9F07 call
 0xA048   # p02:9F93 call
 0xA05A   # p02:9F9C call
+0xA078   # huerfano: guarda HL en 0xD0E0 y sigue en p03:A07B; nadie lo llama
 0xA07B   # p02:9F96 call
 0xA0A6   # p02:9F04 call
 0xA0BA   # p02:9F8D call
 0xA0E8   # p02:9FB6 call
 0xA0F8   # p02:9F2A call
 0xA108   # p02:9F84 call
-0xA14F   # p02:9FA0 call
+0xA14F   # p02:9E98 call
 0xA196   # p02:9EBD call
 0xA1A0   # p02:9F90 call
 0xA23D   # p00:5B70 call
@@ -72,6 +73,8 @@
 0xACC9   # p03:ABA1 entrada 4 de la tabla de 0xABA4 (call 0x409E en 0xABA1)
 0xAD05   # p03:ABA1 entrada 5 de la tabla de 0xABA4 (call 0x409E en 0xABA1)
 0xAD2F   # p00:4AFC call
+0xAEB8   # huerfano: llama a p03:AECB y sigue en p03:AEBE; nadie lo llama
+0xAF83   # huerfano: A = 4 y sigue en p03:AF85; nadie lo llama
 0xAFEF   # p03:AA54 entrada 2 de la tabla de 0xAA57 (call 0x409E en 0xAA54)
 0xB025   # p01:6405 entrada 2 de la tabla de 0x6408 (call 0x409E en 0x6405)
 0xB035   # p03:B028 entrada 0 de la tabla de 0xB02B (call 0x409E en 0xB028)
@@ -85,16 +88,21 @@
 0xB45B   # p01:643D call
 0xB474   # p03:B40C entrada 1 de la tabla de 0xB40F (call 0x409E en 0xB40C)
 0xB4CF   # p03:B40C entrada 2 de la tabla de 0xB40F (call 0x409E en 0xB40C)
+0xB544   # huerfano: 22 bytes que acaban en ret; nadie lo llama
 0xB5FC   # p03:B40C entrada 3 de la tabla de 0xB40F (call 0x409E en 0xB40C)
 0xB667   # p03:B40C entrada 4 de la tabla de 0xB40F (call 0x409E en 0xB40C)
 0xB689   # p03:B40C entrada 5 de la tabla de 0xB40F (call 0x409E en 0xB40C)
 0xB7B7   # p00:44DC call
 0xB7CF   # p00:44F7 jp
 0xB800   # p01:62AB entrada 0 de la tabla de 0x62AE (call 0x409E en 0x62AB)
+0xB8BE   # tipo 1 de las tablas p01:62D9 (repintar) y p01:62E3 (pintar): la puerta giratoria
 0xB8DE   # p01:7E6E jp cc
 0xB92B   # p01:62AB entrada 1 de la tabla de 0x62AE (call 0x409E en 0x62AB)
+0xB9CB   # tipo 2 de las tablas p01:62D9 y p01:62E3: la puerta de tipo 2
 0xB9EF   # p01:62A2 jp
 0xBA3B   # p01:62AB entrada 2 de la tabla de 0x62AE (call 0x409E en 0x62AB)
+0xBA5D   # tipo 3 de la tabla p01:62D9 (repintar)
 0xBA9C   # p01:62AB entrada 3 de la tabla de 0x62AE (call 0x409E en 0x62AB)
+0xBB25   # tipo 4 de la tabla p01:62E3 (pintar): el suelo que se rompe
 0xBB3B   # p01:7E22 entrada 3 de la tabla de 0x7E25 (call 0x409E en 0x7E22)
 0xBB90   # p00:5B8B call

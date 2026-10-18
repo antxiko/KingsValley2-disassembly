@@ -80,6 +80,8 @@
 0xAF4E   # p03:AE26 entrada 4 de la tabla de 0xAE29 (call 0x4099 en 0xAE26)
 0xAF8A   # p03:AE26 entrada 5 de la tabla de 0xAE29 (call 0x4099 en 0xAE26)
 0xAFB4   # p00:4AFB call
+0xB13D   # huerfano: llama a p03:B150 y sigue en p03:B143; nadie lo llama
+0xB208   # huerfano: A = 4 y sigue en p03:B20A; nadie lo llama
 0xB274   # p03:ACD9 entrada 2 de la tabla de 0xACDC (call 0x4099 en 0xACD9)
 0xB2AA   # p01:65FB entrada 2 de la tabla de 0x65FE (call 0x4099 en 0x65FB)
 0xB2BA   # p03:B2AD entrada 0 de la tabla de 0xB2B0 (call 0x4099 en 0xB2AD)
@@ -93,6 +95,7 @@
 0xB6E0   # p01:6633 call
 0xB6F9   # p03:B691 entrada 1 de la tabla de 0xB694 (call 0x4099 en 0xB691)
 0xB754   # p03:B691 entrada 2 de la tabla de 0xB694 (call 0x4099 en 0xB691)
+0xB7C9   # huerfano: 22 bytes que acaban en ret; nadie lo llama
 0xB881   # p03:B691 entrada 3 de la tabla de 0xB694 (call 0x4099 en 0xB691)
 0xB8C5   # p02:9B85 jp cc
 0xB8EC   # p03:B691 entrada 4 de la tabla de 0xB694 (call 0x4099 en 0xB691)
@@ -100,10 +103,14 @@
 0xBA3C   # p00:44D4 call
 0xBA54   # p00:44EF jp
 0xBA85   # p01:64A1 entrada 0 de la tabla de 0x64A4 (call 0x4099 en 0x64A1)
+0xBB43   # tipo 1 de las tablas p01:64CF (repintar) y p01:64D9 (pintar): la puerta giratoria
 0xBB63   # p02:828D jp cc
 0xBBB0   # p01:64A1 entrada 1 de la tabla de 0x64A4 (call 0x4099 en 0x64A1)
+0xBC50   # tipo 2 de las tablas p01:64CF y p01:64D9: la puerta de tipo 2
 0xBC74   # p01:6498 jp
 0xBCC0   # p01:64A1 entrada 2 de la tabla de 0x64A4 (call 0x4099 en 0x64A1)
+0xBCE2   # tipo 3 de la tabla p01:64CF (repintar)
 0xBD21   # p01:64A1 entrada 3 de la tabla de 0x64A4 (call 0x4099 en 0x64A1)
+0xBDAA   # tipo 4 de la tabla p01:64D9 (pintar): el suelo que se rompe
 0xBDC0   # p02:823E entrada 3 de la tabla de 0x8241 (call 0x4099 en 0x823E)
 0xBE15   # p00:5D94 call

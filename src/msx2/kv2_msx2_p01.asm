@@ -742,8 +742,11 @@ L_6444:
 	ret			;6444
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6445..0x644a  (5 bytes)
-DATA_6445:
+; DATOS anchos_6445: 5 bytes, uno por tipo de cosa (1-5, desde 0x6444: la
+;   entrada 0 cae en el codigo de delante): su ancho en casillas del mapa
+;   (p01:63ED); lo leen p01:63E3 (5 bytes)
+;   0x6445..0x644a  (5 bytes)
+DATA_anchos_6445:
 	defb 002h,001h,001h,004h,002h	; 6445
 
 ; ======================================================================

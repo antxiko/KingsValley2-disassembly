@@ -79,68 +79,104 @@ DATA_graf_814B:
 	defb 000h	; 8157
 
 ; ----------------------------------------------------------------------
-; DATOS fundido_8158: lista de fundido: fichas de 4 bytes
-;   [tercios][caracter][cuantos bytes], un 0 acaba (se borran en la VRAM poco
-;   a poco); se solapan 5 bloques: (graf_815F 815F-8166) (fundido_8166
-;   8166-81AB) (fundido_816E 816E-81AB) (graf_8175 8175-8182); lo leen
-;   p00:5571, p00:5033 (83 bytes)
-;   0x8158..0x81ab  (83 bytes)
-DATA_fundido_8158:
-	defb 007h,082h,081h,001h	; 8158
-	defb 0ddh,082h,000h,007h	; 815c
-	defb 015h,090h,001h,0ach	; 8160
-	defb 091h,000h,007h,035h	; 8164
-	defb 08dh,001h,0deh,08eh	; 8168
-	defb 000h,000h,007h,034h	; 816c
-	defb 089h,058h,0aah,08bh	; 8170
-	defb 000h,007h,035h,08dh	; 8174
-	defb 001h,0deh,08eh,007h	; 8178
-	defb 034h,089h,058h,0aah	; 817c
-	defb 08bh,000h,085h,0ffh	; 8180
-	defb 07fh,01fh,010h,0e8h	; 8184
-	defb 003h,017h,003h,0ffh	; 8188
-	defb 005h,000h,008h,017h	; 818c
-	defb 085h,000h,0ffh,000h	; 8190
-	defb 0f7h,0e8h,006h,017h	; 8194
-	defb 085h,010h,01fh,000h	; 8198
-	defb 0ffh,0ffh,005h,000h	; 819c
-	defb 003h,0ffh,004h,017h	; 81a0
-	defb 084h,008h,007h,0ffh	; 81a4
-	defb 0ffh,007h,000h	; 81a8
+; DATOS graf_8158: 1 fichas de 6 bytes [tercios][colores][caracter][patrones]
+;   (el fundido de entrada 1), un 0 acaba: rachas a las tablas de patrones y
+;   colores de cada tercio marcado; lo leen p00:54A7 (7 bytes)
+;   0x8158..0x815f  (7 bytes)
+DATA_graf_8158:
+	defb 007h,082h,081h,001h,0ddh,082h	; 8158
+	defb 000h	; 815e
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x81ab..0x8382  (471 bytes)
-DATA_81AB:
-	defb 08dh,001h,000h,000h,001h,007h,01eh,07ch,0f0h,0e0h,000h,07fh,0f0h,080h,005h,000h	; 81ab  .......|........
-	defb 081h,020h,004h,000h,082h,001h,007h,006h,000h,08ch,0e0h,0f8h,003h,007h,00fh,01eh	; 81bb  . ..............
-	defb 03eh,03ch,07ch,0f8h,0c0h,080h,006h,000h,08dh,00fh,01ch,030h,020h,060h,040h,0c0h	; 81cb  ><|........0 `@.
-	defb 080h,03ch,00ch,006h,006h,002h,003h,003h,08dh,000h,001h,001h,003h,003h,007h,007h	; 81db  .<..............
-	defb 00fh,0f8h,0f0h,0f0h,0e0h,0e0h,003h,0c0h,002h,001h,087h,003h,002h,006h,005h,003h	; 81eb  ................
-	defb 007h,080h,003h,000h,085h,07ch,0fch,0feh,0ffh,003h,005h,001h,002h,083h,002h,00fh	; 81fb  .....|..........
-	defb 004h,01fh,002h,03fh,006h,080h,002h,000h,08bh,00fh,00eh,01ch,018h,018h,030h,0b0h	; 820b  ...?..........0.
-	defb 0b0h,006h,00fh,007h,005h,003h,083h,0c3h,0c2h,0e2h,003h,0e6h,084h,0ech,0cch,03fh	; 821b  ...............?
-	defb 03fh,005h,07fh,081h,0ffh,006h,000h,002h,080h,002h,001h,002h,003h,084h,007h,00eh	; 822b  ?...............
-	defb 00eh,01eh,003h,0a0h,003h,020h,002h,000h,003h,003h,003h,007h,002h,00fh,088h,0dch	; 823b  ..... ..........
-	defb 0d8h,0b8h,0b8h,0b0h,070h,070h,060h,004h,0ffh,004h,07fh,082h,080h,0c0h,003h,0e0h	; 824b  ....pp`.........
-	defb 002h,0f0h,083h,0f8h,01ch,03ch,003h,0f8h,002h,0f0h,081h,0f8h,003h,020h,005h,000h	; 825b  .....<....... ..
-	defb 081h,00fh,004h,01eh,003h,03eh,081h,060h,003h,0c0h,002h,080h,002h,000h,081h,07fh	; 826b  .....>.`........
-	defb 003h,03fh,003h,01fh,095h,00fh,0fch,0feh,0e0h,0f0h,07eh,07fh,01fh,003h,0f8h,0f8h	; 827b  .?........~.....
-	defb 0fch,0c0h,0f0h,0f8h,0fch,0fch,000h,000h,001h,007h,004h,0ffh,003h,07eh,002h,07fh	; 828b  .............~..
-	defb 002h,0bfh,081h,09fh,005h,000h,083h,080h,0e0h,00fh,004h,000h,088h,020h,040h,0c0h	; 829b  ............. @.
-	defb 080h,007h,007h,003h,001h,004h,000h,082h,0ffh,01fh,003h,0ffh,085h,03fh,00fh,001h	; 82ab  .............?..
-	defb 0fch,0f8h,003h,0ffh,08fh,000h,007h,0fch,0ffh,0ffh,0feh,0fch,0f8h,0e0h,080h,000h	; 82bb  ................
-	defb 0ffh,00fh,007h,001h,004h,000h,084h,01eh,07fh,0feh,0f0h,004h,000h,081h,080h,007h	; 82cb  ................
-	defb 000h,000h,085h,033h,0f3h,0c3h,0c3h,031h,003h,0c3h,083h,033h,0f3h,0c3h,005h,030h	; 82db  ...3...1...3...0
-	defb 008h,0c3h,003h,0f3h,082h,0c3h,0fch,006h,0c3h,085h,0c0h,0c3h,0f3h,0f3h,0cch,006h	; 82eb  ................
-	defb 030h,082h,0ffh,0cch,004h,0c3h,084h,031h,0c3h,0f0h,0c0h,029h,0b0h,082h,030h,0b0h	; 82fb  0......1...)..0.
-	defb 003h,030h,082h,0b0h,030h,006h,0b0h,003h,030h,081h,0b0h,007h,030h,084h,0b0h,030h	; 830b  .0..0...0...0..0
-	defb 020h,030h,003h,020h,00dh,030h,083h,020h,030h,020h,006h,030h,081h,0b0h,006h,030h	; 831b   0. .0. 0 .0...0
-	defb 002h,0b2h,081h,032h,008h,020h,009h,030h,00fh,020h,081h,032h,00fh,020h,007h,030h	; 832b  ...2. .0. .2. .0
-	defb 081h,032h,013h,020h,005h,030h,010h,020h,004h,033h,007h,030h,005h,032h,008h,020h	; 833b  .2. .0. .3.0.2.
-	defb 008h,030h,010h,020h,008h,030h,002h,032h,006h,0b3h,003h,020h,005h,032h,003h,030h	; 834b  .0. .0.2... .2.0
-	defb 014h,020h,081h,0b3h,008h,030h,008h,020h,002h,032h,004h,020h,002h,0c0h,002h,032h	; 835b  . ...0. .2. ...2
-	defb 003h,022h,002h,0c2h,081h,0c0h,005h,020h,003h,0c0h,002h,020h,006h,0c0h,083h,0b3h	; 836b  ."..... ... ....
-	defb 032h,020h,005h,0c0h,008h,030h,000h	; 837b
+; DATOS graf_815F: 1 fichas de 6 bytes [tercios][colores][caracter][patrones]
+;   (el final), un 0 acaba: rachas a las tablas de patrones y colores de cada
+;   tercio marcado; lo leen p00:5033 (7 bytes)
+;   0x815f..0x8166  (7 bytes)
+DATA_graf_815F:
+	defb 007h,015h,090h,001h,0ach,091h	; 815f
+	defb 000h	; 8165
+
+; ----------------------------------------------------------------------
+; DATOS graf_8166: 1 fichas de 6 bytes [tercios][colores][caracter][patrones]
+;   (el fundido de entrada 0), un 0 acaba: rachas a las tablas de patrones y
+;   colores de cada tercio marcado; lo leen p00:54A7 (7 bytes)
+;   0x8166..0x816d  (7 bytes)
+DATA_graf_8166:
+	defb 007h,035h,08dh,001h,0deh,08eh	; 8166
+	defb 000h	; 816c
+
+; ----------------------------------------------------------------------
+; DATOS cero_816D: un 0 suelto entre graf_8166 y graf_816E: ninguna
+;   instruccion ni tabla apunta aqui; lo leen nadie (1 bytes)
+;   0x816d..0x816e  (1 bytes)
+DATA_cero_816D:
+	defb 000h	; 816d
+
+; ----------------------------------------------------------------------
+; DATOS graf_816E: 1 fichas de 6 bytes [tercios][colores][caracter][patrones]
+;   (el fundido de entrada 2), un 0 acaba: rachas a las tablas de patrones y
+;   colores de cada tercio marcado; lo leen p00:54A7 (7 bytes)
+;   0x816e..0x8175  (7 bytes)
+DATA_graf_816E:
+	defb 007h,034h,089h,058h,0aah,08bh	; 816e
+	defb 000h	; 8174
+
+; ----------------------------------------------------------------------
+; DATOS graf_8175: 2 fichas de 6 bytes [tercios][colores][caracter][patrones]
+;   (el final), un 0 acaba: rachas a las tablas de patrones y colores de cada
+;   tercio marcado; lo leen p00:5033 (13 bytes)
+;   0x8175..0x8182  (13 bytes)
+DATA_graf_8175:
+	defb 007h,035h,08dh,001h,0deh,08eh	; 8175
+	defb 007h,034h,089h,058h,0aah,08bh	; 817b
+	defb 000h	; 8181
+
+; ----------------------------------------------------------------------
+; DATOS rachas_8182: rachas a la VRAM (colores de el fundido de entrada 1): [n
+;   < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino,
+;   0 acaba; lo leen p00:54A7 (347 bytes)
+;   0x8182..0x82dd  (347 bytes)
+DATA_rachas_8182:
+	defb 085h,0ffh,07fh,01fh,010h,0e8h,003h,017h,003h,0ffh,005h,000h,008h,017h,085h,000h	; 8182  ................
+	defb 0ffh,000h,0f7h,0e8h,006h,017h,085h,010h,01fh,000h,0ffh,0ffh,005h,000h,003h,0ffh	; 8192  ................
+	defb 004h,017h,084h,008h,007h,0ffh,0ffh,007h,000h,08dh,001h,000h,000h,001h,007h,01eh	; 81a2  ................
+	defb 07ch,0f0h,0e0h,000h,07fh,0f0h,080h,005h,000h,081h,020h,004h,000h,082h,001h,007h	; 81b2  |......... .....
+	defb 006h,000h,08ch,0e0h,0f8h,003h,007h,00fh,01eh,03eh,03ch,07ch,0f8h,0c0h,080h,006h	; 81c2  .........><|....
+	defb 000h,08dh,00fh,01ch,030h,020h,060h,040h,0c0h,080h,03ch,00ch,006h,006h,002h,003h	; 81d2  ....0 `@..<.....
+	defb 003h,08dh,000h,001h,001h,003h,003h,007h,007h,00fh,0f8h,0f0h,0f0h,0e0h,0e0h,003h	; 81e2  ................
+	defb 0c0h,002h,001h,087h,003h,002h,006h,005h,003h,007h,080h,003h,000h,085h,07ch,0fch	; 81f2  ..............|.
+	defb 0feh,0ffh,003h,005h,001h,002h,083h,002h,00fh,004h,01fh,002h,03fh,006h,080h,002h	; 8202  ............?...
+	defb 000h,08bh,00fh,00eh,01ch,018h,018h,030h,0b0h,0b0h,006h,00fh,007h,005h,003h,083h	; 8212  .......0........
+	defb 0c3h,0c2h,0e2h,003h,0e6h,084h,0ech,0cch,03fh,03fh,005h,07fh,081h,0ffh,006h,000h	; 8222  ........??......
+	defb 002h,080h,002h,001h,002h,003h,084h,007h,00eh,00eh,01eh,003h,0a0h,003h,020h,002h	; 8232  .............. .
+	defb 000h,003h,003h,003h,007h,002h,00fh,088h,0dch,0d8h,0b8h,0b8h,0b0h,070h,070h,060h	; 8242  .............pp`
+	defb 004h,0ffh,004h,07fh,082h,080h,0c0h,003h,0e0h,002h,0f0h,083h,0f8h,01ch,03ch,003h	; 8252  ..............<.
+	defb 0f8h,002h,0f0h,081h,0f8h,003h,020h,005h,000h,081h,00fh,004h,01eh,003h,03eh,081h	; 8262  ...... .......>.
+	defb 060h,003h,0c0h,002h,080h,002h,000h,081h,07fh,003h,03fh,003h,01fh,095h,00fh,0fch	; 8272  `.........?.....
+	defb 0feh,0e0h,0f0h,07eh,07fh,01fh,003h,0f8h,0f8h,0fch,0c0h,0f0h,0f8h,0fch,0fch,000h	; 8282  ...~............
+	defb 000h,001h,007h,004h,0ffh,003h,07eh,002h,07fh,002h,0bfh,081h,09fh,005h,000h,083h	; 8292  ......~.........
+	defb 080h,0e0h,00fh,004h,000h,088h,020h,040h,0c0h,080h,007h,007h,003h,001h,004h,000h	; 82a2  ...... @........
+	defb 082h,0ffh,01fh,003h,0ffh,085h,03fh,00fh,001h,0fch,0f8h,003h,0ffh,08fh,000h,007h	; 82b2  ......?.........
+	defb 0fch,0ffh,0ffh,0feh,0fch,0f8h,0e0h,080h,000h,0ffh,00fh,007h,001h,004h,000h,084h	; 82c2  ................
+	defb 01eh,07fh,0feh,0f0h,004h,000h,081h,080h,007h,000h,000h	; 82d2  ...........
+
+; ----------------------------------------------------------------------
+; DATOS rachas_82DD: rachas a la VRAM (patrones de el fundido de entrada 1):
+;   [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro
+;   destino, 0 acaba; lo leen p00:54A7 (165 bytes)
+;   0x82dd..0x8382  (165 bytes)
+DATA_rachas_82DD:
+	defb 085h,033h,0f3h,0c3h,0c3h,031h,003h,0c3h,083h,033h,0f3h,0c3h,005h,030h,008h,0c3h	; 82dd  .3...1...3...0..
+	defb 003h,0f3h,082h,0c3h,0fch,006h,0c3h,085h,0c0h,0c3h,0f3h,0f3h,0cch,006h,030h,082h	; 82ed  ..............0.
+	defb 0ffh,0cch,004h,0c3h,084h,031h,0c3h,0f0h,0c0h,029h,0b0h,082h,030h,0b0h,003h,030h	; 82fd  .....1...)..0..0
+	defb 082h,0b0h,030h,006h,0b0h,003h,030h,081h,0b0h,007h,030h,084h,0b0h,030h,020h,030h	; 830d  ..0...0...0..0 0
+	defb 003h,020h,00dh,030h,083h,020h,030h,020h,006h,030h,081h,0b0h,006h,030h,002h,0b2h	; 831d  . .0. 0 .0...0..
+	defb 081h,032h,008h,020h,009h,030h,00fh,020h,081h,032h,00fh,020h,007h,030h,081h,032h	; 832d  .2. .0. .2. .0.2
+	defb 013h,020h,005h,030h,010h,020h,004h,033h,007h,030h,005h,032h,008h,020h,008h,030h	; 833d  . .0. .3.0.2. .0
+	defb 010h,020h,008h,030h,002h,032h,006h,0b3h,003h,020h,005h,032h,003h,030h,014h,020h	; 834d  . .0.2... .2.0.
+	defb 081h,0b3h,008h,030h,008h,020h,002h,032h,004h,020h,002h,0c0h,002h,032h,003h,022h	; 835d  ...0. .2. ...2."
+	defb 002h,0c2h,081h,0c0h,005h,020h,003h,0c0h,002h,020h,006h,0c0h,083h,0b3h,032h,020h	; 836d  ..... ... ....2
+	defb 005h,0c0h,008h,030h,000h	; 837d
 
 ; ----------------------------------------------------------------------
 ; DATOS rachas_8382: rachas a la VRAM (colores de la entrada): [n < 0x80]
@@ -251,7 +287,7 @@ DATA_rachas_8757:
 ; ----------------------------------------------------------------------
 ; DATOS rachas_8934: rachas a la VRAM (colores de el final): [n < 0x80] repite
 ;   el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo
-;   leen p00:5033, p00:5289 (630 bytes)
+;   leen p00:5033, p00:5289, p00:54A7 (630 bytes)
 ;   0x8934..0x8baa  (630 bytes)
 DATA_rachas_8934:
 	defb 085h,0ffh,0ddh,077h,0ddh,0efh,003h,0ffh,085h,004h,029h,067h,0beh,0fdh,004h,0ffh	; 8934  ...w......)g....
@@ -298,7 +334,7 @@ DATA_rachas_8934:
 ; ----------------------------------------------------------------------
 ; DATOS rachas_8BAA: rachas a la VRAM (patrones de el final): [n < 0x80]
 ;   repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0
-;   acaba; lo leen p00:5033, p00:5292 (395 bytes)
+;   acaba; lo leen p00:5033, p00:5292, p00:54A7 (395 bytes)
 ;   0x8baa..0x8d35  (395 bytes)
 DATA_rachas_8BAA:
 	defb 081h,099h,00fh,0b9h,081h,011h,004h,091h,003h,0b9h,085h,091h,096h,061h,061h,064h	; 8baa  .............aad
@@ -330,7 +366,7 @@ DATA_rachas_8BAA:
 ; ----------------------------------------------------------------------
 ; DATOS rachas_8D35: rachas a la VRAM (colores de la entrada): [n < 0x80]
 ;   repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0
-;   acaba; lo leen p00:5033 (425 bytes)
+;   acaba; lo leen p00:5033, p00:54A7 (425 bytes)
 ;   0x8d35..0x8ede  (425 bytes)
 DATA_rachas_8D35:
 	defb 083h,0ffh,080h,0ffh,00dh,0e0h,083h,0ffh,000h,0ffh,005h,000h,003h,0feh,00dh,006h	; 8d35  ................
@@ -364,7 +400,7 @@ DATA_rachas_8D35:
 ; ----------------------------------------------------------------------
 ; DATOS rachas_8EDE: rachas a la VRAM (patrones de la entrada): [n < 0x80]
 ;   repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0
-;   acaba; lo leen p00:5033 (311 bytes)
+;   acaba; lo leen p00:5033, p00:54A7 (311 bytes)
 ;   0x8ede..0x9015  (311 bytes)
 DATA_rachas_8EDE:
 	defb 002h,0c2h,081h,0cch,00dh,0c1h,003h,0c2h,006h,0c1h,081h,021h,014h,0c1h,081h,022h	; 8ede  ...........!..."
@@ -483,21 +519,30 @@ DATA_rachas_93C3:
 	defb 007h,0e1h,081h,0f1h,007h,0e1h,081h,0f1h,07fh,0e1h,009h,0e1h,008h,0f1h,000h	; 9413  ...............
 
 ; ----------------------------------------------------------------------
-; DATOS resto_9422: lo apuntan con el banco puesto p00:53FC (0x9422), p00:5413
-;   (0x9432); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p00:53FC, p00:5413 (18 bytes)
-;   0x9422..0x9434  (18 bytes)
-DATA_resto_9422:
-	defb 007h,001h,0b8h,002h,000h,007h,058h,0c0h,002h,000h,007h,000h,058h,090h,005h,000h	; 9422  ......X.....X...
-	defb 066h,081h	; 9432
+; DATOS fundidos_salida: 2 listas de fundido de salida (0x9422 + 5 x A; A = 0
+;   en p01:70FE y p01:71CD, 1 en p01:6735 y p01:734A): una ficha
+;   [tercios][caracter][cuantos bytes, 2] y el 0 (se borran en la VRAM poco a
+;   poco); lo leen p00:53FC (10 bytes)
+;   0x9422..0x942c  (10 bytes)
+DATA_fundidos_salida:
+	defb 007h,001h,0b8h,002h,000h	; 9422
+	defb 007h,058h,0c0h,002h,000h	; 9427
 
 ; ----------------------------------------------------------------------
-; DATOS fundidos_lista: 2 punteros (desde 0x9432, por A): listas de fundido de
-;   4 bytes [tercios][caracter][cuantos bytes], un 0 acaba; lo leen p00:5416
-;   (4 bytes)
-;   0x9434..0x9438  (4 bytes)
-DATA_fundidos_lista:
-	defw 08158h,0816eh	; 9434  -> DATA_fundido_8158 0x816e
+; DATOS fundido_942C: 6 bytes detras de las dos listas de fundido de salida:
+;   serian la de A = 2, pero p00:53F9 solo se llama con A = 0 o 1; lo leen
+;   nadie (6 bytes)
+;   0x942c..0x9432  (6 bytes)
+DATA_fundido_942C:
+	defb 007h,000h,058h,090h,005h,000h	; 942c
+
+; ----------------------------------------------------------------------
+; DATOS fundidos_entrada: 3 punteros (por A: 0 en p01:70B5, 1 en p01:7147, 2
+;   en p01:72B9): listas de graficos que aparecen con el fundido de entrada;
+;   lo leen p00:5416 (6 bytes)
+;   0x9432..0x9438  (6 bytes)
+DATA_fundidos_entrada:
+	defw 08166h,08158h,0816eh	; 9432  -> DATA_graf_8166 DATA_graf_8158 DATA_graf_816E
 
 ; ----------------------------------------------------------------------
 ; DATOS rachas_9438: rachas a la VRAM (el titulo (japones: 0x002B de la
@@ -578,30 +623,56 @@ DATA_rachas_9756:
 	defb 008h,0f0h,005h,0ffh,000h	; 97a6
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x97ab..0x98ff  (340 bytes)
-DATA_97AB:
+; DATOS rachas_97AB: rachas a la VRAM (un paso con la BIOS japonesa): [n <
+;   0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0
+;   acaba; lo leen p00:52F7 (85 bytes)
+;   0x97ab..0x9800  (85 bytes)
+DATA_rachas_97AB:
 	defb 040h,0f0h,07fh,0feh,07fh,0feh,030h,0feh,004h,0f0h,00ch,0feh,004h,0f0h,00ah,0feh	; 97ab  @.....0.........
 	defb 007h,0f0h,009h,0feh,008h,0f0h,008h,0feh,008h,0f0h,008h,0feh,008h,0f0h,00bh,0feh	; 97bb  ................
 	defb 003h,0f0h,00bh,0feh,007h,0f0h,007h,0feh,006h,0f0h,00ch,0feh,006h,0f0h,009h,0feh	; 97cb  ................
 	defb 007h,0f0h,00ch,0feh,006h,0f0h,007h,0feh,00bh,0f0h,006h,0feh,006h,0f0h,00bh,0feh	; 97db  ................
 	defb 005h,0f0h,008h,0feh,008h,0f0h,006h,0feh,009h,0f0h,00bh,0feh,005h,0f0h,009h,0feh	; 97eb  ................
-	defb 008h,0f0h,005h,0feh,000h,040h,0f0h,07fh,0f7h,07fh,0f7h,030h,0f7h,004h,0f0h,00ch	; 97fb  .....@.....0....
-	defb 0f7h,004h,0f0h,00ah,0f7h,007h,0f0h,009h,0f7h,008h,0f0h,008h,0f7h,008h,0f0h,008h	; 980b  ................
-	defb 0f7h,008h,0f0h,00bh,0f7h,003h,0f0h,00bh,0f7h,007h,0f0h,007h,0f7h,006h,0f0h,00ch	; 981b  ................
-	defb 0f7h,006h,0f0h,009h,0f7h,007h,0f0h,00ch,0f7h,006h,0f0h,007h,0f7h,00bh,0f0h,006h	; 982b  ................
-	defb 0f7h,006h,0f0h,00bh,0f7h,005h,0f0h,008h,0f7h,008h,0f0h,006h,0f7h,009h,0f0h,00bh	; 983b  ................
-	defb 0f7h,005h,0f0h,009h,0f7h,008h,0f0h,005h,0f7h,000h,040h,0f0h,07fh,0f5h,07fh,0f5h	; 984b  ..........@.....
-	defb 030h,0f5h,004h,0f0h,00ch,0f5h,004h,0f0h,00ah,0f5h,007h,0f0h,009h,0f5h,008h,0f0h	; 985b  0...............
-	defb 008h,0f5h,008h,0f0h,008h,0f5h,008h,0f0h,00bh,0f5h,003h,0f0h,00bh,0f5h,007h,0f0h	; 986b  ................
-	defb 007h,0f5h,006h,0f0h,00ch,0f5h,006h,0f0h,009h,0f5h,007h,0f0h,00ch,0f5h,006h,0f0h	; 987b  ................
-	defb 007h,0f5h,00bh,0f0h,006h,0f5h,006h,0f0h,00bh,0f5h,005h,0f0h,008h,0f5h,008h,0f0h	; 988b  ................
-	defb 006h,0f5h,009h,0f0h,00bh,0f5h,005h,0f0h,009h,0f5h,008h,0f0h,005h,0f5h,000h,040h	; 989b  ...............@
-	defb 0f0h,07fh,0f4h,07fh,0f4h,030h,0f4h,004h,0f0h,00ch,0f4h,004h,0f0h,00ah,0f4h,007h	; 98ab  .....0..........
-	defb 0f0h,009h,0f4h,008h,0f0h,008h,0f4h,008h,0f0h,008h,0f4h,008h,0f0h,00bh,0f4h,003h	; 98bb  ................
-	defb 0f0h,00bh,0f4h,007h,0f0h,007h,0f4h,006h,0f0h,00ch,0f4h,006h,0f0h,009h,0f4h,007h	; 98cb  ................
-	defb 0f0h,00ch,0f4h,006h,0f0h,007h,0f4h,00bh,0f0h,006h,0f4h,006h,0f0h,00bh,0f4h,005h	; 98db  ................
-	defb 0f0h,008h,0f4h,008h,0f0h,006h,0f4h,009h,0f0h,00bh,0f4h,005h,0f0h,009h,0f4h,008h	; 98eb  ................
-	defb 0f0h,005h,0f4h,000h	; 98fb
+	defb 008h,0f0h,005h,0feh,000h	; 97fb
+
+; ----------------------------------------------------------------------
+; DATOS rachas_9800: rachas a la VRAM (un paso con la BIOS japonesa): [n <
+;   0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0
+;   acaba; lo leen p00:52F7 (85 bytes)
+;   0x9800..0x9855  (85 bytes)
+DATA_rachas_9800:
+	defb 040h,0f0h,07fh,0f7h,07fh,0f7h,030h,0f7h,004h,0f0h,00ch,0f7h,004h,0f0h,00ah,0f7h	; 9800  @.....0.........
+	defb 007h,0f0h,009h,0f7h,008h,0f0h,008h,0f7h,008h,0f0h,008h,0f7h,008h,0f0h,00bh,0f7h	; 9810  ................
+	defb 003h,0f0h,00bh,0f7h,007h,0f0h,007h,0f7h,006h,0f0h,00ch,0f7h,006h,0f0h,009h,0f7h	; 9820  ................
+	defb 007h,0f0h,00ch,0f7h,006h,0f0h,007h,0f7h,00bh,0f0h,006h,0f7h,006h,0f0h,00bh,0f7h	; 9830  ................
+	defb 005h,0f0h,008h,0f7h,008h,0f0h,006h,0f7h,009h,0f0h,00bh,0f7h,005h,0f0h,009h,0f7h	; 9840  ................
+	defb 008h,0f0h,005h,0f7h,000h	; 9850
+
+; ----------------------------------------------------------------------
+; DATOS rachas_9855: rachas a la VRAM (un paso con la BIOS japonesa): [n <
+;   0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0
+;   acaba; lo leen p00:52F7 (85 bytes)
+;   0x9855..0x98aa  (85 bytes)
+DATA_rachas_9855:
+	defb 040h,0f0h,07fh,0f5h,07fh,0f5h,030h,0f5h,004h,0f0h,00ch,0f5h,004h,0f0h,00ah,0f5h	; 9855  @.....0.........
+	defb 007h,0f0h,009h,0f5h,008h,0f0h,008h,0f5h,008h,0f0h,008h,0f5h,008h,0f0h,00bh,0f5h	; 9865  ................
+	defb 003h,0f0h,00bh,0f5h,007h,0f0h,007h,0f5h,006h,0f0h,00ch,0f5h,006h,0f0h,009h,0f5h	; 9875  ................
+	defb 007h,0f0h,00ch,0f5h,006h,0f0h,007h,0f5h,00bh,0f0h,006h,0f5h,006h,0f0h,00bh,0f5h	; 9885  ................
+	defb 005h,0f0h,008h,0f5h,008h,0f0h,006h,0f5h,009h,0f0h,00bh,0f5h,005h,0f0h,009h,0f5h	; 9895  ................
+	defb 008h,0f0h,005h,0f5h,000h	; 98a5
+
+; ----------------------------------------------------------------------
+; DATOS rachas_98AA: rachas a la VRAM (un paso con la BIOS japonesa): [n <
+;   0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0
+;   acaba; lo leen p00:52F7 (85 bytes)
+;   0x98aa..0x98ff  (85 bytes)
+DATA_rachas_98AA:
+	defb 040h,0f0h,07fh,0f4h,07fh,0f4h,030h,0f4h,004h,0f0h,00ch,0f4h,004h,0f0h,00ah,0f4h	; 98aa  @.....0.........
+	defb 007h,0f0h,009h,0f4h,008h,0f0h,008h,0f4h,008h,0f0h,008h,0f4h,008h,0f0h,00bh,0f4h	; 98ba  ................
+	defb 003h,0f0h,00bh,0f4h,007h,0f0h,007h,0f4h,006h,0f0h,00ch,0f4h,006h,0f0h,009h,0f4h	; 98ca  ................
+	defb 007h,0f0h,00ch,0f4h,006h,0f0h,007h,0f4h,00bh,0f0h,006h,0f4h,006h,0f0h,00bh,0f4h	; 98da  ................
+	defb 005h,0f0h,008h,0f4h,008h,0f0h,006h,0f4h,009h,0f0h,00bh,0f4h,005h,0f0h,009h,0f4h	; 98ea  ................
+	defb 008h,0f0h,005h,0f4h,000h	; 98fa
 
 ; ----------------------------------------------------------------------
 ; DATOS rachas_98FF: rachas a la VRAM (el titulo (no japones)): [n < 0x80]
@@ -677,10 +748,11 @@ DATA_rachas_9A8F:
 	defb 017h,018h,006h,000h,081h,011h,018h,015h,081h,018h,000h	; 9bcf  ...........
 
 ; ----------------------------------------------------------------------
-; DATOS plano_mapas: 6 punteros: rachas que se desempaquetan en la RAM
-;   (0xE900) para el plano; lo leen p00:5A11 (12 bytes)
+; DATOS presentacion_trozos: 6 punteros: los trozos del dibujo de la
+;   presentacion, en rachas que se desempaquetan en la RAM (0xE900); lo leen
+;   p00:5A11 (12 bytes)
 ;   0x9bda..0x9be6  (12 bytes)
-DATA_plano_mapas:
+DATA_presentacion_trozos:
 	defw 09d71h,09d76h,09d7bh,09d82h,09d89h,09d8eh	; 9bda
 
 ; ----------------------------------------------------------------------
@@ -692,8 +764,8 @@ DATA_resto_9BE6:
 	defb 000h,00ah,0a8h,00ah,050h,00bh,0f8h,00bh,0a0h,00ch,048h,00dh	; 9be6  ....P.....H.
 
 ; ----------------------------------------------------------------------
-; DATOS rachas_9BF2: rachas a la VRAM (el plano) con su destino delante (2
-;   bytes); lo leen p00:4E23 (354 bytes)
+; DATOS rachas_9BF2: rachas a la VRAM (la presentacion) con su destino delante
+;   (2 bytes); lo leen p00:4E23 (354 bytes)
 ;   0x9bf2..0x9d54  (354 bytes)
 DATA_rachas_9BF2:
 	defb 000h,02ah,018h,000h,002h,007h,003h,00fh,002h,01fh,081h,03fh,008h,0ffh,002h,0f8h	; 9bf2  .*.........?....
@@ -721,45 +793,55 @@ DATA_rachas_9BF2:
 	defb 000h,000h	; 9d52
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x9d54..0x9d71  (29 bytes)
-DATA_9D54:
+; DATOS rachas_9D54: rachas que suman 0x3F0 bytes, lo que miden los patrones
+;   del dibujo de la presentacion (p00:599B): con la forma de sus colores;
+;   ninguna instruccion carga 0x9D54 ni sale como palabra en la ROM; lo leen
+;   nadie (29 bytes)
+;   0x9d54..0x9d71  (29 bytes)
+DATA_rachas_9D54:
 	defb 07fh,090h,029h,090h,07fh,090h,029h,090h,020h,090h,020h,060h,068h,0e0h,018h,090h	; 9d54  ..)...). . `h...
 	defb 020h,060h,070h,0e0h,07fh,060h,029h,060h,07fh,060h,029h,060h,000h	; 9d64   `p..`)`.`)`.
 
 ; ----------------------------------------------------------------------
-; DATOS plano_0: rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+; DATOS presentacion_0: un trozo del dibujo de la presentacion: rachas a la
+;   RAM (p00:5A21); lo leen p00:5A21 (5 bytes)
 ;   0x9d71..0x9d76  (5 bytes)
-DATA_plano_0:
+DATA_presentacion_0:
 	defb 07fh,090h,029h,090h,000h	; 9d71
 
 ; ----------------------------------------------------------------------
-; DATOS plano_1: rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+; DATOS presentacion_1: un trozo del dibujo de la presentacion: rachas a la
+;   RAM (p00:5A21); lo leen p00:5A21 (5 bytes)
 ;   0x9d76..0x9d7b  (5 bytes)
-DATA_plano_1:
+DATA_presentacion_1:
 	defb 07fh,090h,029h,090h,000h	; 9d76
 
 ; ----------------------------------------------------------------------
-; DATOS plano_2: rachas a la RAM (como p00:5A21); lo leen p00:5A21 (7 bytes)
+; DATOS presentacion_2: un trozo del dibujo de la presentacion: rachas a la
+;   RAM (p00:5A21); lo leen p00:5A21 (7 bytes)
 ;   0x9d7b..0x9d82  (7 bytes)
-DATA_plano_2:
+DATA_presentacion_2:
 	defb 020h,090h,020h,060h,068h,0e0h,000h	; 9d7b
 
 ; ----------------------------------------------------------------------
-; DATOS plano_3: rachas a la RAM (como p00:5A21); lo leen p00:5A21 (7 bytes)
+; DATOS presentacion_3: un trozo del dibujo de la presentacion: rachas a la
+;   RAM (p00:5A21); lo leen p00:5A21 (7 bytes)
 ;   0x9d82..0x9d89  (7 bytes)
-DATA_plano_3:
+DATA_presentacion_3:
 	defb 018h,090h,020h,060h,070h,0e0h,000h	; 9d82
 
 ; ----------------------------------------------------------------------
-; DATOS plano_4: rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+; DATOS presentacion_4: un trozo del dibujo de la presentacion: rachas a la
+;   RAM (p00:5A21); lo leen p00:5A21 (5 bytes)
 ;   0x9d89..0x9d8e  (5 bytes)
-DATA_plano_4:
+DATA_presentacion_4:
 	defb 07fh,060h,029h,060h,000h	; 9d89
 
 ; ----------------------------------------------------------------------
-; DATOS plano_5: rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+; DATOS presentacion_5: un trozo del dibujo de la presentacion: rachas a la
+;   RAM (p00:5A21); lo leen p00:5A21 (5 bytes)
 ;   0x9d8e..0x9d93  (5 bytes)
-DATA_plano_5:
+DATA_presentacion_5:
 	defb 07fh,060h,029h,060h,000h	; 9d8e
 
 ; ----------------------------------------------------------------------

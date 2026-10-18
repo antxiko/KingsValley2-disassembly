@@ -12,14 +12,17 @@
 #
 # Este fichero lo regenera `make semillas` (tools/bancos.py escribe).
 0x402E   # gancho de interrupcion que pone el arranque
-0x4099   # p01:74AD call
 0x409F   # p01:62D6 jp
 0x40A8   # cabecera AB: INIT
 0x40C4   # gancho H.STKE (0xFEDA) que pone INIT
-0x41BD   # p01:73F7 call
+0x4192   # p02:9EBA call
+0x41AE   # huerfano: pone los bancos 4-5-6 (como p00:41B3); nadie lo llama
+0x41BD   # p02:9EA1 call
 0x41C2   # p02:9D07 call
 0x41C7   # p02:876D call
+0x41ED   # huerfano: pide el sonido 2; nadie lo llama
 0x41F2   # p12:B979 entrada 0 de la tabla de 0xB97C (call 0x409E en 0xB979)
+0x41F7   # huerfano: pide el sonido 4; nadie lo llama
 0x41FC   # p12:B979 entrada 1 de la tabla de 0xB97C (call 0x409E en 0xB979)
 0x4201   # p12:B979 entrada 2 de la tabla de 0xB97C (call 0x409E en 0xB979)
 0x4206   # p12:B979 entrada 3 de la tabla de 0xB97C (call 0x409E en 0xB979)
@@ -80,6 +83,7 @@
 0x430B   # p03:BC48 jp
 0x430F   # pide el sonido 0x41
 0x4323   # p01:6F1F call
+0x432C   # huerfano: pide la orden 0x84 (sigue en p00:432E); nadie lo llama
 0x4360   # p12:BA2D call
 0x4368   # p12:BA1B call
 0x4371   # p12:BA49 jp
@@ -117,18 +121,28 @@
 0x4BB0   # p00:46EB entrada 13 de la tabla de 0x46EE (call 0x409E en 0x46EB)
 0x4C21   # p03:A9C9 call
 0x4D20   # p02:8DFC call
-0x4D4D   # p01:7400 call
+0x4DEC   # huerfano: DE = -DE; nadie lo llama
+0x4DF4   # huerfano: HL = -HL; nadie lo llama
+0x4E1A   # huerfano: WRTVDP sin tocar BC; nadie lo llama
+0x4E59   # huerfano: C = 1 y salta; nadie lo llama
+0x4E5D   # huerfano: C = 1 y salta; nadie lo llama
+0x4EC7   # p02:9EAD call
+0x4EF5   # huerfano: R#8 = 0xFFE7 con el bit 1 (cosa de MSX2, aqui sin usar); nadie lo llama
+0x4F00   # huerfano: el otro de R#8; nadie lo llama
+0x4F0B   # p02:9EB1 call
 0x4F0F   # p01:73F1 call
 0x4F4B   # p01:6107 call
 0x4FC7   # p12:BA63 jp
+0x5088   # huerfano: 278 bytes de rutinas con su tabla de saltos; nadie llama a 0x5088
 0x52FD   # p01:7535 call
 0x531F   # p02:8C04 call
 0x532E   # p01:76EA call
 0x5342   # p12:B6CC call
 0x5368   # p12:B52B jp cc
 0x537B   # p03:BC0D call cc
-0x537D   # p03:ABFD call
+0x537D   # p03:B8DA call
 0x53C1   # p02:939C jp
+0x53D6   # p02:9377 jp
 0x53EE   # p02:8B07 call cc
 0x53F9   # p01:734C call
 0x5410   # p01:72B9 call
@@ -140,6 +154,7 @@
 0x564A   # p01:6FDD jp
 0x565F   # p01:76F7 call
 0x56C2   # p01:6DEE call
+0x56CF   # huerfano: los graficos de la lista 0x8166 (bancos 7-8-9); nadie lo llama
 0x56D8   # p01:6614 call
 0x56E1   # p01:71E4 call
 0x56EA   # p01:6E10 call

@@ -57,8 +57,8 @@
 0x8E0F   # p02:8CA8 entrada 6 de la tabla de 0x8CAB (call 0x409E en 0x8CA8)
 0x8E16   # p02:8CA8 entrada 7 de la tabla de 0x8CAB (call 0x409E en 0x8CA8)
 0x8E21   # p03:A8FA call
-0x8E2D   # p03:AADB call
-0x8E74   # p00:5B0D call
+0x8E2D   # p03:BA8B call
+0x8E74   # p03:BA94 call
 0x8ECA   # p00:5B73 call
 0x8F34   # p00:5AD9 call
 0x8F51   # p03:A5CB call
@@ -69,8 +69,8 @@
 0x9118   # p02:910F entrada 0 de la tabla de 0x9112 (call 0x409E en 0x910F)
 0x9182   # p02:910F entrada 1 de la tabla de 0x9112 (call 0x409E en 0x910F)
 0x9218   # p02:910F entrada 2 de la tabla de 0x9112 (call 0x409E en 0x910F)
-0x928A   # p01:7B92 call
 0x9311   # p01:61C8 jp cc
+0x934F   # tipo 5 de la tabla p01:62D9 (repintar): el bloque
 0x936B   # p01:7E22 entrada 4 de la tabla de 0x7E25 (call 0x409E en 0x7E22)
 0x937A   # p01:6281 call
 0x93E8   # p03:AAF5 call
@@ -102,7 +102,10 @@
 0x9CA3   # p00:5B6D call
 0x9D06   # p00:49D2 call
 0x9D07   # p00:49F0 call
-0x9D5F   # p01:7BAA call
+0x9D5F   # p03:AEB1 call
 0x9D89   # p03:A3CE call
 0x9E16   # p00:5AD6 call
+0x9E67   # rutina de error de disco del juego: la BIOS de disco salta por 0xF323 (DISKVE) -> 0x9E65 -> aqui (p00:4165, p03:A135)
+0x9E95   # huerfano: C = 6 (el letrero DATATYPEERROR) y sigue en el error de disco p02:9E97; nadie salta aqui
 0x9E97   # p03:A066 jp cc
+0x9ED2   # rutina de error de disco mientras se lee la lista: 0xF323 -> 0x9ED0 -> aqui (p03:A013)
