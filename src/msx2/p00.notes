@@ -718,6 +718,7 @@ C 0x4074 lee el banco puesto en 0xA000
 C 0x4077 el mapper: pone en 0xA000 el banco de A
 C 0x408A guarda la marca de cuadro del juego en marcha
 C 0x40D0 guarda la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0x40F1 guarda la demostracion siguiente (1-6)
 C 0x4100 el mapper: pone en 0x6000 el banco de A
 C 0x4105 el mapper: pone en 0x8000 el banco de A
 C 0x410B el mapper: pone en 0xA000 el banco de A
@@ -795,7 +796,10 @@ C 0x477A apunta a la espera del paso (en cuadros)
 C 0x4780 el letrero del jugador (1 o 2) que parpadea
 C 0x478B pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0x478E pone el banco 12 en 0xA000
+C 0x4791 la demostracion: la fase de la tabla 0xBA3A (una de 6, 0xE219 va dando la vuelta)
 C 0x4794 pone los bancos 1-2-3 (el juego)
+C 0x47A4 el mando de la demostracion: [teclas][cuadros] de la tabla de la piramide (0xBA92)
+C 0x47A7 un cuadro de la demostracion: la partida con el mando grabado; si muere, se acaba
 C 0x47AA pone los bancos 1-2-3 (el juego)
 C 0x47AD lee la marca de fase empezada
 C 0x47B6 guarda el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final) y el byte siguiente (16 bits)
@@ -896,6 +900,7 @@ C 0x4AE5 guarda la marca de seguir tras el fin de la partida (F5)
 C 0x4AEF guarda la marca de borde sin pantalla al otro lado
 C 0x4AF2 pasa a la pantalla de al lado al salir por el borde 0xE248 (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 C 0x4AF5 lee la marca de borde sin pantalla al otro lado
+C 0x4AFB al entrar en una pantalla, se quitan los enemigos que esten a menos de 24 pixeles del personaje
 C 0x4AFE pinta la pantalla en la que se esta: apaga, pinta y enciende
 C 0x4B07 guarda la cuenta para volver a poner la musica
 C 0x4B0A un cuadro de la fase acabada (estado 9), por pasos (0xE257)
@@ -915,11 +920,14 @@ C 0x4B63 copia a la VRAM los 16 sprites en otro orden cada cuadro (asi parpadean
 C 0x4B66 lee el paso del editor
 C 0x4B70 apunta a la espera del paso (en cuadros)
 C 0x4B7A pone el banco 12 en 0xA000
+C 0x4B7D un cuadro del minijuego del sitio escondido (estado 12)
 C 0x4B80 pone los bancos 1-2-3 (el juego)
+C 0x4B83 lee el sitio escondido de la fase: tipo, paso, pantalla, y, x (0xEF10-0xEF15)
 C 0x4B88 apunta a las vidas (BCD)
 C 0x4B8F pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0x4B94 0xE204 = A: la espera del paso siguiente
 C 0x4B97 pone los bancos 14-15 en 0x8000-0xBFFF
+C 0x4B9D lee el sitio escondido de la fase: tipo, paso, pantalla, y, x (0xEF10-0xEF15)
 C 0x4BA2 suma A a HL (HL = HL + A)
 C 0x4BA9 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0x4BB2 lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
@@ -1151,12 +1159,14 @@ C 0x5CD9 lee las cosas de la fase (tabla 0xAAE0 del banco 13) a 0xE600
 C 0x5CDC las cosas que se cogen de la fase (tabla 0xAFB1 del banco 13) a 0xE300
 C 0x5CDF la lista 0xEE50: el numero (desde 1) de cada cosa de 0xE300 que hay, y un 0
 C 0x5CE2 pone el banco 12 en 0xA000
+C 0x5CE5 el sitio escondido de la fase, si lo tiene: tabla 0xB548, 5 bytes [fase][tipo][pantalla][y][x], un 0 acaba
 C 0x5CE8 pone los bancos 1-2-3 (el juego)
 C 0x5CF2 los dibujos de los sprites del personaje, con los bancos 14-15
 C 0x5CF8 quita los sprites: 0xE0 en la y de las tablas de 0xF600 y 0xF200
 C 0x5CFB apaga la pantalla (bit 6 de R#1 a cero)
 C 0x5CFE las borra del mapa (valor 0)
 C 0x5D04 pone el banco 12 en 0xA000
+C 0x5D07 al pintar la pantalla, el sitio si ya ha aparecido
 C 0x5D0A pone los bancos 1-2-3 (el juego)
 C 0x5D0D pinta la salida si es de esta pantalla: 4 x 4 caracteres de 0x9340 + 16 x 0xE2F6
 C 0x5D10 al entrar en la pantalla por un lado: los bloques del borde se apartan
@@ -1171,6 +1181,7 @@ C 0x5D66 lo que pasa en un cuadro, en este orden
 C 0x5D69 copia a la VRAM los 16 sprites en otro orden cada cuadro (asi parpadean en vez de desaparecer)
 C 0x5D70 un cuadro del personaje: lo de su estado y sus dibujos
 C 0x5D76 los sprites del personaje; en el estado 0x0E, uno de cada dos cuadros no se ve (parpadea)
+C 0x5D79 un cuadro de las 64 cosas de 0xE300: cada tipo, su rutina (tabla detras)
 C 0x5D7C los sprites de las cosas de 0xE300 que brillan (tipo 2 o mas, estado < 3)
 C 0x5D7F coger una cosa de 0xE300 del suelo (si no lleva otra y no esta saliendo)
 C 0x5D82 coger las cosas de 2 x 2 de esta pantalla que esten a menos de 12 pixeles del personaje
@@ -1179,7 +1190,9 @@ C 0x5D88 un cuadro de los 8 enemigos de 0xE500 (32 bytes cada uno)
 C 0x5D8B los sprites de los enemigos de esta pantalla; en MSX2, sus colores a 0xD300
 C 0x5D8E el personaje en la salida: si esta en su pantalla y no queda nada por coger (0xE2F5)...
 C 0x5D91 un cuadro de las 16 cosas de 0xE600: cada tipo, su rutina (tabla 0x64A4)
+C 0x5D94 las columnas de 0xE7C0 de esta pantalla
 C 0x5D97 pone el banco 12 en 0xA000
+C 0x5D9A un cuadro del sitio escondido, por pasos (0xEF11)
 C 0x5D9D pone los bancos 1-2-3 (el juego)
 C 0x5DA0 un enemigo de esta pantalla toca al personaje: muere (salvo con FESTIVAL o ya muerto)
 C 0x5DA3 las cosas lanzadas (tipo 1-3 de 0xE300 en vuelo) que dan a un enemigo

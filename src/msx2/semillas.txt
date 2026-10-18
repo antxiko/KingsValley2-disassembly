@@ -32,3 +32,16 @@ p04 0x6A90 4 5 6   # orden 0xFB de la tabla p04:68A3
 p04 0x6AAA 4 5 6   # orden 0xFC de la tabla p04:68A3
 p04 0x6ABF 4 5 6   # orden 0xFD de la tabla p04:68A3
 p04 0x6AC2 4 5 6   # orden 0xFE de la tabla p04:68A3
+#
+# Peticiones de sonido a las que solo se llega con jp (hl): p03 las carga en HL
+# y salta por la rutina que mira si el enemigo esta en esta pantalla (p03:B294 en MSX2).
+p00 0x4271 1 2 3   # pide el sonido 0x1E
+p00 0x4276 1 2 3   # pide el sonido 0x1F
+p00 0x42AF 1 2 3   # pide el sonido 0x2B
+p00 0x42B3 1 2 3   # pide el sonido 0x2C
+p00 0x42BF 1 2 3   # pide el sonido 0x2F
+p00 0x42C7 1 2 3   # pide el sonido 0x31
+p00 0x42CF 1 2 3   # pide el sonido 0x33
+p00 0x42D3 1 2 3   # pide el sonido 0x34
+p00 0x42FF 1 2 3   # pide el sonido 0x3F
+p00 0x4307 1 2 3   # pide el sonido 0x41

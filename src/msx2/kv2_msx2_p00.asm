@@ -137,7 +137,7 @@ L_40B5:
 	ld (hl),a			;40ec
 	ldir		;40ed
 	ld a,001h		;40ef   ; 0xE219 = 1
-	ld (0e219h),a		;40f1
+	ld (0e219h),a		;40f1   ; guarda la demostracion siguiente (1-6)
 	xor a			;40f4
 	ld (0f3eah),a		;40f5   ; 0xF3EA y 0xF3EB a cero (los colores del borde y del fondo)
 	ld (0f3ebh),a		;40f8
@@ -323,7 +323,7 @@ DATA_41EF:
 	defb 03eh,004h,0c3h,026h,043h	; 41ef
 
 ; ======================================================================
-; CODIGO 0x41f4..0x4271  (125 bytes)
+; CODIGO 0x41f4..0x4324  (304 bytes)
 ; ======================================================================
 
 
@@ -402,20 +402,12 @@ L_4267:
 L_426C:
 	ld a,01dh		;426c   ; pide el sonido 0x1D
 	jp L_4326		;426e
-
-; ----------------------------------------------------------------------
-; DATOS resto_4271: lo apuntan con el banco puesto p03:AD4D (0x4271), p03:B37C
-;   (0x4276); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p03:AD4D, p03:B37C (10 bytes)
-;   0x4271..0x427b  (10 bytes)
-DATA_resto_4271:
-	defb 03eh,01eh,0c3h,026h,043h,03eh,01fh,0c3h,026h,043h	; 4271  >..&C>..&C
-
-; ======================================================================
-; CODIGO 0x427b..0x42af  (52 bytes)
-; ======================================================================
-
-
+L_4271:
+	ld a,01eh		;4271
+	jp L_4326		;4273
+L_4276:
+	ld a,01fh		;4276
+	jp L_4326		;4278
 L_427B:
 	ld a,020h		;427b   ; pide el sonido 0x20
 	jp L_4326		;427d
@@ -449,65 +441,36 @@ L_42A7:
 L_42AB:
 	ld a,02ah		;42ab   ; pide el sonido 0x2A
 	jr $+121		;42ad
-
-; ----------------------------------------------------------------------
-; DATOS resto_42AF: lo apuntan con el banco puesto p03:AF48 (0x42B3); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p03:AF48 (8 bytes)
-;   0x42af..0x42b7  (8 bytes)
-DATA_resto_42AF:
-	defb 03eh,02bh,018h,073h,03eh,02ch,018h,06fh	; 42af  >+.s>,.o
-
-; ======================================================================
-; CODIGO 0x42b7..0x42bf  (8 bytes)
-; ======================================================================
-
-
+L_42AF:
+	ld a,02bh		;42af
+	jr $+117		;42b1
+L_42B3:
+	ld a,02ch		;42b3
+	jr $+113		;42b5
 L_42B7:
 	ld a,02dh		;42b7   ; pide el sonido 0x2D
 	jr $+109		;42b9
 L_42BB:
 	ld a,02eh		;42bb   ; pide el sonido 0x2E
 	jr $+105		;42bd
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x42bf..0x42c3  (4 bytes)
-DATA_42BF:
-	defb 03eh,02fh,018h,063h	; 42bf
-
-; ======================================================================
-; CODIGO 0x42c3..0x42c7  (4 bytes)
-; ======================================================================
-
-
+L_42BF:
+	ld a,02fh		;42bf
+	jr $+101		;42c1
 L_42C3:
 	ld a,030h		;42c3   ; pide el sonido 0x30
 	jr $+97		;42c5
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x42c7..0x42cb  (4 bytes)
-DATA_42C7:
-	defb 03eh,031h,018h,05bh	; 42c7
-
-; ======================================================================
-; CODIGO 0x42cb..0x42cf  (4 bytes)
-; ======================================================================
-
-
+L_42C7:
+	ld a,031h		;42c7
+	jr $+93		;42c9
 L_42CB:
 	ld a,032h		;42cb   ; pide el sonido 0x32
 	jr $+89		;42cd
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x42cf..0x42d7  (8 bytes)
-DATA_42CF:
-	defb 03eh,033h,018h,053h,03eh,034h,018h,04fh	; 42cf  >3.S>4.O
-
-; ======================================================================
-; CODIGO 0x42d7..0x42ff  (40 bytes)
-; ======================================================================
-
-
+L_42CF:
+	ld a,033h		;42cf
+	jr $+85		;42d1
+L_42D3:
+	ld a,034h		;42d3
+	jr $+81		;42d5
 L_42D7:
 	ld a,035h		;42d7   ; pide el sonido 0x35
 	jr $+77		;42d9
@@ -538,34 +501,15 @@ L_42F7:
 L_42FB:
 	ld a,03eh		;42fb   ; pide el sonido 0x3E
 	jr $+41		;42fd
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x42ff..0x4303  (4 bytes)
-DATA_42FF:
-	defb 03eh,03fh,018h,023h	; 42ff
-
-; ======================================================================
-; CODIGO 0x4303..0x4307  (4 bytes)
-; ======================================================================
-
-
+L_42FF:
+	ld a,03fh		;42ff
+	jr $+37		;4301
 L_4303:
 	ld a,040h		;4303   ; pide el sonido 0x40
 	jr $+33		;4305
-
-; ----------------------------------------------------------------------
-; DATOS resto_4307: lo apuntan con el banco puesto p03:AE3F (0x4307); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p03:AE3F (4 bytes)
-;   0x4307..0x430b  (4 bytes)
-DATA_resto_4307:
-	defb 03eh,041h,018h,01bh	; 4307
-
-; ======================================================================
-; CODIGO 0x430b..0x4324  (25 bytes)
-; ======================================================================
-
-
+L_4307:
+	ld a,041h		;4307
+	jr $+29		;4309
 L_430B:
 	ld a,080h		;430b   ; orden 0x80 al motor de sonido (p04:61E4)
 	jr $+25		;430d
@@ -1322,7 +1266,7 @@ L_4787:
 	jr nz,L_47A1		;4789
 	call L_4E98		;478b   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	call L_41B5		;478e   ; pone el banco 12 en 0xA000
-	call 0ba11h		;4791
+	call 0ba11h		;4791   ; la demostracion: la fase de la tabla 0xBA3A (una de 6, 0xE219 va dando la vuelta)
 	call L_418A		;4794   ; pone los bancos 1-2-3 (el juego)
 	ld a,020h		;4797
 L_4799:
@@ -1333,8 +1277,8 @@ L_479C:
 	ret			;47a0
 L_47A1:
 	call L_41B5		;47a1   ; al acabar, sin partida empezada vuelve al estado 0
-	call 0ba66h		;47a4
-	call 0ba41h		;47a7
+	call 0ba66h		;47a4   ; el mando de la demostracion: [teclas][cuadros] de la tabla de la piramide (0xBA92)
+	call 0ba41h		;47a7   ; un cuadro de la demostracion: la partida con el mando grabado; si muere, se acaba
 	call L_418A		;47aa   ; pone los bancos 1-2-3 (el juego)
 	ld a,(0e246h)		;47ad   ; lee la marca de fase empezada
 	or a			;47b0
@@ -1765,7 +1709,7 @@ L_4AEE:
 	ld a,(0e24dh)		;4af5   ; lee la marca de borde sin pantalla al otro lado
 	and a			;4af8
 	jr nz,L_4B01		;4af9
-	call 0afb4h		;4afb
+	call 0afb4h		;4afb   ; al entrar en una pantalla, se quitan los enemigos que esten a menos de 24 pixeles del personaje
 	call L_5CF5		;4afe   ; pinta la pantalla en la que se esta: apaga, pinta y enciende
 L_4B01:
 	ld a,005h		;4b01
@@ -1829,9 +1773,9 @@ L_4B6E:
 L_4B78:
 	djnz L_4B8F		;4b78
 	call L_41B5		;4b7a   ; pone el banco 12 en 0xA000
-	call 0b534h		;4b7d
+	call 0b534h		;4b7d   ; un cuadro del minijuego del sitio escondido (estado 12)
 	call L_418A		;4b80   ; pone los bancos 1-2-3 (el juego)
-	ld a,(0ef10h)		;4b83
+	ld a,(0ef10h)		;4b83   ; lee el sitio escondido de la fase: tipo, paso, pantalla, y, x (0xEF10-0xEF15)
 	or a			;4b86
 	ret nz			;4b87
 	ld hl,0e240h		;4b88   ; apunta a las vidas (BCD)
@@ -1843,7 +1787,7 @@ L_4B8F:
 	call L_4799		;4b94   ; 0xE204 = A: la espera del paso siguiente
 	call L_41CC		;4b97   ; pone los bancos 14-15 en 0x8000-0xBFFF
 	ld hl,09d37h		;4b9a
-	ld a,(0ef10h)		;4b9d
+	ld a,(0ef10h)		;4b9d   ; lee el sitio escondido de la fase: tipo, paso, pantalla, y, x (0xEF10-0xEF15)
 	dec a			;4ba0
 	add a,a			;4ba1
 	call L_408F		;4ba2   ; suma A a HL (HL = HL + A)
@@ -4504,7 +4448,7 @@ L_5C94:
 	call 097b2h		;5cdc   ; las cosas que se cogen de la fase (tabla 0xAFB1 del banco 13) a 0xE300
 	call 0921ah		;5cdf   ; la lista 0xEE50: el numero (desde 1) de cada cosa de 0xE300 que hay, y un 0
 	call L_41B5		;5ce2   ; pone el banco 12 en 0xA000
-	call 0b400h		;5ce5
+	call 0b400h		;5ce5   ; el sitio escondido de la fase, si lo tiene: tabla 0xB548, 5 bytes [fase][tipo][pantalla][y][x], un 0 acaba
 	call L_418A		;5ce8   ; pone los bancos 1-2-3 (el juego)
 	xor a			;5ceb
 	ld (0e287h),a		;5cec   ; el personaje en su primera postura
@@ -4517,7 +4461,7 @@ L_5CF5:
 	call 0639ch		;5cfe   ; las borra del mapa (valor 0)
 	call L_44D4		;5d01   ; los ladrillos, las puertas y lo de 0xE2C0
 	call L_41B5		;5d04   ; pone el banco 12 en 0xA000
-	call 0b51ch		;5d07
+	call 0b51ch		;5d07   ; al pintar la pantalla, el sitio si ya ha aparecido
 	call L_418A		;5d0a   ; pone los bancos 1-2-3 (el juego)
 	call 09010h		;5d0d   ; pinta la salida si es de esta pantalla: 4 x 4 caracteres de 0x9340 + 16 x 0xE2F6
 	call 093beh		;5d10   ; al entrar en la pantalla por un lado: los bloques del borde se apartan
@@ -4578,7 +4522,7 @@ L_5D6D:
 	call 09ec4h		;5d70   ; un cuadro del personaje: lo de su estado y sus dibujos
 	call L_5864		;5d73   ; los dibujos del personaje
 	call 09866h		;5d76   ; los sprites del personaje; en el estado 0x0E, uno de cada dos cuadros no se ve (parpadea)
-	call 0a6bdh		;5d79
+	call 0a6bdh		;5d79   ; un cuadro de las 64 cosas de 0xE300: cada tipo, su rutina (tabla detras)
 	call 0916dh		;5d7c   ; los sprites de las cosas de 0xE300 que brillan (tipo 2 o mas, estado < 3)
 	call 09a14h		;5d7f   ; coger una cosa de 0xE300 del suelo (si no lleva otra y no esta saliendo)
 	call 0999dh		;5d82   ; coger las cosas de 2 x 2 de esta pantalla que esten a menos de 12 pixeles del personaje
@@ -4587,9 +4531,9 @@ L_5D6D:
 	call 06645h		;5d8b   ; los sprites de los enemigos de esta pantalla; en MSX2, sus colores a 0xD300
 	call 08fbeh		;5d8e   ; el personaje en la salida: si esta en su pantalla y no queda nada por coger (0xE2F5)...
 	call 06483h		;5d91   ; un cuadro de las 16 cosas de 0xE600: cada tipo, su rutina (tabla 0x64A4)
-	call 0be15h		;5d94
+	call 0be15h		;5d94   ; las columnas de 0xE7C0 de esta pantalla
 	call L_41B5		;5d97   ; pone el banco 12 en 0xA000
-	call 0b422h		;5d9a
+	call 0b422h		;5d9a   ; un cuadro del sitio escondido, por pasos (0xEF11)
 	call L_418A		;5d9d   ; pone los bancos 1-2-3 (el juego)
 	call 09ab1h		;5da0   ; un enemigo de esta pantalla toca al personaje: muere (salvo con FESTIVAL o ya muerto)
 	call 09afeh		;5da3   ; las cosas lanzadas (tipo 1-3 de 0xE300 en vuelo) que dan a un enemigo

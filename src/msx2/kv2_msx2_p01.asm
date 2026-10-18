@@ -993,7 +993,7 @@ L_65DF:
 	ld (ix+016h),h		;65e5   ; IX+16 la casilla, IX+10 la pantalla
 	ld (ix+010h),l		;65e8
 	ld a,l			;65eb
-	call 0ad15h		;65ec
+	call 0ad15h		;65ec   ; DE = el mapa de la pantalla A
 	ld (ix+00ch),e		;65ef
 	ld (ix+00dh),d		;65f2
 	ret			;65f5
@@ -1033,7 +1033,7 @@ L_6608:
 L_662D:
 	ld hl,0663dh		;662d
 	ld de,06641h		;6630
-	call 0b6e0h		;6633
+	call 0b6e0h		;6633   ; el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
 	jp z,L_6706		;6636
 	ld (ix+011h),a		;6639
 	ret			;663c
@@ -1209,7 +1209,7 @@ L_6729:
 	ld e,(hl)			;673e
 	inc hl			;673f
 	ld d,(hl)			;6740
-	call 0ac6dh		;6741
+	call 0ac6dh		;6741   ; crea un enemigo del tipo C (1-4) en (E, D) de la pantalla A, si hay ficha libre en 0xE500
 L_6744:
 	pop hl			;6744
 	pop bc			;6745
@@ -2698,11 +2698,11 @@ L_71A5:
 	jp 0418ah		;71b5
 L_71B8:
 	call 041b5h		;71b8   ; el personaje de la secuencia (banco 12, 0xBDD7)
-	call 0bdd7h		;71bb
+	call 0bdd7h		;71bb   ; el personaje de las secuencias: seis sprites
 	jp 0418ah		;71be
 L_71C1:
 	call 041b5h		;71c1   ; lo mismo con 0xBDDA
-	call 0bddah		;71c4
+	call 0bddah		;71c4   ; y el sprite 12 en (0xEDCB, 0xEDCC)
 	jp 0418ah		;71c7
 
 ; ----------------------------------------------------------------------
@@ -3084,7 +3084,7 @@ L_746F:
 	ld a,005h		;7480
 	call 04ef2h		;7482   ; pone el color A de la paleta a D, E (y lo guarda en la VRAM 0xF680 + 2 x A)
 	call 041b5h		;7485   ; pone el banco 12 en 0xA000
-	call 0bc6eh		;7488
+	call 0bc6eh		;7488   ; las estrellas del final: 0xE910 (32 de 16 bytes) a cero
 	call 0418ah		;748b   ; pone los bancos 1-2-3 (el juego)
 	call L_7703		;748e   ; el dibujo de 0xBCD2 (banco 12)
 	ld a,060h		;7491
@@ -3392,7 +3392,7 @@ L_76F8:
 	ret			;7702
 L_7703:
 	call 041b5h		;7703   ; el dibujo de 0xBCD2 (banco 12)
-	call 0bcd2h		;7706
+	call 0bcd2h		;7706   ; un cuadro de las estrellas
 	jp 0418ah		;7709
 L_770C:
 	ld a,(0edc9h)		;770c   ; el borde parpadea: color 0 o 11 cada 4 cuadros

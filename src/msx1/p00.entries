@@ -45,6 +45,8 @@
 0x426A   # p03:A531 call cc
 0x426F   # p03:A413 call cc
 0x4274   # p12:B979 entrada 18 de la tabla de 0xB97C (call 0x409E en 0xB979)
+0x4279   # pide el sonido 0x1E
+0x427E   # pide el sonido 0x1F
 0x4288   # p03:B852 call
 0x428D   # p03:B987 call
 0x4292   # p02:8C01 call
@@ -54,10 +56,16 @@
 0x42A6   # p12:B979 entrada 16 de la tabla de 0xB97C (call 0x409E en 0xB979)
 0x42AB   # p12:B979 entrada 17 de la tabla de 0xB97C (call 0x409E en 0xB979)
 0x42AF   # p02:98C9 jp
+0x42B7   # pide el sonido 0x2B
+0x42BB   # pide el sonido 0x2C
 0x42BF   # p01:6418 call cc
 0x42C3   # p12:B476 call
+0x42C7   # pide el sonido 0x2F
 0x42CB   # p12:B4A9 jp
+0x42CF   # pide el sonido 0x31
 0x42D3   # p12:B764 jp
+0x42D7   # pide el sonido 0x33
+0x42DB   # pide el sonido 0x34
 0x42DF   # p03:A4D4 call
 0x42E3   # p03:A304 jp
 0x42E7   # p01:720B jp
@@ -68,7 +76,9 @@
 0x42FB   # p02:9586 jp
 0x42FF   # p01:71AB jp
 0x4303   # p01:6F0F call cc
+0x4307   # pide el sonido 0x3F
 0x430B   # p03:BC48 jp
+0x430F   # pide el sonido 0x41
 0x4323   # p01:6F1F call
 0x4360   # p12:BA2D call
 0x4368   # p12:BA1B call

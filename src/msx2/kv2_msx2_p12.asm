@@ -352,7 +352,7 @@ DATA_resto_A000:
 
 
 L_B400:
-	ld hl,0b548h		;b400
+	ld hl,0b548h		;b400   ; el sitio escondido de la fase, si lo tiene: tabla 0xB548, 5 bytes [fase][tipo][pantalla][y][x], un 0 acaba
 L_B403:
 	ld a,(hl)			;b403
 	and a			;b404
@@ -364,8 +364,8 @@ L_B403:
 	call 0408fh		;b40e   ; suma A a HL (HL = HL + A)
 	jr L_B403		;b411
 L_B413:
-	inc hl			;b413
-	ld de,0ef10h		;b414
+	inc hl			;b413   ; lo copia a 0xEF10: tipo, paso (0) y pantalla, y, x
+	ld de,0ef10h		;b414   ; apunta a el sitio escondido de la fase: tipo, paso, pantalla, y, x (0xEF10-0xEF15)
 	ldi		;b417
 	xor a			;b419
 	ld (de),a			;b41a
@@ -374,7 +374,7 @@ L_B413:
 	ldir		;b41f
 	ret			;b421
 L_B422:
-	ld hl,0ef10h		;b422
+	ld hl,0ef10h		;b422   ; un cuadro del sitio escondido, por pasos (0xEF11)
 	ld a,(hl)			;b425
 	or a			;b426
 	ret z			;b427
@@ -397,16 +397,16 @@ DATA_tabla_B42F:
 
 
 L_B437:
-	exx			;b437
+	exx			;b437   ; paso 0: aparece si el personaje salta (estado 1) justo en el sitio
 	ld a,(0e243h)		;b438   ; lee la pantalla de la fase (desde 1)
 	cp (hl)			;b43b
 	ret nz			;b43c
 	ld a,(0e280h)		;b43d   ; lee el estado del personaje
 	dec a			;b440
 	ret nz			;b441
-	call L_B4AC		;b442
+	call L_B4AC		;b442   ; C si el personaje esta a menos de 4 pixeles del sitio
 	ret nc			;b445
-	ld hl,0ef11h		;b446
+	ld hl,0ef11h		;b446   ; el paso siguiente, una espera de 0x40 y se pinta, con el sonido 0x3B
 	inc (hl)			;b449
 	inc l			;b44a
 	inc l			;b44b
@@ -415,39 +415,39 @@ L_B437:
 	ld (hl),040h		;b44e
 	call 096ffh		;b450   ; devuelve el fondo de los bloques de esta pantalla
 	call 090abh		;b453   ; las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
-	call L_B4E3		;b456
+	call L_B4E3		;b456   ; guarda el fondo del sitio y pinta 2 x 2 caracteres de 0xB4F8
 	call 090f7h		;b459   ; las de la lista, al reves: guarda el fondo y pinta la cosa
 	call 096cfh		;b45c   ; pinta los bloques de esta pantalla
 	jp 042efh		;b45f
 L_B462:
-	ld hl,0ef15h		;b462
+	ld hl,0ef15h		;b462   ; paso 1: espera
 	dec (hl)			;b465
 	ret nz			;b466
 	ld hl,0ef11h		;b467
 	inc (hl)			;b46a
 	ret			;b46b
 L_B46C:
-	exx			;b46c
+	exx			;b46c   ; paso 2: al tocarlo, el sonido 0x2E y su dibujo de 0xB1D6
 	ld a,(0e243h)		;b46d   ; lee la pantalla de la fase (desde 1)
 	cp (hl)			;b470
 	ret nz			;b471
-	call L_B4C9		;b472
+	call L_B4C9		;b472   ; C si esta a menos de 4 en y y de 8 en x
 	ret nc			;b475
 	call 042bbh		;b476   ; pide el sonido 0x2E
 	ld hl,0ef11h		;b479
 	inc (hl)			;b47c
 	call 096ffh		;b47d   ; devuelve el fondo de los bloques de esta pantalla
 	call 090abh		;b480   ; las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
-	call L_B50B		;b483
+	call L_B50B		;b483   ; devuelve el fondo
 	call 056c5h		;b486   ; un dibujo de 16 x 16 de 0xB1D6 en la posicion de 0xEF13 (HMMC)
 	call 090f7h		;b489   ; las de la lista, al reves: guarda el fondo y pinta la cosa
 	jp 096cfh		;b48c
 L_B48F:
-	exx			;b48f
+	exx			;b48f   ; paso 3: en el sitio pulsando abajo, se entra (estado 12) con el sonido 0x30
 	ld a,(0e243h)		;b490   ; lee la pantalla de la fase (desde 1)
 	cp (hl)			;b493
 	ret nz			;b494
-	call L_B4C9		;b495
+	call L_B4C9		;b495   ; C si esta a menos de 4 en y y de 8 en x
 	ret nc			;b498
 	ld a,(0e208h)		;b499   ; lee el mando: lo pulsado
 	rra			;b49c
@@ -459,7 +459,7 @@ L_B48F:
 	ld (0ef11h),a		;b4a6
 	jp 042c3h		;b4a9
 L_B4AC:
-	inc l			;b4ac
+	inc l			;b4ac   ; C si el personaje esta a menos de 4 pixeles del sitio
 	ld a,(hl)			;b4ad
 	sub 010h		;b4ae
 	ld b,a			;b4b0
@@ -480,7 +480,7 @@ L_B4C6:
 	cp 004h		;b4c6
 	ret			;b4c8
 L_B4C9:
-	inc l			;b4c9
+	inc l			;b4c9   ; C si esta a menos de 4 en y y de 8 en x
 	ld b,(hl)			;b4ca
 	ld a,(0e282h)		;b4cb   ; lee la y del personaje
 	sub b			;b4ce
@@ -499,8 +499,8 @@ L_B4E0:
 	cp 008h		;b4e0
 	ret			;b4e2
 L_B4E3:
-	ld hl,0ef13h		;b4e3
-	call L_B4FC		;b4e6
+	ld hl,0ef13h		;b4e3   ; guarda el fondo del sitio y pinta 2 x 2 caracteres de 0xB4F8
+	call L_B4FC		;b4e6   ; guarda en la pagina 1 (0xB0) los 16 x 16 pixeles del sitio
 	ld hl,0ef13h		;b4e9
 	ld e,(hl)			;b4ec
 	inc l			;b4ed
@@ -523,7 +523,7 @@ DATA_resto_B4F8:
 
 
 L_B4FC:
-	ld a,(hl)			;b4fc
+	ld a,(hl)			;b4fc   ; guarda en la pagina 1 (0xB0) los 16 x 16 pixeles del sitio
 	inc l			;b4fd
 	ld h,(hl)			;b4fe
 	ld l,a			;b4ff
@@ -532,7 +532,7 @@ L_B4FC:
 	ld a,004h		;b506
 	jp 05029h		;b508
 L_B50B:
-	ld hl,0ef13h		;b50b
+	ld hl,0ef13h		;b50b   ; devuelve el fondo
 	ld e,(hl)			;b50e
 	inc l			;b50f
 	ld d,(hl)			;b510
@@ -541,7 +541,7 @@ L_B50B:
 	ld a,001h		;b517
 	jp 05029h		;b519
 L_B51C:
-	ld hl,0ef10h		;b51c
+	ld hl,0ef10h		;b51c   ; al pintar la pantalla, el sitio si ya ha aparecido
 	ld a,(hl)			;b51f
 	or a			;b520
 	ret z			;b521
@@ -558,10 +558,10 @@ L_B51C:
 	jp z,056c5h		;b52f
 	jr $-79		;b532
 L_B534:
-	call L_B53A		;b534
+	call L_B53A		;b534   ; un cuadro del minijuego del sitio escondido (estado 12)
 	jp 0583bh		;b537
 L_B53A:
-	ld ix,0ef10h		;b53a
+	ld ix,0ef10h		;b53a   ; tipo 1: las musicas; tipo 2: el puzle
 	ld a,(ix+000h)		;b53e
 	dec a			;b541
 	jp z,L_B917		;b542
@@ -605,7 +605,7 @@ DATA_resto_B548:
 
 
 L_B6B0:
-	ld a,(0e20ch)		;b6b0   ; lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
+	ld a,(0e20ch)		;b6b0   ; el puzle: ESC sale; por pasos (IX+01)
 	rla			;b6b3
 	rla			;b6b4
 	jp c,L_B8A3		;b6b5
@@ -626,7 +626,7 @@ DATA_tabla_B6BE:
 
 
 L_B6CA:
-	call 04e98h		;b6ca   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
+	call 04e98h		;b6ca   ; paso 0: la fuente, las piezas en orden (1-24 y el hueco) y el letrero
 	call 05d41h		;b6cd   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	call 056aah		;b6d0   ; la fuente: 0x35 caracteres de 0xAFDD
 	call 057cah		;b6d3   ; las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
@@ -639,24 +639,24 @@ L_B6DE:
 	ld (hl),b			;b6df
 	dec hl			;b6e0
 	djnz L_B6DE		;b6e1
-	call L_B71E		;b6e3
+	call L_B71E		;b6e3   ; pinta las 25 casillas (5 x 5) y el letrero
 	ld hl,0b8afh		;b6e6
 	call 051d0h		;b6e9   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	inc (ix+001h)		;b6ec
 	jp 0420dh		;b6ef
 L_B6F2:
-	ld a,(0e207h)		;b6f2   ; lee el mando: lo que se acaba de pulsar
+	ld a,(0e207h)		;b6f2   ; paso 1: espera el disparo
 	and 010h		;b6f5
 	ret z			;b6f7
 	inc (ix+001h)		;b6f8
 	ld hl,0b8beh		;b6fb
 	jp 051d4h		;b6fe
 L_B701:
-	ld hl,0b5e0h		;b701
+	ld hl,0b5e0h		;b701   ; paso 2: un puzle revuelto de los 4 de la tabla 0xB5E0 (al azar con 0xE203)
 	ld a,(0e203h)		;b704   ; lee la cuenta de cuadros
 	and 003h		;b707
 	call 04d4ch		;b709   ; HL = la palabra A de la tabla de HL
-	ld de,0ef20h		;b70c
+	ld de,0ef20h		;b70c   ; apunta a el puzle: las 25 casillas
 	ld bc,00019h		;b70f
 	ldir		;b712
 	inc (ix+001h)		;b714
@@ -664,7 +664,7 @@ L_B701:
 	ld (ix+002h),a		;b718
 	ld (ix+003h),a		;b71b
 L_B71E:
-	ld hl,0ef20h		;b71e
+	ld hl,0ef20h		;b71e   ; pinta las 25 casillas (5 x 5) y el letrero
 	ld bc,00505h		;b721
 	ld de,05830h		;b724
 L_B727:
@@ -676,7 +676,7 @@ L_B72A:
 	push de			;b72b
 	push hl			;b72c
 	ld a,(hl)			;b72d
-	call L_B7EC		;b72e
+	call L_B7EC		;b72e   ; pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
 	pop hl			;b731
 	inc hl			;b732
 	pop de			;b733
@@ -694,7 +694,7 @@ L_B72A:
 	ld hl,0b5b8h		;b743
 	jp 051d0h		;b746
 L_B749:
-	call L_B8CF		;b749
+	call L_B8CF		;b749   ; paso 3: los cursores mueven la mano; el disparo mueve la pieza al hueco de al lado
 	ld a,(0e207h)		;b74c   ; lee el mando: lo que se acaba de pulsar
 	rra			;b74f
 	jr c,L_B76B		;b750
@@ -733,11 +733,11 @@ L_B780:
 	dec (ix+003h)		;b785
 	jr L_B768		;b788
 L_B78A:
-	call L_B7FA		;b78a
+	call L_B7FA		;b78a   ; la pieza: si tiene el hueco al lado, se corre
 	ret z			;b78d
 	push hl			;b78e
 	push bc			;b78f
-	call L_B824		;b790
+	call L_B824		;b790   ; C = hacia donde esta el hueco (1 arriba, 2 abajo, 3 izquierda, 4 derecha; 0 no esta al lado)
 	ld a,c			;b793
 	pop bc			;b794
 	pop de			;b795
@@ -764,7 +764,7 @@ DATA_tabla_B7A5:
 
 
 L_B7AD:
-	ex de,hl			;b7ad
+	ex de,hl			;b7ad   ; al hueco de abajo
 	ld (hl),000h		;b7ae
 	inc hl			;b7b0
 	ld (hl),b			;b7b1
@@ -772,7 +772,7 @@ L_B7AD:
 	ld a,b			;b7b5
 	jr L_B7C5		;b7b6
 L_B7B8:
-	ex de,hl			;b7b8
+	ex de,hl			;b7b8   ; al de la izquierda
 	ld (hl),000h		;b7b9
 	dec hl			;b7bb
 	dec hl			;b7bc
@@ -786,14 +786,14 @@ L_B7C5:
 	push de			;b7c5
 	push bc			;b7c6
 	push af			;b7c7
-	call L_B80F		;b7c8
+	call L_B80F		;b7c8   ; D, E = la casilla de la mano en pixeles
 	pop af			;b7cb
-	call L_B7EC		;b7cc
+	call L_B7EC		;b7cc   ; pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
 	pop bc			;b7cf
 	pop de			;b7d0
 	ret			;b7d1
 L_B7D2:
-	ex de,hl			;b7d2
+	ex de,hl			;b7d2   ; al de la derecha
 	ld (hl),000h		;b7d3
 	inc hl			;b7d5
 	inc hl			;b7d6
@@ -805,7 +805,7 @@ L_B7D2:
 	ld a,b			;b7de
 	jr L_B7C5		;b7df
 L_B7E1:
-	ex de,hl			;b7e1
+	ex de,hl			;b7e1   ; al de arriba
 	ld (hl),000h		;b7e2
 	dec hl			;b7e4
 	ld (hl),b			;b7e5
@@ -813,14 +813,14 @@ L_B7E1:
 	ld a,b			;b7e9
 	jr L_B7C5		;b7ea
 L_B7EC:
-	add a,a			;b7ec
+	add a,a			;b7ec   ; pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
 	add a,a			;b7ed
 	ld hl,0b64ch		;b7ee
 	call 0408fh		;b7f1   ; suma A a HL (HL = HL + A)
 	ld bc,00202h		;b7f4
 	jp 05737h		;b7f7
 L_B7FA:
-	ld d,(ix+002h)		;b7fa
+	ld d,(ix+002h)		;b7fa   ; B = la pieza de la casilla de la mano (Z si es el hueco)
 	ld e,(ix+003h)		;b7fd
 L_B800:
 	ld a,d			;b800
@@ -828,14 +828,14 @@ L_B800:
 	add a,a			;b802
 	add a,d			;b803
 	add a,e			;b804
-	ld hl,0ef20h		;b805
+	ld hl,0ef20h		;b805   ; apunta a el puzle: las 25 casillas
 	call 0408fh		;b808   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;b80b
 	ld b,a			;b80c
 	and a			;b80d
 	ret			;b80e
 L_B80F:
-	ld a,(ix+002h)		;b80f
+	ld a,(ix+002h)		;b80f   ; D, E = la casilla de la mano en pixeles
 	add a,a			;b812
 	add a,a			;b813
 	add a,a			;b814
@@ -851,7 +851,7 @@ L_B80F:
 	ld d,a			;b822
 	ret			;b823
 L_B824:
-	ld d,(ix+002h)		;b824
+	ld d,(ix+002h)		;b824   ; C = hacia donde esta el hueco (1 arriba, 2 abajo, 3 izquierda, 4 derecha; 0 no esta al lado)
 	ld e,(ix+003h)		;b827
 	ld c,001h		;b82a
 	ld a,d			;b82c
@@ -894,7 +894,7 @@ L_B85B:
 	ld c,000h		;b85b
 	ret			;b85d
 L_B85E:
-	ld de,0ef20h		;b85e
+	ld de,0ef20h		;b85e   ; paso 4: si las piezas estan en orden (1-24)...
 	ld hl,0ef21h		;b861
 	ld a,(de)			;b864
 	cp 001h		;b865
@@ -913,7 +913,7 @@ L_B876:
 	dec (ix+001h)		;b876
 	ret			;b879
 L_B87A:
-	call 05d41h		;b87a   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call 05d41h		;b87a   ; ...resuelto: 3 vidas mas (hasta 99) y el letrero de 0xB5C7
 	inc (ix+001h)		;b87d
 	ld a,(0e240h)		;b880   ; lee las vidas (BCD)
 	add a,003h		;b883
@@ -930,11 +930,11 @@ L_B88E:
 	ld hl,0b5c7h		;b897
 	jp 051d0h		;b89a
 L_B89D:
-	ld a,(0e207h)		;b89d   ; lee el mando: lo que se acaba de pulsar
+	ld a,(0e207h)		;b89d   ; paso 5: el disparo sale
 	and 010h		;b8a0
 	ret z			;b8a2
 L_B8A3:
-	ld bc,00007h		;b8a3
+	ld bc,00007h		;b8a3   ; sale: el borde a 0 y el sonido 1
 	ld (ix+000h),b		;b8a6
 	call 00047h		;b8a9   ; BIOS WRTVDP - Writes data in the VDP-register
 	jp 041e0h		;b8ac
@@ -954,7 +954,7 @@ DATA_resto_B8AF:
 
 
 L_B8CF:
-	ld hl,0e800h		;b8cf   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ld hl,0e800h		;b8cf   ; la mano (cuatro sprites con los colores de 0xB913)
 	ld de,0b913h		;b8d2
 	ld bc,00400h		;b8d5
 	exx			;b8d8
@@ -1019,10 +1019,10 @@ DATA_resto_B913:
 
 
 L_B917:
-	ld a,(ix+001h)		;b917
+	ld a,(ix+001h)		;b917   ; las musicas: por pasos
 	cp 001h		;b91a
 	jr z,L_B938		;b91c
-	jr nc,L_B981		;b91e
+	jr nc,L_B981		;b91e   ; paso 0: graficos, el dibujo de 0xBC05 y el letrero
 	call 04e98h		;b920   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	call 057ach		;b923   ; los graficos de la lista 0xB7DF (bancos 7-8-9) y la paleta de 0xBA78
 	call 057cah		;b926   ; las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
@@ -1032,7 +1032,7 @@ L_B917:
 	ld hl,0b585h		;b932
 	jp 051d0h		;b935
 L_B938:
-	call L_B9B0		;b938
+	call L_B9B0		;b938   ; paso 1: arriba y abajo eligen (19, IX+02), el disparo la pone; RETURN sale
 	ld a,(0e207h)		;b93b   ; lee el mando: lo que se acaba de pulsar
 	rra			;b93e
 	rra			;b93f
@@ -1069,7 +1069,7 @@ L_B97B:
 	inc (ix+001h)		;b97b
 	jp 041e0h		;b97e
 L_B981:
-	dec (ix+001h)		;b981
+	dec (ix+001h)		;b981   ; la pone (tabla detras, una peticion de sonido por musica)
 	ld a,(ix+002h)		;b984
 	call 04099h		;b987   ; el despachador de Konami: la tabla va detras del call
 
@@ -1090,7 +1090,7 @@ DATA_tabla_B98A:
 
 
 L_B9B0:
-	ld hl,0e800h		;b9b0   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ld hl,0e800h		;b9b0   ; los sprites de la flecha (tablas 0xB9FA y 0xBA0D)
 	ld de,0ba0dh		;b9b3
 	ld bc,00400h		;b9b6
 	exx			;b9b9
@@ -1161,9 +1161,9 @@ DATA_resto_B9FA:
 
 
 L_BA11:
-	ld hl,001ffh		;ba11
-	ld (0e209h),hl		;ba14
-	ld hl,0e219h		;ba17
+	ld hl,001ffh		;ba11   ; la demostracion: la fase de la tabla 0xBA3A (una de 6, 0xE219 va dando la vuelta)
+	ld (0e209h),hl		;ba14   ; 0xE209/0xE20A: el mando grabado
+	ld hl,0e219h		;ba17   ; apunta a la demostracion siguiente (1-6)
 	ld a,(hl)			;ba1a
 	ld de,0ba3ah		;ba1b
 	call 04094h		;ba1e   ; suma A a DE (DE = DE + A)
@@ -1175,7 +1175,7 @@ L_BA11:
 	jr c,L_BA2D		;ba29
 	ld (hl),001h		;ba2b
 L_BA2D:
-	xor a			;ba2d
+	xor a			;ba2d   ; cuenta a cero, empieza la fase y la musica
 	ld (0e203h),a		;ba2e   ; guarda la cuenta de cuadros
 	inc a			;ba31
 	ld (0e246h),a		;ba32   ; guarda la marca de fase empezada
@@ -1193,7 +1193,7 @@ DATA_BA3B:
 
 
 L_BA41:
-	ld a,(0e248h)		;ba41   ; lee el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+	ld a,(0e248h)		;ba41   ; un cuadro de la demostracion: la partida con el mando grabado; si muere, se acaba
 	and a			;ba44
 	jr nz,L_BA57		;ba45
 	call 04358h		;ba47   ; con los bancos 1-2-3, llama a 0x5D63 y pone el 12 en 0xA000
@@ -1205,7 +1205,7 @@ L_BA50:
 	ld (0e246h),a		;ba51   ; guarda la marca de fase empezada
 	jp 041e0h		;ba54
 L_BA57:
-	xor a			;ba57
+	xor a			;ba57   ; sale de la pantalla: a la de al lado
 	ld (0e24dh),a		;ba58   ; guarda la marca de borde sin pantalla al otro lado
 	call 05dfeh		;ba5b   ; pasa a la pantalla de al lado al salir por el borde 0xE248 (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	ld a,(0e24dh)		;ba5e   ; lee la marca de borde sin pantalla al otro lado
@@ -1213,22 +1213,22 @@ L_BA57:
 	ret nz			;ba62
 	jp 04369h		;ba63
 L_BA66:
-	ld hl,0e20ah		;ba66
+	ld hl,0e20ah		;ba66   ; el mando de la demostracion: [teclas][cuadros] de la tabla de la piramide (0xBA92)
 	dec (hl)			;ba69
 	jr nz,L_BA7A		;ba6a
 	dec hl			;ba6c
 	inc (hl)			;ba6d
 	inc hl			;ba6e
-	call L_BA80		;ba6f
-	cp 0ffh		;ba72
+	call L_BA80		;ba6f   ; A = las teclas y C = los cuadros del paso 0xE209 de la piramide
+	cp 0ffh		;ba72   ; 0xFF acaba la demostracion
 	jr z,L_BA50		;ba74
 	ld hl,0e20ah		;ba76
 	ld (hl),c			;ba79
 L_BA7A:
-	call L_BA80		;ba7a
+	call L_BA80		;ba7a   ; las teclas, como si se pulsaran
 	jp 05434h		;ba7d
 L_BA80:
-	dec hl			;ba80
+	dec hl			;ba80   ; A = las teclas y C = los cuadros del paso 0xE209 de la piramide
 	ld c,(hl)			;ba81
 	ld a,(0e241h)		;ba82   ; lee la piramide (1-6)
 	ld hl,lba92h		;ba85
@@ -1282,8 +1282,8 @@ DATA_BA94:
 
 
 L_BC6E:
-	xor a			;bc6e
-	ld hl,0e910h		;bc6f
+	xor a			;bc6e   ; las estrellas del final: 0xE910 (32 de 16 bytes) a cero
+	ld hl,0e910h		;bc6f   ; apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
 	ld de,0e911h		;bc72
 	ld (hl),a			;bc75
 	ld bc,001ffh		;bc76
@@ -1294,14 +1294,14 @@ L_BC6E:
 	ld (0e900h),a		;bc82   ; guarda el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
 	ret			;bc85
 L_BC86:
-	ld a,(0e902h)		;bc86
+	ld a,(0e902h)		;bc86   ; cada 2 cuadros sale una estrella nueva del centro (0x70, 0x80)
 	or a			;bc89
 	ret nz			;bc8a
 	ld hl,0e900h		;bc8b   ; apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
 	dec (hl)			;bc8e
 	ret nz			;bc8f
 	ld (hl),002h		;bc90
-	ld ix,0e910h		;bc92
+	ld ix,0e910h		;bc92   ; apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
 	ld b,020h		;bc96
 L_BC98:
 	ld a,(ix+000h)		;bc98
@@ -1312,7 +1312,7 @@ L_BC98:
 	djnz L_BC98		;bca3
 	ret			;bca5
 L_BCA6:
-	xor a			;bca6
+	xor a			;bca6   ; su velocidad, de las tablas 0xBDB7 y 0xBD97 por la direccion
 	ld (ix+000h),001h		;bca7
 	ld (ix+001h),a		;bcab
 	ld (ix+002h),070h		;bcae
@@ -1323,32 +1323,32 @@ L_BCA6:
 	ld a,(hl)			;bcbd
 	and 00fh		;bcbe
 	ld b,008h		;bcc0
-	call L_BD74		;bcc2
+	call L_BD74		;bcc2   ; HL, DE = la velocidad en y y en x de la direccion A, por B
 	ld (ix+005h),l		;bcc5
 	ld (ix+006h),h		;bcc8
 	ld (ix+007h),e		;bccb
 	ld (ix+008h),d		;bcce
 	ret			;bcd1
 L_BCD2:
-	call L_BC86		;bcd2
-	call L_BD30		;bcd5
+	call L_BC86		;bcd2   ; un cuadro de las estrellas
+	call L_BD30		;bcd5   ; los sprites fuera, de color 5
 	call L_BCDD		;bcd8
 	jr L_BD4B		;bcdb
 L_BCDD:
-	ld ix,0e910h		;bcdd
+	ld ix,0e910h		;bcdd   ; apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
 	ld b,020h		;bce1
 L_BCE3:
 	ld a,(ix+000h)		;bce3
 	or a			;bce6
 	push bc			;bce7
-	call nz,L_BCF4		;bce8
+	call nz,L_BCF4		;bce8   ; una estrella se mueve; al salir de la pantalla se quita
 	pop bc			;bceb
 	ld de,00010h		;bcec
 	add ix,de		;bcef
 	djnz L_BCE3		;bcf1
 	ret			;bcf3
 L_BCF4:
-	ld e,(ix+001h)		;bcf4
+	ld e,(ix+001h)		;bcf4   ; una estrella se mueve; al salir de la pantalla se quita
 	ld d,(ix+002h)		;bcf7
 	ld l,(ix+005h)		;bcfa
 	ld h,(ix+006h)		;bcfd
@@ -1374,7 +1374,7 @@ L_BD2B:
 	ld (ix+000h),000h		;bd2b
 	ret			;bd2f
 L_BD30:
-	ld hl,0e800h		;bd30   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ld hl,0e800h		;bd30   ; los sprites fuera, de color 5
 	ld de,0e801h		;bd33
 	ld (hl),0e0h		;bd36
 	ld bc,0007fh		;bd38
@@ -1386,7 +1386,7 @@ L_BD30:
 	ldir		;bd48
 	ret			;bd4a
 L_BD4B:
-	ld ix,0e910h		;bd4b
+	ld ix,0e910h		;bd4b   ; los sprites de las estrellas (dibujo 0xD0)
 	ld hl,0e800h		;bd4f   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld b,020h		;bd52
 L_BD54:
@@ -1411,7 +1411,7 @@ L_BD65:
 	inc hl			;bd72
 	ret			;bd73
 L_BD74:
-	push af			;bd74
+	push af			;bd74   ; HL, DE = la velocidad en y y en x de la direccion A, por B
 	ld hl,0bdb7h		;bd75
 	call 04d4ch		;bd78   ; HL = la palabra A de la tabla de HL
 	ld e,l			;bd7b
@@ -1452,9 +1452,9 @@ DATA_resto_BD97:
 
 
 L_BDD7:
-	call L_BDF7		;bdd7
+	call L_BDF7		;bdd7   ; el personaje de las secuencias: seis sprites
 L_BDDA:
-	ld hl,0e830h		;bdda
+	ld hl,0e830h		;bdda   ; y el sprite 12 en (0xEDCB, 0xEDCC)
 	ld a,(0edcbh)		;bddd
 	ld (hl),a			;bde0
 	inc hl			;bde1
@@ -1469,7 +1469,7 @@ L_BDDA:
 	ldir		;bdf4
 	ret			;bdf6
 L_BDF7:
-	ld a,(0edd8h)		;bdf7
+	ld a,(0edd8h)		;bdf7   ; dos posturas (0xEDD8)
 	or a			;bdfa
 	ld a,004h		;bdfb
 	jr z,L_BE01		;bdfd
@@ -1477,14 +1477,14 @@ L_BDF7:
 L_BE01:
 	ld hl,0e800h		;be01   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld de,0a868h		;be04
-	call L_BE18		;be07
+	call L_BE18		;be07   ; dos sprites de 16 x 16 uno al lado de otro
 	ld de,0a878h		;be0a
-	call L_BE18		;be0d
+	call L_BE18		;be0d   ; dos sprites de 16 x 16 uno al lado de otro
 	ld de,0a888h		;be10
-	call L_BE18		;be13
+	call L_BE18		;be13   ; dos sprites de 16 x 16 uno al lado de otro
 	jr L_BE35		;be16
 L_BE18:
-	ld b,002h		;be18
+	ld b,002h		;be18   ; dos sprites de 16 x 16 uno al lado de otro
 L_BE1A:
 	ld (hl),e			;be1a
 	inc hl			;be1b
@@ -1510,7 +1510,7 @@ L_BE1A:
 	djnz L_BE1A		;be32
 	ret			;be34
 L_BE35:
-	ld hl,0d200h		;be35   ; apunta a los colores de los sprites (16 bytes por sprite)
+	ld hl,0d200h		;be35   ; sus colores, 13 y 0x4E
 	ld de,0d201h		;be38
 	ld bc,0000fh		;be3b
 	ld (hl),00dh		;be3e
@@ -1549,14 +1549,14 @@ DATA_resto_BE67:
 
 
 L_BE75:
-	ld hl,0be67h		;be75
+	ld hl,0be67h		;be75   ; carga de cinta: el letrero de buscar y el nombre
 	call 051d0h		;be78   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
-	call L_BEF3		;be7b
+	call L_BEF3		;be7b   ; pinta el nombre de 0xEE50
 L_BE7E:
-	call 000e1h		;be7e   ; BIOS TAPION - Reads the header block after turning the cassette motor on
+	call 000e1h		;be7e   ; BIOS TAPION - Reads the header block after turning the cassette motor on | TAPION: la cabecera de la cinta
 	jp c,L_BEFC		;be81
 L_BE84:
-	ld c,010h		;be84
+	ld c,010h		;be84   ; 16 bytes 0xAA seguidos
 L_BE86:
 	exx			;be86
 	call 000e4h		;be87   ; BIOS TAPIN - Reads data from the tape
@@ -1566,12 +1566,12 @@ L_BE86:
 	jr nz,L_BE84		;be90
 	dec c			;be92
 	jr nz,L_BE86		;be93
-	ld hl,0ee50h		;be95   ; apunta a la lista de las cosas de 0xE300 por orden de pintado
+	ld hl,0ee50h		;be95   ; el nombre de la fase (8 letras)
 	ld bc,00008h		;be98
-	call L_BF1B		;be9b
+	call L_BF1B		;be9b   ; lee BC bytes de la cinta a HL, sumandolos en D
 	jr c,L_BEFC		;be9e
 	call 000f0h		;bea0   ; BIOS TAPOOF - Stops writing on the tape
-	ld hl,0ee50h		;bea3   ; apunta a la lista de las cosas de 0xE300 por orden de pintado
+	ld hl,0ee50h		;bea3   ; si no es el que se busca, otra vez
 	ld de,0e270h		;bea6   ; apunta a el nombre de la fase del editor (11 letras)
 	ld b,008h		;bea9
 L_BEAB:
@@ -1581,21 +1581,21 @@ L_BEAB:
 	inc de			;beaf
 	inc hl			;beb0
 	djnz L_BEAB		;beb1
-	ld hl,0be6eh		;beb3
+	ld hl,0be6eh		;beb3   ; encontrado: el letrero y los seis trozos
 	call 051d0h		;beb6   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
-	call L_BEF3		;beb9
+	call L_BEF3		;beb9   ; pinta el nombre de 0xEE50
 	call 000e1h		;bebc   ; BIOS TAPION - Reads the header block after turning the cassette motor on
 	jr c,L_BEFC		;bebf
 	ld ix,06c6dh		;bec1
 	ld d,000h		;bec5
 	ld b,006h		;bec7
 L_BEC9:
-	push bc			;bec9
+	push bc			;bec9   ; los seis trozos de la tabla p01:6C6D, sumando los bytes
 	ld l,(ix+000h)		;beca
 	ld h,(ix+001h)		;becd
 	ld c,(ix+002h)		;bed0
 	ld b,(ix+003h)		;bed3
-	call L_BF1B		;bed6
+	call L_BF1B		;bed6   ; lee BC bytes de la cinta a HL, sumandolos en D
 	pop bc			;bed9
 	jr c,L_BEFC		;beda
 	inc ix		;bedc
@@ -1603,7 +1603,7 @@ L_BEC9:
 	inc ix		;bee0
 	inc ix		;bee2
 	djnz L_BEC9		;bee4
-	exx			;bee6
+	exx			;bee6   ; la suma tiene que dar el ultimo byte
 	call 000e4h		;bee7   ; BIOS TAPIN - Reads data from the tape
 	exx			;beea
 	jr c,L_BEFC		;beeb
@@ -1611,11 +1611,11 @@ L_BEC9:
 	jr nz,L_BEFC		;beee
 	jp 000f0h		;bef0   ; BIOS TAPOOF - Stops writing on the tape
 L_BEF3:
-	ld hl,0ee50h		;bef3   ; apunta a la lista de las cosas de 0xE300 por orden de pintado
+	ld hl,0ee50h		;bef3   ; pinta el nombre de 0xEE50
 	ld de,07070h		;bef6
 	jp 08a1ah		;bef9
 L_BEFC:
-	call 000f0h		;befc   ; BIOS TAPOOF - Stops writing on the tape
+	call 000f0h		;befc   ; BIOS TAPOOF - Stops writing on the tape | error: el letrero de 0xBF0E y 0xE27F = 2
 	call 04e98h		;beff   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	ld hl,0bf0eh		;bf02
 	call 051d0h		;bf05   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
@@ -1637,7 +1637,7 @@ DATA_resto_BF0E:
 
 
 L_BF1B:
-	exx			;bf1b
+	exx			;bf1b   ; lee BC bytes de la cinta a HL, sumandolos en D
 	call 000e4h		;bf1c   ; BIOS TAPIN - Reads data from the tape
 	exx			;bf1f
 	ret c			;bf20
@@ -1651,26 +1651,26 @@ L_BF1B:
 	jr nz,L_BF1B		;bf28
 	ret			;bf2a
 L_BF2B:
-	ld a,0ffh		;bf2b
+	ld a,0ffh		;bf2b   ; graba en cinta: TAPOON con la cabecera larga
 	call 000eah		;bf2d   ; BIOS TAPOON - Turns on the cassette motor and writes the header
 	jp c,L_BF82		;bf30
 	ld b,010h		;bf33
 L_BF35:
-	ld a,0aah		;bf35
+	ld a,0aah		;bf35   ; 16 bytes 0xAA
 	exx			;bf37
 	call 000edh		;bf38   ; BIOS TAPOUT - Writes data on the tape
 	exx			;bf3b
 	jr c,L_BF82		;bf3c
 	djnz L_BF35		;bf3e
-	ld hl,0e270h		;bf40   ; apunta a el nombre de la fase del editor (11 letras)
+	ld hl,0e270h		;bf40   ; el nombre (8 letras)
 	ld bc,00008h		;bf43
-	call L_BFA1		;bf46
+	call L_BFA1		;bf46   ; escribe BC bytes de HL en la cinta, sumandolos en D
 	jr c,L_BF82		;bf49
 	call 000f0h		;bf4b   ; BIOS TAPOOF - Stops writing on the tape
-	xor a			;bf4e
+	xor a			;bf4e   ; otra cabecera, corta
 	call 000eah		;bf4f   ; BIOS TAPOON - Turns on the cassette motor and writes the header
 	jr c,L_BF82		;bf52
-	ld ix,06c6dh		;bf54
+	ld ix,06c6dh		;bf54   ; los seis trozos, sumando
 	ld d,000h		;bf58
 	ld b,006h		;bf5a
 L_BF5C:
@@ -1679,7 +1679,7 @@ L_BF5C:
 	ld h,(ix+001h)		;bf60
 	ld c,(ix+002h)		;bf63
 	ld b,(ix+003h)		;bf66
-	call L_BFA1		;bf69
+	call L_BFA1		;bf69   ; escribe BC bytes de HL en la cinta, sumandolos en D
 	pop bc			;bf6c
 	jr c,L_BF82		;bf6d
 	inc ix		;bf6f
@@ -1687,12 +1687,12 @@ L_BF5C:
 	inc ix		;bf73
 	inc ix		;bf75
 	djnz L_BF5C		;bf77
-	ld a,d			;bf79
+	ld a,d			;bf79   ; y la suma
 	call 000edh		;bf7a   ; BIOS TAPOUT - Writes data on the tape
 	jr c,L_BF82		;bf7d
 	jp 000f0h		;bf7f   ; BIOS TAPOOF - Stops writing on the tape
 L_BF82:
-	call 000f0h		;bf82   ; BIOS TAPOOF - Stops writing on the tape
+	call 000f0h		;bf82   ; BIOS TAPOOF - Stops writing on the tape | error: el letrero de 0xBF94 y 0xE27F = 2
 	call 04e98h		;bf85   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	ld hl,0bf94h		;bf88
 	call 051d0h		;bf8b   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
@@ -1714,7 +1714,7 @@ DATA_resto_BF94:
 
 
 L_BFA1:
-	ld a,(hl)			;bfa1
+	ld a,(hl)			;bfa1   ; escribe BC bytes de HL en la cinta, sumandolos en D
 	ld e,a			;bfa2
 	inc hl			;bfa3
 	exx			;bfa4

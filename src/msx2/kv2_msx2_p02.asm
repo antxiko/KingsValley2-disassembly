@@ -1874,7 +1874,7 @@ L_8B72:
 	jp 06c3dh		;8b7c
 L_8B7F:
 	call 041b5h		;8b7f   ; pone el banco 12 en 0xA000
-	call 0bf2bh		;8b82
+	call 0bf2bh		;8b82   ; graba en cinta: TAPOON con la cabecera larga
 	jp 0418ah		;8b85
 L_8B88:
 	ld a,(0e207h)		;8b88   ; espera una tecla y vuelve al menu
@@ -2325,7 +2325,7 @@ L_8EA3:
 	jp 06c55h		;8ead
 L_8EB0:
 	call 041b5h		;8eb0   ; pone el banco 12 en 0xA000
-	call 0be7eh		;8eb3
+	call 0be7eh		;8eb3   ; TAPION: la cabecera de la cinta
 	jp 0418ah		;8eb6
 L_8EB9:
 	ld a,(0e207h)		;8eb9   ; tras el error, una tecla vuelve
@@ -4090,7 +4090,7 @@ L_9AEB:
 	djnz L_9AC1		;9af0
 	ret			;9af2
 L_9AF3:
-	ld a,005h		;9af3   ; el personaje muere (estado 5) con el sonido 0x2A
+	ld a,005h		;9af3   ; el personaje muere (estado 5) con el sonido 0x28
 	ld (0e280h),a		;9af5   ; guarda el estado del personaje
 	call L_92FF		;9af8   ; el personaje muere (0xE298 = 1)
 	jp 042a3h		;9afb
@@ -4633,14 +4633,14 @@ DATA_tabla_9ED0:
 
 L_9EEE:
 	call 0a624h		;9eee   ; estado 0: andar
-	call 0a4efh		;9ef1
+	call 0a4efh		;9ef1   ; hacia donde mira (0xE294) segun izquierda y derecha
 	call L_9F4D		;9ef4   ; con 0xE2A6: si debajo hay ladrillo, la y se ajusta a la fila y 0xE2A6 = 0
-	call 0a512h		;9ef7
+	call 0a512h		;9ef7   ; Z si debajo de los pies no hay nada (tres puntos)
 	jr nz,L_9F02		;9efa
-	call 0a45eh		;9efc
+	call 0a45eh		;9efc   ; Z si toca escalera a la altura de los pies
 	jp nz,L_9FD4		;9eff
 L_9F02:
-	call 0a045h		;9f02
+	call 0a045h		;9f02   ; usar lo que lleva (disparo con algo en la mano)
 	ld a,(0e280h)		;9f05   ; lee el estado del personaje
 	or a			;9f08
 	ret nz			;9f09
@@ -4723,12 +4723,12 @@ L_9F77:
 	ld a,(0e208h)		;9f84   ; lee el mando: lo pulsado
 	rra			;9f87
 	jr nc,L_9F8F		;9f88
-	call 0a5a2h		;9f8a
+	call 0a5a2h		;9f8a   ; subir a una escalera
 	jr L_9F95		;9f8d
 L_9F8F:
 	rra			;9f8f
 	jr nc,L_9F9A		;9f90
-	call 0a591h		;9f92
+	call 0a591h		;9f92   ; bajar a una escalera
 L_9F95:
 	ld a,(0e280h)		;9f95   ; lee el estado del personaje
 	or a			;9f98

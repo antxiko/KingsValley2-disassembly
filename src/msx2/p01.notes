@@ -521,8 +521,10 @@ C 0x65B9 el enemigo pasa a la pantalla de al lado (la misma busqueda que el pers
 C 0x65C3 el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5E38)
 C 0x65CD el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5E38)
 C 0x65D7 el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5E38)
+C 0x65EC DE = el mapa de la pantalla A
 C 0x65FB el despachador de Konami: la tabla va detras del call
 C 0x660E pide el sonido 0x2D
+C 0x6633 el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
 C 0x6648 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0x667A lee la pantalla de la fase (desde 1)
 C 0x668C pone el banco 13 en 0xA000
@@ -536,6 +538,7 @@ C 0x66DE pone los bancos 1-2-3 (el juego)
 C 0x6714 apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
 C 0x6717 suma A a HL (HL = HL + A)
 C 0x6723 apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
+C 0x6741 crea un enemigo del tipo C (1-4) en (E, D) de la pantalla A, si hay ficha libre en 0xE500
 C 0x675F lee la fase (1-60)
 C 0x6762 HL = la palabra A de la tabla de HL
 C 0x6765 apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
@@ -704,6 +707,8 @@ C 0x718C HL = la palabra A de la tabla de HL
 C 0x71AB lee la piramide (1-6)
 C 0x71AF HL = la palabra A de la tabla de HL
 C 0x71B2 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x71BB el personaje de las secuencias: seis sprites
+C 0x71C4 y el sprite 12 en (0xEDCB, 0xEDCC)
 C 0x71E3 el despachador de Konami: la tabla va detras del call
 C 0x7214 apunta a el paso de la secuencia en curso (entrada, fase o piramide acabada)
 C 0x7235 apunta a la y del personaje
@@ -755,6 +760,7 @@ C 0x7477 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0x747A los de la lista 0x9063
 C 0x7482 pone el color A de la paleta a D, E (y lo guarda en la VRAM 0xF680 + 2 x A)
 C 0x7485 pone el banco 12 en 0xA000
+C 0x7488 las estrellas del final: 0xE910 (32 de 16 bytes) a cero
 C 0x748B pone los bancos 1-2-3 (el juego)
 C 0x748E el dibujo de 0xBCD2 (banco 12)
 C 0x7499 apunta a la espera del paso (en cuadros)
@@ -824,6 +830,7 @@ C 0x76E5 empieza el fundido de paleta A (tabla 0xA792, 5 bytes cada uno, bancos 
 C 0x76EB lee lo que tapa el recuadro de estado; en las secuencias, el fundido de paleta en marcha (0 al acabar)
 C 0x76F0 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0x76FF guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x7706 un cuadro de las estrellas
 C 0x771F pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0x772E HL = la palabra A de la tabla de HL
 C 0x7731 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba

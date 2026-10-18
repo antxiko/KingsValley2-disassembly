@@ -1,5 +1,90 @@
 # Notas del banco p12 (msx2): C comentario, L nombre, B bloque, D datos.
 
+# --- A MANO: comentarios escritos leyendo el codigo ---
+C 0xB400 el sitio escondido de la fase, si lo tiene: tabla 0xB548, 5 bytes [fase][tipo][pantalla][y][x], un 0 acaba
+C 0xB413 lo copia a 0xEF10: tipo, paso (0) y pantalla, y, x
+C 0xB422 un cuadro del sitio escondido, por pasos (0xEF11)
+C 0xB437 paso 0: aparece si el personaje salta (estado 1) justo en el sitio
+C 0xB446 el paso siguiente, una espera de 0x40 y se pinta, con el sonido 0x3B
+C 0xB462 paso 1: espera
+C 0xB46C paso 2: al tocarlo, el sonido 0x2E y su dibujo de 0xB1D6
+C 0xB48F paso 3: en el sitio pulsando abajo, se entra (estado 12) con el sonido 0x30
+C 0xB4AC C si el personaje esta a menos de 4 pixeles del sitio
+C 0xB4C9 C si esta a menos de 4 en y y de 8 en x
+C 0xB4E3 guarda el fondo del sitio y pinta 2 x 2 caracteres de 0xB4F8
+C 0xB4FC guarda en la pagina 1 (0xB0) los 16 x 16 pixeles del sitio
+C 0xB50B devuelve el fondo
+C 0xB51C al pintar la pantalla, el sitio si ya ha aparecido
+C 0xB534 un cuadro del minijuego del sitio escondido (estado 12)
+C 0xB53A tipo 1: las musicas; tipo 2: el puzle
+C 0xB6B0 el puzle: ESC sale; por pasos (IX+01)
+C 0xB6CA paso 0: la fuente, las piezas en orden (1-24 y el hueco) y el letrero
+C 0xB6F2 paso 1: espera el disparo
+C 0xB701 paso 2: un puzle revuelto de los 4 de la tabla 0xB5E0 (al azar con 0xE203)
+C 0xB71E pinta las 25 casillas (5 x 5) y el letrero
+C 0xB749 paso 3: los cursores mueven la mano; el disparo mueve la pieza al hueco de al lado
+C 0xB78A la pieza: si tiene el hueco al lado, se corre
+C 0xB7AD al hueco de abajo
+C 0xB7B8 al de la izquierda
+C 0xB7D2 al de la derecha
+C 0xB7E1 al de arriba
+C 0xB7EC pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
+C 0xB7FA B = la pieza de la casilla de la mano (Z si es el hueco)
+C 0xB80F D, E = la casilla de la mano en pixeles
+C 0xB824 C = hacia donde esta el hueco (1 arriba, 2 abajo, 3 izquierda, 4 derecha; 0 no esta al lado)
+C 0xB85E paso 4: si las piezas estan en orden (1-24)...
+C 0xB87A ...resuelto: 3 vidas mas (hasta 99) y el letrero de 0xB5C7
+C 0xB89D paso 5: el disparo sale
+C 0xB8A3 sale: el borde a 0 y el sonido 1
+C 0xB8CF la mano (cuatro sprites con los colores de 0xB913)
+C 0xB917 las musicas: por pasos
+C 0xB91E paso 0: graficos, el dibujo de 0xBC05 y el letrero
+C 0xB938 paso 1: arriba y abajo eligen (19, IX+02), el disparo la pone; RETURN sale
+C 0xB981 la pone (tabla detras, una peticion de sonido por musica)
+C 0xB9B0 los sprites de la flecha (tablas 0xB9FA y 0xBA0D)
+C 0xBA11 la demostracion: la fase de la tabla 0xBA3A (una de 6, 0xE219 va dando la vuelta)
+C 0xBA14 0xE209/0xE20A: el mando grabado
+C 0xBA2D cuenta a cero, empieza la fase y la musica
+C 0xBA41 un cuadro de la demostracion: la partida con el mando grabado; si muere, se acaba
+C 0xBA57 sale de la pantalla: a la de al lado
+C 0xBA66 el mando de la demostracion: [teclas][cuadros] de la tabla de la piramide (0xBA92)
+C 0xBA72 0xFF acaba la demostracion
+C 0xBA7A las teclas, como si se pulsaran
+C 0xBA80 A = las teclas y C = los cuadros del paso 0xE209 de la piramide
+C 0xBC6E las estrellas del final: 0xE910 (32 de 16 bytes) a cero
+C 0xBC86 cada 2 cuadros sale una estrella nueva del centro (0x70, 0x80)
+C 0xBCA6 su velocidad, de las tablas 0xBDB7 y 0xBD97 por la direccion
+C 0xBCD2 un cuadro de las estrellas
+C 0xBCF4 una estrella se mueve; al salir de la pantalla se quita
+C 0xBD30 los sprites fuera, de color 5
+C 0xBD4B los sprites de las estrellas (dibujo 0xD0)
+C 0xBD74 HL, DE = la velocidad en y y en x de la direccion A, por B
+C 0xBDD7 el personaje de las secuencias: seis sprites
+C 0xBDDA y el sprite 12 en (0xEDCB, 0xEDCC)
+C 0xBDF7 dos posturas (0xEDD8)
+C 0xBE18 dos sprites de 16 x 16 uno al lado de otro
+C 0xBE35 sus colores, 13 y 0x4E
+C 0xBE75 carga de cinta: el letrero de buscar y el nombre
+C 0xBE7E TAPION: la cabecera de la cinta
+C 0xBE84 16 bytes 0xAA seguidos
+C 0xBE95 el nombre de la fase (8 letras)
+C 0xBEA3 si no es el que se busca, otra vez
+C 0xBEB3 encontrado: el letrero y los seis trozos
+C 0xBEC9 los seis trozos de la tabla p01:6C6D, sumando los bytes
+C 0xBEE6 la suma tiene que dar el ultimo byte
+C 0xBEF3 pinta el nombre de 0xEE50
+C 0xBEFC error: el letrero de 0xBF0E y 0xE27F = 2
+C 0xBF1B lee BC bytes de la cinta a HL, sumandolos en D
+C 0xBF2B graba en cinta: TAPOON con la cabecera larga
+C 0xBF35 16 bytes 0xAA
+C 0xBF40 el nombre (8 letras)
+C 0xBF4E otra cabecera, corta
+C 0xBF54 los seis trozos, sumando
+C 0xBF79 y la suma
+C 0xBF82 error: el letrero de 0xBF94 y 0xE27F = 2
+C 0xBFA1 escribe BC bytes de HL en la cinta, sumandolos en D
+# --- fin de lo escrito a mano ---
+
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
 D 0xB42F 0xB437 tabla_B42F  4 destinos del despachador p00:4099 (call en p12:B42C, el indice en A): B437, B462, B46C, B48F; lo leen p12:B42C (8 bytes)
 F 0xB42F w4
@@ -36,47 +121,55 @@ F 0xBF94 16
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 C 0xB406 lee la fase (1-60)
 C 0xB40E suma A a HL (HL = HL + A)
+C 0xB414 apunta a el sitio escondido de la fase: tipo, paso, pantalla, y, x (0xEF10-0xEF15)
 C 0xB42C el despachador de Konami: la tabla va detras del call
 C 0xB438 lee la pantalla de la fase (desde 1)
 C 0xB43D lee el estado del personaje
+C 0xB442 C si el personaje esta a menos de 4 pixeles del sitio
 C 0xB450 devuelve el fondo de los bloques de esta pantalla
 C 0xB453 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xB456 guarda el fondo del sitio y pinta 2 x 2 caracteres de 0xB4F8
 C 0xB459 las de la lista, al reves: guarda el fondo y pinta la cosa
 C 0xB45C pinta los bloques de esta pantalla
 C 0xB46D lee la pantalla de la fase (desde 1)
+C 0xB472 C si esta a menos de 4 en y y de 8 en x
 C 0xB476 pide el sonido 0x2E
 C 0xB47D devuelve el fondo de los bloques de esta pantalla
 C 0xB480 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xB483 devuelve el fondo
 C 0xB486 un dibujo de 16 x 16 de 0xB1D6 en la posicion de 0xEF13 (HMMC)
 C 0xB489 las de la lista, al reves: guarda el fondo y pinta la cosa
 C 0xB490 lee la pantalla de la fase (desde 1)
+C 0xB495 C si esta a menos de 4 en y y de 8 en x
 C 0xB499 lee el mando: lo pulsado
 C 0xB4A3 guarda el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final) y el byte siguiente (16 bits)
 C 0xB4B1 lee la y del personaje
 C 0xB4BE lee la x del personaje
 C 0xB4CB lee la y del personaje
 C 0xB4D8 lee la x del personaje
+C 0xB4E6 guarda en la pagina 1 (0xB0) los 16 x 16 pixeles del sitio
 C 0xB524 lee la pantalla de la fase (desde 1)
-C 0xB6B0 lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
 C 0xB6BB el despachador de Konami: la tabla va detras del call
-C 0xB6CA pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0xB6CD los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0xB6D0 la fuente: 0x35 caracteres de 0xAFDD
 C 0xB6D3 las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
+C 0xB6E3 pinta las 25 casillas (5 x 5) y el letrero
 C 0xB6E9 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
-C 0xB6F2 lee el mando: lo que se acaba de pulsar
 C 0xB704 lee la cuenta de cuadros
 C 0xB709 HL = la palabra A de la tabla de HL
+C 0xB70C apunta a el puzle: las 25 casillas
+C 0xB72E pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
 C 0xB74C lee el mando: lo que se acaba de pulsar
+C 0xB790 C = hacia donde esta el hueco (1 arriba, 2 abajo, 3 izquierda, 4 derecha; 0 no esta al lado)
 C 0xB7A2 el despachador de Konami: la tabla va detras del call
+C 0xB7C8 D, E = la casilla de la mano en pixeles
+C 0xB7CC pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
 C 0xB7F1 suma A a HL (HL = HL + A)
+C 0xB805 apunta a el puzle: las 25 casillas
 C 0xB808 suma A a HL (HL = HL + A)
-C 0xB87A los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0xB880 lee las vidas (BCD)
 C 0xB88E guarda las vidas (BCD)
 C 0xB894 lo mismo, borrando (caracter 0)
-C 0xB89D lee el mando: lo que se acaba de pulsar
-C 0xB8CF apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0xB8D9 apunta a los colores de los sprites (16 bytes por sprite)
 C 0xB920 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0xB923 los graficos de la lista 0xB7DF (bancos 7-8-9) y la paleta de 0xBA78
@@ -88,42 +181,51 @@ C 0xB949 lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 m
 C 0xB95A pide el sonido 0x32
 C 0xB96A pide el sonido 0x32
 C 0xB987 el despachador de Konami: la tabla va detras del call
-C 0xB9B0 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0xB9BA apunta a los colores de los sprites (16 bytes por sprite)
+C 0xBA17 apunta a la demostracion siguiente (1-6)
 C 0xBA1E suma A a DE (DE = DE + A)
 C 0xBA22 guarda la fase (1-60)
 C 0xBA2E guarda la cuenta de cuadros
 C 0xBA32 guarda la marca de fase empezada
 C 0xBA35 con los bancos 1-2-3, llama a 0x5C80 y pone el 12 en 0xA000
-C 0xBA41 lee el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 C 0xBA47 con los bancos 1-2-3, llama a 0x5D63 y pone el 12 en 0xA000
 C 0xBA4A lee el estado del personaje
 C 0xBA51 guarda la marca de fase empezada
 C 0xBA58 guarda la marca de borde sin pantalla al otro lado
 C 0xBA5B pasa a la pantalla de al lado al salir por el borde 0xE248 (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 C 0xBA5E lee la marca de borde sin pantalla al otro lado
+C 0xBA6F A = las teclas y C = los cuadros del paso 0xE209 de la piramide
 C 0xBA82 lee la piramide (1-6)
 C 0xBA88 HL = la palabra A de la tabla de HL
 C 0xBA8D suma A a HL (HL = HL + A)
+C 0xBC6F apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
 C 0xBC82 guarda el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
 C 0xBC8B apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
-C 0xBD30 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0xBC92 apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
+C 0xBCC2 HL, DE = la velocidad en y y en x de la direccion A, por B
+C 0xBCD5 los sprites fuera, de color 5
+C 0xBCDD apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
+C 0xBCE8 una estrella se mueve; al salir de la pantalla se quita
 C 0xBD3D apunta a los colores de los sprites (16 bytes por sprite)
 C 0xBD4F apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0xBD78 HL = la palabra A de la tabla de HL
 C 0xBD8A HL = la palabra A de la tabla de HL
 C 0xBE01 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
-C 0xBE35 apunta a los colores de los sprites (16 bytes por sprite)
+C 0xBE07 dos sprites de 16 x 16 uno al lado de otro
+C 0xBE0D dos sprites de 16 x 16 uno al lado de otro
+C 0xBE13 dos sprites de 16 x 16 uno al lado de otro
 C 0xBE78 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
-C 0xBE95 apunta a la lista de las cosas de 0xE300 por orden de pintado
-C 0xBEA3 apunta a la lista de las cosas de 0xE300 por orden de pintado
+C 0xBE7B pinta el nombre de 0xEE50
+C 0xBE9B lee BC bytes de la cinta a HL, sumandolos en D
 C 0xBEA6 apunta a el nombre de la fase del editor (11 letras)
 C 0xBEB6 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
-C 0xBEF3 apunta a la lista de las cosas de 0xE300 por orden de pintado
+C 0xBEB9 pinta el nombre de 0xEE50
+C 0xBED6 lee BC bytes de la cinta a HL, sumandolos en D
 C 0xBEFF pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0xBF05 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0xBF0A guarda el resultado de grabar o cargar (0 bien, 2 error)
-C 0xBF40 apunta a el nombre de la fase del editor (11 letras)
+C 0xBF46 escribe BC bytes de HL en la cinta, sumandolos en D
+C 0xBF69 escribe BC bytes de HL en la cinta, sumandolos en D
 C 0xBF85 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0xBF8B pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0xBF90 guarda el resultado de grabar o cargar (0 bien, 2 error)
