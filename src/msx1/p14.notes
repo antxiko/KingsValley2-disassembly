@@ -1,6 +1,164 @@
 # Notas del banco p14 (msx1): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
-D 0x8000 0xA000 resto_8000  lo apuntan con el banco puesto p00:4645 (0x800C), p00:460F (0x806A), p00:5674 (0x84D7), p00:5693 (0x8589), p00:56A3 (0x8597), p00:5824 (0x85A5); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:4645, p00:460F, p00:5674, p00:5693, p00:56A3, p00:5824 (8192 bytes)
+D 0x84D7 0x84E5 posturas  7 punteros, uno por lo que lleva el personaje (0xE287): una tabla por direccion; lo leen p00:567A (14 bytes)
+F 0x84D7 w8
+D 0x84E5 0x84F9 postura_0  10 punteros, uno por direccion: las rachas de sus sprites; lo leen p00:5686 (20 bytes)
+F 0x84E5 w8
+D 0x84F9 0x8511 postura_1  12 punteros, uno por direccion: las rachas de sus sprites; lo leen p00:5686 (24 bytes)
+F 0x84F9 w8
+D 0x8511 0x8529 postura_2  12 punteros, uno por direccion: las rachas de sus sprites; lo leen p00:5686 (24 bytes)
+F 0x8511 w8
+D 0x8529 0x8541 postura_3  12 punteros, uno por direccion: las rachas de sus sprites; lo leen p00:5686 (24 bytes)
+F 0x8529 w8
+D 0x8541 0x8559 postura_4  12 punteros, uno por direccion: las rachas de sus sprites; lo leen p00:5686 (24 bytes)
+F 0x8541 w8
+D 0x8559 0x8571 postura_5  12 punteros, uno por direccion: las rachas de sus sprites; lo leen p00:5686 (24 bytes)
+F 0x8559 w8
+D 0x8571 0x8589 postura_6  12 punteros, uno por direccion: las rachas de sus sprites; lo leen p00:5686 (24 bytes)
+F 0x8571 w8
+D 0x8589 0x8597 spr_8589  7 punteros a las rachas de los sprites del personaje muerto, por direccion; lo leen p00:5696 (14 bytes)
+F 0x8589 w8
+D 0x8597 0x85A5 spr_8597  7 punteros a las rachas de los sprites del personaje en pausa; lo leen p00:56A6 (14 bytes)
+F 0x8597 w8
+D 0x85A5 0x8604 rachas_85A5  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D, p00:5824 (95 bytes)
+F 0x85A5 16
+D 0x8604 0x8662 rachas_8604  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D, p00:582D (94 bytes)
+F 0x8604 16
+D 0x8662 0x86BC rachas_8662  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D, p00:5836 (90 bytes)
+F 0x8662 16
+D 0x86BC 0x871B rachas_86BC  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D, p00:5860 (95 bytes)
+F 0x86BC 16
+D 0x871B 0x8778 rachas_871B  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D, p00:5869 (93 bytes)
+F 0x871B 16
+D 0x8778 0x87D1 rachas_8778  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D, p00:5872 (89 bytes)
+F 0x8778 16
+D 0x87D1 0x881F rachas_87D1  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (78 bytes)
+F 0x87D1 16
+D 0x881F 0x8873 rachas_881F  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (84 bytes)
+F 0x881F 16
+D 0x8873 0x88CF rachas_8873  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (92 bytes)
+F 0x8873 16
+D 0x88CF 0x892B rachas_88CF  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (92 bytes)
+F 0x88CF 16
+D 0x892B 0x898A rachas_892B  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x892B 16
+D 0x898A 0x89E9 rachas_898A  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x898A 16
+D 0x89E9 0x8A4A rachas_89E9  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (97 bytes)
+F 0x89E9 16
+D 0x8A4A 0x8AAC rachas_8A4A  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (98 bytes)
+F 0x8A4A 16
+D 0x8AAC 0x8B0B rachas_8AAC  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x8AAC 16
+D 0x8B0B 0x8B6C rachas_8B0B  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (97 bytes)
+F 0x8B0B 16
+D 0x8B6C 0x8BCD rachas_8B6C  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (97 bytes)
+F 0x8B6C 16
+D 0x8BCD 0x8C2B rachas_8BCD  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (94 bytes)
+F 0x8BCD 16
+D 0x8C2B 0x8C87 rachas_8C2B  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (92 bytes)
+F 0x8C2B 16
+D 0x8C87 0x8CE3 rachas_8C87  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (92 bytes)
+F 0x8C87 16
+D 0x8CE3 0x8D4D rachas_8CE3  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (106 bytes)
+F 0x8CE3 16
+D 0x8D4D 0x8DB5 rachas_8D4D  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (104 bytes)
+F 0x8D4D 16
+D 0x8DB5 0x8E18 rachas_8DB5  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (99 bytes)
+F 0x8DB5 16
+D 0x8E18 0x8E7D rachas_8E18  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (101 bytes)
+F 0x8E18 16
+D 0x8E7D 0x8EDC rachas_8E7D  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x8E7D 16
+D 0x8EDC 0x8F3F rachas_8EDC  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (99 bytes)
+F 0x8EDC 16
+D 0x8F3F 0x8FA3 rachas_8F3F  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (100 bytes)
+F 0x8F3F 16
+D 0x8FA3 0x9001 rachas_8FA3  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (94 bytes)
+F 0x8FA3 16
+D 0x9001 0x9061 rachas_9001  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (96 bytes)
+F 0x9001 16
+D 0x9061 0x90BF rachas_9061  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (94 bytes)
+F 0x9061 16
+D 0x90BF 0x9128 rachas_90BF  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (105 bytes)
+F 0x90BF 16
+D 0x9128 0x918F rachas_9128  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (103 bytes)
+F 0x9128 16
+D 0x918F 0x91FF rachas_918F  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (112 bytes)
+F 0x918F 16
+D 0x91FF 0x9271 rachas_91FF  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (114 bytes)
+F 0x91FF 16
+D 0x9271 0x92DD rachas_9271  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (108 bytes)
+F 0x9271 16
+D 0x92DD 0x934D rachas_92DD  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (112 bytes)
+F 0x92DD 16
+D 0x934D 0x93BF rachas_934D  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (114 bytes)
+F 0x934D 16
+D 0x93BF 0x942D rachas_93BF  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (110 bytes)
+F 0x93BF 16
+D 0x942D 0x9491 rachas_942D  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (100 bytes)
+F 0x942D 16
+D 0x9491 0x94F2 rachas_9491  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (97 bytes)
+F 0x9491 16
+D 0x94F2 0x9553 rachas_94F2  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (97 bytes)
+F 0x94F2 16
+D 0x9553 0x95B2 rachas_9553  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x9553 16
+D 0x95B2 0x9613 rachas_95B2  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (97 bytes)
+F 0x95B2 16
+D 0x9613 0x9672 rachas_9613  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x9613 16
+D 0x9672 0x96E6 rachas_9672  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (116 bytes)
+F 0x9672 16
+D 0x96E6 0x9759 rachas_96E6  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (115 bytes)
+F 0x96E6 16
+D 0x9759 0x97C9 rachas_9759  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (112 bytes)
+F 0x9759 16
+D 0x97C9 0x983D rachas_97C9  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (116 bytes)
+F 0x97C9 16
+D 0x983D 0x98B1 rachas_983D  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (116 bytes)
+F 0x983D 16
+D 0x98B1 0x9922 rachas_98B1  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (113 bytes)
+F 0x98B1 16
+D 0x9922 0x997C rachas_9922  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (90 bytes)
+F 0x9922 16
+D 0x997C 0x99DD rachas_997C  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (97 bytes)
+F 0x997C 16
+D 0x99DD 0x9A3B rachas_99DD  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (94 bytes)
+F 0x99DD 16
+D 0x9A3B 0x9A9B rachas_9A3B  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (96 bytes)
+F 0x9A3B 16
+D 0x9A9B 0x9AF9 rachas_9A9B  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (94 bytes)
+F 0x9A9B 16
+D 0x9AF9 0x9B59 rachas_9AF9  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (96 bytes)
+F 0x9AF9 16
+D 0x9B59 0x9BB8 rachas_9B59  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x9B59 16
+D 0x9BB8 0x9C17 rachas_9BB8  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x9BB8 16
+D 0x9C17 0x9C76 rachas_9C17  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x9C17 16
+D 0x9C76 0x9CD5 rachas_9C76  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x9C76 16
+D 0x9CD5 0x9D33 rachas_9CD5  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (94 bytes)
+F 0x9CD5 16
+D 0x9D33 0x9D91 rachas_9D33  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (94 bytes)
+F 0x9D33 16
+D 0x9D91 0x9DED rachas_9D91  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (92 bytes)
+F 0x9D91 16
+D 0x9DED 0x9E48 rachas_9DED  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (91 bytes)
+F 0x9DED 16
+D 0x9E48 0x9EA7 rachas_9E48  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x9E48 16
+D 0x9EA7 0x9F11 rachas_9EA7  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (106 bytes)
+F 0x9EA7 16
+D 0x9F11 0x9F70 rachas_9F11  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (95 bytes)
+F 0x9F11 16
+D 0x9F70 0x9FDA rachas_9F70  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (106 bytes)
+F 0x9F70 16
+D 0x9FDA 0xA000 rachas_9FDA  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba (sigue en el banco 15, en 0xA000); lo leen p00:568D (38 bytes)
+F 0x9FDA 16
+D 0x8000 0x84D7 resto_8000  lo apuntan con el banco puesto p00:4645 (0x800C), p00:460F (0x806A); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:4645, p00:460F (1239 bytes)
 F 0x8000 16
 # --- fin de los bloques de bloques.py ---

@@ -1,8 +1,208 @@
 # Notas del banco p15 (msx1): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA000 0xA03B rachas_9FDA_cola  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba (sigue del banco 14); lo leen p00:568D (59 bytes)
+F 0xA000 16
+D 0xA03B 0xA09D rachas_A03B  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (98 bytes)
+F 0xA03B 16
+D 0xA09D 0xA0FB rachas_A09D  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (94 bytes)
+F 0xA09D 16
+D 0xA0FB 0xA15C rachas_A0FB  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (97 bytes)
+F 0xA0FB 16
+D 0xA15C 0xA1BD rachas_A15C  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (97 bytes)
+F 0xA15C 16
+D 0xA1BD 0xA21A rachas_A1BD  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (93 bytes)
+F 0xA1BD 16
+D 0xA21A 0xA273 rachas_A21A  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (89 bytes)
+F 0xA21A 16
+D 0xA273 0xA2CD rachas_A273  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (90 bytes)
+F 0xA273 16
+D 0xA2CD 0xA32D rachas_A2CD  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (96 bytes)
+F 0xA2CD 16
+D 0xA32D 0xA389 rachas_A32D  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (92 bytes)
+F 0xA32D 16
+D 0xA389 0xA3E9 rachas_A389  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (96 bytes)
+F 0xA389 16
+D 0xA3E9 0xA446 rachas_A3E9  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (93 bytes)
+F 0xA3E9 16
+D 0xA446 0xA4A2 rachas_A446  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (92 bytes)
+F 0xA446 16
+D 0xA4A2 0xA4FC rachas_A4A2  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (90 bytes)
+F 0xA4A2 16
+D 0xA4FC 0xA559 rachas_A4FC  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (93 bytes)
+F 0xA4FC 16
+D 0xA559 0xA5C1 rachas_A559  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (104 bytes)
+F 0xA559 16
+D 0xA5C1 0xA62F rachas_A5C1  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (110 bytes)
+F 0xA5C1 16
+D 0xA62F 0xA69E rachas_A62F  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (111 bytes)
+F 0xA62F 16
+D 0xA69E 0xA6D8 rachas_A69E  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (58 bytes)
+F 0xA69E 16
+D 0xA6D8 0xA778 rachas_A6D8  rachas a la VRAM (sprites o pantallas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:56BC (160 bytes)
+F 0xA6D8 16
+D 0xA778 0xA77C letreros_sitios  2 punteros: el letrero de cada minijuego escondido; lo leen p00:4BA6 (4 bytes)
+F 0xA778 w8
+D 0xA77C 0xA78A letrero_sitio1  letrero (del sitio escondido 1): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (14 bytes)
+F 0xA77C 16
+D 0xA78A 0xA799 letrero_sitio2  letrero (del sitio escondido 2): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (15 bytes)
+F 0xA78A 16
+D 0xAAC7 0xAB57 rect_AAC7  12 x 12 caracteres (p00:53D6: B filas de C); lo leen p00:56FF (144 bytes)
+F 0xAAC7 12
+D 0xAB57 0xABE7 rect_AB57  12 x 12 caracteres (p00:53D6: B filas de C); lo leen p00:56F0 (144 bytes)
+F 0xAB57 12
+D 0xABE7 0xAC47 columnas_23  48 punteros a columnas de 23 caracteres (32 seguidas desde la que se pide); lo leen p00:5769 (96 bytes)
+F 0xABE7 w8
+D 0xAC47 0xAC5F col23_00  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAC47 24
+D 0xAC5F 0xAC77 col23_01  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAC5F 24
+D 0xAC77 0xAC8F col23_02  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAC77 24
+D 0xAC8F 0xACA7 col23_03  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAC8F 24
+D 0xACA7 0xACBF col23_04  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xACA7 24
+D 0xACBF 0xACD7 col23_05  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xACBF 24
+D 0xACD7 0xACEF col23_06  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xACD7 24
+D 0xACEF 0xAD07 col23_07  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xACEF 24
+D 0xAD07 0xAD1F col23_08  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAD07 24
+D 0xAD1F 0xAD37 col23_09  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAD1F 24
+D 0xAD37 0xAD4F col23_10  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAD37 24
+D 0xAD4F 0xAD67 col23_11  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAD4F 24
+D 0xAD67 0xAD7F col23_12  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAD67 24
+D 0xAD7F 0xAD97 col23_13  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAD7F 24
+D 0xAD97 0xADAF col23_14  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAD97 24
+D 0xADAF 0xADC7 col23_15  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xADAF 24
+D 0xADC7 0xADDF col23_16  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xADC7 24
+D 0xADDF 0xADF7 col23_17  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xADDF 24
+D 0xADF7 0xAE0F col23_18  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xADF7 24
+D 0xAE0F 0xAE27 col23_19  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAE0F 24
+D 0xAE27 0xAE3F col23_20  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAE27 24
+D 0xAE3F 0xAE57 col23_21  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAE3F 24
+D 0xAE57 0xAE6F col23_22  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAE57 24
+D 0xAE6F 0xAE87 col23_23  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAE6F 24
+D 0xAE87 0xAE9F col23_24  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAE87 24
+D 0xAE9F 0xAEB7 col23_25  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAE9F 24
+D 0xAEB7 0xAECF col23_26  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAEB7 24
+D 0xAECF 0xAEE7 col23_27  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAECF 24
+D 0xAEE7 0xAEFF col23_28  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAEE7 24
+D 0xAEFF 0xAF17 col23_29  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAEFF 24
+D 0xAF17 0xAF2F col23_30  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAF17 24
+D 0xAF2F 0xAF47 col23_31  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAF2F 24
+D 0xAF47 0xAF5F col23_32  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAF47 24
+D 0xAF5F 0xAF77 col23_33  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAF5F 24
+D 0xAF77 0xAF8F col23_34  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAF77 24
+D 0xAF8F 0xAFA7 col23_35  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAF8F 24
+D 0xAFA7 0xAFBF col23_36  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAFA7 24
+D 0xAFBF 0xAFD7 col23_37  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAFBF 24
+D 0xAFD7 0xAFEF col23_38  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAFD7 24
+D 0xAFEF 0xB007 col23_39  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xAFEF 24
+D 0xB007 0xB01F col23_40  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xB007 24
+D 0xB01F 0xB037 col23_41  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xB01F 24
+D 0xB037 0xB04F col23_42  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xB037 24
+D 0xB04F 0xB067 col23_43  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xB04F 24
+D 0xB067 0xB07F col23_44  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xB067 24
+D 0xB07F 0xB097 col23_45  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xB07F 24
+D 0xB097 0xB0AF col23_46  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xB097 24
+D 0xB0AF 0xB0C7 col23_47  columna de 23 caracteres en 24 bytes (el ultimo no lo lee nadie: p00:5772 pide 0x17 filas); lo leen p00:53D9 (24 bytes)
+F 0xB0AF 24
+D 0xB0C7 0xB0DC rect_B0C7  7 x 3 caracteres (p00:53D6: B filas de C); lo leen p00:5719 (21 bytes)
+F 0xB0C7 3
+D 0xB0DC 0xB16C rect_B0DC  12 x 12 caracteres (p00:53D6: B filas de C); lo leen p00:5711 (144 bytes)
+F 0xB0DC 12
+D 0xB16C 0xB172 rect_B16C  2 x 3 caracteres (p00:53D6: B filas de C); lo leen p00:572C (6 bytes)
+F 0xB16C 3
+D 0xB172 0xB178 rect_B172  2 x 3 caracteres (p00:53D6: B filas de C); lo leen p00:5731 (6 bytes)
+F 0xB172 3
+D 0xB178 0xB17E rect_B178  2 x 3 caracteres (p00:53D6: B filas de C); lo leen p00:5744 (6 bytes)
+F 0xB178 3
+D 0xB17E 0xB184 rect_B17E  2 x 3 caracteres (p00:53D6: B filas de C); lo leen p00:5749 (6 bytes)
+F 0xB17E 3
+D 0xB184 0xB244 rect_B184  16 x 12 caracteres (p00:53D6: B filas de C); lo leen p00:5785 (192 bytes)
+F 0xB184 12
+D 0xB244 0xB304 rect_B244  16 x 12 caracteres (p00:53D6: B filas de C); lo leen p00:578B (192 bytes)
+F 0xB244 12
+D 0xB304 0xB31C rect_B304  12 x 2 caracteres (p00:53D6: B filas de C); lo leen p00:579D (24 bytes)
+F 0xB304 2
+D 0xB31C 0xB34C rect_B31C  12 x 4 caracteres (p00:53D6: B filas de C); lo leen p00:57AF (48 bytes)
+F 0xB31C 4
+D 0xB34C 0xB3A0 rect_B34C  14 x 6 caracteres (p00:53D6: B filas de C); lo leen p00:57C1 (84 bytes)
+F 0xB34C 6
+D 0xB3A0 0xB3C4 rect_B3A0  6 x 6 caracteres (p00:53D6: B filas de C); lo leen p00:57D8 (36 bytes)
+F 0xB3A0 6
+D 0xB3C4 0xB418 rect_B3C4  14 x 6 caracteres (p00:53D6: B filas de C); lo leen p00:57F1 (84 bytes)
+F 0xB3C4 6
+D 0xB418 0xB41D rachas_B418  rachas a la VRAM (sprites o pantallas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5848 (5 bytes)
+F 0xB418 16
+D 0xB41D 0xB422 rachas_B41D  rachas a la VRAM (sprites o pantallas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:580C (5 bytes)
+F 0xB41D 16
+D 0xB422 0xB48A rachas_B422  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (104 bytes)
+F 0xB422 16
+D 0xB48A 0xB4E8 rachas_B48A  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (94 bytes)
+F 0xB48A 16
+D 0xB4E8 0xB550 rachas_B4E8  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (104 bytes)
+F 0xB4E8 16
+D 0xB550 0xB5B7 rachas_B550  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (103 bytes)
+F 0xB550 16
+D 0xB5B7 0xB61D rachas_B5B7  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D, p00:581B (102 bytes)
+F 0xB5B7 16
+D 0xB61D 0xB851 rachas_B61D  rachas a la VRAM (sprites o pantallas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5325 (564 bytes)
+F 0xB61D 16
+D 0xB851 0xB963 rachas_B851  rachas a la VRAM (sprites o pantallas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5803 (274 bytes)
+F 0xB851 16
+D 0xB963 0xBA96 rachas_B963  rachas a la VRAM (sprites o pantallas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:583F (307 bytes)
+F 0xB963 16
+D 0xBA96 0xBB21 rachas_BA96  rachas a la VRAM (sprites o pantallas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5605 (139 bytes)
+F 0xBA96 16
+D 0xBB21 0xBBA0 rachas_BB21  rachas a la VRAM (el titulo) con su destino delante (2 bytes); lo leen p00:4E23 (127 bytes)
+F 0xBB21 16
 D 0xBBB4 0xC000 relleno_ff  1100 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (1100 bytes)
 F 0xBBB4 16
-D 0xA000 0xBBB4 resto_A000  lo apuntan con el banco puesto p00:57C4 (0xA030), p00:57F4 (0xA030), p00:56BC (0xA6D8), p00:4B9B (0xA778), p00:5331 (0xA799), p00:5338 (0xA7BA); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:57C4, p00:57F4, p00:56BC, p00:4B9B, p00:5331, p00:5338 (7092 bytes)
-F 0xA000 16
+D 0xA799 0xAAC7 resto_A799  lo apuntan con el banco puesto p00:5331 (0xA799), p00:5338 (0xA7BA), p00:57B2 (0xA838); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5331, p00:5338, p00:57B2 (814 bytes)
+F 0xA799 16
+D 0xBBA0 0xBBB4 resto_BBA0  lo apuntan con el banco puesto p02:9D0F (0xBBA0); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p02:9D0F (20 bytes)
+F 0xBBA0 16
 # --- fin de los bloques de bloques.py ---

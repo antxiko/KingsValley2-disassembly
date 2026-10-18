@@ -282,6 +282,18 @@ D 0xAA14 0xAA1E columnas_58  Las columnas que se marcan en el mapa y se apuntan 
 F 0xAA14 16
 D 0xAA1E 0xAA29 columnas_60  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 60; lo leen p00:443C (11 bytes)
 F 0xAA1E 16
+D 0xAA29 0xAA89 fuente_AA29  96 bytes de patrones (12 caracteres) que van a la VRAM en los tres tercios; lo leen p00:5893 (96 bytes)
+F 0xAA29 8
+D 0xAA89 0xAB79 fuente_AA89  240 bytes de patrones (30 caracteres) que van a la VRAM en los tres tercios; lo leen p00:5A4C (240 bytes)
+F 0xAA89 8
+D 0xAB79 0xABA1 fuente_AB79  40 bytes de patrones (5 caracteres) que van a la VRAM en los tres tercios; lo leen p00:58AB (40 bytes)
+F 0xAB79 8
+D 0xABA1 0xABB1 fuente_ABA1  16 bytes de patrones (2 caracteres) que van a la VRAM en los tres tercios; lo leen p00:5A58 (16 bytes)
+F 0xABA1 8
+D 0xABB1 0xABC1 fuente_ABB1  16 bytes de patrones (2 caracteres) que van a la VRAM en los tres tercios; lo leen p00:5A7A (16 bytes)
+F 0xABB1 8
+D 0xAFDD 0xB185 fuente_AFDD  424 bytes de patrones (53 caracteres) que van a la VRAM en los tres tercios; lo leen p00:534B (424 bytes)
+F 0xAFDD 8
 D 0xB42F 0xB437 tabla_B42F  4 destinos del despachador p00:409E (call en p12:B42C, el indice en A): B437, B462, B46C, B48F; lo leen p12:B42C (8 bytes)
 F 0xB42F w4
 D 0xB6BA 0xB6C6 tabla_B6BA  6 destinos del despachador p00:409E (call en p12:B6B7, el indice en A): B6C6, B6EE, B6FD, B745, B85A, B899; lo leen p12:B6B7 (12 bytes)
@@ -292,8 +304,10 @@ D 0xB97C 0xB9A2 tabla_B97C  19 destinos del despachador p00:409E (call en p12:B9
 F 0xB97C w8
 D 0xBF50 0xC000 relleno_ff  176 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (176 bytes)
 F 0xBF50 16
-D 0xAA29 0xB400 resto_AA29  lo apuntan con el banco puesto p00:5893 (0xAA29), p00:5A40 (0xAA29), p00:589F (0xAA89), p00:5A4C (0xAA89), p00:58AB (0xAB79), p00:5A58 (0xABA1); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5893, p00:5A40, p00:589F, p00:5A4C, p00:58AB, p00:5A58 (2519 bytes)
-F 0xAA29 16
+D 0xABC1 0xAFDD resto_ABC1  lo apuntan con el banco puesto p01:6FA4 (0xAC13), p01:73FD (0xAD76), p01:7190 (0xAF37), p02:9EA4 (0xAF52), p02:9EB4 (0xAF60), p02:892A (0xAF7D); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p01:6FA4, p01:73FD, p01:7190, p02:9EA4, p02:9EB4, p02:892A (1052 bytes)
+F 0xABC1 16
+D 0xB185 0xB400 resto_B185  lo apuntan con el banco puesto p01:658E (0xB185), p01:6605 (0xB1B6), p02:8DC3 (0xB256), p00:482A (0xB284); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p01:658E, p01:6605, p02:8DC3, p00:482A (635 bytes)
+F 0xB185 16
 D 0xB4F8 0xB4FC resto_B4F8  lo apuntan con el banco puesto p12:B4EF (0xB4F8); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B4EF (4 bytes)
 F 0xB4F8 16
 D 0xB544 0xB6AC resto_B544  lo apuntan con el banco puesto p12:B400 (0xB544), p12:B924 (0xB581), p12:B73F (0xB5B4), p12:B893 (0xB5C3), p12:B6FD (0xB5DC), p12:B7EA (0xB648); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B400, p12:B924, p12:B73F, p12:B893, p12:B6FD, p12:B7EA (360 bytes)

@@ -525,6 +525,12 @@ def rachas_vram(v, a):
             a += 1 + (n & 0x7F)
 
 
+def rachas_destino(v, a, nom, texto, lector):
+    """Rachas con el destino delante (p00:4E1F en MSX2, p00:4E20 en MSX1)."""
+    B.declara(v, a, rachas_vram(v, a + 2), nom, "rachas a la VRAM (%s) con su destino delante "
+              "(2 bytes)" % texto, lector, F=16)
+
+
 def rachas(v, a, nom, texto, lector):
     B.declara(v, a, rachas_vram(v, a), nom, "rachas a la VRAM (%s): [n < 0x80] repite el byte "
               "siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba" % texto, lector, F=16)
@@ -730,9 +736,9 @@ def graficos_msx2_resto():
     B.declara(v, 0x9D37, 0x9D3B, "letreros_sitios", "2 punteros: el letrero de cada minijuego "
               "escondido", tr("p00:4BA5"), F="w8")
     # las columnas de 27 caracteres (p00:59ED): de la 0 a la 0x0F + 31
-    B.declara(v, 0x9D58, 0x9D58 + 2 * 47, "columnas_27", "47 punteros a columnas de 27 caracteres "
+    B.declara(v, 0x9D58, 0x9D58 + 2 * 48, "columnas_27", "48 punteros a columnas de 27 caracteres "
               "(32 seguidas desde la que se pide: 0, 4 o 0x0F)", tr("p00:59FF"), F="w8")
-    for k in range(47):
+    for k in range(48):
         a = v.w(0x9D58 + 2 * k)
         B.declara(v, a, a + 27, "col27_%02d" % k, "columna de 27 caracteres", tr("p00:5742"),
                   F=27)
@@ -861,6 +867,145 @@ def banco13_resto():
               tr("p00:5155"), F=8)
 
 
+# ------------------------------------------------------- graficos de MSX1
+#
+# El cartucho de MSX1 pinta en SCREEN 2 (TMS9918), con sus propias rutinas
+# del banco 0 (direcciones de MSX1):
+#   p00:5033  lista de 6 bytes [tercios][colores][caracter][patrones], un 0
+#             acaba: en cada tercio marcado (bit 0: 0x1000, 1: 0x0800, 2:
+#             0x0000) las rachas de patrones van a 8 x caracter y las de colores
+#             a 0x2000 + 8 x caracter (las rachas, como p00:4E20).
+#   p00:4EB7  rachas a los tres tercios (HL, HL + 0x800, HL + 0x1000).
+#   p00:53D6  rectangulo: B filas de C caracteres.
+#   p00:4F0B  letrero: [x][y] y caracteres, 0xFE [x][y], 0xFF acaba.
+
+
+def lista_tercios(v, a, nom, que, lector):
+    ini = a
+    while v(a):
+        for o, q in ((1, "colores"), (4, "patrones")):
+            r = v.w(a + o)
+            rachas(v, r, "rachas_%04X" % r, "%s de %s" % (q, que), lector)
+        a += 6
+    B.declara(v, ini, a + 1, nom, "%d fichas de 6 bytes [tercios][colores][caracter][patrones] "
+              "(%s), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado"
+              % ((a - ini) // 6, que), lector, F=6)
+
+
+def graficos_msx1():
+    if actual() != "msx1":
+        return
+    lec_l = "p00:5033"
+    v = B.Ventana((7, 8, 9))
+    lista_tercios(v, 0x6000, "graf_6000", "lo comun a las piramides", lec_l)
+    B.declara(v, 0x6007, 0x6013, "graficos_piramides", "6 punteros, uno por piramide (0xE241, "
+              "desde 0x6005: la entrada 0 son los dos ultimos bytes de la lista de delante)",
+              "p00:530C", F="w8")
+    for k in range(1, 7):
+        lista_tercios(v, v.w(0x6005 + 2 * k), "graf_pir%d" % k, "la piramide %d" % k, lec_l)
+    for a, que, lec in ((0x814B, "la entrada", "p00:56C5"), (0x815F, "el final", "p00:56E4"),
+                        (0x8175, "el final", "p00:56DB")):
+        lista_tercios(v, a, "graf_%04X" % a, que, lec_l)
+    for a, que, lec in ((0x8934, "la presentacion", "p00:5289"), (0x8BAA, "la presentacion",
+                        "p00:5292"), (0x9625, "el titulo (no japones)", "p00:529B"),
+                        (0x9438, "el titulo (japones: 0x002B de la BIOS)", "p00:52A5"),
+                        (0x98FF, "el titulo (no japones)", "p00:52AE"),
+                        (0x9756, "el titulo (japones)", "p00:52B8"),
+                        (0x926A, "las musicas", "p00:55E7"), (0x93C3, "las musicas", "p00:55F0"),
+                        (0x9A8F, "la tabla de nombres", "p00:55D8")):
+        rachas(v, a, "rachas_%04X" % a, que, lec)
+    rachas_destino(v, 0x9BF2, "rachas_9BF2", "el plano", "p00:4E23")
+    B.declara(v, 0x9434, 0x9438, "fundidos_lista", "2 punteros (desde 0x9432, por A): listas de "
+              "fundido de 4 bytes [tercios][caracter][cuantos bytes], un 0 acaba", "p00:5416", F="w8")
+    for k in range(3):
+        a = v.w(0x9432 + 2 * k)
+        x = a
+        while v(x):
+            x += 4
+        B.declara(v, a, x + 1, "fundido_%04X" % a, "lista de fundido: fichas de 4 bytes [tercios]"
+                  "[caracter][cuantos bytes], un 0 acaba (se borran en la VRAM poco a poco)",
+                  "p00:5571", F=4)
+    # los caracteres que cambian solos (p00:5915 y p00:58C5), tablas del banco 0
+    w0 = B.Ventana((7, 8, 9))
+    B.declara(w0, 0x5930, 0x5940, "animados_comunes", "8 punteros (por 0xEF06 & 7): rachas de "
+              "patrones que van a los caracteres 0x98-0x9F de los tres tercios", "p00:5926", F="w8")
+    for k in range(8):
+        r = w0.w(0x5930 + 2 * k)
+        rachas(w0, r, "rachas_%04X" % r, "un paso de los caracteres animados", "p00:4EB9")
+    B.declara(w0, 0x5940, 0x5940 + 60, "animados_piramides", "10 bytes por piramide (desde "
+              "0x5936 + 10 x piramide): [caracter][cada cuantos cuadros] y 4 punteros a los pasos",
+              "p00:58D3", F=10)
+    for k in range(1, 7):
+        for j in range(4):
+            r = w0.w(0x5936 + 10 * k + 2 + 2 * j)
+            rachas(w0, r, "rachas_%04X" % r, "un paso del caracter animado de la piramide %d" % k,
+                   "p00:4EB9")
+    for a, que, lec in ((0x9A54, "del titulo (no japones)", "p00:52DE"),
+                        (0x99E9, "del titulo (japones)", "p00:52E8")):
+        letrero(v, a, "letrero_%04X" % a, que, lec)
+    B.declara(v, 0x9BDA, 0x9BE6, "plano_mapas", "6 punteros: rachas que se desempaquetan en la RAM "
+              "(0xE900) para el plano", "p00:5A11", F="w8")
+    for k in range(6):
+        a = v.w(0x9BDA + 2 * k)
+        B.declara(v, a, rachas_vram(v, a), "plano_%d" % k, "rachas a la RAM (como p00:5A21)",
+                  "p00:5A21", F=16)
+    # bancos 14-15 (p00:41D4)
+    v = B.Ventana((1, 14, 15))
+    B.declara(v, 0x84D7, 0x84E5, "posturas", "7 punteros, uno por lo que lleva el personaje "
+              "(0xE287): una tabla por direccion", "p00:567A", F="w8")
+    for k in range(7):
+        t = v.w(0x84D7 + 2 * k)
+        sig = v.w(0x84D7 + 2 * (k + 1)) if k < 6 else 0x8589
+        n = (sig - t) // 2
+        B.declara(v, t, t + 2 * n, "postura_%d" % k, "%d punteros, uno por direccion: las rachas "
+                  "de sus sprites" % n, "p00:5686", F="w8")
+        for j in range(n):
+            r = v.w(t + 2 * j)
+            rachas(v, r, "rachas_%04X" % r, "sprites del personaje", "p00:568D")
+    for t, n, que, lec in ((0x8589, 7, "muerto, por direccion", "p00:5696"),
+                           (0x8597, 7, "en pausa", "p00:56A6")):
+        B.declara(v, t, t + 2 * n, "spr_%04X" % t, "%d punteros a las rachas de los sprites del "
+                  "personaje %s" % (n, que), lec, F="w8")
+        for j in range(n):
+            r = v.w(t + 2 * j)
+            rachas(v, r, "rachas_%04X" % r, "sprites del personaje", "p00:568D")
+    for a, lec in ((0x85A5, "p00:5824"), (0x8604, "p00:582D"), (0x8662, "p00:5836"),
+                   (0x86BC, "p00:5860"), (0x871B, "p00:5869"), (0x8778, "p00:5872"),
+                   (0xA6D8, "p00:56BC"), (0xB418, "p00:5848"), (0xB41D, "p00:580C"),
+                   (0xB5B7, "p00:581B"), (0xB61D, "p00:5325"), (0xB851, "p00:5803"),
+                   (0xB963, "p00:583F"), (0xBA96, "p00:5605")):
+        rachas(v, a, "rachas_%04X" % a, "sprites o pantallas", lec)
+    rachas_destino(v, 0xBB21, "rachas_BB21", "el titulo", "p00:4E23")
+    for a, b, c, lec in ((0xAB57, 12, 12, "p00:56F0"), (0xAAC7, 12, 12, "p00:56FF"),
+                         (0xB0DC, 12, 12, "p00:5711"), (0xB0C7, 7, 3, "p00:5719"),
+                         (0xB16C, 2, 3, "p00:572C"), (0xB172, 2, 3, "p00:5731"),
+                         (0xB178, 2, 3, "p00:5744"), (0xB17E, 2, 3, "p00:5749"),
+                         (0xB184, 16, 12, "p00:5785"), (0xB244, 16, 12, "p00:578B"),
+                         (0xB304, 12, 2, "p00:579D"), (0xB31C, 12, 4, "p00:57AF"),
+                         (0xB34C, 14, 6, "p00:57C1"), (0xB3A0, 6, 6, "p00:57D8"),
+                         (0xB3C4, 14, 6, "p00:57F1")):
+        B.declara(v, a, a + b * c, "rect_%04X" % a, "%d x %d caracteres (p00:53D6: B filas de C)"
+                  % (b, c), lec, F=c)
+    B.declara(v, 0xABE7, 0xABE7 + 2 * 48, "columnas_23", "48 punteros a columnas de 23 caracteres "
+              "(32 seguidas desde la que se pide)", "p00:5769", F="w8")
+    for k in range(48):
+        a = v.w(0xABE7 + 2 * k)
+        B.declara(v, a, a + 24, "col23_%02d" % k, "columna de 23 caracteres en 24 bytes (el ultimo "
+                  "no lo lee nadie: p00:5772 pide 0x17 filas)", "p00:53D9", F=24)
+    for k in (0, 1):
+        letrero(v, v.w(0xA778 + 2 * k), "letrero_sitio%d" % (k + 1), "del sitio escondido %d"
+                % (k + 1), "p00:4F11")
+    B.declara(v, 0xA778, 0xA77C, "letreros_sitios", "2 punteros: el letrero de cada minijuego "
+              "escondido", "p00:4BA6", F="w8")
+    # banco 12: las fuentes (p00:5342, 5890, 5A3D)
+    v12 = B.Ventana((10, 11, 12))
+    for a, n, lec in ((0xAFDD, 0x1A8, "p00:534B"), (0xAA29, 0x60, "p00:5893"),
+                      (0xAA89, 0xF0, "p00:5A4C"), (0xAB79, 0x28, "p00:58AB"),
+                      (0xABA1, 0x10, "p00:5A58"), (0xABB1, 0x10, "p00:5A7A")):
+        B.declara(v12, a, a + n, "fuente_%04X" % a, "%d bytes de patrones (%d caracteres) que van "
+                  "a la VRAM en los tres tercios" % (n, n // 8), lec, F=8)
+
+
 def todo():
     """Declara los bloques de los dos cartuchos (B.declara ...)."""
     sonido()
@@ -868,3 +1013,4 @@ def todo():
     banco13_resto()
     graficos_msx2()
     graficos_msx2_resto()
+    graficos_msx1()

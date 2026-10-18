@@ -1,6 +1,100 @@
 # Notas del banco p07 (msx1): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
-D 0x6000 0x8000 resto_6000  lo apuntan con el banco puesto p00:5318 (0x6000), p00:530C (0x6005), p00:419B (0x7000); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5318, p00:530C, p00:419B (8192 bytes)
-F 0x6000 16
+D 0x6000 0x6007 graf_6000  1 fichas de 6 bytes [tercios][colores][caracter][patrones] (lo comun a las piramides), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (7 bytes)
+F 0x6000 6
+D 0x6007 0x6013 graficos_piramides  6 punteros, uno por piramide (0xE241, desde 0x6005: la entrada 0 son los dos ultimos bytes de la lista de delante); lo leen p00:530C (12 bytes)
+F 0x6007 w8
+D 0x6013 0x6026 graf_pir1  3 fichas de 6 bytes [tercios][colores][caracter][patrones] (la piramide 1), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (19 bytes)
+F 0x6013 6
+D 0x6026 0x6039 graf_pir2  3 fichas de 6 bytes [tercios][colores][caracter][patrones] (la piramide 2), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (19 bytes)
+F 0x6026 6
+D 0x6039 0x6046 graf_pir3  2 fichas de 6 bytes [tercios][colores][caracter][patrones] (la piramide 3), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (13 bytes)
+F 0x6039 6
+D 0x6046 0x6053 graf_pir4  2 fichas de 6 bytes [tercios][colores][caracter][patrones] (la piramide 4), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (13 bytes)
+F 0x6046 6
+D 0x6053 0x6066 graf_pir5  3 fichas de 6 bytes [tercios][colores][caracter][patrones] (la piramide 5), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (19 bytes)
+F 0x6053 6
+D 0x6066 0x6073 graf_pir6  2 fichas de 6 bytes [tercios][colores][caracter][patrones] (la piramide 6), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (13 bytes)
+F 0x6066 6
+D 0x6073 0x63DA rachas_6073  rachas a la VRAM (colores de lo comun a las piramides): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (871 bytes)
+F 0x6073 16
+D 0x63DA 0x63E7 rachas_63DA  rachas a la VRAM (colores de la piramide 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (13 bytes)
+F 0x63DA 16
+D 0x63E7 0x657A rachas_63E7  rachas a la VRAM (patrones de lo comun a las piramides): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (403 bytes)
+F 0x63E7 16
+D 0x657A 0x6594 rachas_657A  rachas a la VRAM (un paso de los caracteres animados): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (26 bytes)
+F 0x657A 16
+D 0x6594 0x65AC rachas_6594  rachas a la VRAM (un paso de los caracteres animados): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (24 bytes)
+F 0x6594 16
+D 0x65AC 0x65C3 rachas_65AC  rachas a la VRAM (un paso de los caracteres animados): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (23 bytes)
+F 0x65AC 16
+D 0x65C3 0x65DE rachas_65C3  rachas a la VRAM (un paso de los caracteres animados): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (27 bytes)
+F 0x65C3 16
+D 0x65DE 0x65F8 rachas_65DE  rachas a la VRAM (un paso de los caracteres animados): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (26 bytes)
+F 0x65DE 16
+D 0x65F8 0x6610 rachas_65F8  rachas a la VRAM (un paso de los caracteres animados): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (24 bytes)
+F 0x65F8 16
+D 0x6610 0x6627 rachas_6610  rachas a la VRAM (un paso de los caracteres animados): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (23 bytes)
+F 0x6610 16
+D 0x6627 0x6644 rachas_6627  rachas a la VRAM (un paso de los caracteres animados): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (29 bytes)
+F 0x6627 16
+D 0x6644 0x6647 rachas_6644  rachas a la VRAM (patrones de la piramide 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (3 bytes)
+F 0x6644 16
+D 0x6647 0x68D8 rachas_6647  rachas a la VRAM (colores de la piramide 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (657 bytes)
+F 0x6647 16
+D 0x68D8 0x696D rachas_68D8  rachas a la VRAM (colores de la piramide 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (149 bytes)
+F 0x68D8 16
+D 0x696D 0x6AD9 rachas_696D  rachas a la VRAM (patrones de la piramide 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (364 bytes)
+F 0x696D 16
+D 0x6AD9 0x6AF9 rachas_6AD9  rachas a la VRAM (un paso del caracter animado de la piramide 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (32 bytes)
+F 0x6AD9 16
+D 0x6AF9 0x6B19 rachas_6AF9  rachas a la VRAM (un paso del caracter animado de la piramide 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (32 bytes)
+F 0x6AF9 16
+D 0x6B19 0x6BB3 rachas_6B19  rachas a la VRAM (patrones de la piramide 1): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (154 bytes)
+F 0x6B19 16
+D 0x6BB3 0x6E04 rachas_6BB3  rachas a la VRAM (colores de la piramide 2): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (593 bytes)
+F 0x6BB3 16
+D 0x6E04 0x6E99 rachas_6E04  rachas a la VRAM (colores de la piramide 2): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (149 bytes)
+F 0x6E04 16
+D 0x6E99 0x700A rachas_6E99  rachas a la VRAM (patrones de la piramide 2): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (369 bytes)
+F 0x6E99 16
+D 0x700A 0x7026 rachas_700A  rachas a la VRAM (un paso del caracter animado de la piramide 2): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (28 bytes)
+F 0x700A 16
+D 0x7026 0x7042 rachas_7026  rachas a la VRAM (un paso del caracter animado de la piramide 2): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (28 bytes)
+F 0x7026 16
+D 0x7042 0x70D9 rachas_7042  rachas a la VRAM (patrones de la piramide 2): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (151 bytes)
+F 0x7042 16
+D 0x70D9 0x733B rachas_70D9  rachas a la VRAM (colores de la piramide 3): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (610 bytes)
+F 0x70D9 16
+D 0x733B 0x7414 rachas_733B  rachas a la VRAM (patrones de la piramide 3): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (217 bytes)
+F 0x733B 16
+D 0x7414 0x7438 rachas_7414  rachas a la VRAM (un paso del caracter animado de la piramide 3): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (36 bytes)
+F 0x7414 16
+D 0x7438 0x745C rachas_7438  rachas a la VRAM (un paso del caracter animado de la piramide 3): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (36 bytes)
+F 0x7438 16
+D 0x74A4 0x765B rachas_74A4  rachas a la VRAM (colores de la piramide 4): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (439 bytes)
+F 0x74A4 16
+D 0x765B 0x777C rachas_765B  rachas a la VRAM (patrones de la piramide 4): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (289 bytes)
+F 0x765B 16
+D 0x777C 0x778B rachas_777C  rachas a la VRAM (un paso del caracter animado de la piramide 4): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (15 bytes)
+F 0x777C 16
+D 0x778B 0x779A rachas_778B  rachas a la VRAM (un paso del caracter animado de la piramide 4): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (15 bytes)
+F 0x778B 16
+D 0x779A 0x79E8 rachas_779A  rachas a la VRAM (colores de la piramide 5): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (590 bytes)
+F 0x779A 16
+D 0x79E8 0x7A6B rachas_79E8  rachas a la VRAM (colores de la piramide 5): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (131 bytes)
+F 0x79E8 16
+D 0x7A6B 0x7C19 rachas_7A6B  rachas a la VRAM (patrones de la piramide 5): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (430 bytes)
+F 0x7A6B 16
+D 0x7C19 0x7C89 rachas_7C19  rachas a la VRAM (patrones de la piramide 5): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (112 bytes)
+F 0x7C19 16
+D 0x7C89 0x7C9B rachas_7C89  rachas a la VRAM (un paso del caracter animado de la piramide 5): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (18 bytes)
+F 0x7C89 16
+D 0x7C9B 0x7CAA rachas_7C9B  rachas a la VRAM (un paso del caracter animado de la piramide 5): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (15 bytes)
+F 0x7C9B 16
+D 0x7CAA 0x7F18 rachas_7CAA  rachas a la VRAM (colores de la piramide 6): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (622 bytes)
+F 0x7CAA 16
+D 0x7F18 0x8000 rachas_7F18  rachas a la VRAM (patrones de la piramide 6): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba (sigue en el banco 8, en 0x8000); lo leen p00:5033 (232 bytes)
+F 0x7F18 16
 # --- fin de los bloques de bloques.py ---

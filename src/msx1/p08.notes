@@ -1,8 +1,76 @@
 # Notas del banco p08 (msx1): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x8000 0x80B3 rachas_7F18_cola  rachas a la VRAM (patrones de la piramide 6): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba (sigue del banco 7); lo leen p00:5033 (179 bytes)
+F 0x8000 16
+D 0x80B3 0x80D9 rachas_80B3  rachas a la VRAM (un paso del caracter animado de la piramide 6): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (38 bytes)
+F 0x80B3 16
+D 0x80D9 0x80FF rachas_80D9  rachas a la VRAM (un paso del caracter animado de la piramide 6): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (38 bytes)
+F 0x80D9 16
+D 0x80FF 0x8125 rachas_80FF  rachas a la VRAM (un paso del caracter animado de la piramide 6): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (38 bytes)
+F 0x80FF 16
+D 0x8125 0x814B rachas_8125  rachas a la VRAM (un paso del caracter animado de la piramide 6): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:4EB9 (38 bytes)
+F 0x8125 16
+D 0x814B 0x8158 graf_814B  2 fichas de 6 bytes [tercios][colores][caracter][patrones] (la entrada), un 0 acaba: rachas a las tablas de patrones y colores de cada tercio marcado; lo leen p00:5033 (13 bytes)
+F 0x814B 6
+D 0x8158 0x81AB fundido_8158  lista de fundido: fichas de 4 bytes [tercios][caracter][cuantos bytes], un 0 acaba (se borran en la VRAM poco a poco); se solapan 5 bloques: (graf_815F 815F-8166) (fundido_8166 8166-81AB) (fundido_816E 816E-81AB) (graf_8175 8175-8182); lo leen p00:5571, p00:5033 (83 bytes)
+F 0x8158 4
+D 0x8382 0x8757 rachas_8382  rachas a la VRAM (colores de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (981 bytes)
+F 0x8382 16
+D 0x8757 0x8934 rachas_8757  rachas a la VRAM (patrones de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (477 bytes)
+F 0x8757 16
+D 0x8934 0x8BAA rachas_8934  rachas a la VRAM (colores de el final): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033, p00:5289 (630 bytes)
+F 0x8934 16
+D 0x8BAA 0x8D35 rachas_8BAA  rachas a la VRAM (patrones de el final): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033, p00:5292 (395 bytes)
+F 0x8BAA 16
+D 0x8D35 0x8EDE rachas_8D35  rachas a la VRAM (colores de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (425 bytes)
+F 0x8D35 16
+D 0x8EDE 0x9015 rachas_8EDE  rachas a la VRAM (patrones de la entrada): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (311 bytes)
+F 0x8EDE 16
+D 0x9015 0x91AC rachas_9015  rachas a la VRAM (colores de el final): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (407 bytes)
+F 0x9015 16
+D 0x91AC 0x926A rachas_91AC  rachas a la VRAM (patrones de el final): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5033 (190 bytes)
+F 0x91AC 16
+D 0x926A 0x93C3 rachas_926A  rachas a la VRAM (las musicas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:55E7 (345 bytes)
+F 0x926A 16
+D 0x93C3 0x9422 rachas_93C3  rachas a la VRAM (las musicas): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:55F0 (95 bytes)
+F 0x93C3 16
+D 0x9434 0x9438 fundidos_lista  2 punteros (desde 0x9432, por A): listas de fundido de 4 bytes [tercios][caracter][cuantos bytes], un 0 acaba; lo leen p00:5416 (4 bytes)
+F 0x9434 w8
+D 0x9438 0x9625 rachas_9438  rachas a la VRAM (el titulo (japones: 0x002B de la BIOS)): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52A5 (493 bytes)
+F 0x9438 16
+D 0x9625 0x9756 rachas_9625  rachas a la VRAM (el titulo (no japones)): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:529B (305 bytes)
+F 0x9625 16
+D 0x9756 0x97AB rachas_9756  rachas a la VRAM (el titulo (japones)): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52B8 (85 bytes)
+F 0x9756 16
+D 0x98FF 0x99E9 rachas_98FF  rachas a la VRAM (el titulo (no japones)): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:52AE (234 bytes)
+F 0x98FF 16
+D 0x99E9 0x9A54 letrero_99E9  letrero (del titulo (japones)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:52E8 (107 bytes)
+F 0x99E9 16
+D 0x9A54 0x9A8F letrero_9A54  letrero (del titulo (no japones)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:52DE (59 bytes)
+F 0x9A54 16
+D 0x9A8F 0x9BDA rachas_9A8F  rachas a la VRAM (la tabla de nombres): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:55D8 (331 bytes)
+F 0x9A8F 16
+D 0x9BDA 0x9BE6 plano_mapas  6 punteros: rachas que se desempaquetan en la RAM (0xE900) para el plano; lo leen p00:5A11 (12 bytes)
+F 0x9BDA w8
+D 0x9BF2 0x9D54 rachas_9BF2  rachas a la VRAM (el plano) con su destino delante (2 bytes); lo leen p00:4E23 (354 bytes)
+F 0x9BF2 16
+D 0x9D71 0x9D76 plano_0  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+F 0x9D71 16
+D 0x9D76 0x9D7B plano_1  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+F 0x9D76 16
+D 0x9D7B 0x9D82 plano_2  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (7 bytes)
+F 0x9D7B 16
+D 0x9D82 0x9D89 plano_3  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (7 bytes)
+F 0x9D82 16
+D 0x9D89 0x9D8E plano_4  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+F 0x9D89 16
+D 0x9D8E 0x9D93 plano_5  rachas a la RAM (como p00:5A21); lo leen p00:5A21 (5 bytes)
+F 0x9D8E 16
 D 0x9D93 0xA000 relleno_ff  621 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (621 bytes)
 F 0x9D93 16
-D 0x8000 0x9D93 resto_8000  lo apuntan con el banco puesto p00:56C5 (0x814B), p00:56E4 (0x815F), p00:56DB (0x8175), p00:5289 (0x8934), p00:5292 (0x8BAA), p00:41A1 (0x9000); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:56C5, p00:56E4, p00:56DB, p00:5289, p00:5292, p00:41A1 (7571 bytes)
-F 0x8000 16
+D 0x9422 0x9434 resto_9422  lo apuntan con el banco puesto p00:53FC (0x9422), p00:5413 (0x9432); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:53FC, p00:5413 (18 bytes)
+F 0x9422 16
+D 0x9BE6 0x9BF2 resto_9BE6  lo apuntan con el banco puesto p00:59CF (0x9BE6); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:59CF (12 bytes)
+F 0x9BE6 16
 # --- fin de los bloques de bloques.py ---

@@ -499,6 +499,10 @@ D 0x470E 0x4718 tabla_470E  5 destinos del despachador p00:409E (call en p00:470
 F 0x470E w5
 D 0x47C6 0x47DE tabla_47C6  12 destinos del despachador p00:409E (call en p00:47C3, el indice en A): 47DE, 47E5, 483C, 4845, 4855, 4869, 486F, 487C, 4882, 4891, 4897, 48A9; lo leen p00:47C3 (24 bytes)
 F 0x47C6 w8
+D 0x5930 0x5940 animados_comunes  8 punteros (por 0xEF06 & 7): rachas de patrones que van a los caracteres 0x98-0x9F de los tres tercios; lo leen p00:5926 (16 bytes)
+F 0x5930 w8
+D 0x5940 0x597C animados_piramides  10 bytes por piramide (desde 0x5936 + 10 x piramide): [caracter][cada cuantos cuadros] y 4 punteros a los pasos; lo leen p00:58D3 (60 bytes)
+F 0x5940 10
 D 0x5C3A 0x5C42 tabla_5C3A  4 destinos del despachador p00:409E (call en p00:5C37, el indice en A): 5C42, 5C4E, 5C5C, 5C6A; lo leen p00:5C37 (8 bytes)
 F 0x5C3A w4
 D 0x5DD1 0x5DD5 tabla_5DD1  2 destinos del despachador p00:409E (call en p00:5DCE, el indice en A): 5DD5, 5DE7; lo leen p00:5DCE (4 bytes)
@@ -517,8 +521,6 @@ D 0x4FA7 0x4FAF resto_4FA7  lo apuntan con el banco puesto p00:4F96 (0x4FA7); el
 F 0x4FA7 16
 D 0x5377 0x537B resto_5377  lo apuntan con el banco puesto p00:536E (0x5377); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:536E (4 bytes)
 F 0x5377 16
-D 0x5930 0x597C resto_5930  lo apuntan con el banco puesto p00:5923 (0x5930), p00:58D0 (0x5936); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5923, p00:58D0 (76 bytes)
-F 0x5930 16
 D 0x5CE9 0x5D84 resto_5CE9  lo apuntan con el banco puesto p00:4C9B (0x5CE9), p02:8DCE (0x5D05), p00:48C4 (0x5D0A), p00:4908 (0x5D1F), p00:5E0B (0x5D26), p00:47EF (0x5D35); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:4C9B, p02:8DCE, p00:48C4, p00:4908, p00:5E0B, p00:47EF (155 bytes)
 F 0x5CE9 16
 D 0x5E1C 0x5E70 resto_5E1C  lo apuntan con el banco puesto p00:5DF6 (0x5E1C), p00:5DBF (0x5E24), p00:5E05 (0x5E34); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5DF6, p00:5DBF, p00:5E05 (84 bytes)

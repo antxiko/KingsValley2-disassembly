@@ -253,7 +253,7 @@ D 0x9D3B 0x9D49 letrero_sitio1  letrero (del sitio escondido 1): [x][y] y caract
 F 0x9D3B 16
 D 0x9D49 0x9D58 letrero_sitio2  letrero (del sitio escondido 2): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (15 bytes)
 F 0x9D49 16
-D 0x9D58 0x9DB6 columnas_27  47 punteros a columnas de 27 caracteres (32 seguidas desde la que se pide: 0, 4 o 0x0F); lo leen p00:59FF (94 bytes)
+D 0x9D58 0x9DB8 columnas_27  48 punteros a columnas de 27 caracteres (32 seguidas desde la que se pide: 0, 4 o 0x0F); lo leen p00:59FF (96 bytes)
 F 0x9D58 w8
 D 0x9DB8 0x9DD3 col27_00  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
 F 0x9DB8 27

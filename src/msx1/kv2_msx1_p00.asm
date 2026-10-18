@@ -3637,16 +3637,25 @@ L_5915:
 	jp L_590C		;592d
 
 ; ----------------------------------------------------------------------
-; DATOS resto_5930: lo apuntan con el banco puesto p00:5923 (0x5930), p00:58D0
-;   (0x5936); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p00:5923, p00:58D0 (76 bytes)
-;   0x5930..0x597c  (76 bytes)
-DATA_resto_5930:
-	defb 07ah,065h,094h,065h,0ach,065h,0c3h,065h,0deh,065h,0f8h,065h,010h,066h,027h,066h	; 5930  ze.e.e.e.e.e.f'f
-	defb 04fh,00ch,0d9h,06ah,0f9h,06ah,0d9h,06ah,0f9h,06ah,04ch,012h,00ah,070h,026h,070h	; 5940  O..j.j.j.jL..p&p
-	defb 00ah,070h,026h,070h,049h,010h,014h,074h,038h,074h,014h,074h,038h,074h,036h,005h	; 5950  .p&pI..t8t.t8t6.
-	defb 07ch,077h,08bh,077h,07ch,077h,08bh,077h,05bh,00ch,09bh,07ch,089h,07ch,09bh,07ch	; 5960  |w.w|w.w[..|.|.|
-	defb 089h,07ch,04ch,004h,0b3h,080h,0d9h,080h,0ffh,080h,025h,081h	; 5970  .|L.......%.
+; DATOS animados_comunes: 8 punteros (por 0xEF06 & 7): rachas de patrones que
+;   van a los caracteres 0x98-0x9F de los tres tercios; lo leen p00:5926 (16
+;   bytes)
+;   0x5930..0x5940  (16 bytes)
+DATA_animados_comunes:
+	defw 0657ah,06594h,065ach,065c3h,065deh,065f8h,06610h,06627h	; 5930
+
+; ----------------------------------------------------------------------
+; DATOS animados_piramides: 10 bytes por piramide (desde 0x5936 + 10 x
+;   piramide): [caracter][cada cuantos cuadros] y 4 punteros a los pasos; lo
+;   leen p00:58D3 (60 bytes)
+;   0x5940..0x597c  (60 bytes)
+DATA_animados_piramides:
+	defb 04fh,00ch,0d9h,06ah,0f9h,06ah,0d9h,06ah,0f9h,06ah	; 5940  O..j.j.j.j
+	defb 04ch,012h,00ah,070h,026h,070h,00ah,070h,026h,070h	; 594a  L..p&p.p&p
+	defb 049h,010h,014h,074h,038h,074h,014h,074h,038h,074h	; 5954  I..t8t.t8t
+	defb 036h,005h,07ch,077h,08bh,077h,07ch,077h,08bh,077h	; 595e  6.|w.w|w.w
+	defb 05bh,00ch,09bh,07ch,089h,07ch,09bh,07ch,089h,07ch	; 5968  [..|.|.|.|
+	defb 04ch,004h,0b3h,080h,0d9h,080h,0ffh,080h,025h,081h	; 5972  L.......%.
 
 ; ======================================================================
 ; CODIGO 0x597c..0x5c3a  (702 bytes)

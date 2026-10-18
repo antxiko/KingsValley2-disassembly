@@ -167,10 +167,10 @@ DATA_col27_46:
 	defb 0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,063h,083h,07ch,095h,000h,000h,087h,081h,091h,0a6h,064h,07eh,09eh	; a292  ..............c.|.......d~.
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xa2ad..0xa2c8  (27 bytes)
-DATA_A2AD:
-	defb 0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,063h,083h	; a2ad  ..............c.
-	defb 083h,000h,000h,000h,087h,081h,091h,0a6h,064h,07eh,09eh	; a2bd  ........d~.
+; DATOS col27_47: columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+;   0xa2ad..0xa2c8  (27 bytes)
+DATA_col27_47:
+	defb 0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,0a5h,063h,083h,083h,000h,000h,000h,087h,081h,091h,0a6h,064h,07eh,09eh	; a2ad  ..............c.........d~.
 
 ; ----------------------------------------------------------------------
 ; DATOS rect_A2C8: 12 x 12 caracteres (p00:573B: B filas de C); lo leen

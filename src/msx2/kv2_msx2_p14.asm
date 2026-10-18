@@ -1651,21 +1651,16 @@ DATA_letrero_sitio2:
 	defb 048h,050h,0f0h,0f5h,0fah,0fah,0ech,0e5h,000h,0f3h,0f4h,0e1h,0e7h,0e5h,0ffh	; 9d49  HP.............
 
 ; ----------------------------------------------------------------------
-; DATOS columnas_27: 47 punteros a columnas de 27 caracteres (32 seguidas
-;   desde la que se pide: 0, 4 o 0x0F); lo leen p00:59FF (94 bytes)
-;   0x9d58..0x9db6  (94 bytes)
+; DATOS columnas_27: 48 punteros a columnas de 27 caracteres (32 seguidas
+;   desde la que se pide: 0, 4 o 0x0F); lo leen p00:59FF (96 bytes)
+;   0x9d58..0x9db8  (96 bytes)
 DATA_columnas_27:
 	defw 09db8h,09dd3h,09deeh,09e09h,09e24h,09e3fh,09e5ah,09e75h	; 9d58
 	defw 09e90h,09eabh,09ec6h,09ee1h,09efch,09f17h,09f32h,09f4dh	; 9d68
 	defw 09f68h,09f83h,09f9eh,09fb9h,09fd4h,09fefh,0a00ah,0a025h	; 9d78
 	defw 0a040h,0a05bh,0a076h,0a091h,0a0ach,0a0c7h,0a0e2h,0a0fdh	; 9d88
 	defw 0a118h,0a133h,0a14eh,0a169h,0a184h,0a19fh,0a1bah,0a1d5h	; 9d98
-	defw 0a1f0h,0a20bh,0a226h,0a241h,0a25ch,0a277h,0a292h	; 9da8
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x9db6..0x9db8  (2 bytes)
-DATA_9DB6:
-	defb 0adh,0a2h	; 9db6
+	defw 0a1f0h,0a20bh,0a226h,0a241h,0a25ch,0a277h,0a292h,0a2adh	; 9da8
 
 ; ----------------------------------------------------------------------
 ; DATOS col27_00: columna de 27 caracteres; lo leen p00:5742 (27 bytes)
