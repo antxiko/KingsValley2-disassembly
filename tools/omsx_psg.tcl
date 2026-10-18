@@ -74,6 +74,14 @@ debug set_bp $PIDE "\[debug read memory $PIDE\] == $PB" {
             if {[reg a] == [expr {$de}]} { reg a [expr {$a}]; break }
         }
     }
+    # $PSG_CALLA: agotada la lista $PSG_FUERZA, las demas peticiones no se hacen
+    # (se vuelve de la rutina sin entrar): la pieza suena sin que la pise nada.
+    if {[info exists ::env(PSG_CALLA)] && $::env(PSG_CALLA) ne "" && [llength $::fuerza] == 0} {
+        set sp [reg sp]
+        reg pc [expr {[debug read memory $sp] | ([debug read memory [expr {$sp + 1}]] << 8)}]
+        reg sp [expr {$sp + 2}]
+        return
+    }
     if {[info exists ::env(PSG_SIEMPRE)] && $::env(PSG_SIEMPRE) ne ""} {
         reg a $::env(PSG_SIEMPRE)
     } elseif {[llength $::fuerza] > 0} {

@@ -64,6 +64,10 @@ def lee(ruta, fusiona=False, salta=None):
                 cuadro_scc.append((o, v))
             elif actual is not None:
                 actual[3][o] = v
+    if tramos and tramos[-1][2]:
+        # la sonda sale a mitad del ultimo cuadro: ese queda a medias
+        tramos[-1][2].pop()
+        tramos[-1][4].pop()
     return tramos
 
 
@@ -104,8 +108,13 @@ def main(ruta, fusiona=False, como=None):
         a = como.get(a, a)
         if len(cuadros) < MIN_CUADROS:
             continue
-        mios_todo, _ = motor_musica.ejecuta(musica.CFG, rom, a,
-                                            maximo=len(cuadros) + 1)
+        mios_todo, vuelta = motor_musica.ejecuta(musica.CFG, rom, a,
+                                                 maximo=len(cuadros) + 1)
+        if vuelta is not None:
+            # el motor vuelve a un estado ya visto: desde ahi se repite igual
+            bucle = mios_todo[vuelta:]
+            while bucle and len(mios_todo) < len(cuadros):
+                mios_todo = mios_todo + bucle
         mios = [[x for x in c if x[0] < 0x100] for c in mios_todo]
         mios_scc = [[(x[0] - 0x100, x[1]) for x in c if x[0] >= 0x100]
                     for c in mios_todo]

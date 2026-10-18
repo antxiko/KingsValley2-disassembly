@@ -58,5 +58,13 @@ CFG = dict(rom="kv2_msx2.rom", org=0x4000, mapper="konami_scc",
            romtype="KonamiSCC", max_s=180, cabeceras=(4, 0x6F2C), piezas=PIEZAS, pagina=PAGINA,
            maquina="C-BIOS_MSX2")
 
+# Para la sonda de openMSX (`emu`) con VARIANTE=msx1: el cartucho de MSX1, en un
+# MSX1; alli pedir sonido es p00:432E y el cuadro p00:4062 (el mismo codigo, 8
+# y 2 bytes mas adelante). El motor se ejecuta igual con la ROM de MSX2.
+EMU_MSX1 = dict(rom="kv2_msx1.rom", maquina="C-BIOS_MSX1", pide=0x432E, bp_frame=0x4062)
+
 if __name__ == "__main__":
-    sys.exit(motor_musica.main(CFG, sys.argv[1:]))
+    cfg = CFG
+    if sys.argv[1:2] == ["emu"] and os.environ.get("VARIANTE") == "msx1":
+        cfg = dict(CFG, **EMU_MSX1)
+    sys.exit(motor_musica.main(cfg, sys.argv[1:]))
