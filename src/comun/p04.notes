@@ -108,6 +108,10 @@ C 0x6835 con el bit 4 de 0xE1CB (lo pone p04:61AB, al que no llama nadie): el vo
 C 0x684D se acaba el sonido del canal: todo a cero
 C 0x686C en los canales del PSG, el ruido y la envolvente
 C 0x688E una orden de la partitura: de 0xD0 a 0xDF por p04:6AF8; de 0xE0 a 0xFE por la tabla 0x68A3
+C 0x6890 0xD0-0xDF
+C 0x6893 0xE0-0xFE: la entrada de la tabla
+C 0x689E el destino
+C 0x68A2 salta, con HL (la partitura) guardado en la pila
 C 0x68E1 ordenes 0xE0-0xE3: la forma de la nota (IX+0D) y, salvo 0xE0, la duracion fija
 C 0x68F7 ordenes 0xE1 y 0xE3 en el canal 2: el ruido
 C 0x6914 orden 0xE4: el periodo del ruido
@@ -140,6 +144,8 @@ C 0x6ABF orden 0xFD: salto
 C 0x6AC2 orden 0xFE: el modo de las notas
 C 0x6AF8 ordenes 0xD0-0xDF por la cifra baja
 C 0x6AFF 0xD0-0xD5: la octava
+C 0x6B06 segun la cifra baja
+C 0x6B26 0xD6 y 0xDF
 C 0x6B28 0xD7: sin deslizar
 C 0x6B31 0xD8: deslizar (pasos y cuanto)
 C 0x6B51 0xD9: llamada (la vuelta en IX+2D)
@@ -152,18 +158,50 @@ C 0x6B93 0xDF: sin el bit 7 de IX+0E
 C 0x6B98 manda todo al PSG y al SCC
 C 0x6B9F el PSG: ruido, tonos, envolvente y canales
 C 0x6BAF los canales 0 y 2 con ruido a la vez: el 0 sin el
+C 0x6BB2 el canal 0 con ruido...
+C 0x6BBA ...y el 2 tambien...
+C 0x6BC2 ...el 0 se queda sin el
 C 0x6BC6 los tres tonos del PSG (registros 0-5) y sus volumenes (8-10)
 C 0x6BDD un canal: periodo (dos registros) y volumen, salvo con envolvente
 C 0x6BFB el periodo del ruido (registro 6)
+C 0x6C0E el ruido del canal 2 (bit 2): su periodo
+C 0x6C1C el registro 6
 C 0x6C22 la envolvente del PSG (registros 11-13)
 C 0x6C50 el registro 7 (que canales llevan tono y ruido)
 C 0x6C7D HL = HL + A & 3
 C 0x6C90 el SCC: periodos, volumenes, canales y ondas
 C 0x6C9D compara cada periodo y volumen con lo ultimo mandado (0xE1ED, 0xE1F7) y marca los cambios
+C 0x6CAA canal 3 (SCC 1): el periodo bajo, contra el ultimo mandado
+C 0x6CB2 ha cambiado: se marca y se apunta
+C 0x6CBA el periodo alto
+C 0x6CCA el volumen, contra el ultimo mandado (0xE1F7)
+C 0x6CDC canal 4 (SCC 2): el periodo bajo, contra el ultimo mandado
+C 0x6CEC el periodo alto
+C 0x6CFC el volumen, contra el ultimo mandado (0xE1F7)
+C 0x6D0E canal 5 (SCC 3): el periodo bajo, contra el ultimo mandado
+C 0x6D1E el periodo alto
+C 0x6D2E el volumen, contra el ultimo mandado (0xE1F7)
+C 0x6D40 canal 6 (SCC 4): el periodo bajo, contra el ultimo mandado
+C 0x6D50 el periodo alto
+C 0x6D60 el volumen, contra el ultimo mandado (0xE1F7)
+C 0x6D72 canal 7 (SCC 5): el periodo bajo, contra el ultimo mandado
+C 0x6D82 el periodo alto
+C 0x6D92 el volumen, contra el ultimo mandado (0xE1F7)
 C 0x6DA2 los canales del SCC con volumen: si cambian, se mandan
+C 0x6DAE el canal 3 (SCC 1) con volumen: su bit
+C 0x6DB0 el canal 4 (SCC 2)
+C 0x6DBC el canal 5 (SCC 3)
+C 0x6DC8 el canal 6 (SCC 4)
+C 0x6DD4 el canal 7 (SCC 5)
 C 0x6DF4 manda al SCC (0x9880-0x988E) lo que ha cambiado
 C 0x6EAC un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 C 0x6EBB las ondas nuevas de los canales 3-6 (bit 7 de IX+0F) a 0x9800 + 0x20 x canal
+C 0x6ED1 el canal 4: onda nueva?
+C 0x6EDA su onda a 0x9820
+C 0x6EE7 el canal 5: onda nueva?
+C 0x6EF0 su onda a 0x9840
+C 0x6EFD el canal 6: onda nueva? (el 7 comparte la de 0x9860)
+C 0x6F05 su onda a 0x9860
 C 0x6F0F 32 bytes de la onda al SCC, con los canales apagados mientras
 # --- fin de lo escrito a mano ---
 

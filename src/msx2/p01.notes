@@ -55,8 +55,13 @@ C 0x61ED la casilla de la pantalla?
 C 0x61F0 la siguiente de la fila
 C 0x61F3 la fila siguiente
 C 0x61F7 su sitio: la casilla mas su y / 8 y su x / 8
+C 0x61FD la y del personaje
+C 0x6201 / 8 mas la fila del plano
+C 0x6208 la x del personaje / 8 mas la columna
 C 0x6214 el sprite 1, en ese sitio
-C 0x621F de color 7
+C 0x6217 y - 1
+C 0x621A x - 3
+C 0x621F el dibujo 4
 C 0x622F la otra marca del plano: la casilla de la pantalla 0xE2F3 y el sitio de 0xE2F1
 C 0x6239 la casilla de la pantalla?
 C 0x623C la siguiente de la fila
@@ -89,13 +94,16 @@ C 0x6315 mas el margen del plano (0x20, 0x18)
 C 0x632D lee las cosas de la fase (tabla 0xAAE0 del banco 13) a 0xE600
 C 0x6336 la palabra de la fase
 C 0x633F 16 fichas de 16 bytes en 0xE600
-C 0x6343 cada una son 4 bytes: [tipo | pantalla][x][y][alto | variante]; 0 acaba
+C 0x6343 cada una son 4 bytes: [tipo | pantalla][y][x][alto | variante]; 0 acaba
+C 0x6344 B = el byte
 C 0x6347 el tipo (cifra alta)
 C 0x6350 la pantalla (cifra baja), en IX+04 y en IX+09
-C 0x6359 la x
-C 0x635F la y
+C 0x6359 la y
+C 0x635F la x
 C 0x6364 los 5 bits altos: IX+08
 C 0x636D los 3 bits bajos: la variante (bit 1 de IX+07 si no es 0)
+C 0x6372 con variante
+C 0x6378 sin variante
 C 0x637C IX+05 = variante x 3, solo en el tipo 1
 C 0x6391 la ficha siguiente
 C 0x6398 marca en el mapa las cosas de 0xE600 con el valor 3
@@ -121,10 +129,11 @@ C 0x64C6 la rutina de su tipo
 C 0x64E3 lee las cosas de 2 x 2 de la fase (tabla 0xA75D del banco 13) a 0xE700
 C 0x64E6 0xE700-0xE77F a cero
 C 0x64F6 la palabra de la fase
-C 0x6502 cada una son 3 bytes: [tipo | pantalla][x][y]; 0 acaba; en 0xE700 van de 8 en 8
-C 0x6505 el tipo
+C 0x6502 cada una son 3 bytes: [tipo | pantalla][y][x]; 0 acaba; en 0xE700 van de 8 en 8
+C 0x6505 a la cifra baja
 C 0x650C la pantalla
-C 0x6513 la x y la y
+C 0x6513 la y y la x
+C 0x6517 la ficha siguiente (8 bytes)
 C 0x651D pinta las cosas de 0xE700 de esta pantalla
 C 0x6536 si es de esta pantalla...
 C 0x653D ...2 x 2 caracteres de 0x9324 en su sitio
@@ -160,8 +169,13 @@ C 0x66EA el sprite fuera
 C 0x66F3 un atributo: [y - 1][x][dibujo][color]
 C 0x6706 el enemigo se va: su sitio de salida (0xE2C0 + 5 x IX+15) se marca para que salga otro
 C 0x671D cada 4 cuadros, los 8 sitios de salida de 0xE2C0
+C 0x6729 un sitio de salida
 C 0x672B con el bit 7, su cuenta baja...
 C 0x6731 ...y al acabar sale un enemigo nuevo (0xAC6D) y la cuenta vuelve a 0x30
+C 0x6733 C = el numero del sitio
+C 0x6735 se queda sin el bit 7
+C 0x6737 C = el tipo
+C 0x673C A = la pantalla, E = la y, D = la x
 C 0x6744 el sitio siguiente (5 bytes)
 C 0x674B su numero
 C 0x674F lee los sitios de salida de la fase (tabla 0xB7CD del banco 13) a 0xE2C0
@@ -176,6 +190,10 @@ C 0x67A8 elegido: 0xE24A = 1
 C 0x67AE arriba: el sonido 0x32 y la opcion anterior (de 0 a 2)
 C 0x67BA abajo: la siguiente
 C 0x67C5 la flecha (sprite 0) en la fila de la opcion
+C 0x67C6 la opcion x 16 + 0x50: la y
+C 0x67D1 x = 0x50
+C 0x67D4 el dibujo de la flecha
+C 0x67D7 su color (en MSX1)
 C 0x67DE en MSX2, de color 7
 C 0x67EC el dibujo de la flecha, 32 bytes de 0xB1B6 (en 0xF8A0 en MSX2, 0x18A0 en MSX1)
 C 0x6807 la entrada (opcion 0 del menu, antes de empezar): graficos y paleta
@@ -199,7 +217,11 @@ C 0x697C la contrasena: se calcula y se pinta
 C 0x6994 la contrasena: la fase, las vidas y un numero al azar (el registro R)...
 C 0x69A3 ...el azar dice cuantas vueltas se da a la fase y las vidas
 C 0x69B7 cada byte, dos letras
+C 0x69BA la fase...
+C 0x69C1 ...las vidas...
+C 0x69C9 ...y el azar
 C 0x69D1 y la suma de los tres, de control
+C 0x69D4 la suma de los tres
 C 0x69E0 dos letras de A: una por cifra
 C 0x69F5 la letra de la cifra: 0xE1 + la cifra
 C 0x6A0B la pantalla de meter la contrasena: 0xEDD9-0xEDFE a cero y el letrero de 0xBE91
@@ -265,19 +287,51 @@ C 0x6CBE la llamada al Game Master 2
 C 0x6CC2 vuelve este cartucho a 0x8000
 C 0x6CEF los seis trozos de RAM de la tabla 0x6C6D: [desde][cuantos]
 C 0x6CF5 a 0xEE0D, con la cabecera
+C 0x6CFE el Game Master 2 en 0x8000
 C 0x6D0F orden 9: escribe el trozo
+C 0x6D15 la llamada
+C 0x6D19 este cartucho otra vez
 C 0x6D24 si falla, se acaba con error
+C 0x6D28 el trozo siguiente
+C 0x6D2A el Game Master 2...
 C 0x6D3B orden 1: cierra
+C 0x6D41 ...cierra
 C 0x6D52 0xE27F = 0: bien
 C 0x6D57 carga: orden 0, 2 y los seis trozos con la orden 8
+C 0x6D5B el Game Master 2 en 0x8000
+C 0x6D68 orden 0: abre
+C 0x6D6E la llamada
+C 0x6D72 este cartucho otra vez
+C 0x6D7B otra vez el Game Master 2
+C 0x6D8C orden 2
+C 0x6D9F los seis trozos
+C 0x6DA5 la direccion y el largo del trozo, a la cabecera
+C 0x6DAE el Game Master 2 en 0x8000
 C 0x6DBF orden 8: lee el trozo
+C 0x6DC5 la llamada
+C 0x6DC9 este cartucho otra vez en 0x8000
+C 0x6DD4 el trozo siguiente
+C 0x6DDA el Game Master 2...
 C 0x6DE7 orden 1: cierra
+C 0x6DED ...cierra
+C 0x6DFA si falla, error
 C 0x6E02 error: orden 6 y 0xE27F = 2
 C 0x6E2D cuenta los ficheros del Game Master 2 que se llaman FILE (hasta 3) en 0xF0E5
+C 0x6E2E sin la interrupcion
 C 0x6E39 0xEE50-0xEE70 a cero y la cabecera FILE? en 0xEE00
+C 0x6E46 FILE? en la cabecera (el nombre que se busca)
+C 0x6E51 donde va la lista de nombres
+C 0x6E5E el Game Master 2 en 0x8000
 C 0x6E6B orden 3: el primero
+C 0x6E71 la llamada
+C 0x6E75 este cartucho otra vez
+C 0x6E7E si no hay ninguno, se acaba
 C 0x6E99 orden 4: el siguiente, hasta que no haya
 C 0x6EBC cada nombre de la lista: si es FILE...
+C 0x6EC0 F
+C 0x6EC6 I
+C 0x6ECC L
+C 0x6ED2 E
 C 0x6EDF ...se cuenta
 C 0x6EEA mira que hay para grabar: disco (H.PHYD) bit 0 y Game Master 2 bit 1, en 0xF0F9
 C 0x6F06 busca el Game Master 2 en los cuatro slots (y sus secundarios)
@@ -332,9 +386,19 @@ C 0x721F paso 2: el personaje sube por la salida, cada 0x20 cuadros un trozo
 C 0x7230 cada 16 cuadros sube 2 pixeles
 C 0x723D sus cuatro sprites con el dibujo que toca
 C 0x725B y, x y dibujo de cada sprite (tabla 0x7280)
+C 0x725E la y del personaje + la de la tabla
+C 0x7262 la x del personaje
+C 0x7267 el dibujo, de 4 en 4
+C 0x726F el color, de la tabla
 C 0x7271 y su color, 16 veces
 C 0x7288 acabado: el paso siguiente
 C 0x7296 paso 3: borra la pantalla fila a fila desde los dos lados
+C 0x7299 cada 4 cuadros
+C 0x729B la fila de arriba (0xE258 x 8)...
+C 0x72A8 ...y la de abajo (0x17 - 0xE258) x 8
+C 0x72B2 la fila siguiente
+C 0x72BA a la 0x0C se ha borrado todo
+C 0x72BD los dos sprites, 16 pixeles mas arriba
 C 0x72C2 al acabar, los sprites 16 pixeles mas arriba
 C 0x72D2 borra una fila de 32 caracteres
 C 0x72E1 paso 4: la fase siguiente y su letrero
@@ -358,6 +422,12 @@ C 0x746F la imagen de la lista 0x9063 con el color 5 y el dibujo de 0xBC6E
 C 0x7496 la imagen de 0xA2C8
 C 0x74C3 a 0x30 del final, 0xE902 = 1
 C 0x74E1 cada 8 cuadros un caracter de la lista de 0xAF37 (banco 12) y el sonido 0x3D
+C 0x74E7 se acaba la espera?
+C 0x74EA cada 8 cuadros
+C 0x74F4 la entrada 0xEDCE x 3
+C 0x74FD x, y y el caracter
+C 0x7505 la siguiente
+C 0x750C con el sonido 0x3D
 C 0x7521 la imagen de 0xA702 con el dibujo de 0xA6E0, el letrero de 0xAD69 y el sonido 0x37
 C 0x755B los colores 10 y 12 parpadean; luego el letrero de 0xAD58
 C 0x756F con disparo: los colores cambian, se copia la imagen y el sonido 0x39
@@ -387,8 +457,12 @@ C 0x77B8 dos sprites
 C 0x77D7 empieza el fundido de paleta A (tabla 0xA792, 5 bytes cada uno, bancos 14-15)
 C 0x77DA 0xE880-0xE8A7 a cero
 C 0x77E7 la entrada A de la tabla: 5 bytes [los 16 colores de partida][los 16 de llegada][cada cuantos cuadros]
+C 0x77E8 A x 5
+C 0x77F4 el puntero de los colores de partida
 C 0x77F8 los colores de partida (32 bytes) a 0xE887
+C 0x7801 el de llegada
 C 0x7808 0xE884: los de llegada
+C 0x780C y la espera
 C 0x780E 0xE882/0xE883: la espera entre pasos
 C 0x7815 0xE880 = 1: en marcha
 C 0x781C un cuadro del cambio de paleta en marcha (0xE880), con los bancos 14-15
@@ -426,12 +500,22 @@ C 0x7996 la rejilla de pantallas en blanco
 C 0x799C el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
 C 0x79A4 paso: la rejilla de pantallas, con su cursor
 C 0x79AA RETURN acaba; los cursores mueven (0xE25C fila, 0xE25D columna); el disparo pone y el segundo boton quita
+C 0x79AD RETURN (bit 7)
+C 0x79B1 arriba: una fila menos
+C 0x79BB abajo: una mas
+C 0x79BF izquierda: una columna menos
+C 0x79C6 derecha: una mas
+C 0x79CA disparo: poner
+C 0x79D0 segundo boton: quitar, si hay alguna...
+C 0x79D6 ...y en la casilla hay pantalla
+C 0x79DB una pantalla menos
 C 0x79E1 poner una pantalla: si la casilla esta libre, tiene que tocar a otra
 C 0x79EB hasta 6 pantallas (0xE25E)
 C 0x79F2 la casilla: 1 puesta, 0 quitada; y su recuadro
 C 0x79F5 la casilla de la rejilla: 1 o 0
 C 0x79F6 la esquina del recuadro: y = fila x 0x18 + 0x23...
-C 0x7A03 ...x = columna x 0x20 + 0x20
+C 0x79F9 la fila x 0x18...
+C 0x7A03 la columna x 0x20
 C 0x7A0C lleno (color 0xCC) o vacio (0)
 C 0x7A13 el recuadro de la casilla: lleno (0xCC) o vacio
 C 0x7A23 HL = la casilla del cursor en la rejilla (0xE788 + fila x 8 + columna)
@@ -443,8 +527,8 @@ C 0x7A51 la casilla siguiente
 C 0x7A54 ninguna pantalla: nada
 C 0x7A5C 0xE260 y 0xE261 a cero, la fuente del menu y el paso siguiente
 C 0x7A69 el cursor de la rejilla: el sprite 0 en la casilla
-C 0x7A6C y = fila x 0x18 + 0x26
-C 0x7A79 x = columna x 0x20 + 0x28
+C 0x7A6C la fila del cursor
+C 0x7A79 la columna
 C 0x7A85 el dibujo del cursor
 C 0x7A8E de color 7
 C 0x7A96 los sprites, el personaje mirando a la derecha sin nada en la mano y sus dibujos
@@ -452,9 +536,14 @@ C 0x7AA6 las rachas de 0xBBFC a 0xF880 (banco 13)
 C 0x7AB5 se puede poner si toca a una pantalla puesta (arriba, abajo, izquierda o derecha); NZ si se puede
 C 0x7AB8 si ya hay pantalla...
 C 0x7ABC si no: la de la izquierda...
+C 0x7ABE la de la izquierda
 C 0x7AC2 ...la de la derecha...
+C 0x7AC4 la de la derecha
 C 0x7AC7 ...la de abajo (+8)...
+C 0x7ACC la de abajo
 C 0x7ACF ...y la de arriba (-8)
+C 0x7AD6 la de arriba
+C 0x7AD9 no se puede: Z
 C 0x7ADB NZ si en la casilla del cursor hay pantalla
 C 0x7AE1 la rejilla: 7 rayas verticales y 7 horizontales
 C 0x7AE8 una raya vertical de 0x90 y una horizontal de 0xC0, de color 11
@@ -465,6 +554,11 @@ C 0x7B2E el paso siguiente del menu (0xE25B + 1)
 C 0x7B33 13 x 2 caracteres de la fuente de 0xBC44 en 0xF038
 C 0x7B45 RETURN: segun la opcion 0xE260 (9 probar, 10 grabar o cargar, 4-6 editar)
 C 0x7B6A elegir una de las 11 opciones (0xE260) con arriba y abajo; disparo elige
+C 0x7B73 arriba
+C 0x7B76 abajo
+C 0x7B79 disparo
+C 0x7B8A la opcion elegida
+C 0x7B94 4-6: un submenu
 C 0x7BA4 las opciones 0-3 y 7-8: al paso de editar
 C 0x7BAA la opcion 10: grabar o cargar (paso 5)
 C 0x7BC5 la opcion anterior (de 0 se pasa a la 10)
@@ -497,7 +591,11 @@ C 0x7D6D probar la fase (opcion 9): solo con 0xE26A y 0xE26B puestos
 C 0x7D86 cuenta las cosas de 2 x 2 puestas (0xE700) a 0xE2F4 y 0xE2F5
 C 0x7DA0 pinta la pantalla que se edita: ladrillos, cosas, salida y lo de 0xE300
 C 0x7DAE las cosas de 2 x 2 de esta pantalla
+C 0x7DC4 la cosa siguiente (8 bytes)
 C 0x7DCC la salida (0xE2F1-0xE2F3), 4 x 4 de 0x9340
+C 0x7DCF esta en la pantalla que se edita?
+C 0x7DD5 su sitio
+C 0x7DE6 y se marca en el mapa
 C 0x7DE9 las 64 cosas de 0xE300 (8 bytes cada una) de esta pantalla
 C 0x7E35 los ladrillos de la pantalla que se edita
 C 0x7E49 el menu de grabar y cargar (0x8A38)
@@ -511,6 +609,13 @@ C 0x7F2A D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 C 0x7F39 A = la pantalla que se edita (de la casilla 0xE262)
 C 0x7F44 lo mismo con otro tamano (0x5E03)
 C 0x7F4A poner o quitar una cosa de 1 x 2
+C 0x7F5E 0xEFD0: poner (1) o quitar (0)
+C 0x7F62 la pantalla que se edita
+C 0x7F67 su mapa
+C 0x7F6F el cursor
+C 0x7F73 quitar
+C 0x7F77 poner: si la casilla es escalera...
+C 0x7F85 ...y se corta (p03:A60F), una fila mas arriba
 C 0x7FB5 en el borde de arriba o de abajo (y 0 o 0xB8): la pantalla de al lado
 C 0x7FE1 en el borde de arriba o abajo
 C 0x7FF0 limites del cursor: 0x20 x 0x00
@@ -626,8 +731,6 @@ C 0x6356 guarda la pantalla de la cosa al empezar
 C 0x635B guarda la y de la cosa
 C 0x6360 guarda la x de la cosa
 C 0x636A guarda el alto de la cosa
-C 0x6372 pone a uno el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
-C 0x6378 pone a cero el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 C 0x6380 lee el tipo de la cosa (0: libre)
 C 0x6389 guarda el giro o paso del dibujo de la cosa
 C 0x638C la cuenta de la cosa = 0x00
@@ -793,26 +896,18 @@ C 0x6C88 apunta a la cabecera para el Game Master 2
 C 0x6CCF lee el slot del cartucho de la otra ranura (0xFF si no hay)
 C 0x6CE6 lee el slot de este cartucho
 C 0x6D02 lee el slot del cartucho de la otra ranura (0xFF si no hay)
-C 0x6D19 lee el slot de este cartucho
 C 0x6D2E lee el slot del cartucho de la otra ranura (0xFF si no hay)
 C 0x6D45 lee el slot de este cartucho
 C 0x6D53 guarda el resultado de grabar o cargar (0 bien, 2 error)
-C 0x6D5B lee el slot del cartucho de la otra ranura (0xFF si no hay)
-C 0x6D72 lee el slot de este cartucho
 C 0x6D7F lee el slot del cartucho de la otra ranura (0xFF si no hay)
 C 0x6D96 lee el slot de este cartucho
 C 0x6DB2 lee el slot del cartucho de la otra ranura (0xFF si no hay)
-C 0x6DC9 lee el slot de este cartucho
-C 0x6DDA lee el slot del cartucho de la otra ranura (0xFF si no hay)
 C 0x6DF1 lee el slot de este cartucho
 C 0x6DFE guarda el resultado de grabar o cargar (0 bien, 2 error)
 C 0x6E19 lee el slot de este cartucho
 C 0x6E24 guarda el resultado de grabar o cargar (0 bien, 2 error)
 C 0x6E49 apunta a la cabecera para el Game Master 2
-C 0x6E51 apunta a la lista de las cosas de 0xE300 por orden de pintado
 C 0x6E57 apunta a la cabecera para el Game Master 2
-C 0x6E5E lee el slot del cartucho de la otra ranura (0xFF si no hay)
-C 0x6E75 lee el slot de este cartucho
 C 0x6E86 suma A a HL (HL = HL + A)
 C 0x6E8C lee el slot del cartucho de la otra ranura (0xFF si no hay)
 C 0x6EA3 lee el slot de este cartucho
@@ -892,11 +987,9 @@ C 0x7214 apunta a el paso de la secuencia en curso (entrada, fase o piramide aca
 C 0x7235 apunta a la y del personaje
 C 0x7251 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0x7257 apunta a los colores de los sprites (16 bytes por sprite)
-C 0x7262 lee la x del personaje
 C 0x728B apunta a el paso de la secuencia en curso (entrada, fase o piramide acabada)
 C 0x72A4 borra una fila de 32 caracteres
 C 0x72AF borra una fila de 32 caracteres
-C 0x72BD apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0x72C8 suma A a HL (HL = HL + A)
 C 0x72CD apunta a el paso de la secuencia en curso (entrada, fase o piramide acabada)
 C 0x72D7 pinta el caracter A tal cual (p00:5207)
@@ -1043,8 +1136,6 @@ C 0x797F el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
 C 0x798A el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
 C 0x7992 guarda el paso del editor
 C 0x7999 la rejilla: 7 rayas verticales y 7 horizontales
-C 0x79B1 lee el mando: lo que se acaba de pulsar
-C 0x79D6 NZ si en la casilla del cursor hay pantalla
 C 0x79E6 se puede poner si toca a una pantalla puesta (arriba, abajo, izquierda o derecha); NZ si se puede
 C 0x7A19 rellena un rectangulo (orden HMMV): desde (H, L) de la pagina D, B x C, del color de A
 C 0x7A56 prepara los saltos de la fase hecha en el editor: las listas de 0xED80-0xEDB0
@@ -1162,10 +1253,7 @@ C 0x7F3C lee la casilla de la pantalla que se edita
 C 0x7F3F suma A a DE (DE = DE + A)
 C 0x7F4D limites del cursor: 0x28 x 0x08
 C 0x7F51 lee el mando: lo que se acaba de pulsar
-C 0x7F62 A = la pantalla que se edita (de la casilla 0xE262)
-C 0x7F67 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 C 0x7F6A guarda el mapa de la pantalla en la que se esta (16 bits)
-C 0x7F6F D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 C 0x7F7A lee el mapa de la pantalla en la que se esta (16 bits)
 C 0x7F7F A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
 C 0x7F96 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A

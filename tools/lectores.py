@@ -420,10 +420,10 @@ def fases():
                 "apuntan en 0xE7C0 (mismo formato)", tr("p00:4434"), lista_columnas, "columnas")
     w = B.Ventana((1, 2, 13))
     tabla_fases(w, 0xAAE0, 1, "cosas", "las cosas de la fase (puertas, bloques, suelos): fichas "
-                "de 4 bytes [tipo | pantalla][x][y][alto | variante], 0 acaba",
+                "de 4 bytes [tipo | pantalla][y][x][alto | variante], 0 acaba",
                 tr("p01:6343"), hasta_cero(4), "cosas")
     tabla_fases(w, 0xA75D, 1, "joyas", "lo que hay que coger para abrir la salida: fichas de 3 "
-                "bytes [tipo | pantalla][x][y], 0 acaba", tr("p01:6502"), hasta_cero(3), "coger")
+                "bytes [tipo | pantalla][y][x], 0 acaba", tr("p01:6502"), hasta_cero(3), "coger")
     B.declara(w, 0xAB5A, 0xAB5A + 8 * FASES, "rejillas", "la rejilla de pantallas de cada fase: "
               "8 bytes por fase (con fase - 1), un bit por casilla de una rejilla de 8 de ancho",
               tr("p00:5DD2"), F=8)
@@ -432,7 +432,7 @@ def fases():
         tabla_fases(w, t, 1, "saltos_%04x" % t, "los saltos al salir por %s (parejas [de][a], "
                     "0xFF acaba)" % lado, tr("p00:5EE5"), hasta_ff(2), "saltos_%04x" % t)
     tabla_fases(w, 0xAFB1, 0, "herramientas", "las cosas que se cogen y se llevan: fichas de 3 "
-                "bytes [pantalla | tipo][x][y], 0xFF acaba", tr("p02:97D4"), hasta_ff(3),
+                "bytes [pantalla | tipo][y][x], 0xFF acaba", tr("p02:97D4"), hasta_ff(3),
                 "herramientas")
     tabla_fases(w, 0xB7CD, 1, "salidas_enemigos", "los sitios de los que salen los enemigos: "
                 "fichas de 4 bytes [tipo] y 3 mas, 0 acaba", tr("p01:6768"), hasta_cero(4),

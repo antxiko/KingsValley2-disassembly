@@ -1093,19 +1093,19 @@ L_6889:
 	ret			;688d
 L_688E:
 	cp 0e0h		;688e   ; una orden de la partitura: de 0xD0 a 0xDF por p04:6AF8; de 0xE0 a 0xFE por la tabla 0x68A3
-	jp c,L_6AF8		;6890
-	and 01fh		;6893
+	jp c,L_6AF8		;6890   ; 0xD0-0xDF
+	and 01fh		;6893   ; 0xE0-0xFE: la entrada de la tabla
 	push hl			;6895
 	ld hl,068a3h		;6896
 	add a,a			;6899
 	ld e,a			;689a
 	ld d,000h		;689b
 	add hl,de			;689d
-	ld e,(hl)			;689e
+	ld e,(hl)			;689e   ; el destino
 	inc hl			;689f
 	ld d,(hl)			;68a0
 	ex de,hl			;68a1
-	jp (hl)			;68a2
+	jp (hl)			;68a2   ; salta, con HL (la partitura) guardado en la pila
 
 ; ----------------------------------------------------------------------
 ; DATOS ordenes: 31 destinos, uno por orden de la partitura de 0xE0 a 0xFE
@@ -1461,7 +1461,7 @@ L_6AF8:
 	ld (ix+02ch),a		;6b02   ; guarda la octava de la bateria
 	ret			;6b05
 L_6B06:
-	cp 007h		;6b06
+	cp 007h		;6b06   ; segun la cifra baja
 	jr z,L_6B28		;6b08
 	cp 008h		;6b0a
 	jr z,L_6B31		;6b0c
@@ -1477,7 +1477,7 @@ L_6B06:
 	jr z,L_6B88		;6b20
 	cp 00eh		;6b22
 	jr z,L_6B8D		;6b24
-	jr L_6B93		;6b26
+	jr L_6B93		;6b26   ; 0xD6 y 0xDF
 L_6B28:
 	res 6,(ix+00dh)		;6b28   ; 0xD7: sin deslizar
 	res 5,(ix+00dh)		;6b2c   ; pone a cero el bit 5 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
@@ -1560,15 +1560,15 @@ L_6B9F:
 	ret			;6bae
 L_6BAF:
 	ld hl,0e00dh		;6baf   ; los canales 0 y 2 con ruido a la vez: el 0 sin el
-	ld a,(hl)			;6bb2
+	ld a,(hl)			;6bb2   ; el canal 0 con ruido...
 	and 001h		;6bb3
 	jr z,L_6BC5		;6bb5
 	ld hl,0e073h		;6bb7
-	ld a,(hl)			;6bba
+	ld a,(hl)			;6bba   ; ...y el 2 tambien...
 	and 001h		;6bbb
 	jr z,L_6BC5		;6bbd
 	ld hl,0e00dh		;6bbf
-	ld a,002h		;6bc2
+	ld a,002h		;6bc2   ; ...el 0 se queda sin el
 	ld (hl),a			;6bc4
 L_6BC5:
 	ret			;6bc5
@@ -1615,7 +1615,7 @@ L_6BFB:
 	ld a,006h		;6c0a
 	jr L_6C1E		;6c0c
 L_6C0E:
-	bit 1,(hl)		;6c0e
+	bit 1,(hl)		;6c0e   ; el ruido del canal 2 (bit 2): su periodo
 	ret nz			;6c10
 	bit 2,(hl)		;6c11
 	ret z			;6c13
@@ -1623,7 +1623,7 @@ L_6C0E:
 	set 3,(hl)		;6c16
 	ld a,(0e1e6h)		;6c18
 	ld e,a			;6c1b
-	ld a,006h		;6c1c
+	ld a,006h		;6c1c   ; el registro 6
 L_6C1E:
 	call 00093h		;6c1e   ; BIOS WRTPSG - Writes data to PSG-register
 	ret			;6c21
@@ -1706,17 +1706,17 @@ L_6C9D:
 	ld bc,0e1f7h		;6ca1
 	ld de,0e1edh		;6ca4
 	ld hl,0e0a3h		;6ca7
-	ld a,(de)			;6caa
+	ld a,(de)			;6caa   ; canal 3 (SCC 1): el periodo bajo, contra el ultimo mandado
 	res 0,(ix+000h)		;6cab
 	cp (hl)			;6caf
 	jr z,L_6CB8		;6cb0
-	set 0,(ix+000h)		;6cb2
+	set 0,(ix+000h)		;6cb2   ; ha cambiado: se marca y se apunta
 	ld a,(hl)			;6cb6
 	ld (de),a			;6cb7
 L_6CB8:
 	inc de			;6cb8
 	inc hl			;6cb9
-	ld a,(de)			;6cba
+	ld a,(de)			;6cba   ; el periodo alto
 	res 1,(ix+000h)		;6cbb
 	cp (hl)			;6cbf
 	jr z,L_6CC8		;6cc0
@@ -1726,7 +1726,7 @@ L_6CB8:
 L_6CC8:
 	inc de			;6cc8
 	inc hl			;6cc9
-	res 2,(ix+001h)		;6cca
+	res 2,(ix+001h)		;6cca   ; el volumen, contra el ultimo mandado (0xE1F7)
 	ld a,(bc)			;6cce
 	cp (hl)			;6ccf
 	jr z,L_6CD8		;6cd0
@@ -1736,7 +1736,7 @@ L_6CC8:
 L_6CD8:
 	inc bc			;6cd8
 	ld hl,0e0d6h		;6cd9
-	ld a,(de)			;6cdc
+	ld a,(de)			;6cdc   ; canal 4 (SCC 2): el periodo bajo, contra el ultimo mandado
 	res 2,(ix+000h)		;6cdd
 	cp (hl)			;6ce1
 	jr z,L_6CEA		;6ce2
@@ -1746,7 +1746,7 @@ L_6CD8:
 L_6CEA:
 	inc de			;6cea
 	inc hl			;6ceb
-	ld a,(de)			;6cec
+	ld a,(de)			;6cec   ; el periodo alto
 	res 3,(ix+000h)		;6ced
 	cp (hl)			;6cf1
 	jr z,L_6CFA		;6cf2
@@ -1756,7 +1756,7 @@ L_6CEA:
 L_6CFA:
 	inc de			;6cfa
 	inc hl			;6cfb
-	res 3,(ix+001h)		;6cfc
+	res 3,(ix+001h)		;6cfc   ; el volumen, contra el ultimo mandado (0xE1F7)
 	ld a,(bc)			;6d00
 	cp (hl)			;6d01
 	jr z,L_6D0A		;6d02
@@ -1766,7 +1766,7 @@ L_6CFA:
 L_6D0A:
 	inc bc			;6d0a
 	ld hl,0e109h		;6d0b
-	ld a,(de)			;6d0e
+	ld a,(de)			;6d0e   ; canal 5 (SCC 3): el periodo bajo, contra el ultimo mandado
 	res 4,(ix+000h)		;6d0f
 	cp (hl)			;6d13
 	jr z,L_6D1C		;6d14
@@ -1776,7 +1776,7 @@ L_6D0A:
 L_6D1C:
 	inc de			;6d1c
 	inc hl			;6d1d
-	ld a,(de)			;6d1e
+	ld a,(de)			;6d1e   ; el periodo alto
 	res 5,(ix+000h)		;6d1f
 	cp (hl)			;6d23
 	jr z,L_6D2C		;6d24
@@ -1786,7 +1786,7 @@ L_6D1C:
 L_6D2C:
 	inc de			;6d2c
 	inc hl			;6d2d
-	res 4,(ix+001h)		;6d2e
+	res 4,(ix+001h)		;6d2e   ; el volumen, contra el ultimo mandado (0xE1F7)
 	ld a,(bc)			;6d32
 	cp (hl)			;6d33
 	jr z,L_6D3C		;6d34
@@ -1796,7 +1796,7 @@ L_6D2C:
 L_6D3C:
 	inc bc			;6d3c
 	ld hl,0e13ch		;6d3d
-	ld a,(de)			;6d40
+	ld a,(de)			;6d40   ; canal 6 (SCC 4): el periodo bajo, contra el ultimo mandado
 	res 6,(ix+000h)		;6d41
 	cp (hl)			;6d45
 	jr z,L_6D4E		;6d46
@@ -1806,7 +1806,7 @@ L_6D3C:
 L_6D4E:
 	inc de			;6d4e
 	inc hl			;6d4f
-	ld a,(de)			;6d50
+	ld a,(de)			;6d50   ; el periodo alto
 	res 7,(ix+000h)		;6d51
 	cp (hl)			;6d55
 	jr z,L_6D5E		;6d56
@@ -1816,7 +1816,7 @@ L_6D4E:
 L_6D5E:
 	inc de			;6d5e
 	inc hl			;6d5f
-	res 5,(ix+001h)		;6d60
+	res 5,(ix+001h)		;6d60   ; el volumen, contra el ultimo mandado (0xE1F7)
 	ld a,(bc)			;6d64
 	cp (hl)			;6d65
 	jr z,L_6D6E		;6d66
@@ -1826,7 +1826,7 @@ L_6D5E:
 L_6D6E:
 	inc bc			;6d6e
 	ld hl,0e16fh		;6d6f
-	ld a,(de)			;6d72
+	ld a,(de)			;6d72   ; canal 7 (SCC 5): el periodo bajo, contra el ultimo mandado
 	res 0,(ix+001h)		;6d73
 	cp (hl)			;6d77
 	jr z,L_6D80		;6d78
@@ -1836,7 +1836,7 @@ L_6D6E:
 L_6D80:
 	inc de			;6d80
 	inc hl			;6d81
-	ld a,(de)			;6d82
+	ld a,(de)			;6d82   ; el periodo alto
 	res 1,(ix+001h)		;6d83
 	cp (hl)			;6d87
 	jr z,L_6D90		;6d88
@@ -1846,7 +1846,7 @@ L_6D80:
 L_6D90:
 	inc de			;6d90
 	inc hl			;6d91
-	res 6,(ix+001h)		;6d92
+	res 6,(ix+001h)		;6d92   ; el volumen, contra el ultimo mandado (0xE1F7)
 	ld a,(bc)			;6d96
 	cp (hl)			;6d97
 	jr z,L_6DA0		;6d98
@@ -1865,9 +1865,9 @@ L_6DA2:
 	jr z,L_6DAE		;6dab
 	ld a,c			;6dad
 L_6DAE:
-	or e			;6dae
+	or e			;6dae   ; el canal 3 (SCC 1) con volumen: su bit
 	ld e,a			;6daf
-	ld hl,0e0d9h		;6db0
+	ld hl,0e0d9h		;6db0   ; el canal 4 (SCC 2)
 	sla c		;6db3
 	ld a,(hl)			;6db5
 	or a			;6db6
@@ -1876,7 +1876,7 @@ L_6DAE:
 L_6DBA:
 	or e			;6dba
 	ld e,a			;6dbb
-	ld hl,0e10ch		;6dbc
+	ld hl,0e10ch		;6dbc   ; el canal 5 (SCC 3)
 	sla c		;6dbf
 	ld a,(hl)			;6dc1
 	or a			;6dc2
@@ -1885,7 +1885,7 @@ L_6DBA:
 L_6DC6:
 	or e			;6dc6
 	ld e,a			;6dc7
-	ld hl,0e13fh		;6dc8
+	ld hl,0e13fh		;6dc8   ; el canal 6 (SCC 4)
 	sla c		;6dcb
 	ld a,(hl)			;6dcd
 	or a			;6dce
@@ -1894,7 +1894,7 @@ L_6DC6:
 L_6DD2:
 	or e			;6dd2
 	ld e,a			;6dd3
-	ld hl,0e172h		;6dd4
+	ld hl,0e172h		;6dd4   ; el canal 7 (SCC 5)
 	sla c		;6dd7
 	ld a,(hl)			;6dd9
 	or a			;6dda
@@ -2036,11 +2036,11 @@ L_6EBB:
 	ld de,09800h		;6ecb
 	call L_6F0F		;6ece   ; 32 bytes de la onda al SCC, con los canales apagados mientras
 L_6ED1:
-	ld hl,0e0dbh		;6ed1
+	ld hl,0e0dbh		;6ed1   ; el canal 4: onda nueva?
 	bit 7,(hl)		;6ed4
 	jr z,L_6EE7		;6ed6
 	res 7,(hl)		;6ed8
-	ld hl,0e0f3h		;6eda
+	ld hl,0e0f3h		;6eda   ; su onda a 0x9820
 	ld e,(hl)			;6edd
 	inc hl			;6ede
 	ld d,(hl)			;6edf
@@ -2048,11 +2048,11 @@ L_6ED1:
 	ld de,09820h		;6ee1
 	call L_6F0F		;6ee4   ; 32 bytes de la onda al SCC, con los canales apagados mientras
 L_6EE7:
-	ld hl,0e10eh		;6ee7
+	ld hl,0e10eh		;6ee7   ; el canal 5: onda nueva?
 	bit 7,(hl)		;6eea
 	jr z,L_6EFD		;6eec
 	res 7,(hl)		;6eee
-	ld hl,0e126h		;6ef0
+	ld hl,0e126h		;6ef0   ; su onda a 0x9840
 	ld e,(hl)			;6ef3
 	inc hl			;6ef4
 	ld d,(hl)			;6ef5
@@ -2060,11 +2060,11 @@ L_6EE7:
 	ld de,09840h		;6ef7
 	call L_6F0F		;6efa   ; 32 bytes de la onda al SCC, con los canales apagados mientras
 L_6EFD:
-	ld hl,0e141h		;6efd
+	ld hl,0e141h		;6efd   ; el canal 6: onda nueva? (el 7 comparte la de 0x9860)
 	bit 7,(hl)		;6f00
 	ret z			;6f02
 	res 7,(hl)		;6f03
-	ld hl,0e159h		;6f05
+	ld hl,0e159h		;6f05   ; su onda a 0x9860
 	ld e,(hl)			;6f08
 	inc hl			;6f09
 	ld d,(hl)			;6f0a
