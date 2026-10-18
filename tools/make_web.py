@@ -15,39 +15,59 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from estilo_web import ESTILO                                   # noqa: E402
-from contenido_web import (NOMBRE, PORTADA, PAGINAS, LOGOTIPO,  # noqa: E402
-                           CODIGO, DATOS, RUTINAS, densidad)
+from contenido_web import NOMBRE, PORTADA, PAGINAS, LOGOTIPO     # noqa: E402
+import contenido_web                                            # noqa: E402
+
+# Uno o varios cartuchos: contenido_web.CARTUCHOS es una lista de dicts
+# (nombre, codigo, datos, rutinas, instrucciones, comentarios); si no esta, las
+# cifras sueltas de siempre (CODIGO, DATOS, RUTINAS, INSTRUCCIONES, COMENTARIOS).
+CARTUCHOS = getattr(contenido_web, "CARTUCHOS", None) or [dict(
+    nombre="", codigo=contenido_web.CODIGO, datos=contenido_web.DATOS,
+    rutinas=contenido_web.RUTINAS, instrucciones=contenido_web.INSTRUCCIONES,
+    comentarios=contenido_web.COMENTARIOS)]
 
 
 def mil(n, idioma):
     return f"{n:,}".replace(",", "." if idioma == "es" else ",")
 
 
+def densidad(c, idioma):
+    """El porcentaje comentado, con la coma o el punto de cada idioma."""
+    d = "%.1f" % (100.0 * c["comentarios"] / c["instrucciones"])
+    return d.replace(".", ",") if idioma == "es" else d
+
+
+def cifras_de(c, idioma):
+    if idioma == "es":
+        return [("100 %", "del binario explicado"),
+                (mil(c["rutinas"], "es"), "rutinas y etiquetas"),
+                (densidad(c, "es") + " %", "del listado comentado"),
+                (mil(c["codigo"], "es"), "bytes de código"),
+                (mil(c["datos"], "es"), "bytes de datos"),
+                ("0", "bytes sin identificar")]
+    return [("100%", "of the binary explained"),
+            (mil(c["rutinas"], "en"), "routines and labels"),
+            (densidad(c, "en") + "%", "of the listing commented"),
+            (mil(c["codigo"], "en"), "bytes of code"),
+            (mil(c["datos"], "en"), "bytes of data"),
+            ("0", "bytes unidentified")]
+
+
 TXT = {
     "es": dict(
         otro=("../", "In English"),
-        h_num="El cartucho en cifras", h_pag="Lo que hay dentro",
+        h_num="El cartucho en cifras" if len(CARTUCHOS) == 1 else "Los cartuchos en cifras",
+        h_pag="Lo que hay dentro",
         bloques=["El juego", "Curiosidades", "Por dentro"],
-        cifras=[("100 %", "del binario explicado"),
-                (mil(RUTINAS, "es"), "rutinas y etiquetas"),
-                (densidad("es") + " %", "del listado comentado"),
-                (mil(CODIGO, "es"), "bytes de código"),
-                (mil(DATOS, "es"), "bytes de datos"),
-                ("0", "bytes sin identificar")],
         pie_leg="Esto es trabajo de documentación y preservación: el código y "
                 "los gráficos siguen siendo de sus autores y de Konami, y la "
                 "imagen del cartucho no se distribuye.",
     ),
     "en": dict(
         otro=("es/", "En castellano"),
-        h_num="The cartridge in numbers", h_pag="What is inside",
+        h_num="The cartridge in numbers" if len(CARTUCHOS) == 1 else "The cartridges in numbers",
+        h_pag="What is inside",
         bloques=["The game", "Curiosities", "Under the hood"],
-        cifras=[("100%", "of the binary explained"),
-                (mil(RUTINAS, "en"), "routines and labels"),
-                (densidad("en") + "%", "of the listing commented"),
-                (mil(CODIGO, "en"), "bytes of code"),
-                (mil(DATOS, "en"), "bytes of data"),
-                ("0", "bytes unidentified")],
         pie_leg="This is documentation and preservation work: the code and "
                 "artwork still belong to their authors and to Konami, and the "
                 "cartridge image is not distributed.",
@@ -83,8 +103,13 @@ def main(argv):
     nav += (f'<a href="{t["otro"][0]}" style="margin-left:auto;color:var(--oro)">'
             f'{t["otro"][1]}</a>')
 
-    cifras = "".join(f'<div class="cifra"><b>{v}</b><span>{e}</span></div>'
-                     for v, e in t["cifras"])
+    cifras = ""
+    for c in CARTUCHOS:
+        if c["nombre"]:
+            cifras += f'<h3>{c["nombre"]}</h3>'
+        cifras += '<div class="cifras">' + "".join(
+            f'<div class="cifra"><b>{v}</b><span>{e}</span></div>'
+            for v, e in cifras_de(c, idioma)) + "</div>"
     paginas = "".join(
         f'<div class="hall"><h3>{tit}</h3><ul>'
         + "".join(f'<li><a href="{p[k_h]}">{p[k_t]}</a>: {p[k_d]}.</li>' for p in b)
@@ -105,7 +130,7 @@ def main(argv):
 <nav>{nav}</nav>
 <section id="numbers">
   <h2>{t['h_num']}</h2>
-  <div class="cifras">{cifras}</div>
+  {cifras}
 </section>
 <section id="pages"><h2>{t['h_pag']}</h2>{paginas}</section>
 <footer><p>{t['pie_leg']}</p></footer>

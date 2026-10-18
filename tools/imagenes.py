@@ -218,20 +218,67 @@ def hoja_prota(m, v, salida):
     hoja.save(os.path.join(salida, "sprites_%s_prota.png" % v), optimize=True)
 
 
+NOMBRES_ENEMIGOS = {1: "SLOUMAN", 2: "FLOUMAN", 3: "PYONCY", 4: "ROCK ROLL", 5: "al morir"}
+
+
+def vistos_enemigos(v):
+    """{tipo: {dibujo: (color 1, color 2)}}: lo que el juego pone en las fichas de
+    0xE500 (IX+00 el tipo, IX+11 el dibujo, IX+1E/1F los colores) cuadro a cuadro,
+    en las seis demostraciones (como demos) y en la fase 3 sin tocar nada (la
+    primera con FLOUMAN, el tipo 2, que no sale en las demostraciones). El tipo 5
+    es el enemigo al morir (p01:6611). De cada dibujo, los colores con los que mas
+    cuadros se ha visto; fuera los vistos un solo cuadro (el del cambio de tipo,
+    que aun lleva el dibujo de antes)."""
+    from collections import Counter
+    cuenta = {}
+
+    def mira(m):
+        for k in range(8):
+            f = 0xE500 + 32 * k
+            t, dib = m.mem[f], m.mem[f + 0x11]
+            if t and dib != 0xFF:
+                cuenta.setdefault(t, {}).setdefault(dib, Counter())[(m.mem[f + 0x1E], m.mem[f + 0x1F])] += 1
+    m = maquina(v)
+    hechas, dentro = 0, False
+    for _ in range(60 * 60 * 12):
+        m.llama(0x402E)
+        if m.mem[0xE200] == 2:
+            dentro = True
+            mira(m)
+        elif dentro:
+            dentro, hechas = False, hechas + 1
+            if hechas == 6:
+                break
+    m = maquina(v)
+    for _ in range(400):
+        m.llama(0x402E)
+    for a, x in ((0xE242, 3), (0xE200, 4), (0xE201, 0), (0xE204, 1)):
+        m.mem[a] = x
+    for _ in range(3000):
+        m.llama(0x402E)
+        mira(m)
+    vistos = {}
+    for t, dibs in cuenta.items():
+        for dib, c in dibs.items():
+            if sum(c.values()) > 1:
+                vistos.setdefault(t, {})[dib] = c.most_common(1)[0][0]
+    return vistos
+
+
 def hoja_enemigos(m, v, salida):
-    """Los 30 dibujos de enemigo (IX+11, tabla del banco 13) con los colores de cada
-    tipo (1-4) que pone la rutina del juego (IX+1E/1F)."""
+    """Una fila por tipo (1-4 y el 5, al morir) con los dibujos que se le han
+    visto (vistos_enemigos), en orden y con los colores que les pone el juego;
+    cada dibujo son dos sprites de la tabla del banco 13 (IX+11)."""
     from PIL import Image
     d = SPR[v]
     b13 = m.rom[13 * 0x2000:14 * 0x2000]
-    hoja = Image.new("RGB", (30 * 20, 4 * 20), (40, 40, 40))
-    for t in range(1, 5):
-        m.mem[0xE500:0xE520] = bytes(32)
-        m.mem[0xE500] = t
-        m.ix = 0xE500
-        m.llama(d["colores_enemigo"], ix=0xE500)
-        c1, c2 = m.mem[0xE51E], m.mem[0xE51F]
-        for dib in range(30):
+    vistos = vistos_enemigos(v)
+    tipos = sorted(vistos)
+    ancho = max(len(vistos[t]) for t in tipos)
+    hoja = Image.new("RGB", (ancho * 20, len(tipos) * 20), (40, 40, 40))
+    for fila, t in enumerate(tipos):
+        for col, dib in enumerate(sorted(vistos[t])):
+            c1, c2 = vistos[t][dib]
             if m.msx2:
                 attr, cols = 0xF600, 0xF400
                 p1, p2 = b13[d["dibujos_enemigos"] - 0xA000 + 2 * dib:][:2]
@@ -242,10 +289,10 @@ def hoja_enemigos(m, v, salida):
                 attr = (m.vdp.regs[5] & 0x7F) << 7
                 p1 = b13[d["dibujos_enemigos"] - 0xA000 + dib]
                 m.vdp.vram[attr:attr + 5] = bytes([39, 40, p1, c1, 0xD0])
-            hoja.paste(solo_sprites(m).crop((38, 38, 58, 58)), (dib * 20, (t - 1) * 20))
+            hoja.paste(solo_sprites(m).crop((38, 38, 58, 58)), (col * 20, fila * 20))
+        print(v, "enemigo", t, NOMBRES_ENEMIGOS.get(t), "dibujos", sorted(vistos[t]))
     hoja = hoja.resize((hoja.width * 2, hoja.height * 2), Image.NEAREST)
     hoja.save(os.path.join(salida, "sprites_%s_enemigos.png" % v), optimize=True)
-
 
 OBJ = {
     "msx2": dict(borra=0x4E98, rect=0x573B, cosas=0x9324, salida=0x9340, sitio=0x93AC,
