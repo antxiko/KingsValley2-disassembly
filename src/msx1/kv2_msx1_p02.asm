@@ -2760,16 +2760,16 @@ L_928A:
 	ex de,hl			;929c
 	ret			;929d
 L_929E:
-	call L_92F3		;929e   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+	call L_92F3		;929e   ; el bloque de IX: sus casillas (p02:92F3, p02:931A, p02:92C3) y 2 x 2 casillas del mapa a 3 (ladrillo)
 	push de			;92a1
 	call L_931A		;92a2
 	pop hl			;92a5
 	call L_92C3		;92a6
-	ld a,003h		;92a9
-	ld h,(ix+003h)		;92ab   ; lee la x de la cosa
+	ld a,003h		;92a9   ; el valor 3
+	ld h,(ix+003h)		;92ab   ; H = la x, L = la y
 	ld l,(ix+002h)		;92ae   ; lee la y de la cosa
-	ld d,(ix+004h)		;92b1   ; lee la pantalla de la cosa
-	ld bc,00202h		;92b4
+	ld d,(ix+004h)		;92b1   ; D = la pantalla
+	ld bc,00202h		;92b4   ; 2 x 2
 	jp 061f7h		;92b7
 L_92BA:
 	ld h,(ix+003h)		;92ba   ; guarda las casillas que tapa el bloque (en 0xEF40)
@@ -2861,13 +2861,13 @@ L_932E:
 	ret			;934e
 L_934F:
 	call L_93B3		;934f   ; devuelve el fondo del bloque donde estaba
-	ld h,(ix+00bh)		;9352
-	ld l,(ix+00ah)		;9355
-	ld d,(ix+003h)		;9358
-	ld e,(ix+002h)		;935b
-	call L_929E		;935e
-	ld a,(0e243h)		;9361   ; lee la pantalla de la fase (desde 1)
-	cp (ix+009h)		;9364
+	ld h,(ix+00bh)		;9352   ; donde estaba: IX+0B y IX+0A
+	ld l,(ix+00ah)		;9355   ; lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
+	ld d,(ix+003h)		;9358   ; donde esta: la x y la y
+	ld e,(ix+002h)		;935b   ; lee la y de la cosa
+	call L_929E		;935e   ; sus casillas
+	ld a,(0e243h)		;9361   ; en esta pantalla (IX+09)?
+	cp (ix+009h)		;9364   ; compara con la pantalla de la cosa al empezar
 	ret nz			;9367
 	call L_937F		;9368   ; guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
 L_936B:
@@ -4586,33 +4586,33 @@ DATA_diskve_9E65:
 
 
 L_9E67:
-	push bc			;9e67
+	push bc			;9e67   ; la rutina de error de disco del juego (por 0xF323): la RAM a su sitio, este cartucho otra vez y el letrero del error
 	call 0a14fh		;9e68   ; la deja como estaba
-	ld a,001h		;9e6b
+	ld a,001h		;9e6b   ; 0xF0E6 = 1
 	ld (0f0e6h),a		;9e6d
-	ld a,(0f0e9h)		;9e70   ; lee el slot de este cartucho
+	ld a,(0f0e9h)		;9e70   ; este cartucho en 0x4000 (ENASLT)
 	ld h,040h		;9e73
 	call 00024h		;9e75   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop bc			;9e78
-	ld a,c			;9e79
+	ld a,c			;9e79   ; el error de la BIOS de disco (C): (C & 0x0E) / 2...
 	and 00eh		;9e7a
 	rrca			;9e7c
 	cp 002h		;9e7d
-	jr c,L_9E87		;9e7f
+	jr c,L_9E87		;9e7f   ; ...0 o 1: aparte
 	cp 006h		;9e81
-	jr c,L_9E90		;9e83
-	jr L_9E8C		;9e85
+	jr c,L_9E90		;9e83   ; ...de 2 a 5: el letrero 0
+	jr L_9E8C		;9e85   ; ...6 y 7: el 3
 L_9E87:
-	ld c,004h		;9e87
+	ld c,004h		;9e87   ; 0: el 4...
 	rrca			;9e89
 	jr nc,L_9E92		;9e8a
 L_9E8C:
-	ld c,003h		;9e8c
+	ld c,003h		;9e8c   ; ...1 (y 6-7): el 3
 	jr L_9E92		;9e8e
 L_9E90:
 	ld c,000h		;9e90
 L_9E92:
-	jp L_9E9C		;9e92
+	jp L_9E9C		;9e92   ; al letrero del error C
 L_9E95:
 	ld c,006h		;9e95
 L_9E97:
@@ -4641,9 +4641,9 @@ L_9E9C:
 	call 0a196h		;9ebd   ; 256 veces la de 0xF0EA
 	ld a,(0f0e4h)		;9ec0   ; la interrupcion vuelve
 	ld (0fd9ah),a		;9ec3
-	ld a,002h		;9ec6
+	ld a,002h		;9ec6   ; 0xE27F = 2: error
 	ld (0e27fh),a		;9ec8   ; guarda el resultado de grabar o cargar (0 bien, 2 error)
-	ld sp,(0f0e2h)		;9ecb
+	ld sp,(0f0e2h)		;9ecb   ; y se vuelve con la pila de antes de empezar (0xF0E2): se deja todo
 	ret			;9ecf
 
 ; ----------------------------------------------------------------------
@@ -4660,12 +4660,12 @@ DATA_diskve_9ED0:
 
 
 L_9ED2:
-	call 0a14fh		;9ed2   ; la deja como estaba
-	ld a,(0f0e9h)		;9ed5   ; lee el slot de este cartucho
+	call 0a14fh		;9ed2   ; la rutina de error de disco al buscar los ficheros (por 0xF323): todo como estaba y se vuelve con la pila de 0xF0E2
+	ld a,(0f0e9h)		;9ed5   ; este cartucho en 0x4000 (ENASLT)
 	ld h,040h		;9ed8
 	call 00024h		;9eda   ; BIOS ENASLT - Switches to specified slot and page definitively
 	call 0a196h		;9edd   ; 256 veces la de 0xF0EA
-	ld a,(0f0e4h)		;9ee0
+	ld a,(0f0e4h)		;9ee0   ; la interrupcion vuelve
 	ld (0fd9ah),a		;9ee3
 	ld sp,(0f0e2h)		;9ee6
 	ret			;9eea

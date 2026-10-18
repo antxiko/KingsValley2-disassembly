@@ -2104,22 +2104,22 @@ L_4DD7:
 	djnz L_4DD7		;4de8
 	ret			;4dea
 L_4DEB:
-	ld a,d			;4deb
-	cpl			;4dec
+	ld a,d			;4deb   ; DE = -DE (no la llama nadie)
+	cpl			;4dec   ; los bits al reves...
 	ld d,a			;4ded
 	ld a,e			;4dee
 	cpl			;4def
 	ld e,a			;4df0
-	inc de			;4df1
+	inc de			;4df1   ; ...mas 1
 	ret			;4df2
 L_4DF3:
-	ld a,h			;4df3
-	cpl			;4df4
+	ld a,h			;4df3   ; HL = -HL (no la llama nadie)
+	cpl			;4df4   ; los bits al reves...
 	ld h,a			;4df5
 	ld a,l			;4df6
 	cpl			;4df7
 	ld l,a			;4df8
-	inc hl			;4df9
+	inc hl			;4df9   ; ...mas 1
 	ret			;4dfa
 L_4DFB:
 	push hl			;4dfb   ; lee B C bytes de la VRAM (LDIRMV) sin tocar registros
@@ -2156,11 +2156,11 @@ L_4E19:
 L_4E1F:
 	ld c,000h		;4e1f   ; rachas a la VRAM: [destino] y rachas; [n < 0x80] repite el byte siguiente n veces; [0x80 + n] copia n; [0x80] trae otro destino; 0 acaba
 L_4E21:
-	ex de,hl			;4e21
+	ex de,hl			;4e21   ; DE = el destino (los dos primeros bytes)
 	ld e,(hl)			;4e22
 	inc hl			;4e23
 	ld d,(hl)			;4e24
-	inc hl			;4e25
+	inc hl			;4e25   ; las rachas, detras
 	ex de,hl			;4e26
 L_4E27:
 	call 00171h		;4e27   ; BIOS NSTWRT - Same function as SETWRT (with 16-bit VRAM-address) | NSETWR: la VRAM en HL
@@ -4192,12 +4192,12 @@ L_5B16:
 	call L_514C		;5b2e   ; pinta B caracteres de la fuente de DE
 	jp L_418A		;5b31
 L_5B34:
-	call L_41B0		;5b34   ; pone los bancos 10-11-12
-	ld de,08030h		;5b37
+	call L_41B0		;5b34   ; no la llama nadie: las fuentes de 0xAA29 (0x2A caracteres) y 0xAB79 (5), color 0x0C, con el banco 12
+	ld de,08030h		;5b37   ; DE = 0x8030
 	ld hl,0aa29h		;5b3a
 	ld bc,02a0ch		;5b3d
 	call L_514C		;5b40   ; pinta B caracteres de la fuente de DE
-	ld de,0b838h		;5b43
+	ld de,0b838h		;5b43   ; DE = 0xB838
 	ld hl,0ab79h		;5b46
 	ld bc,0050ch		;5b49
 	call L_514C		;5b4c   ; pinta B caracteres de la fuente de DE

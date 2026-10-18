@@ -455,11 +455,19 @@ C 0x4DB7 la siguiente: 32 mas alla
 C 0x4DCE devuelve lo guardado en 0xE880 a 0x3908
 C 0x4DDD HL: 16 bytes mas
 C 0x4DE2 DE: la fila siguiente de la VRAM (32 bytes)
+C 0x4DEB DE = -DE (no la llama nadie)
+C 0x4DEC los bits al reves...
+C 0x4DF1 ...mas 1
+C 0x4DF3 HL = -HL (no la llama nadie)
+C 0x4DF4 los bits al reves...
+C 0x4DF9 ...mas 1
 C 0x4DFB lee B C bytes de la VRAM (LDIRMV) sin tocar registros
 C 0x4E05 escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
 C 0x4E0F llena BC bytes de la VRAM con A (BIGFIL)
 C 0x4E19 escribe un registro del VDP (WRTVDP) sin tocar BC
 C 0x4E1F rachas a la VRAM: [destino] y rachas; [n < 0x80] repite el byte siguiente n veces; [0x80 + n] copia n; [0x80] trae otro destino; 0 acaba
+C 0x4E21 DE = el destino (los dos primeros bytes)
+C 0x4E25 las rachas, detras
 C 0x4E27 NSETWR: la VRAM en HL
 C 0x4E2B C' = el puerto de datos del VDP (0x0007 de la BIOS)
 C 0x4E30 0 acaba
@@ -932,6 +940,9 @@ C 0x5A8C rachas de 0xAF21 a 0xF820 y de 0xA9FB a 0xFE80 (sprites)
 C 0x5AA5 los sprites de 0xAB59, 0x86D4, 0x8FD9, 0xAE08 y 0xA9F6
 C 0x5AD8 los mismos, con 0x86D4 y 0x8FD9 en otro sitio y una copia en espejo
 C 0x5B16 la fuente: 0x29 caracteres de 0xAA29 y 5 de 0xAB79 (color 0x0A)
+C 0x5B34 no la llama nadie: las fuentes de 0xAA29 (0x2A caracteres) y 0xAB79 (5), color 0x0C, con el banco 12
+C 0x5B37 DE = 0x8030
+C 0x5B43 DE = 0xB838
 C 0x5B52 la paleta de 0xA7FF
 C 0x5B5E la paleta de 0xA8BB
 C 0x5B6A la presentacion: paleta, letras y el dibujo de 0xBB9B
@@ -1501,7 +1512,6 @@ C 0x5B05 lo mismo con el destino en HL
 C 0x5B10 copia C bloques de 16 bytes de HL a DE en la VRAM dandoles la vuelta (espejo)
 C 0x5B22 pinta B caracteres de la fuente de DE
 C 0x5B2E pinta B caracteres de la fuente de DE
-C 0x5B34 pone los bancos 10-11-12
 C 0x5B40 pinta B caracteres de la fuente de DE
 C 0x5B4C pinta B caracteres de la fuente de DE
 C 0x5B58 la paleta de la lista de HL: [color][D][E], 0xFF acaba

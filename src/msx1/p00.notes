@@ -439,10 +439,19 @@ C 0x4DB8 la siguiente: 32 mas alla
 C 0x4DCF devuelve lo guardado en 0xE880 a 0x3908
 C 0x4DDE HL: 16 bytes mas
 C 0x4DE3 DE: la fila siguiente de la VRAM (32 bytes)
+C 0x4DEC DE = -DE (no la llama nadie)
+C 0x4DED los bits al reves...
+C 0x4DF2 ...mas 1
+C 0x4DF4 HL = -HL (no la llama nadie)
+C 0x4DF5 los bits al reves...
+C 0x4DFA ...mas 1
 C 0x4DFC lee B C bytes de la VRAM (LDIRMV) sin tocar registros
 C 0x4E06 escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
 C 0x4E10 llena BC bytes de la VRAM con A (BIGFIL)
+C 0x4E1A escribe un registro del VDP (WRTVDP) sin tocar BC
 C 0x4E20 rachas a la VRAM: [destino] y rachas; [n < 0x80] repite el byte siguiente n veces; [0x80 + n] copia n; [0x80] trae otro destino; 0 acaba
+C 0x4E22 DE = el destino (los dos primeros bytes)
+C 0x4E26 las rachas, detras
 C 0x4E2C C' = el puerto de datos del VDP (0x0007 de la BIOS)
 C 0x4E31 0 acaba
 C 0x4E39 bit 7 a cero: racha
@@ -463,6 +472,8 @@ C 0x4EC7 borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 C 0x4ED4 enciende la pantalla (bit 6 de R#1)
 C 0x4EDF apaga la pantalla (bit 6 de R#1 a cero)
 C 0x4EEA los atributos de los sprites (0x3B00, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x4EF5 no la llama nadie: R#8 (y su copia 0xFFE7) con el bit 1 a 1: sin sprites
+C 0x4F00 no la llama nadie: R#8 con el bit 1 a 0: con sprites
 C 0x4F0B pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0x4F0F lo mismo, borrando (caracter 0)
 C 0x4F20 0xFF acaba
@@ -523,6 +534,35 @@ C 0x5064 la tabla de colores
 C 0x5068 las rachas de colores (IX+01)
 C 0x5076 la de patrones
 C 0x507A las de patrones (IX+04)
+C 0x5088 no la llama nadie: lista de fichas de 4 bytes [de][a][marcas][n], 0 acaba: copia n caracteres del tercio de origen (bits 1-2) a los de destino (bits 3-5), dados la vuelta
+C 0x508D las marcas (IX+02): el bit 7, a 0xEFC0
+C 0x5097 n (IX+03), a 0xEFC3
+C 0x509E una ficha
+C 0x50A1 la siguiente (4 bytes)
+C 0x50A8 n x 8 bytes, a 0xEFC1
+C 0x50B0 los lee del tercio de origen: colores a 0xE800 y patrones a 0xEA00
+C 0x50B3 bit 7 a 0: espejo de izquierda a derecha...
+C 0x50BC ...a 1: de arriba abajo
+C 0x50BF y a los tercios de destino
+C 0x50C2 de arriba abajo: los 8 bytes de cada caracter al reves, en los colores...
+C 0x50CB ...y en los patrones
+C 0x50D2 n caracteres
+C 0x50D9 cambia uno de arriba con uno de abajo
+C 0x50E6 el caracter siguiente (8 bytes mas)
+C 0x50EF de izquierda a derecha: cada byte con sus bits al reves
+C 0x50F8 un bit...
+C 0x50FB ...los 8
+C 0x5105 bit 3: al tercio 2 (0x1000)
+C 0x510F bit 4: al tercio 1 (0x0800)
+C 0x5119 bit 5: al tercio 0
+C 0x5121 escribe los n caracteres en el de destino (IX+01) del tercio DE: colores de 0xE800...
+C 0x5141 ...y patrones de 0xEA00
+C 0x514F lee los n caracteres de IX+00 del tercio de origen
+C 0x515F bit 2: el tercio 0
+C 0x5167 bit 1: el tercio 1; si no, el 2
+C 0x5170 los colores a 0xE800 (LDIRMV)
+C 0x517E lo mismo con los patrones...
+C 0x518F ...a 0xEA00
 C 0x519E copia sprites a la VRAM: [n x 32 bytes][dibujo][puntero], 0 acaba
 C 0x51A3 n x 32: los bytes
 C 0x51AB BC = cuantos bytes
@@ -652,6 +692,7 @@ C 0x5690 muerto: la tabla 0x8589 por la direccion
 C 0x56A0 en pausa: la tabla 0x8597 por 0xE2B3
 C 0x56B0 rachas de 0xA6D8 a 0x1880 (sprites)
 C 0x56C2 los graficos de la lista 0x814B (la entrada)
+C 0x56CF no la llama nadie: los graficos de la lista 0x8166 con los bancos 7-8-9 (p00:56C9)
 C 0x56D8 los de la lista 0x8175
 C 0x56E1 los de la lista 0x815F
 C 0x56EA 12 x 12 caracteres de 0xAB57 en (0x18, 0x18)
@@ -1215,15 +1256,13 @@ C 0x5070 lo mismo con el destino en HL
 C 0x5082 lo mismo con el destino en HL
 C 0x5094 guarda un dato de paso de la rutina en curso
 C 0x509B guarda la marca de apuntar en 0xE7C0 las columnas al leer el mapa
-C 0x50B3 lee un dato de paso de la rutina en curso
-C 0x50C2 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
-C 0x50D2 lee la marca de apuntar en 0xE7C0 las columnas al leer el mapa
+C 0x50B8 de izquierda a derecha: cada byte con sus bits al reves
 C 0x50E8 suma A a DE (DE = DE + A)
-C 0x50EF apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0x510C escribe los n caracteres en el de destino (IX+01) del tercio DE: colores de 0xE800...
+C 0x5116 escribe los n caracteres en el de destino (IX+01) del tercio DE: colores de 0xE800...
 C 0x5131 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0x5139 escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
 C 0x5149 escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
-C 0x5170 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0x51B8 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0x51C9 escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
 C 0x51D9 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
@@ -1294,7 +1333,6 @@ C 0x5686 HL = la palabra A de la tabla de HL
 C 0x5696 HL = la palabra A de la tabla de HL
 C 0x56A6 HL = la palabra A de la tabla de HL
 C 0x56C9 carga graficos: fichas de 6 bytes [tercios][colores][caracter][patrones], un 0 acaba
-C 0x56CF pone los bancos 7-8-9
 C 0x56F6 un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 C 0x5708 un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 C 0x5722 un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres

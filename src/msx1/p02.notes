@@ -479,6 +479,11 @@ C 0x927D DE = el mapa de la pantalla del bloque, H, L = su sitio
 C 0x928A DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 C 0x928B A - 1
 C 0x9296 x 3: x 0xC0
+C 0x929E el bloque de IX: sus casillas (p02:92F3, p02:931A, p02:92C3) y 2 x 2 casillas del mapa a 3 (ladrillo)
+C 0x92A9 el valor 3
+C 0x92AB H = la x, L = la y
+C 0x92B1 D = la pantalla
+C 0x92B4 2 x 2
 C 0x92BA guarda las casillas que tapa el bloque (en 0xEF40)
 C 0x92DA la casilla de arriba a la izquierda...
 C 0x92E3 ...guardada
@@ -493,6 +498,10 @@ C 0x932E dos casillas
 C 0x9334 1 x 1
 C 0x933C la siguiente: 8 pixeles a la derecha
 C 0x9341 su valor
+C 0x9352 donde estaba: IX+0B y IX+0A
+C 0x9358 donde esta: la x y la y
+C 0x935E sus casillas
+C 0x9361 en esta pantalla (IX+09)?
 C 0x936B pinta el bloque: 2 x 2 de 0x9089
 C 0x937A guarda el fondo del bloque y lo pinta
 C 0x937F guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
@@ -821,12 +830,27 @@ C 0x9E4C la y
 C 0x9E51 la x
 C 0x9E56 el resto a cero
 C 0x9E63 NZ: una mas
+C 0x9E67 la rutina de error de disco del juego (por 0xF323): la RAM a su sitio, este cartucho otra vez y el letrero del error
+C 0x9E6B 0xF0E6 = 1
+C 0x9E70 este cartucho en 0x4000 (ENASLT)
+C 0x9E79 el error de la BIOS de disco (C): (C & 0x0E) / 2...
+C 0x9E7F ...0 o 1: aparte
+C 0x9E83 ...de 2 a 5: el letrero 0
+C 0x9E85 ...6 y 7: el 3
+C 0x9E87 0: el 4...
+C 0x9E8C ...1 (y 6-7): el 3
+C 0x9E92 al letrero del error C
 C 0x9E97 error de disco: el letrero del error C (tabla 0xAF52) y se vuelve con la pila de 0xF0E2
 C 0x9E98 la RAM del juego a su sitio
 C 0x9E9C el letrero del error C (0-4)
 C 0x9EA9 su letrero
 C 0x9EB4 y el de pulsar una tecla
 C 0x9EC0 la interrupcion vuelve
+C 0x9EC6 0xE27F = 2: error
+C 0x9ECB y se vuelve con la pila de antes de empezar (0xF0E2): se deja todo
+C 0x9ED2 la rutina de error de disco al buscar los ficheros (por 0xF323): todo como estaba y se vuelve con la pila de 0xF0E2
+C 0x9ED5 este cartucho en 0x4000 (ENASLT)
+C 0x9EE0 la interrupcion vuelve
 C 0x9EF7 la pila, para volver si hay error
 C 0x9EFB deja sitio a la BDOS: la RAM del juego se cambia a 0xC000
 C 0x9F04 la cabecera del fichero (FCB) en 0xCE00 con el nombre de 0xC270
@@ -1307,10 +1331,7 @@ C 0x9280 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 C 0x9283 lee la x de la cosa
 C 0x9286 lee la y de la cosa
 C 0x9298 apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
-C 0x929E 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
-C 0x92AB lee la x de la cosa
 C 0x92AE lee la y de la cosa
-C 0x92B1 lee la pantalla de la cosa
 C 0x92BD lee la y de la cosa
 C 0x92C0 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x92C3 lee la pantalla de la cosa
@@ -1331,7 +1352,9 @@ C 0x9337 marca un rectangulo del mapa de la pantalla D: B filas de C casillas co
 C 0x9343 lee la pantalla de la cosa
 C 0x9349 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 C 0x934F devuelve el fondo del bloque donde estaba
-C 0x9361 lee la pantalla de la fase (desde 1)
+C 0x9355 lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
+C 0x935B lee la y de la cosa
+C 0x9364 compara con la pantalla de la cosa al empezar
 C 0x9368 guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
 C 0x938B lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0x9391 pasa la posicion de caracter de HL a direccion de la VRAM
@@ -1619,7 +1642,6 @@ C 0x9E5A guarda el paso de la velocidad de la cosa
 C 0x9E5D guarda la cuenta de la cosa
 C 0x9E60 guarda el lado de la cosa
 C 0x9E68 la deja como estaba
-C 0x9E70 lee el slot de este cartucho
 C 0x9EA1 pone el banco 12 en 0xA000
 C 0x9EAD borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 C 0x9EB1 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
@@ -1627,8 +1649,6 @@ C 0x9EB7 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF ac
 C 0x9EBA pone los bancos 1-2-3 (el juego)
 C 0x9EBD 256 veces la de 0xF0EA
 C 0x9EC8 guarda el resultado de grabar o cargar (0 bien, 2 error)
-C 0x9ED2 la deja como estaba
-C 0x9ED5 lee el slot de este cartucho
 C 0x9EDD 256 veces la de 0xF0EA
 C 0x9F0A el tamano de registro a 1 y el registro actual a 0
 C 0x9F2A lee HL registros (orden 0x27); error 0 si falla

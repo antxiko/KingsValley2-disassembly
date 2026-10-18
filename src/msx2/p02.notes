@@ -602,6 +602,11 @@ C 0x9564 DE = el mapa de la pantalla del bloque, H, L = su sitio
 C 0x9571 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 C 0x9572 A - 1
 C 0x957D x 3: x 0xC0
+C 0x9585 el bloque de IX: sus casillas (p02:95DA, p02:9601, p02:95AA) y 2 x 2 casillas del mapa a 3 (ladrillo)
+C 0x9590 el valor 3
+C 0x9592 H = la x, L = la y
+C 0x9598 D = la pantalla
+C 0x959B 2 x 2
 C 0x95A1 guarda las casillas que tapa el bloque (en 0xEF40)
 C 0x95C1 la casilla de arriba a la izquierda...
 C 0x95CA ...guardada
@@ -616,6 +621,11 @@ C 0x9615 dos casillas
 C 0x961B 1 x 1
 C 0x9623 la siguiente: 8 pixeles a la derecha
 C 0x9628 su valor
+C 0x9636 tipo 5 de la tabla p01:64CF: repinta el bloque
+C 0x9639 donde estaba: IX+0B y IX+0A
+C 0x963F donde esta: la x y la y
+C 0x9645 sus casillas
+C 0x9648 en esta pantalla (IX+09)?
 C 0x9652 pinta el bloque: 2 x 2 de 0x9370
 C 0x9661 guarda el fondo del bloque y lo pinta
 C 0x9666 guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
@@ -632,6 +642,16 @@ C 0x96BB MSX2: el fondo guardado en la pagina 1
 C 0x96C7 de vuelta a la pagina 0
 C 0x96CF pinta los bloques de esta pantalla
 C 0x96FF devuelve el fondo de los bloques de esta pantalla
+C 0x972E la rutina de error de disco del juego (por 0xF323): la RAM a su sitio, este cartucho otra vez y el letrero del error
+C 0x9732 0xF0E6 = 1
+C 0x9737 este cartucho en 0x4000 (ENASLT)
+C 0x9740 el error de la BIOS de disco (C): (C & 0x0E) / 2...
+C 0x9746 ...0 o 1: aparte
+C 0x974A ...de 2 a 5: el letrero 0
+C 0x974C ...6 y 7: el 3
+C 0x974E 0: el 4...
+C 0x9753 ...1 (y 6-7): el 3
+C 0x9759 al letrero del error C
 C 0x975E error de disco: el letrero del error C (tabla 0xAF52) y se vuelve con la pila de 0xF0E2
 C 0x975F la RAM del juego a su sitio
 C 0x9763 el letrero del error C (0-4)
@@ -640,6 +660,10 @@ C 0x977B y el de pulsar una tecla
 C 0x9787 la interrupcion vuelve
 C 0x978D 0xE27F = 2: error
 C 0x9792 y se vuelve con la pila de antes de empezar (0xF0E2): se deja todo
+C 0x9799 la rutina de error de disco al buscar los ficheros (por 0xF323): todo como estaba y se vuelve con la pila de 0xF0E2
+C 0x979C este cartucho en 0x4000 (ENASLT)
+C 0x97A7 la interrupcion vuelve
+C 0x97AD la pila de antes de empezar
 C 0x97B2 las cosas que se cogen de la fase (tabla 0xAFB1 del banco 13) a 0xE300
 C 0x97BB la palabra (fase - 1)
 C 0x97C9 cada una a una ficha de 8 bytes, hasta 0xFF
@@ -1391,10 +1415,7 @@ C 0x9567 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 C 0x956A lee la x de la cosa
 C 0x956D lee la y de la cosa
 C 0x957F apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
-C 0x9585 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
-C 0x9592 lee la x de la cosa
 C 0x9595 lee la y de la cosa
-C 0x9598 lee la pantalla de la cosa
 C 0x95A4 lee la y de la cosa
 C 0x95A7 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x95AA lee la pantalla de la cosa
@@ -1414,12 +1435,8 @@ C 0x9618 lee la pantalla de la cosa
 C 0x961E marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 C 0x962A lee la pantalla de la cosa
 C 0x9630 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
-C 0x9636 devuelve el fondo del bloque donde estaba
-C 0x9639 lee la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
 C 0x963C lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
-C 0x963F lee la x de la cosa
 C 0x9642 lee la y de la cosa
-C 0x9648 lee la pantalla de la fase (desde 1)
 C 0x964B compara con la pantalla de la cosa al empezar
 C 0x964F guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
 C 0x9672 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
@@ -1436,7 +1453,6 @@ C 0x9706 lee el tipo de la cosa (0: libre)
 C 0x9717 lee la pantalla de la fase (desde 1)
 C 0x971E 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x972F la deja como estaba
-C 0x9737 lee el slot de este cartucho
 C 0x9768 pone el banco 12 en 0xA000
 C 0x9774 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0x9778 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
@@ -1444,8 +1460,6 @@ C 0x977E pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF ac
 C 0x9781 pone los bancos 1-2-3 (el juego)
 C 0x9784 256 veces la de 0xF0EA
 C 0x978F guarda el resultado de grabar o cargar (0 bien, 2 error)
-C 0x9799 la deja como estaba
-C 0x979C lee el slot de este cartucho
 C 0x97A4 256 veces la de 0xF0EA
 C 0x97B5 la palabra (fase - 1)
 C 0x97C2 lee la fase (1-60)

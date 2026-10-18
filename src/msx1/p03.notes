@@ -385,6 +385,7 @@ C 0xB4F3 choca con otro de su tipo o con pared: se para
 C 0xB50D el otro enemigo (IY) tambien se centra si se mueve
 C 0xB513 hacia el lado
 C 0xB53A el sonido 0x24 si esta en esta pantalla
+C 0xB544 no la llama nadie: el enemigo quieto (IX+06 = 0, velocidad 0), espera 0x3C y paso 1
 C 0xB55A C si choca con otro enemigo de tipo 4 de su pantalla
 C 0xB571 solo los de tipo 4
 C 0xB578 de otro sitio de salida...
@@ -451,6 +452,10 @@ C 0xB870 empujando a la izquierda (bit 2)
 C 0xB87B estado 6: pasa andando
 C 0xB889 paso 1: cada 10 cuadros un giro, hasta 3: se queda del otro lado
 C 0xB8A6 paso 2: gira al reves hasta 0
+C 0xB8C5 los tres dibujos, el mismo (0x908D)
+C 0xB8CF B = el alto
+C 0xB8D2 2 de ancho
+C 0xB8D4 D = la x, E = la y
 C 0xB8DE pinta la puerta: la parte de arriba (HL), la del medio (DE) repetida y la de abajo (BC)
 C 0xB90E dos caracteres de la parte, segun el giro (IX+05)
 C 0xB912 el giro x 2
@@ -475,6 +480,9 @@ C 0xB993 ...a menos de 0x14
 C 0xB99B empujando a la izquierda (bit 2)
 C 0xB9A3 estado 6: pasa andando
 C 0xB9AA gira cada 8 cuadros; a los 4 pasos vuelve a estar cerrada (sonido 0x22)
+C 0xB9D5 el bit 1: su lado
+C 0xB9D7 de un lado: 0x9095, 0x909D y 0x90A5...
+C 0xB9E3 ...del otro: 0x90AD, 0x90B5 y 0x90BD
 C 0xB9EF las cosas de tipo 3 de 0xE600: si el personaje pasa por su columna, empiezan a moverse
 C 0xBA17 C si el personaje esta en su pantalla, a menos de 8 pixeles en x y dentro de su alto
 C 0xBA22 x + 8 - la de la cosa...
@@ -482,6 +490,12 @@ C 0xBA27 ...menos de 8
 C 0xBA2D el alto x 8
 C 0xBA34 la y - la de la cosa, menos que el alto: C
 C 0xBA3B la cosa de tipo 3 en marcha: cada 0x1E cuadros un paso, hasta su alto (IX+08); luego se quita
+C 0xBA65 H = la x
+C 0xBA68 L = la y + (IX+05 - 1) x 8
+C 0xBA6F 1 x 1, con el valor 2
+C 0xBA80 D = la x
+C 0xBA83 E = la y + lo mismo
+C 0xBA8F el caracter 5
 C 0xBA9C una cosa de tipo 4 (suelo que se rompe): mira si el personaje esta encima
 C 0xBAC1 al bajarse de ella (en el suelo), cuenta; a la segunda, se rompe
 C 0xBAC8 sin estar antes encima: nada
@@ -493,7 +507,18 @@ C 0xBAE0 ...1 fila de 4 casillas
 C 0xBAF0 0xE60A = 1: el personaje esta encima
 C 0xBAF5 el sonido 0x27 y se repinta el fondo (MSX1 de la ficha, MSX2 de la pagina 1)
 C 0xBB13 en MSX2: el fondo guardado en la pagina 1 (x = 2 x el numero de la ficha, y 0x40 o 0x50)
+C 0xBB2F A = 3
 C 0xBB3B pinta una fila de 4 caracteres (0xAD en MSX2, 0x61 en MSX1)
+C 0xBB41 4 caracteres
+C 0xBB44 0x61 en MSX1, 0xAD en MSX2
+C 0xBB52 8 pixeles a la derecha
+C 0xBB59 guarda el fondo del suelo de IX: en MSX1, 4 bytes de la tabla de nombres en IX+0C; en MSX2, un trozo de la pagina 1
+C 0xBB65 MSX1: su direccion en la VRAM
+C 0xBB68 a IX+0C
+C 0xBB70 4 bytes
+C 0xBB7B MSX2: (IX & 0xFF) x 2, en la columna...
+C 0xBB81 ...y la fila 0x40 o 0x50
+C 0xBB87 0x20 x 8, de la pagina 0 a la 1
 C 0xBB90 las columnas de 0xE7C0 de esta pantalla
 C 0xBBA8 el personaje sobre la columna: dentro de su alto y a menos de 16 pixeles en x
 C 0xBBA9 la y
@@ -1168,7 +1193,6 @@ C 0xB52C se centra en la casilla en la direccion en la que va
 C 0xB531 lo mismo con el mapa de DE
 C 0xB537 se marca en el mapa; si choca con algo, se va
 C 0xB53D compara con la pantalla del enemigo
-C 0xB544 la marca de enemigo en movimiento = 0x00
 C 0xB54B la velocidad en x
 C 0xB54E la velocidad en y
 C 0xB551 la espera del enemigo = 0x3C
@@ -1284,8 +1308,6 @@ C 0xB8B6 guarda el paso de la cosa
 C 0xB8B9 pone a cero el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 C 0xB8BE lee la pantalla de la fase (desde 1)
 C 0xB8C1 compara con la pantalla de la cosa
-C 0xB8CF lee el alto de la cosa
-C 0xB8D4 lee la x de la cosa
 C 0xB8D7 lee la y de la cosa
 C 0xB8E1 guarda la pantalla que se lee del mapa y el byte siguiente (16 bits)
 C 0xB8E9 lee la x de la cosa
@@ -1348,14 +1370,10 @@ C 0xBA4F compara con el alto de la cosa
 C 0xBA54 sube el giro o paso del dibujo de la cosa
 C 0xBA58 el tipo de la cosa (0: libre) = 0x00
 C 0xBA5D lee el giro o paso del dibujo de la cosa
-C 0xBA65 lee la x de la cosa
-C 0xBA68 le suma la y de la cosa
 C 0xBA6C lee la pantalla de la cosa
 C 0xBA75 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 C 0xBA79 lee la pantalla de la fase (desde 1)
 C 0xBA7C compara con la pantalla de la cosa
-C 0xBA80 lee la x de la cosa
-C 0xBA83 lee la y de la cosa
 C 0xBA8B las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 C 0xBA91 escribe el caracter A en la posicion D, E de la tabla de nombres
 C 0xBA94 las de la lista, al reves: guarda el fondo y pinta la cosa
@@ -1383,14 +1401,14 @@ C 0xBB0F un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 C 0xBB21 en este cartucho no hace nada: aqui iria el pintor de caracteres de MSX2
 C 0xBB26 guarda la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
 C 0xBB29 guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
+C 0xBB2C guarda el fondo del suelo de IX: en MSX1, 4 bytes de la tabla de nombres en IX+0C; en MSX2, un trozo de la pagina 1
 C 0xBB31 ...1 fila de 4 casillas
 C 0xBB34 lee la pantalla de la fase (desde 1)
 C 0xBB37 compara con la pantalla de la cosa
 C 0xBB3E lee la y de la cosa
-C 0xBB44 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0xBB4E escribe el caracter A en la posicion D, E de la tabla de nombres
+C 0xBB5C lee la y de la cosa
 C 0xBB5F lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
-C 0xBB65 pasa la posicion de caracter de HL a direccion de la VRAM
 C 0xBB6D suma A a DE (DE = DE + A)
 C 0xBB8C en este cartucho no hace nada: aqui iria el pintor de caracteres de MSX2
 C 0xBB95 lee la pantalla de la fase (desde 1)

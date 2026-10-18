@@ -3276,16 +3276,16 @@ L_9571:
 	ex de,hl			;9583
 	ret			;9584
 L_9585:
-	call L_95DA		;9585   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+	call L_95DA		;9585   ; el bloque de IX: sus casillas (p02:95DA, p02:9601, p02:95AA) y 2 x 2 casillas del mapa a 3 (ladrillo)
 	push de			;9588
 	call L_9601		;9589
 	pop hl			;958c
 	call L_95AA		;958d
-	ld a,003h		;9590
-	ld h,(ix+003h)		;9592   ; lee la x de la cosa
+	ld a,003h		;9590   ; el valor 3
+	ld h,(ix+003h)		;9592   ; H = la x, L = la y
 	ld l,(ix+002h)		;9595   ; lee la y de la cosa
-	ld d,(ix+004h)		;9598   ; lee la pantalla de la cosa
-	ld bc,00202h		;959b
+	ld d,(ix+004h)		;9598   ; D = la pantalla
+	ld bc,00202h		;959b   ; 2 x 2
 	jp 063edh		;959e
 L_95A1:
 	ld h,(ix+003h)		;95a1   ; guarda las casillas que tapa el bloque (en 0xEF40)
@@ -3376,13 +3376,13 @@ L_9615:
 	inc de			;9634
 	ret			;9635
 L_9636:
-	call L_969A		;9636   ; devuelve el fondo del bloque donde estaba
-	ld h,(ix+00bh)		;9639   ; lee la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
+	call L_969A		;9636   ; tipo 5 de la tabla p01:64CF: repinta el bloque
+	ld h,(ix+00bh)		;9639   ; donde estaba: IX+0B y IX+0A
 	ld l,(ix+00ah)		;963c   ; lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
-	ld d,(ix+003h)		;963f   ; lee la x de la cosa
+	ld d,(ix+003h)		;963f   ; donde esta: la x y la y
 	ld e,(ix+002h)		;9642   ; lee la y de la cosa
-	call L_9585		;9645
-	ld a,(0e243h)		;9648   ; lee la pantalla de la fase (desde 1)
+	call L_9585		;9645   ; sus casillas
+	ld a,(0e243h)		;9648   ; en esta pantalla (IX+09)?
 	cp (ix+009h)		;964b   ; compara con la pantalla de la cosa al empezar
 	ret nz			;964e
 	call L_9666		;964f   ; guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
@@ -3513,33 +3513,33 @@ DATA_diskve_972C:
 
 
 L_972E:
-	push bc			;972e
+	push bc			;972e   ; la rutina de error de disco del juego (por 0xF323): la RAM a su sitio, este cartucho otra vez y el letrero del error
 	call L_9DE7		;972f   ; la deja como estaba
-	ld a,001h		;9732
+	ld a,001h		;9732   ; 0xF0E6 = 1
 	ld (0f0e6h),a		;9734
-	ld a,(0f0e9h)		;9737   ; lee el slot de este cartucho
+	ld a,(0f0e9h)		;9737   ; este cartucho en 0x4000 (ENASLT)
 	ld h,040h		;973a
 	call 00024h		;973c   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop bc			;973f
-	ld a,c			;9740
+	ld a,c			;9740   ; el error de la BIOS de disco (C): (C & 0x0E) / 2...
 	and 00eh		;9741
 	rrca			;9743
 	cp 002h		;9744
-	jr c,L_974E		;9746
+	jr c,L_974E		;9746   ; ...0 o 1: aparte
 	cp 006h		;9748
-	jr c,L_9757		;974a
-	jr L_9753		;974c
+	jr c,L_9757		;974a   ; ...de 2 a 5: el letrero 0
+	jr L_9753		;974c   ; ...6 y 7: el 3
 L_974E:
-	ld c,004h		;974e
+	ld c,004h		;974e   ; 0: el 4...
 	rrca			;9750
 	jr nc,L_9759		;9751
 L_9753:
-	ld c,003h		;9753
+	ld c,003h		;9753   ; ...1 (y 6-7): el 3
 	jr L_9759		;9755
 L_9757:
 	ld c,000h		;9757
 L_9759:
-	jp L_9763		;9759
+	jp L_9763		;9759   ; al letrero del error C
 L_975C:
 	ld c,006h		;975c
 L_975E:
@@ -3587,14 +3587,14 @@ DATA_diskve_9797:
 
 
 L_9799:
-	call L_9DE7		;9799   ; la deja como estaba
-	ld a,(0f0e9h)		;979c   ; lee el slot de este cartucho
+	call L_9DE7		;9799   ; la rutina de error de disco al buscar los ficheros (por 0xF323): todo como estaba y se vuelve con la pila de 0xF0E2
+	ld a,(0f0e9h)		;979c   ; este cartucho en 0x4000 (ENASLT)
 	ld h,040h		;979f
 	call 00024h		;97a1   ; BIOS ENASLT - Switches to specified slot and page definitively
 	call L_9E1D		;97a4   ; 256 veces la de 0xF0EA
-	ld a,(0f0e4h)		;97a7
+	ld a,(0f0e4h)		;97a7   ; la interrupcion vuelve
 	ld (0fd9fh),a		;97aa
-	ld sp,(0f0e2h)		;97ad
+	ld sp,(0f0e2h)		;97ad   ; la pila de antes de empezar
 	ret			;97b1
 L_97B2:
 	call 041bfh		;97b2   ; las cosas que se cogen de la fase (tabla 0xAFB1 del banco 13) a 0xE300

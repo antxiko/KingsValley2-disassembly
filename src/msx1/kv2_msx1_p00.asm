@@ -2104,22 +2104,22 @@ L_4DD8:
 	djnz L_4DD8		;4de9
 	ret			;4deb
 L_4DEC:
-	ld a,d			;4dec
-	cpl			;4ded
+	ld a,d			;4dec   ; DE = -DE (no la llama nadie)
+	cpl			;4ded   ; los bits al reves...
 	ld d,a			;4dee
 	ld a,e			;4def
 	cpl			;4df0
 	ld e,a			;4df1
-	inc de			;4df2
+	inc de			;4df2   ; ...mas 1
 	ret			;4df3
 L_4DF4:
-	ld a,h			;4df4
-	cpl			;4df5
+	ld a,h			;4df4   ; HL = -HL (no la llama nadie)
+	cpl			;4df5   ; los bits al reves...
 	ld h,a			;4df6
 	ld a,l			;4df7
 	cpl			;4df8
 	ld l,a			;4df9
-	inc hl			;4dfa
+	inc hl			;4dfa   ; ...mas 1
 	ret			;4dfb
 L_4DFC:
 	push hl			;4dfc   ; lee B C bytes de la VRAM (LDIRMV) sin tocar registros
@@ -2149,18 +2149,18 @@ L_4E10:
 	pop de			;4e18
 	ret			;4e19
 L_4E1A:
-	push bc			;4e1a
+	push bc			;4e1a   ; escribe un registro del VDP (WRTVDP) sin tocar BC
 	call 00047h		;4e1b   ; BIOS WRTVDP - Writes data in the VDP-register
 	pop bc			;4e1e
 	ret			;4e1f
 L_4E20:
 	ld c,000h		;4e20   ; rachas a la VRAM: [destino] y rachas; [n < 0x80] repite el byte siguiente n veces; [0x80 + n] copia n; [0x80] trae otro destino; 0 acaba
 L_4E22:
-	ex de,hl			;4e22
+	ex de,hl			;4e22   ; DE = el destino (los dos primeros bytes)
 	ld e,(hl)			;4e23
 	inc hl			;4e24
 	ld d,(hl)			;4e25
-	inc hl			;4e26
+	inc hl			;4e26   ; las rachas, detras
 	ex de,hl			;4e27
 L_4E28:
 	call 00053h		;4e28   ; BIOS SETWRT - Enables VDP to write
@@ -2306,13 +2306,13 @@ L_4EEA:
 	ld a,0e0h		;4ef0
 	jp L_4E10		;4ef2
 L_4EF5:
-	ld a,(0ffe7h)		;4ef5
+	ld a,(0ffe7h)		;4ef5   ; no la llama nadie: R#8 (y su copia 0xFFE7) con el bit 1 a 1: sin sprites
 	or 002h		;4ef8
 	ld b,a			;4efa
 	ld c,008h		;4efb
 	jp 00047h		;4efd   ; BIOS WRTVDP - Writes data in the VDP-register
 L_4F00:
-	ld a,(0ffe7h)		;4f00
+	ld a,(0ffe7h)		;4f00   ; no la llama nadie: R#8 con el bit 1 a 0: con sprites
 	and 0fdh		;4f03
 	ld b,a			;4f05
 	ld c,008h		;4f06
@@ -2567,50 +2567,50 @@ L_505A:
 	pop ix		;5085
 	ret			;5087
 L_5088:
-	ld a,(ix+000h)		;5088
+	ld a,(ix+000h)		;5088   ; no la llama nadie: lista de fichas de 4 bytes [de][a][marcas][n], 0 acaba: copia n caracteres del tercio de origen (bits 1-2) a los de destino (bits 3-5), dados la vuelta
 	and a			;508b
 	ret z			;508c
-	ld e,(ix+002h)		;508d
+	ld e,(ix+002h)		;508d   ; las marcas (IX+02): el bit 7, a 0xEFC0
 	xor a			;5090
 	rl e		;5091
 	rla			;5093
 	ld (0efc0h),a		;5094   ; guarda un dato de paso de la rutina en curso
-	ld l,(ix+003h)		;5097
+	ld l,(ix+003h)		;5097   ; n (IX+03), a 0xEFC3
 	ld a,l			;509a
 	ld (0efc3h),a		;509b   ; guarda la marca de apuntar en 0xE7C0 las columnas al leer el mapa
-	call L_50A8		;509e
-	ld de,00004h		;50a1
+	call L_50A8		;509e   ; una ficha
+	ld de,00004h		;50a1   ; la siguiente (4 bytes)
 	add ix,de		;50a4
 	jr L_5088		;50a6
 L_50A8:
-	ld h,000h		;50a8
+	ld h,000h		;50a8   ; n x 8 bytes, a 0xEFC1
 	add hl,hl			;50aa
 	add hl,hl			;50ab
 	add hl,hl			;50ac
 	ld (0efc1h),hl		;50ad
-	call L_514F		;50b0
-	ld a,(0efc0h)		;50b3   ; lee un dato de paso de la rutina en curso
+	call L_514F		;50b0   ; los lee del tercio de origen: colores a 0xE800 y patrones a 0xEA00
+	ld a,(0efc0h)		;50b3   ; bit 7 a 0: espejo de izquierda a derecha...
 	and a			;50b6
 	push af			;50b7
-	call z,L_50EF		;50b8
+	call z,L_50EF		;50b8   ; de izquierda a derecha: cada byte con sus bits al reves
 	pop af			;50bb
-	call nz,L_50C2		;50bc
-	jp L_5105		;50bf
+	call nz,L_50C2		;50bc   ; ...a 1: de arriba abajo
+	jp L_5105		;50bf   ; y a los tercios de destino
 L_50C2:
-	ld hl,0e800h		;50c2   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ld hl,0e800h		;50c2   ; de arriba abajo: los 8 bytes de cada caracter al reves, en los colores...
 	ld de,0e807h		;50c5
 	call L_50D1		;50c8
-	ld hl,0ea00h		;50cb
+	ld hl,0ea00h		;50cb   ; ...y en los patrones
 	ld de,0ea07h		;50ce
 L_50D1:
 	exx			;50d1
-	ld a,(0efc3h)		;50d2   ; lee la marca de apuntar en 0xE7C0 las columnas al leer el mapa
+	ld a,(0efc3h)		;50d2   ; n caracteres
 	ld b,a			;50d5
 L_50D6:
 	exx			;50d6
 	ld b,004h		;50d7
 L_50D9:
-	ld c,(hl)			;50d9
+	ld c,(hl)			;50d9   ; cambia uno de arriba con uno de abajo
 	ld a,(de)			;50da
 	ld (hl),a			;50db
 	ld a,c			;50dc
@@ -2622,20 +2622,20 @@ L_50D9:
 	inc hl			;50e3
 	inc hl			;50e4
 	inc hl			;50e5
-	ld a,00ch		;50e6
+	ld a,00ch		;50e6   ; el caracter siguiente (8 bytes mas)
 	call L_4099		;50e8   ; suma A a DE (DE = DE + A)
 	exx			;50eb
 	djnz L_50D6		;50ec
 	ret			;50ee
 L_50EF:
-	ld hl,0e800h		;50ef   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ld hl,0e800h		;50ef   ; de izquierda a derecha: cada byte con sus bits al reves
 	ld de,(0efc1h)		;50f2
 L_50F6:
 	ld b,008h		;50f6
 L_50F8:
-	rr (hl)		;50f8
+	rr (hl)		;50f8   ; un bit...
 	adc a,a			;50fa
-	djnz L_50F8		;50fb
+	djnz L_50F8		;50fb   ; ...los 8
 	ld (hl),a			;50fd
 	inc hl			;50fe
 	dec de			;50ff
@@ -2644,17 +2644,17 @@ L_50F8:
 	jr nz,L_50F6		;5102
 	ret			;5104
 L_5105:
-	bit 3,(ix+002h)		;5105
+	bit 3,(ix+002h)		;5105   ; bit 3: al tercio 2 (0x1000)
 	ld de,01000h		;5109
-	call nz,L_5121		;510c
-	bit 4,(ix+002h)		;510f
+	call nz,L_5121		;510c   ; escribe los n caracteres en el de destino (IX+01) del tercio DE: colores de 0xE800...
+	bit 4,(ix+002h)		;510f   ; bit 4: al tercio 1 (0x0800)
 	ld de,00800h		;5113
-	call nz,L_5121		;5116
-	bit 5,(ix+002h)		;5119
+	call nz,L_5121		;5116   ; escribe los n caracteres en el de destino (IX+01) del tercio DE: colores de 0xE800...
+	bit 5,(ix+002h)		;5119   ; bit 5: al tercio 0
 	ld de,00000h		;511d
 	ret z			;5120
 L_5121:
-	push ix		;5121
+	push ix		;5121   ; escribe los n caracteres en el de destino (IX+01) del tercio DE: colores de 0xE800...
 	ld l,(ix+001h)		;5123
 	ld h,000h		;5126
 	add hl,hl			;5128
@@ -2671,14 +2671,14 @@ L_5121:
 	pop hl			;513c
 	ld de,00000h		;513d
 	add hl,de			;5140
-	ld de,0ea00h		;5141
+	ld de,0ea00h		;5141   ; ...y patrones de 0xEA00
 	ex de,hl			;5144
 	ld bc,(0efc1h)		;5145
 	call L_4E06		;5149   ; escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
 	pop ix		;514c
 	ret			;514e
 L_514F:
-	ld bc,(0efc1h)		;514f
+	ld bc,(0efc1h)		;514f   ; lee los n caracteres de IX+00 del tercio de origen
 	ld l,(ix+000h)		;5153
 	ld h,000h		;5156
 	add hl,hl			;5158
@@ -2686,21 +2686,21 @@ L_514F:
 	add hl,hl			;515a
 	push hl			;515b
 	ld de,02000h		;515c
-	bit 2,(ix+002h)		;515f
+	bit 2,(ix+002h)		;515f   ; bit 2: el tercio 0
 	jr nz,L_516F		;5163
 	ld d,028h		;5165
-	bit 1,(ix+002h)		;5167
+	bit 1,(ix+002h)		;5167   ; bit 1: el tercio 1; si no, el 2
 	jr nz,L_516F		;516b
 	ld d,030h		;516d
 L_516F:
 	add hl,de			;516f
-	ld de,0e800h		;5170   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ld de,0e800h		;5170   ; los colores a 0xE800 (LDIRMV)
 	push ix		;5173
 	call 00059h		;5175   ; BIOS LDIRMV - Block transfers to memory from VRAM
 	pop ix		;5178
 	pop hl			;517a
 	ld de,00000h		;517b
-	bit 2,(ix+002h)		;517e
+	bit 2,(ix+002h)		;517e   ; lo mismo con los patrones...
 	jr nz,L_518E		;5182
 	ld d,008h		;5184
 	bit 1,(ix+002h)		;5186
@@ -2708,7 +2708,7 @@ L_516F:
 	ld d,010h		;518c
 L_518E:
 	add hl,de			;518e
-	ld de,0ea00h		;518f
+	ld de,0ea00h		;518f   ; ...a 0xEA00
 	ld bc,(0efc1h)		;5192
 	push ix		;5196
 	call 00059h		;5198   ; BIOS LDIRMV - Block transfers to memory from VRAM
@@ -3429,7 +3429,7 @@ L_56C9:
 	call L_5033		;56c9   ; carga graficos: fichas de 6 bytes [tercios][colores][caracter][patrones], un 0 acaba
 	jp L_4192		;56cc
 L_56CF:
-	call L_41B3		;56cf   ; pone los bancos 7-8-9
+	call L_41B3		;56cf   ; no la llama nadie: los graficos de la lista 0x8166 con los bancos 7-8-9 (p00:56C9)
 	ld ix,08166h		;56d2
 	jr L_56C9		;56d6
 L_56D8:

@@ -3093,7 +3093,7 @@ L_B53A:
 	ret nz			;b540
 	jp 04297h		;b541
 L_B544:
-	ld (ix+006h),000h		;b544   ; la marca de enemigo en movimiento = 0x00
+	ld (ix+006h),000h		;b544   ; no la llama nadie: el enemigo quieto (IX+06 = 0, velocidad 0), espera 0x3C y paso 1
 	ld de,00000h		;b548
 	call L_B017		;b54b   ; la velocidad en x
 	call L_B01E		;b54e   ; la velocidad en y
@@ -3563,14 +3563,14 @@ L_B8BE:
 	ld a,(0e243h)		;b8be   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;b8c1   ; compara con la pantalla de la cosa
 	ret nz			;b8c4
-	ld hl,0908dh		;b8c5
+	ld hl,0908dh		;b8c5   ; los tres dibujos, el mismo (0x908D)
 	ld de,0908dh		;b8c8
 	ld bc,0908dh		;b8cb
 L_B8CE:
 	exx			;b8ce
-	ld b,(ix+008h)		;b8cf   ; lee el alto de la cosa
-	ld c,002h		;b8d2
-	ld d,(ix+003h)		;b8d4   ; lee la x de la cosa
+	ld b,(ix+008h)		;b8cf   ; B = el alto
+	ld c,002h		;b8d2   ; 2 de ancho
+	ld d,(ix+003h)		;b8d4   ; D = la x, E = la y
 	ld e,(ix+002h)		;b8d7   ; lee la y de la cosa
 	call 0537dh		;b8da
 	exx			;b8dd
@@ -3701,13 +3701,13 @@ L_B9CB:
 	cp (ix+004h)		;b9ce   ; compara con la pantalla de la cosa
 	ret nz			;b9d1
 	ld a,(ix+007h)		;b9d2   ; lee las marcas de la cosa (bit 0 repintar, bit 1 su lado)
-	rra			;b9d5
+	rra			;b9d5   ; el bit 1: su lado
 	rra			;b9d6
-	ld hl,09095h		;b9d7
+	ld hl,09095h		;b9d7   ; de un lado: 0x9095, 0x909D y 0x90A5...
 	ld de,0909dh		;b9da
 	ld bc,090a5h		;b9dd
 	jp nc,L_B8CE		;b9e0
-	ld hl,090adh		;b9e3
+	ld hl,090adh		;b9e3   ; ...del otro: 0x90AD, 0x90B5 y 0x90BD
 	ld de,090b5h		;b9e6
 	ld bc,090bdh		;b9e9
 	jp L_B8CE		;b9ec
@@ -3776,11 +3776,11 @@ L_BA5D:
 	add a,a			;ba62
 	add a,a			;ba63
 	ld e,a			;ba64
-	ld h,(ix+003h)		;ba65   ; lee la x de la cosa
-	add a,(ix+002h)		;ba68   ; le suma la y de la cosa
+	ld h,(ix+003h)		;ba65   ; H = la x
+	add a,(ix+002h)		;ba68   ; L = la y + (IX+05 - 1) x 8
 	ld l,a			;ba6b
 	ld d,(ix+004h)		;ba6c   ; lee la pantalla de la cosa
-	ld bc,00101h		;ba6f
+	ld bc,00101h		;ba6f   ; 1 x 1, con el valor 2
 	ld a,002h		;ba72
 	push de			;ba74
 	call 061f7h		;ba75   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
@@ -3788,15 +3788,15 @@ L_BA5D:
 	ld a,(0e243h)		;ba79   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;ba7c   ; compara con la pantalla de la cosa
 	ret nz			;ba7f
-	ld d,(ix+003h)		;ba80   ; lee la x de la cosa
-	ld a,(ix+002h)		;ba83   ; lee la y de la cosa
+	ld d,(ix+003h)		;ba80   ; D = la x
+	ld a,(ix+002h)		;ba83   ; E = la y + lo mismo
 	add a,e			;ba86
 	ld e,a			;ba87
 	push ix		;ba88
 	push de			;ba8a
 	call 08e2dh		;ba8b   ; las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 	pop de			;ba8e
-	ld a,005h		;ba8f
+	ld a,005h		;ba8f   ; el caracter 5
 	call 053efh		;ba91   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	call 08e74h		;ba94   ; las de la lista, al reves: guarda el fondo y pinta la cosa
 	pop ix		;ba97
@@ -3872,8 +3872,8 @@ L_BB25:
 	xor a			;bb25
 	ld (ix+00ah),a		;bb26   ; guarda la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
 	ld (ix+00bh),a		;bb29   ; guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
-	call L_BB59		;bb2c
-	ld a,003h		;bb2f
+	call L_BB59		;bb2c   ; guarda el fondo del suelo de IX: en MSX1, 4 bytes de la tabla de nombres en IX+0C; en MSX2, un trozo de la pagina 1
+	ld a,003h		;bb2f   ; A = 3
 	call L_BAE0		;bb31   ; ...1 fila de 4 casillas
 	ld a,(0e243h)		;bb34   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;bb37   ; compara con la pantalla de la cosa
@@ -3881,10 +3881,10 @@ L_BB25:
 L_BB3B:
 	ld d,(ix+003h)		;bb3b   ; pinta una fila de 4 caracteres (0xAD en MSX2, 0x61 en MSX1)
 	ld e,(ix+002h)		;bb3e   ; lee la y de la cosa
-	ld b,004h		;bb41
+	ld b,004h		;bb41   ; 4 caracteres
 L_BB43:
 	push de			;bb43
-	ld a,(0f0f4h)		;bb44   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+	ld a,(0f0f4h)		;bb44   ; 0x61 en MSX1, 0xAD en MSX2
 	and a			;bb47
 	ld a,061h		;bb48
 	jr z,L_BB4E		;bb4a
@@ -3892,23 +3892,23 @@ L_BB43:
 L_BB4E:
 	call 053efh		;bb4e   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop de			;bb51
-	ld a,d			;bb52
+	ld a,d			;bb52   ; 8 pixeles a la derecha
 	add a,008h		;bb53
 	ld d,a			;bb55
 	djnz L_BB43		;bb56
 	ret			;bb58
 L_BB59:
-	ld h,(ix+003h)		;bb59
-	ld l,(ix+002h)		;bb5c
+	ld h,(ix+003h)		;bb59   ; guarda el fondo del suelo de IX: en MSX1, 4 bytes de la tabla de nombres en IX+0C; en MSX2, un trozo de la pagina 1
+	ld l,(ix+002h)		;bb5c   ; lee la y de la cosa
 	ld a,(0f0f4h)		;bb5f   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;bb62
 	jr nz,L_BB7B		;bb63
-	call 04d7ch		;bb65   ; pasa la posicion de caracter de HL a direccion de la VRAM
-	push ix		;bb68
+	call 04d7ch		;bb65   ; MSX1: su direccion en la VRAM
+	push ix		;bb68   ; a IX+0C
 	pop de			;bb6a
 	ld a,00ch		;bb6b
 	call 04099h		;bb6d   ; suma A a DE (DE = DE + A)
-	ld b,004h		;bb70
+	ld b,004h		;bb70   ; 4 bytes
 L_BB72:
 	call 0004ah		;bb72   ; BIOS RDVRM - Reads the content of VRAM
 	ld (de),a			;bb75
@@ -3917,16 +3917,16 @@ L_BB72:
 	djnz L_BB72		;bb78
 	ret			;bb7a
 L_BB7B:
-	push ix		;bb7b
+	push ix		;bb7b   ; MSX2: (IX & 0xFF) x 2, en la columna...
 	pop de			;bb7d
 	ld a,e			;bb7e
 	add a,a			;bb7f
 	ld d,a			;bb80
-	ld e,040h		;bb81
+	ld e,040h		;bb81   ; ...y la fila 0x40 o 0x50
 	jr nc,L_BB87		;bb83
 	ld e,050h		;bb85
 L_BB87:
-	ld bc,02008h		;bb87
+	ld bc,02008h		;bb87   ; 0x20 x 8, de la pagina 0 a la 1
 	ld a,004h		;bb8a
 	call 04f66h		;bb8c   ; en este cartucho no hace nada: aqui iria el pintor de caracteres de MSX2
 	ret			;bb8f
