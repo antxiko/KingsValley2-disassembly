@@ -1,5 +1,232 @@
 # Notas del banco p03 (msx1): C comentario, L nombre, B bloque, D datos.
 
+# --- A MANO: comentarios escritos leyendo el codigo ---
+C 0xA038 abre el fichero (orden 0x0F); error 1 si falla
+C 0xA048 crea el fichero (orden 0x16); error 3 si falla
+C 0xA05A cierra (orden 0x10); error 2 si falla
+C 0xA06A la FCB 0xCE00 a cero
+C 0xA07B el tamano de registro a 1 y el registro actual a 0
+C 0xA098 la lista de nombres 0xCE50 a cero
+C 0xA0A6 FCB en DE con el nombre de HL
+C 0xA0BA FCB en DE con el nombre de HL sin los espacios de delante
+C 0xA0E8 escribe HL registros (orden 0x26); error 4 si falla
+C 0xA0F8 lee HL registros (orden 0x27); error 0 si falla
+C 0xA108 cambia la RAM del juego con 0xC000-0xD0FF (4352 bytes) y guarda 0xF100 en 0xD780
+C 0xA14F la deja como estaba
+C 0xA18C 256 veces la rutina de 0xD0EA
+C 0xA196 256 veces la de 0xF0EA
+C 0xA1A0 la extension: ELG
+C 0xA1AC busca los ficheros (ordenes 0x11 y 0x12) y apunta sus nombres, hasta 16
+C 0xA1F4 el nombre encontrado a la lista
+C 0xA205 HL = 0xCE50 + 11 x A
+C 0xA221 la FCB para buscar: el patron de 0x9E9D
+C 0xA23D un cuadro de las 64 cosas de 0xE300: cada tipo, su rutina (tabla detras)
+C 0xA26C tipo 1, por su estado (cifra alta)
+C 0xA27F en la mano: en la pantalla del personaje
+C 0xA286 lanzado: sale
+C 0xA297 vuela en linea recta
+C 0xA2C3 cae al suelo y se para
+C 0xA2EE cae
+C 0xA307 C si es la cosa que ha dado a un enemigo (0xE2E8)
+C 0xA31F al salir de la mano, se coloca delante (sin meterse en la pared)
+C 0xA394 IX+06 = 0x18
+C 0xA399 se mueve B pixeles
+C 0xA3A6 4 pixeles hacia su lado
+C 0xA3D3 pasa a la pantalla de al lado
+C 0xA3E6 C si hay pared delante en el mapa de su pantalla
+C 0xA3FF el dibujo de la cosa en vuelo, cada dos cuadros; el sonido 0x1C
+C 0xA41B tipo 2: va y vuelve
+C 0xA447 la velocidad sale de las tablas 0xA961 y 0xA96B: frena y vuelve
+C 0xA4AA vuelve a la mano si el personaje la toca (a menos de 13 pixeles), con el sonido 0x35
+C 0xA4F5 cae y se para
+C 0xA51D su dibujo, cada dos cuadros; el sonido 0x1B
+C 0xA53A cae cada vez mas deprisa (tabla 0xAA60) hasta el suelo
+C 0xA583 se sale por abajo: a la pantalla de abajo
+C 0xA5B0 en el suelo: se queda, y se pinta
+C 0xA5E6 tipo 3: cava hacia abajo una vez
+C 0xA604 cuando acaba, vuelve a la mano vacia
+C 0xA60C el personaje sin nada y en el estado 0
+C 0xA629 cada 8 cuadros, el paso del agujero: los dos caracteres de 0xAB03
+C 0xA667 al tercer paso, el agujero: las casillas a 0 en el mapa
+C 0xA689 tipo 4: cava hacia abajo mientras haya ladrillo
+C 0xA6B1 la fila de debajo: si tambien es de ladrillo, sigue
+C 0xA6DD tipo 5: cava hacia el lado una vez
+C 0xA706 cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
+C 0xA74D al tercer paso, las casillas a 0
+C 0xA775 tipo 6: cava hacia el lado mientras haya ladrillo, y el personaje avanza
+C 0xA7E3 A = el estado de la cosa (cifra alta)
+C 0xA7ED coger las cosas de 2 x 2 de esta pantalla que esten a menos de 12 pixeles del personaje
+C 0xA81D cogida: se borra de la pantalla
+C 0xA832 una menos; con la ultima, el sonido 0x0B y el borde parpadea (la salida se abre)
+C 0xA848 el sonido 0x1A, la salida y 500 puntos
+C 0xA85B E = la y del personaje, D = su x
+C 0xA864 coger una cosa de 0xE300 del suelo (si no lleva otra y no esta saliendo)
+C 0xA896 C si la cosa esta al alcance (en y y en x segun hacia donde mira)
+C 0xA8E3 la coge: su tipo a la postura del personaje (0xE287), se marca llevada y el sonido 0x19
+C 0xA901 un enemigo de esta pantalla toca al personaje: muere (salvo con FESTIVAL o ya muerto)
+C 0xA919 solo los que matan (bit 0 de IX+13)
+C 0xA91F cerca en y...
+C 0xA92B ...y en x
+C 0xA943 el personaje muere (estado 5) con el sonido 0x28
+C 0xA94E las cosas lanzadas (tipo 1-3 de 0xE300 en vuelo) que dan a un enemigo
+C 0xA97A cada enemigo que se puede matar (bit 1 de IX+13) en la misma pantalla
+C 0xA9B4 le da: 0xE2E8 = la cosa, el enemigo muere, 100 puntos y el sonido 0x26
+C 0xA9D0 el enemigo herido segun su tipo
+C 0xA9E8 crea un enemigo del tipo C (1-4) en (E, D) de la pantalla A, si hay ficha libre en 0xE500
+C 0xAA0C la ficha: tipo, y, x, el mapa de su pantalla, la pantalla...
+C 0xAA43 sus colores y su dibujo
+C 0xAA5F sus colores: en MSX2 dos (tabla 0xAD0B), en MSX1 uno (0xAD08)
+C 0xAA90 DE = el mapa de la pantalla A
+C 0xAAA7 el enemigo sale de su sitio: el dibujo de salida (0x93B2) y espera 0x20
+C 0xAACE pinta 3 x 2 caracteres en el sitio del enemigo
+C 0xAAFB un cuadro de un enemigo de tipo 1, por pasos (IX+01)
+C 0xAB0B paso 2: espera y empieza a andar
+C 0xAB36 paso 3: anda
+C 0xAB75 paso 4: cae; al llegar al suelo vuelve a andar hacia el otro lado
+C 0xAB95 da la vuelta (IX+0B xor 1)
+C 0xAB9E un cuadro de un enemigo de tipo 2, por pasos (IX+01)
+C 0xABB0 paso 0: espera, pinta su salida (0x93B8), el sonido 0x41 y ya mata (IX+13 = 2)
+C 0xABCC el paso siguiente
+C 0xABD0 paso 1: espera, borra la salida, ya mata y se le puede matar (IX+13 = 3), el sonido 0x25
+C 0xABEA borra los 3 x 2 caracteres de la salida y pinta el sitio (0x93AC)
+C 0xAC06 paso 2: espera y sale hacia el personaje
+C 0xAC30 paso 3: anda; si el personaje esta en otra pantalla, va hacia ella
+C 0xAC61 en la misma columna de la rejilla: sube o baja segun el personaje
+C 0xAC8F el dibujo al andar: segun el lado y cada 4 cuadros
+C 0xACA5 cae (paso 5)
+C 0xACA7 pasa al paso A: cae con velocidad 5 en y
+C 0xACC3 el sonido 0x2C si esta en esta pantalla
+C 0xACC9 paso: cae hasta el suelo
+C 0xAD05 paso: cae; al llegar al suelo, vuelve a andar
+C 0xAD25 mira hacia el personaje
+C 0xAD2F al entrar en una pantalla, se quitan los enemigos que esten a menos de 24 pixeles del personaje
+C 0xAD71 el enemigo de tipo 4 en los pasos 1 o 4 deja algo (0xB9F0); todos se van
+C 0xAD8A A = el borde por el que el enemigo saldria hacia la pantalla del personaje (0 si esta en ella)
+C 0xADC3 por abajo
+C 0xADDD por la izquierda
+C 0xADF7 por la derecha
+C 0xAE11 Z si la pantalla de ese lado es la del personaje
+C 0xAE21 pasa por el borde: su sitio en la pantalla nueva, si alli esta libre
+C 0xAE60 C si la casilla esta libre
+C 0xAE74 C si al moverse en vertical choca
+C 0xAEAA Z si en el mapa del enemigo la casilla es escalera (1)
+C 0xAEBE Z si debajo hay escalera
+C 0xAECB Z si a su altura hay escalera
+C 0xAED9 NC si no tiene suelo
+C 0xAEE0 NC si puede avanzar hacia donde mira
+C 0xAEF5 C si puede seguir cayendo
+C 0xAF0C C si la casilla esta libre
+C 0xAF27 el sitio al que iria con su velocidad (C si se sale de la pantalla)
+C 0xAF7B DE = -DE
+C 0xAF85 sube la cuenta IX+0E y la compara con A
+C 0xAF8C la cuenta IX+0E a cero
+C 0xAF91 DE = el mapa del enemigo
+C 0xAF97 L = la y del enemigo, H = su x
+C 0xAF9E C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
+C 0xAFBA C = arriba o abajo hacia el personaje (0 igual, 1 arriba, 2 abajo)
+C 0xAFE1 A = la casilla de la rejilla de la pantalla A
+C 0xAFEF sale un enemigo de tipo 3: mira hacia el personaje
+C 0xB00F si esta en esta pantalla, salta a HL (un sonido)
+C 0xB017 la velocidad en x
+C 0xB01E la velocidad en y
+C 0xB025 un cuadro de un enemigo de tipo 3, por pasos (IX+01)
+C 0xB035 paso 0: el dibujo de salida (tablas 0xB2F4 y 0xB2FE); en MSX2 sus colores 0x0A y 0x47
+C 0xB063 sale: ya mata y se le puede matar
+C 0xB06B el paso siguiente
+C 0xB082 paso 1: anda y salta hacia el personaje
+C 0xB0B7 salta hacia su lado si puede; si no, da la vuelta; tras 16 intentos se va a otra pantalla
+C 0xB0DA el salto: velocidad en x 0xF0 y el sonido 0x1F
+C 0xB100 C si puede saltar (no hay techo encima)
+C 0xB151 la casilla de delante
+C 0xB170 busca escalera arriba o abajo
+C 0xB192 sube por la escalera
+C 0xB1AA a la escalera: paso 3, velocidad en y 0x100
+C 0xB1CD baja por la escalera
+C 0xB1EC Z si hay escalera en las dos casillas (y se centra en ella)
+C 0xB22A el dibujo C (o C + 2 mirando a la derecha)
+C 0xB236 paso 2: en el aire
+C 0xB26C la altura del salto de la tabla 0xB595 o 0xB5A6 (segun haya techo)
+C 0xB286 al acabar el salto: si no hay suelo, cae (paso 4)
+C 0xB2AA en el suelo: se centra en la fila y vuelve a andar (paso 1)
+C 0xB2C3 el sonido 0x14 si esta en esta pantalla
+C 0xB2CD Z si hay suelo debajo
+C 0xB2D0 lo mismo, a la altura del paso del salto
+C 0xB2EC Z si la casilla es suelo (ladrillo, o escalera con otra encima)
+C 0xB30A sin velocidad en x
+C 0xB332 paso: cae; si se puede, avanza hacia donde mira
+C 0xB376 en el aire: si toca suelo, aterriza
+C 0xB389 hacia donde salta: si esta debajo del personaje, al azar (0xE203); si no, hacia el
+C 0xB3C9 C si delante hay ladrillo
+C 0xB3EE A = el paso del salto (tabla 0xB595)
+C 0xB3F9 sale un enemigo de tipo 4: el sonido 0x1D
+C 0xB409 un cuadro de un enemigo de tipo 4, por pasos (IX+01)
+C 0xB41B paso 0: el dibujo de salida (tablas 0xB6AF y 0xB6B6)
+C 0xB438 sale: mata y se le puede matar, espera 0x3C; en MSX2 sus colores; se marca en el mapa
+C 0xB45B el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
+C 0xB474 paso: quieto; si cae, deja de estar en el mapa
+C 0xB481 parpadea mientras espera (dibujos 0x0F y 0x10)
+C 0xB49C al acabar, tres veces: va hacia el personaje
+C 0xB4C3 se mueve a velocidad 2
+C 0xB4CF paso: anda; a otra pantalla si el personaje esta alli
+C 0xB4F3 choca con otro de su tipo o con pared: se para
+C 0xB53A el sonido 0x24 si esta en esta pantalla
+C 0xB55A C si choca con otro enemigo de tipo 4 de su pantalla
+C 0xB5AE se centra en la casilla en la direccion en la que va
+C 0xB5D1 cae: paso 3, velocidad en y 5, el sonido 0x2C
+C 0xB5EF el dibujo al andar (0x11-0x14)
+C 0xB5FC paso: anda hasta chocar
+C 0xB623 se para: paso 5 y el sonido 0x25
+C 0xB640 el enemigo de tipo 4 se para en su casilla
+C 0xB656 se centra en la casilla
+C 0xB667 paso: espera 0x3C cuadros quieto y vuelve al paso 1
+C 0xB689 paso: un pequeno salto (tabla 0xB926)
+C 0xB6B3 se marca en el mapa; si choca con algo, se va
+C 0xB6BC quieto: paso 4, espera 0xB4
+C 0xB6D1 marca en el mapa sus cuatro casillas, guardando lo que habia
+C 0xB70D si esta quieto y en esta pantalla, se marca en el mapa
+C 0xB740 pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
+C 0xB75B si esta quieto y en esta pantalla, se quita del mapa
+C 0xB76B quita del mapa sus cuatro casillas, devolviendo lo que habia
+C 0xB79F HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+C 0xB7B7 quita del mapa los enemigos de tipo 4
+C 0xB7CF los vuelve a marcar
+C 0xB7E9 C si al marcarse piso algo que no estaba libre
+C 0xB7FA se quita del mapa y se va
+C 0xB800 un cuadro de una puerta giratoria (tipo 1 de 0xE600), por pasos (IX+01)
+C 0xB812 cerrada: si el personaje la empuja por su lado 10 cuadros seguidos...
+C 0xB83F ...empujando a la derecha...
+C 0xB84A ...gira: el personaje pasa andando (estado 7) con el sonido 0x21
+C 0xB855 la puerta en marcha (bit 0 de IX+07) y el paso siguiente
+C 0xB860 si no, la cuenta vuelve a 10
+C 0xB865 por el otro lado, empujando a la izquierda (estado 6)
+C 0xB889 paso 1: cada 10 cuadros un giro, hasta 3: se queda del otro lado
+C 0xB8A6 paso 2: gira al reves hasta 0
+C 0xB8DE pinta la puerta: la parte de arriba (HL), la del medio (DE) repetida y la de abajo (BC)
+C 0xB90E dos caracteres de la parte, segun el giro (IX+05)
+C 0xB92B un cuadro de una puerta de tipo 2
+C 0xB970 gira: el personaje pasa andando
+C 0xB975 la puerta en marcha y el sonido 0x22
+C 0xB98B si no, la cuenta vuelve a 0x1E
+C 0xB990 por el otro lado
+C 0xB9AA gira cada 8 cuadros; a los 4 pasos vuelve a estar cerrada (sonido 0x22)
+C 0xB9EF las cosas de tipo 3 de 0xE600: si el personaje pasa por su columna, empiezan a moverse
+C 0xBA17 C si el personaje esta en su pantalla, a menos de 8 pixeles en x y dentro de su alto
+C 0xBA3B la cosa de tipo 3 en marcha: cada 0x1E cuadros un paso, hasta su alto (IX+08); luego se quita
+C 0xBA9C una cosa de tipo 4 (suelo que se rompe): mira si el personaje esta encima
+C 0xBAC1 al bajarse de ella (en el suelo), cuenta; a la segunda, se rompe
+C 0xBAD8 se quita: su dibujo y sus 4 casillas del mapa a 0
+C 0xBAF0 0xE60A = 1: el personaje esta encima
+C 0xBAF5 el sonido 0x27 y se repinta el fondo (MSX1 de la ficha, MSX2 de la pagina 1)
+C 0xBB3B pinta una fila de 4 caracteres (0xAD en MSX2, 0x61 en MSX1)
+C 0xBB90 las columnas de 0xE7C0 de esta pantalla
+C 0xBBA8 el personaje sobre la columna: dentro de su alto y a menos de 16 pixeles en x
+C 0xBBC7 al caer sobre ella (0xE2A7) tras haber estado en ella...
+C 0xBBD7 ...le queda una vez menos (bits 6-7); a la ultima se hunde
+C 0xBBE8 subido (estado 2): se marca (bit 5)
+C 0xBBF1 se hunde: arriba queda un ladrillo y el resto se vacia, con el sonido 0x40
+C 0xBC4B pinta dos caracteres A en fila en (D, E) y baja una fila
+# --- fin de lo escrito a mano ---
+
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
 D 0xA260 0xA26C tabla_A260  6 destinos del despachador p00:409E (call en p03:A25D, el indice en A): A26C, A41B, A5E6, A689, A6DD, A775; lo leen p03:A25D (12 bytes)
 F 0xA260 w6
@@ -52,3 +279,387 @@ F 0xB42A 16
 D 0xB6A1 0xB6B3 resto_B6A1  lo apuntan con el banco puesto p03:B693 (0xB6A1); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p03:B693 (18 bytes)
 F 0xB6A1 16
 # --- fin de los bloques de bloques.py ---
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0xA010 cambia la RAM del juego con 0xC000-0xD0FF (4352 bytes) y guarda 0xF100 en 0xD780
+C 0xA019 la FCB para buscar: el patron de 0x9E9D
+C 0xA01C la lista de nombres 0xCE50 a cero
+C 0xA023 busca los ficheros (ordenes 0x11 y 0x12) y apunta sus nombres, hasta 16
+C 0xA02D la deja como estaba
+C 0xA140 guarda un dato de paso de la rutina en curso
+C 0xA144 lee un dato de paso de la rutina en curso y el byte siguiente (16 bits)
+C 0xA159 apunta a el estado del personaje
+C 0xA17F guarda un dato de paso de la rutina en curso
+C 0xA183 lee un dato de paso de la rutina en curso y el byte siguiente (16 bits)
+C 0xA1DB el nombre encontrado a la lista
+C 0xA1FB HL = 0xCE50 + 11 x A
+C 0xA22E la FCB 0xCE00 a cero
+C 0xA242 apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
+C 0xA25D el despachador de Konami: la tabla va detras del call
+C 0xA272 el despachador de Konami: la tabla va detras del call
+C 0xA293 al salir de la mano, se coloca delante (sin meterse en la pared)
+C 0xA29A C si es la cosa que ha dado a un enemigo (0xE2E8)
+C 0xA2A4 4 pixeles hacia su lado
+C 0xA2C6 el dibujo de la cosa en vuelo, cada dos cuadros; el sonido 0x1C
+C 0xA2E4 lee la pantalla de la fase (desde 1)
+C 0xA2F1 el dibujo de la cosa en vuelo, cada dos cuadros; el sonido 0x1C
+C 0xA2F4 cae cada vez mas deprisa (tabla 0xAA60) hasta el suelo
+C 0xA2FD lee la pantalla de la fase (desde 1)
+C 0xA33D A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA34A A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA366 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA371 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA38C IX+06 = 0x18
+C 0xA3BF lee la pantalla de la fase (desde 1)
+C 0xA3CE NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
+C 0xA3D7 C = la casilla de la rejilla en la que esta la pantalla A
+C 0xA3FA lo mismo con el mapa de DE
+C 0xA40D lee la pantalla de la fase (desde 1)
+C 0xA413 pide el sonido 0x1C
+C 0xA421 el despachador de Konami: la tabla va detras del call
+C 0xA443 al salir de la mano, se coloca delante (sin meterse en la pared)
+C 0xA44A C si es la cosa que ha dado a un enemigo (0xE2E8)
+C 0xA484 se mueve B pixeles
+C 0xA49E IX+06 = 0x18
+C 0xA4AF lee la pantalla de la fase (desde 1)
+C 0xA4B6 lee la y del personaje
+C 0xA4C3 lee la x del personaje
+C 0xA4D4 pide el sonido 0x35
+C 0xA4DD guarda la postura del personaje
+C 0xA4F8 su dibujo, cada dos cuadros; el sonido 0x1B
+C 0xA514 C si es la cosa que ha dado a un enemigo (0xE2E8)
+C 0xA517 su dibujo, cada dos cuadros; el sonido 0x1B
+C 0xA52B lee la pantalla de la fase (desde 1)
+C 0xA531 pide el sonido 0x1B
+C 0xA561 lee la pantalla de la fase (desde 1)
+C 0xA57B A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
+C 0xA58B C = la casilla de la rejilla en la que esta la pantalla A
+C 0xA5AC lo mismo con el mapa de DE
+C 0xA5C4 lee la pantalla de la fase (desde 1)
+C 0xA5CB pasa la cosa de IX al principio de la lista
+C 0xA5D0 devuelve el fondo de los bloques de esta pantalla
+C 0xA5D5 una cosa de 0xE300 en el suelo: guarda su fondo y la pinta (0x9328 + 4 x (tipo - 1))
+C 0xA5DA pinta los bloques de esta pantalla
+C 0xA5EC el despachador de Konami: la tabla va detras del call
+C 0xA615 guarda hacia donde mira el personaje
+C 0xA61C guarda la postura del personaje
+C 0xA61F lee la marca de personaje muerto
+C 0xA625 guarda el estado del personaje
+C 0xA65A pinta el caracter como diga 0xEFC0
+C 0xA678 lee la pantalla de la fase (desde 1)
+C 0xA68F el despachador de Konami: la tabla va detras del call
+C 0xA6A9 cada 8 cuadros, el paso del agujero: los dos caracteres de 0xAB03
+C 0xA6BB A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA6C7 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
+C 0xA6D2 cada 8 cuadros, el paso del agujero: los dos caracteres de 0xAB03
+C 0xA6E3 el despachador de Konami: la tabla va detras del call
+C 0xA6FB cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
+C 0xA740 pinta el caracter como diga 0xEFC0
+C 0xA75E lee la pantalla de la fase (desde 1)
+C 0xA77B el despachador de Konami: la tabla va detras del call
+C 0xA795 cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
+C 0xA7B0 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA7BC A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
+C 0xA7CE lee la x del personaje
+C 0xA7D2 guarda la x del personaje
+C 0xA7D8 cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
+C 0xA7F0 lee la pantalla de la fase (desde 1)
+C 0xA7F6 apunta a la tabla de colores al cargar graficos; en la partida, las cosas de 2 x 2 de la fase (16 x 8 bytes)
+C 0xA81E devuelve el fondo de los bloques de esta pantalla
+C 0xA821 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xA838 pide el sonido 0x0B
+C 0xA840 guarda la cuenta para volver a poner la musica
+C 0xA845 guarda la cuenta del borde que parpadea
+C 0xA84B pinta la salida si es de esta pantalla: 4 x 4 caracteres de 0x9340 + 16 x 0xE2F6
+C 0xA84E las de la lista, al reves: guarda el fondo y pinta la cosa
+C 0xA851 pinta los bloques de esta pantalla
+C 0xA857 suma DE (BCD) a los puntos 0xE226-0xE228, si el bit 6 de 0xE202 lo deja
+C 0xA85F lee la x del personaje
+C 0xA869 lee la postura del personaje
+C 0xA86E apunta a la lista de las cosas de 0xE300 por orden de pintado
+C 0xA874 IX = la cosa A de 0xE300 (desde 1)
+C 0xA877 lee la pantalla de la fase (desde 1)
+C 0xA88B C si la cosa esta al alcance (en y y en x segun hacia donde mira)
+C 0xA8A8 lee la x del personaje
+C 0xA8B7 el despachador de Konami: la tabla va detras del call
+C 0xA8C2 lee la x del personaje
+C 0xA8CF lee la x del personaje
+C 0xA8DA lee la x del personaje
+C 0xA8E5 devuelve el fondo de los bloques de esta pantalla
+C 0xA8EF guarda la postura del personaje
+C 0xA8F7 pide el sonido 0x19
+C 0xA8FA repinta lo que se lleva y lo que se suelta en la pantalla
+C 0xA8FD pinta los bloques de esta pantalla
+C 0xA906 lee la marca de personaje muerto
+C 0xA90B apunta a los enemigos (8 x 32 bytes)
+C 0xA911 lee la pantalla de la fase (desde 1)
+C 0xA945 guarda el estado del personaje
+C 0xA948 el personaje muere (0xE298 = 1)
+C 0xA974 apunta a los enemigos (8 x 32 bytes)
+C 0xA9C3 el enemigo herido segun su tipo
+C 0xA9C9 suma DE (BCD) a los puntos 0xE226-0xE228, si el bit 6 de 0xE202 lo deja
+C 0xA9CC pide el sonido 0x26
+C 0xA9F0 apunta a los enemigos (8 x 32 bytes)
+C 0xAA07 la ficha: tipo, y, x, el mapa de su pantalla, la pantalla...
+C 0xAA25 DE = el mapa de la pantalla A
+C 0xAA49 A = la casilla de la rejilla de la pantalla A
+C 0xAA54 el despachador de Konami: la tabla va detras del call
+C 0xAA6C suma A a DE (DE = DE + A)
+C 0xAA7C suma A a DE (DE = DE + A)
+C 0xAAA1 apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
+C 0xAAB2 pinta 3 x 2 caracteres en el sitio del enemigo
+C 0xAAB5 C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
+C 0xAAC1 da la vuelta (IX+0B xor 1)
+C 0xAAD8 devuelve el fondo de los bloques de esta pantalla
+C 0xAADB las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xAAF2 las de la lista, al reves: guarda el fondo y pinta la cosa
+C 0xAAF5 pinta los bloques de esta pantalla
+C 0xAAFE el despachador de Konami: la tabla va detras del call
+C 0xAB1E la velocidad en x
+C 0xAB21 da la vuelta (IX+0B xor 1)
+C 0xAB24 NC si puede avanzar hacia donde mira
+C 0xAB2A da la vuelta (IX+0B xor 1)
+C 0xAB2D NC si puede avanzar hacia donde mira
+C 0xAB3A el dibujo al andar: segun el lado y cada 4 cuadros
+C 0xAB3D NC si no tiene suelo
+C 0xAB42 se centra en la casilla en la direccion en la que va
+C 0xAB4A NC si puede avanzar hacia donde mira
+C 0xAB4F A = el borde por el que el enemigo saldria hacia la pantalla del personaje (0 si esta en ella)
+C 0xAB65 se centra en la casilla en la direccion en la que va
+C 0xAB79 C si puede seguir cayendo
+C 0xAB7D se centra en la casilla en la direccion en la que va
+C 0xAB80 el sonido 0x14 si esta en esta pantalla
+C 0xABA1 el despachador de Konami: la tabla va detras del call
+C 0xABB7 pinta 3 x 2 caracteres en el sitio del enemigo
+C 0xABBD si esta en esta pantalla, salta a HL (un sonido)
+C 0xABD4 borra los 3 x 2 caracteres de la salida y pinta el sitio (0x93AC)
+C 0xABDF lee la pantalla de la fase (desde 1)
+C 0xABE5 pide el sonido 0x25
+C 0xAC14 la cuenta IX+0E a cero
+C 0xAC17 mira hacia el personaje
+C 0xAC1D la velocidad en x
+C 0xAC20 NC si puede avanzar hacia donde mira
+C 0xAC25 da la vuelta (IX+0B xor 1)
+C 0xAC28 NC si puede avanzar hacia donde mira
+C 0xAC34 el dibujo al andar: segun el lado y cada 4 cuadros
+C 0xAC37 NC si no tiene suelo
+C 0xAC3C se centra en la casilla en la direccion en la que va
+C 0xAC41 A = el borde por el que el enemigo saldria hacia la pantalla del personaje (0 si esta en ella)
+C 0xAC4B NC si puede avanzar hacia donde mira
+C 0xAC50 se centra en la casilla en la direccion en la que va
+C 0xAC68 Z si debajo hay escalera
+C 0xAC70 Z si a su altura hay escalera
+C 0xAC7B la velocidad en y
+C 0xAC81 la velocidad en x
+C 0xAC99 lee la cuenta de cuadros
+C 0xACD2 C si al moverse en vertical choca
+C 0xACD8 A = el borde por el que el enemigo saldria hacia la pantalla del personaje (0 si esta en ella)
+C 0xACE1 NC si puede avanzar hacia donde mira
+C 0xACEE se centra en la casilla en la direccion en la que va
+C 0xAD09 C si puede seguir cayendo
+C 0xAD0D se centra en la casilla en la direccion en la que va
+C 0xAD10 el sonido 0x14 si esta en esta pantalla
+C 0xAD33 E = la y del personaje, D = su x
+C 0xAD44 lee la pantalla de la fase (desde 1)
+C 0xAD62 el enemigo de tipo 4 en los pasos 1 o 4 deja algo (0xB9F0); todos se van
+C 0xAD84 quita del mapa sus cuatro casillas, devolviendo lo que habia
+C 0xAD93 E = la y del personaje, D = su x
+C 0xADBD Z si la pantalla de ese lado es la del personaje
+C 0xADD7 Z si la pantalla de ese lado es la del personaje
+C 0xADF1 Z si la pantalla de ese lado es la del personaje
+C 0xAE0B Z si la pantalla de ese lado es la del personaje
+C 0xAE18 lee la casilla de la rejilla de la pantalla
+C 0xAE28 suma A a HL (HL = HL + A)
+C 0xAE2E DE = el mapa del enemigo
+C 0xAE37 C si la casilla esta libre
+C 0xAE3F C si la casilla esta libre
+C 0xAE47 C si la casilla esta libre
+C 0xAE4E C si la casilla esta libre
+C 0xAE52 L = la y del enemigo, H = su x
+C 0xAE63 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xAE7A el sitio al que iria con su velocidad (C si se sale de la pantalla)
+C 0xAE85 Z si en el mapa del enemigo la casilla es escalera (1)
+C 0xAE8D Z si en el mapa del enemigo la casilla es escalera (1)
+C 0xAE95 Z si en el mapa del enemigo la casilla es escalera (1)
+C 0xAE9D Z si en el mapa del enemigo la casilla es escalera (1)
+C 0xAEA3 NC si puede avanzar hacia donde mira
+C 0xAEB1 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xAECE Z si en el mapa del enemigo la casilla es escalera (1)
+C 0xAEE3 el sitio al que iria con su velocidad (C si se sale de la pantalla)
+C 0xAEEF lo mismo con el mapa de DE
+C 0xAEF8 el sitio al que iria con su velocidad (C si se sale de la pantalla)
+C 0xAF02 el primer punto de la orilla segun la direccion C (1 abajo, 2 izquierda, 3 derecha, si no arriba)
+C 0xAF05 C si la casilla esta libre
+C 0xAF0F A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xAF4A DE = -DE
+C 0xAF6A DE = -DE
+C 0xAFA4 lee la casilla de la rejilla de la pantalla
+C 0xAFB1 lee la x del personaje
+C 0xAFC0 lee la casilla de la rejilla de la pantalla
+C 0xAFCE lee la y del personaje
+C 0xAFF7 C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
+C 0xB028 el despachador de Konami: la tabla va detras del call
+C 0xB03E el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
+C 0xB051 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xB08A el dibujo C (o C + 2 mirando a la derecha)
+C 0xB0A4 C = arriba o abajo hacia el personaje (0 igual, 1 arriba, 2 abajo)
+C 0xB0BA C si puede saltar (no hay techo encima)
+C 0xB0C9 C si puede saltar (no hay techo encima)
+C 0xB0DD la velocidad en x
+C 0xB0FA si esta en esta pantalla, salta a HL (un sonido)
+C 0xB109 la casilla de delante
+C 0xB10E DE = el mapa del enemigo
+C 0xB111 la casilla de delante
+C 0xB115 DE = el mapa del enemigo
+C 0xB135 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xB16A A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xB176 L = la y del enemigo, H = su x
+C 0xB17D Z si hay escalera en las dos casillas (y se centra en ella)
+C 0xB186 L = la y del enemigo, H = su x
+C 0xB189 Z si hay escalera en las dos casillas (y se centra en ella)
+C 0xB1A0 L = la y del enemigo, H = su x
+C 0xB1A3 Z si hay escalera en las dos casillas (y se centra en ella)
+C 0xB1BF la velocidad en x
+C 0xB1C5 la velocidad en y
+C 0xB1DB L = la y del enemigo, H = su x
+C 0xB1E2 Z si hay escalera en las dos casillas (y se centra en ella)
+C 0xB1F9 Z si en el mapa del enemigo la casilla es escalera (1)
+C 0xB248 el dibujo C (o C + 2 mirando a la derecha)
+C 0xB257 la velocidad en x
+C 0xB25A C si delante hay ladrillo
+C 0xB25D sin velocidad en x
+C 0xB267 lo mismo, a la altura del paso del salto
+C 0xB27B suma A a HL (HL = HL + A)
+C 0xB28E lo mismo, a la altura del paso del salto
+C 0xB296 la velocidad en y
+C 0xB29C la velocidad en x
+C 0xB2D3 DE = el mapa del enemigo
+C 0xB2E4 Z si la casilla es suelo (ladrillo, o escalera con otra encima)
+C 0xB2EE A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xB2FD A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xB347 C si al moverse en vertical choca
+C 0xB34C NC si puede avanzar hacia donde mira
+C 0xB359 se centra en la casilla en la direccion en la que va
+C 0xB35F la velocidad en y
+C 0xB362 la velocidad en x
+C 0xB37D la velocidad en y
+C 0xB3A5 lee la x del personaje
+C 0xB3B1 lee la cuenta de cuadros
+C 0xB3BF C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
+C 0xB3CC el sitio al que iria con su velocidad (C si se sale de la pantalla)
+C 0xB3D0 A = el paso del salto (tabla 0xB595)
+C 0xB3E8 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xB3F4 suma A a DE (DE = DE + A)
+C 0xB40C el despachador de Konami: la tabla va detras del call
+C 0xB421 el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
+C 0xB440 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xB451 C si al marcarse piso algo que no estaba libre
+C 0xB46D suma A a HL (HL = HL + A)
+C 0xB47B quita del mapa sus cuatro casillas, devolviendo lo que habia
+C 0xB4A1 sube la cuenta IX+0E y la compara con A
+C 0xB4A7 C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
+C 0xB4B0 NC si puede avanzar hacia donde mira
+C 0xB4BD NC si puede avanzar hacia donde mira
+C 0xB4C6 la velocidad en x
+C 0xB4DC el dibujo al andar (0x11-0x14)
+C 0xB4E8 DE = el mapa del enemigo
+C 0xB4ED lo mismo con el mapa de DE
+C 0xB4F8 C si choca con otro enemigo de tipo 4 de su pantalla
+C 0xB526 se marca en el mapa; si choca con algo, se va
+C 0xB52C se centra en la casilla en la direccion en la que va
+C 0xB531 lo mismo con el mapa de DE
+C 0xB537 se marca en el mapa; si choca con algo, se va
+C 0xB560 el sitio al que iria con su velocidad (C si se sale de la pantalla)
+C 0xB565 apunta a los enemigos (8 x 32 bytes)
+C 0xB5DB la velocidad en y
+C 0xB5E1 la velocidad en x
+C 0xB608 el dibujo al andar (0x11-0x14)
+C 0xB60B NC si puede avanzar hacia donde mira
+C 0xB610 C si choca con otro enemigo de tipo 4 de su pantalla
+C 0xB614 se centra en la casilla en la direccion en la que va
+C 0xB617 se marca en el mapa; si choca con algo, se va
+C 0xB636 lee la pantalla de la fase (desde 1)
+C 0xB64C se centra en la casilla
+C 0xB651 se centra en la casilla
+C 0xB671 lee la cuenta de cuadros
+C 0xB683 quita del mapa sus cuatro casillas, devolviendo lo que habia
+C 0xB696 suma A a HL (HL = HL + A)
+C 0xB6B6 C si al marcarse piso algo que no estaba libre
+C 0xB6D4 HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+C 0xB6D7 pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
+C 0xB6EE DE = el mapa del enemigo
+C 0xB6F5 HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+C 0xB6F8 pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
+C 0xB716 lee la pantalla de la fase (desde 1)
+C 0xB71D DE = el mapa del enemigo
+C 0xB720 HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+C 0xB723 pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
+C 0xB72C DE = el mapa del enemigo
+C 0xB733 HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+C 0xB736 pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
+C 0xB750 suma A a HL (HL = HL + A)
+C 0xB764 lee la pantalla de la fase (desde 1)
+C 0xB772 HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+C 0xB77E DE = el mapa del enemigo
+C 0xB781 HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+C 0xB797 suma A a HL (HL = HL + A)
+C 0xB7C3 si esta quieto y en esta pantalla, se quita del mapa
+C 0xB7DD si esta quieto y en esta pantalla, se marca en el mapa
+C 0xB80B lee la pantalla de la fase (desde 1)
+C 0xB81F lee la y del personaje
+C 0xB82F lee la x del personaje
+C 0xB84F guarda el estado del personaje
+C 0xB852 pide el sonido 0x21
+C 0xB86D lee el mando: lo pulsado
+C 0xB87D guarda el estado del personaje
+C 0xB880 la puerta en marcha (bit 0 de IX+07) y el paso siguiente
+C 0xB88D si no, la cuenta vuelve a 10
+C 0xB8AA si no, la cuenta vuelve a 10
+C 0xB8E1 guarda la pantalla que se lee del mapa y el byte siguiente (16 bits)
+C 0xB8EF lee un dato de paso de la rutina en curso y el byte siguiente (16 bits)
+C 0xB8F2 dos caracteres de la parte, segun el giro (IX+05)
+C 0xB8FF lee la pantalla que se lee del mapa y el byte siguiente (16 bits)
+C 0xB904 dos caracteres de la parte, segun el giro (IX+05)
+C 0xB913 suma A a HL (HL = HL + A)
+C 0xB918 pinta el caracter como diga 0xEFC0
+C 0xB922 pinta el caracter como diga 0xEFC0
+C 0xB931 lee la pantalla de la fase (desde 1)
+C 0xB938 lee el estado del personaje
+C 0xB945 lee la y del personaje
+C 0xB955 lee la x del personaje
+C 0xB965 lee el mando: lo pulsado
+C 0xB972 guarda el estado del personaje
+C 0xB987 pide el sonido 0x22
+C 0xB998 lee el mando: lo pulsado
+C 0xB9A5 guarda el estado del personaje
+C 0xB9BF pide el sonido 0x22
+C 0xBA0A C si el personaje esta en su pantalla, a menos de 8 pixeles en x y dentro de su alto
+C 0xBA1F lee la x del personaje
+C 0xBA31 lee la y del personaje
+C 0xBAA9 lee la y del personaje
+C 0xBAB5 lee la x del personaje
+C 0xBACA lee el estado del personaje
+C 0xBADC el sonido 0x27 y se repinta el fondo (MSX1 de la ficha, MSX2 de la pagina 1)
+C 0xBAEC marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0xBB01 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xBB09 suma A a HL (HL = HL + A)
+C 0xBB44 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xBB4E pinta el caracter como diga 0xEFC0
+C 0xBB95 lee la pantalla de la fase (desde 1)
+C 0xBB9B el personaje sobre la columna: dentro de su alto y a menos de 16 pixeles en x
+C 0xBBA1 suma A a HL (HL = HL + A)
+C 0xBBBA lee la y del personaje
+C 0xBBC0 lee la x del personaje
+C 0xBBF4 devuelve el fondo de los bloques de esta pantalla
+C 0xBBF7 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xBC01 pinta dos caracteres A en fila en (D, E) y baja una fila
+C 0xBC0D una cosa de 2 x B caracteres de la piramide en (D, E)
+C 0xBC19 lee la pantalla de la fase (desde 1)
+C 0xBC26 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0xBC36 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0xBC39 pinta los bloques de esta pantalla
+C 0xBC3C las de la lista, al reves: guarda el fondo y pinta la cosa
+C 0xBC3F apunta a la y del personaje
+C 0xBC4E pinta el caracter como diga 0xEFC0
+C 0xBC56 pinta el caracter como diga 0xEFC0
+# --- fin de las anotaciones de anota.py ---

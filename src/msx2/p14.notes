@@ -1,6 +1,302 @@
 # Notas del banco p14 (msx2): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
-D 0x8000 0xA000 resto_8000  lo apuntan con el banco puesto p00:54D1 (0x8000), p00:5898 (0x8001), p00:58B2 (0x8001), p00:4644 (0x800C), p00:460E (0x806A), p00:58AE (0x80F0); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:54D1, p00:5898, p00:58B2, p00:4644, p00:460E, p00:58AE (8192 bytes)
-F 0x8000 16
+D 0x8000 0x800C grabados  6 punteros, uno por piramide (0xE241, desde 0x7FFE): los grabados del fondo; lo leen p00:44F8 (12 bytes)
+F 0x8000 w8
+D 0x800C 0x806C adornos  48 punteros: 8 adornos por piramide ((piramide - 1) x 8 + tipo); el tipo dice su tamano; lo leen p00:4647 (96 bytes)
+F 0x800C w8
+D 0x806C 0x80E4 adornos_fases  60 punteros, uno por fase (0xE242, desde 0x806A): los adornos de cada pantalla; lo leen p00:4611 (120 bytes)
+F 0x806C w8
+D 0x80E4 0x8124 grabado_1  los grabados de la piramide 1: dos de 4 x 8 caracteres (fases impares y pares); lo leen p00:4515 (64 bytes)
+F 0x80E4 8
+D 0x8124 0x8164 grabado_2  los grabados de la piramide 2: dos de 4 x 8 caracteres (fases impares y pares); lo leen p00:4515 (64 bytes)
+F 0x8124 8
+D 0x8164 0x81A4 grabado_3  los grabados de la piramide 3: dos de 4 x 8 caracteres (fases impares y pares); lo leen p00:4515 (64 bytes)
+F 0x8164 8
+D 0x81A4 0x81E4 grabado_4  los grabados de la piramide 4: dos de 4 x 8 caracteres (fases impares y pares); lo leen p00:4515 (64 bytes)
+F 0x81A4 8
+D 0x81E4 0x8224 grabado_5  los grabados de la piramide 5: dos de 4 x 8 caracteres (fases impares y pares); lo leen p00:4515 (64 bytes)
+F 0x81E4 8
+D 0x8224 0x8264 grabado_6  los grabados de la piramide 6: dos de 4 x 8 caracteres (fases impares y pares); lo leen p00:4515 (64 bytes)
+F 0x8224 8
+D 0x8264 0x8274 adorno_1_0  los caracteres del adorno 0 de la piramide 1 (4 x 4); lo leen p00:4663 (16 bytes)
+F 0x8264 16
+D 0x8274 0x8284 adorno_1_1  los caracteres del adorno 1 de la piramide 1 (4 x 4); lo leen p00:4663 (16 bytes)
+F 0x8274 16
+D 0x8284 0x8294 adorno_1_6  los caracteres del adorno 6 de la piramide 1 (largo: principio, medio y final); se solapan 7 bloques: (adorno_1_7 8284-828A) (adorno_1_2 8284-828C) (adorno_1_3 8284-828C) (adorno_1_4 8284-828C) (adorno_1_5 8284-828C) (adorno_2_0 8284-8294); lo leen p00:4663 (16 bytes)
+F 0x8284 6
+D 0x8294 0x82B8 adorno_2_6  los caracteres del adorno 6 de la piramide 2 (largo: principio, medio y final); se solapan 16 bloques: (adorno_2_2 8294-829C) (adorno_2_3 8294-829C) (adorno_2_4 8294-829C) (adorno_2_5 8294-829C) (adorno_2_1 8294-82A4) (adorno_2_7 829A-82A0) (adorno_3_2 82A0-82A8) (adorno_3_3 82A0-82A8) (adorno_3_4 82A0-82A8) (adorno_3_0 82A0-82B0) (adorno_3_1 82A0-82B0) (adorno_3_6 82A8-82AE) (adorno_3_7 82A8-82AE) (adorno_3_5 82A8-82B0) (adorno_4_0 82A8-82B8); lo leen p00:4663 (36 bytes)
+F 0x8294 6
+D 0x82B8 0x82D6 adorno_4_2  los caracteres del adorno 2 de la piramide 4 (4 x 2); se solapan 8 bloques: (adorno_4_1 82B8-82C8) (adorno_4_6 82C0-82C6) (adorno_4_3 82C0-82C8) (adorno_4_4 82C0-82C8) (adorno_4_5 82C0-82C8) (adorno_4_7 82C6-82CC) (adorno_5_0 82C6-82D6); lo leen p00:4663 (30 bytes)
+F 0x82B8 8
+D 0x82D6 0x82E6 adorno_5_6  los caracteres del adorno 6 de la piramide 5 (largo: principio, medio y final); se solapan 8 bloques: (adorno_5_7 82D6-82DC) (adorno_5_2 82D6-82DE) (adorno_5_3 82D6-82DE) (adorno_5_4 82D6-82DE) (adorno_5_5 82D6-82DE) (adorno_5_1 82D6-82E6) (adorno_6_0 82D6-82E6); lo leen p00:4663 (16 bytes)
+F 0x82D6 6
+D 0x82E6 0x82FC adorno_6_2  los caracteres del adorno 2 de la piramide 6 (4 x 2); se solapan 9 bloques: (adorno_6_1 82E6-82F6) (adorno_6_6 82EE-82F4) (adorno_6_7 82EE-82F4) (adornos_fase_1 82EE-82F5) (adorno_6_3 82EE-82F6) (adorno_6_4 82EE-82F6) (adorno_6_5 82EE-82F6) (adornos_fase_2 82F5-82FC); lo leen p00:4663, p00:4614 (22 bytes)
+F 0x82E6 8
+D 0x82FC 0x8309 adornos_fase_3  los adornos de la fase 3: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (13 bytes)
+F 0x82FC 3
+D 0x8309 0x8313 adornos_fase_4  los adornos de la fase 4: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (10 bytes)
+F 0x8309 3
+D 0x8313 0x8320 adornos_fase_5  los adornos de la fase 5: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (13 bytes)
+F 0x8313 3
+D 0x8320 0x832D adornos_fase_6  los adornos de la fase 6: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (13 bytes)
+F 0x8320 3
+D 0x832D 0x8334 adornos_fase_7  los adornos de la fase 7: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (7 bytes)
+F 0x832D 3
+D 0x8334 0x833B adornos_fase_8  los adornos de la fase 8: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (7 bytes)
+F 0x8334 3
+D 0x833B 0x833C adornos_fase_9  los adornos de la fase 9: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x833B 3
+D 0x833C 0x8349 adornos_fase_10  los adornos de la fase 10: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (13 bytes)
+F 0x833C 3
+D 0x8349 0x834A adornos_fase_11  los adornos de la fase 11: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x8349 3
+D 0x834A 0x8354 adornos_fase_12  los adornos de la fase 12: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (10 bytes)
+F 0x834A 3
+D 0x8354 0x8364 adornos_fase_13  los adornos de la fase 13: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (16 bytes)
+F 0x8354 3
+D 0x8364 0x836E adornos_fase_14  los adornos de la fase 14: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (10 bytes)
+F 0x8364 3
+D 0x836E 0x8384 adornos_fase_15  los adornos de la fase 15: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (22 bytes)
+F 0x836E 3
+D 0x8384 0x8385 adornos_fase_16  los adornos de la fase 16: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x8384 3
+D 0x8385 0x83A1 adornos_fase_17  los adornos de la fase 17: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (28 bytes)
+F 0x8385 3
+D 0x83A1 0x83B1 adornos_fase_18  los adornos de la fase 18: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (16 bytes)
+F 0x83A1 3
+D 0x83B1 0x83B8 adornos_fase_19  los adornos de la fase 19: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (7 bytes)
+F 0x83B1 3
+D 0x83B8 0x83CB adornos_fase_20  los adornos de la fase 20: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (19 bytes)
+F 0x83B8 3
+D 0x83CB 0x83CF adornos_fase_21  los adornos de la fase 21: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (4 bytes)
+F 0x83CB 3
+D 0x83CF 0x83D9 adornos_fase_22  los adornos de la fase 22: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (10 bytes)
+F 0x83CF 3
+D 0x83D9 0x83DA adornos_fase_23  los adornos de la fase 23: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x83D9 3
+D 0x83DA 0x83F3 adornos_fase_24  los adornos de la fase 24: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (25 bytes)
+F 0x83DA 3
+D 0x83F3 0x83F7 adornos_fase_25  los adornos de la fase 25: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (4 bytes)
+F 0x83F3 3
+D 0x83F7 0x8401 adornos_fase_26  los adornos de la fase 26: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (10 bytes)
+F 0x83F7 3
+D 0x8401 0x840B adornos_fase_27  los adornos de la fase 27: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (10 bytes)
+F 0x8401 3
+D 0x840B 0x8412 adornos_fase_28  los adornos de la fase 28: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (7 bytes)
+F 0x840B 3
+D 0x8412 0x8419 adornos_fase_29  los adornos de la fase 29: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (7 bytes)
+F 0x8412 3
+D 0x8419 0x841A adornos_fase_30  los adornos de la fase 30: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x8419 3
+D 0x841A 0x8427 adornos_fase_31  los adornos de la fase 31: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (13 bytes)
+F 0x841A 3
+D 0x8427 0x8437 adornos_fase_32  los adornos de la fase 32: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (16 bytes)
+F 0x8427 3
+D 0x8437 0x8453 adornos_fase_33  los adornos de la fase 33: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (28 bytes)
+F 0x8437 3
+D 0x8453 0x8463 adornos_fase_34  los adornos de la fase 34: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (16 bytes)
+F 0x8453 3
+D 0x8463 0x848E adornos_fase_35  los adornos de la fase 35: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (43 bytes)
+F 0x8463 3
+D 0x848E 0x8495 adornos_fase_36  los adornos de la fase 36: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (7 bytes)
+F 0x848E 3
+D 0x8495 0x84AE adornos_fase_37  los adornos de la fase 37: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (25 bytes)
+F 0x8495 3
+D 0x84AE 0x84AF adornos_fase_38  los adornos de la fase 38: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x84AE 3
+D 0x84AF 0x84B9 adornos_fase_39  los adornos de la fase 39: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (10 bytes)
+F 0x84AF 3
+D 0x84B9 0x84CC adornos_fase_40  los adornos de la fase 40: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (19 bytes)
+F 0x84B9 3
+D 0x84CC 0x84CD adornos_fase_41  los adornos de la fase 41: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x84CC 3
+D 0x84CD 0x84D1 adornos_fase_42  los adornos de la fase 42: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (4 bytes)
+F 0x84CD 3
+D 0x84D1 0x84E4 adornos_fase_43  los adornos de la fase 43: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (19 bytes)
+F 0x84D1 3
+D 0x84E4 0x84EE adornos_fase_44  los adornos de la fase 44: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (10 bytes)
+F 0x84E4 3
+D 0x84EE 0x84EF adornos_fase_45  los adornos de la fase 45: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x84EE 3
+D 0x84EF 0x84F6 adornos_fase_46  los adornos de la fase 46: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (7 bytes)
+F 0x84EF 3
+D 0x84F6 0x84F7 adornos_fase_47  los adornos de la fase 47: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x84F6 3
+D 0x84F7 0x84FE adornos_fase_48  los adornos de la fase 48: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (7 bytes)
+F 0x84F7 3
+D 0x84FE 0x850B adornos_fase_49  los adornos de la fase 49: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (13 bytes)
+F 0x84FE 3
+D 0x850B 0x850C adornos_fase_50  los adornos de la fase 50: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x850B 3
+D 0x850C 0x8516 adornos_fase_51  los adornos de la fase 51: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (10 bytes)
+F 0x850C 3
+D 0x8516 0x8517 adornos_fase_52  los adornos de la fase 52: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x8516 3
+D 0x8517 0x8539 adornos_fase_53  los adornos de la fase 53: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (34 bytes)
+F 0x8517 3
+D 0x8539 0x853A adornos_fase_54  los adornos de la fase 54: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x8539 3
+D 0x853A 0x854D adornos_fase_55  los adornos de la fase 55: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (19 bytes)
+F 0x853A 3
+D 0x854D 0x854E adornos_fase_56  los adornos de la fase 56: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x854D 3
+D 0x854E 0x8567 adornos_fase_57  los adornos de la fase 57: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (25 bytes)
+F 0x854E 3
+D 0x8567 0x8568 adornos_fase_58  los adornos de la fase 58: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x8567 3
+D 0x8568 0x858A adornos_fase_59  los adornos de la fase 59: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (34 bytes)
+F 0x8568 3
+D 0x858A 0x858B adornos_fase_60  los adornos de la fase 60: fichas de 3 bytes [x | tipo][y | pantalla][largo], 0xFF acaba; lo leen p00:4614 (1 bytes)
+F 0x858A 3
+D 0x858B 0x8599 posturas  7 punteros, uno por lo que lleva el personaje (0xE287): sus sprites; lo leen p00:58EE (14 bytes)
+F 0x858B w8
+D 0x8599 0x85BA postura_0  los sprites del personaje con lo que lleva 0: fichas de 4 bytes (con la cifra baja del primero 0: [destino][rachas]; si no, [n | destino][de]: n bloques en espejo), 0xFF acaba; lo leen p00:58F6 (33 bytes)
+F 0x8599 4
+D 0x85BA 0x85E3 postura_1  los sprites del personaje con lo que lleva 1: fichas de 4 bytes (con la cifra baja del primero 0: [destino][rachas]; si no, [n | destino][de]: n bloques en espejo), 0xFF acaba; lo leen p00:58F6 (41 bytes)
+F 0x85BA 4
+D 0x85E3 0x860C postura_2  los sprites del personaje con lo que lleva 2: fichas de 4 bytes (con la cifra baja del primero 0: [destino][rachas]; si no, [n | destino][de]: n bloques en espejo), 0xFF acaba; lo leen p00:58F6 (41 bytes)
+F 0x85E3 4
+D 0x860C 0x8631 postura_3  los sprites del personaje con lo que lleva 3: fichas de 4 bytes (con la cifra baja del primero 0: [destino][rachas]; si no, [n | destino][de]: n bloques en espejo), 0xFF acaba; lo leen p00:58F6 (37 bytes)
+F 0x860C 4
+D 0x8631 0x8652 postura_4  los sprites del personaje con lo que lleva 4: fichas de 4 bytes (con la cifra baja del primero 0: [destino][rachas]; si no, [n | destino][de]: n bloques en espejo), 0xFF acaba; lo leen p00:58F6 (33 bytes)
+F 0x8631 4
+D 0x8652 0x8677 postura_5  los sprites del personaje con lo que lleva 5: fichas de 4 bytes (con la cifra baja del primero 0: [destino][rachas]; si no, [n | destino][de]: n bloques en espejo), 0xFF acaba; lo leen p00:58F6 (37 bytes)
+F 0x8652 4
+D 0x8677 0x869C postura_6  los sprites del personaje con lo que lleva 6: fichas de 4 bytes (con la cifra baja del primero 0: [destino][rachas]; si no, [n | destino][de]: n bloques en espejo), 0xFF acaba; lo leen p00:58F6 (37 bytes)
+F 0x8677 4
+D 0x869C 0x86B8 columnas_postura  14 posiciones de la pagina 1 (una por direccion 0xE285) de donde se copia el dibujo del personaje; lo leen p00:5891 (28 bytes)
+F 0x869C 2
+D 0x86B8 0x86D4 columnas_postura2  otras 14, para la segunda copia; lo leen p00:58AB (28 bytes)
+F 0x86B8 2
+D 0x86D4 0x875D rachas_86D4  rachas a la VRAM (sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5AB1, p00:590A (137 bytes)
+F 0x86D4 16
+D 0x875D 0x87EE rachas_875D  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (145 bytes)
+F 0x875D 16
+D 0x87EE 0x8876 rachas_87EE  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (136 bytes)
+F 0x87EE 16
+D 0x8876 0x8911 rachas_8876  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (155 bytes)
+F 0x8876 16
+D 0x8911 0x89A0 rachas_8911  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (143 bytes)
+F 0x8911 16
+D 0x89A0 0x8A3F rachas_89A0  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (159 bytes)
+F 0x89A0 16
+D 0x8A3F 0x8AFA rachas_8A3F  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (187 bytes)
+F 0x8A3F 16
+D 0x8AFA 0x8BC6 rachas_8AFA  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (204 bytes)
+F 0x8AFA 16
+D 0x8BC6 0x8C4F rachas_8BC6  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (137 bytes)
+F 0x8BC6 16
+D 0x8C4F 0x8D08 rachas_8C4F  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (185 bytes)
+F 0x8C4F 16
+D 0x8D08 0x8DC1 rachas_8D08  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (185 bytes)
+F 0x8D08 16
+D 0x8DC1 0x8E86 rachas_8DC1  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (197 bytes)
+F 0x8DC1 16
+D 0x8E86 0x8F0E rachas_8E86  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (136 bytes)
+F 0x8E86 16
+D 0x8F0E 0x8FD9 rachas_8F0E  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (203 bytes)
+F 0x8F0E 16
+D 0x8FD9 0x905D rachas_8FD9  rachas a la VRAM (sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5ABA, p00:590A (132 bytes)
+F 0x8FD9 16
+D 0x905D 0x90D4 rachas_905D  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (119 bytes)
+F 0x905D 16
+D 0x90D4 0x9158 rachas_90D4  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (132 bytes)
+F 0x90D4 16
+D 0x9158 0x91AA rachas_9158  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (82 bytes)
+F 0x9158 16
+D 0x91AA 0x9227 rachas_91AA  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (125 bytes)
+F 0x91AA 16
+D 0x9227 0x9254 rachas_9227  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (45 bytes)
+F 0x9227 16
+D 0x9254 0x92AD rachas_9254  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (89 bytes)
+F 0x9254 16
+D 0x92AD 0x9304 rachas_92AD  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (87 bytes)
+F 0x92AD 16
+D 0x9304 0x9388 rachas_9304  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (132 bytes)
+F 0x9304 16
+D 0x9388 0x9432 rachas_9388  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (170 bytes)
+F 0x9388 16
+D 0x9432 0x94B7 rachas_9432  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (133 bytes)
+F 0x9432 16
+D 0x94B7 0x9510 rachas_94B7  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (89 bytes)
+F 0x94B7 16
+D 0x9510 0x953D rachas_9510  rachas a la VRAM (sprites del personaje): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:590A (45 bytes)
+F 0x9510 16
+D 0x953D 0x97A1 rachas_953D  rachas a la VRAM (sprites del personaje muerto): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:592E (612 bytes)
+F 0x953D 16
+D 0x97A1 0x98C9 rachas_97A1  rachas a la VRAM (sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:595B (296 bytes)
+F 0x97A1 16
+D 0x98C9 0x98EA lista_sprites  lista de sprites: [n][dibujo][puntero], un 0 acaba; lo leen p00:5508 (33 bytes)
+F 0x98C9 4
+D 0x98EA 0x98F7 lista_vueltas  sprites que se copian dados la vuelta: [tipo][n][de][a] (1 de arriba abajo, 2 de izquierda a derecha), un 0 acaba; lo leen p00:553D (13 bytes)
+F 0x98EA 4
+D 0x98F7 0x9977 spr_98F7  4 sprites de 16 x 16 (32 bytes cada uno) que se copian al dibujo 72; lo leen p00:5530 (128 bytes)
+F 0x98F7 16
+D 0x9977 0x9A37 spr_9977  6 sprites de 16 x 16 (32 bytes cada uno) que se copian al dibujo 104; lo leen p00:5530 (192 bytes)
+F 0x9977 16
+D 0x9A37 0x9AF7 spr_9A37  6 sprites de 16 x 16 (32 bytes cada uno) que se copian al dibujo 128; lo leen p00:5530 (192 bytes)
+F 0x9A37 16
+D 0x9AF7 0x9B77 spr_9AF7  4 sprites de 16 x 16 (32 bytes cada uno) que se copian al dibujo 176; lo leen p00:5530 (128 bytes)
+F 0x9AF7 16
+D 0x9B77 0x9BB7 spr_9B77  2 sprites de 16 x 16 (32 bytes cada uno) que se copian al dibujo 192; lo leen p00:5530 (64 bytes)
+F 0x9B77 16
+D 0x9BB7 0x9C37 spr_9BB7  4 sprites de 16 x 16 (32 bytes cada uno) que se copian al dibujo 208; lo leen p00:5530 (128 bytes)
+F 0x9BB7 16
+D 0x9C37 0x9CB7 spr_9C37  4 sprites de 16 x 16 (32 bytes cada uno) que se copian al dibujo 224; lo leen p00:5530 (128 bytes)
+F 0x9C37 16
+D 0x9CB7 0x9D37 spr_9CB7  4 sprites de 16 x 16 (32 bytes cada uno) que se copian al dibujo 240; lo leen p00:5530 (128 bytes)
+F 0x9CB7 16
+D 0x9D37 0x9D3B letreros_sitios  2 punteros: el letrero de cada minijuego escondido; lo leen p00:4BA5 (4 bytes)
+F 0x9D37 w8
+D 0x9D3B 0x9D49 letrero_sitio1  letrero (del sitio escondido 1): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (14 bytes)
+F 0x9D3B 16
+D 0x9D49 0x9D58 letrero_sitio2  letrero (del sitio escondido 2): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (15 bytes)
+F 0x9D49 16
+D 0x9D58 0x9DB6 columnas_27  47 punteros a columnas de 27 caracteres (32 seguidas desde la que se pide: 0, 4 o 0x0F); lo leen p00:59FF (94 bytes)
+F 0x9D58 w8
+D 0x9DB8 0x9DD3 col27_00  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9DB8 27
+D 0x9DD3 0x9DEE col27_01  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9DD3 27
+D 0x9DEE 0x9E09 col27_02  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9DEE 27
+D 0x9E09 0x9E24 col27_03  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9E09 27
+D 0x9E24 0x9E3F col27_04  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9E24 27
+D 0x9E3F 0x9E5A col27_05  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9E3F 27
+D 0x9E5A 0x9E75 col27_06  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9E5A 27
+D 0x9E75 0x9E90 col27_07  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9E75 27
+D 0x9E90 0x9EAB col27_08  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9E90 27
+D 0x9EAB 0x9EC6 col27_09  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9EAB 27
+D 0x9EC6 0x9EE1 col27_10  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9EC6 27
+D 0x9EE1 0x9EFC col27_11  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9EE1 27
+D 0x9EFC 0x9F17 col27_12  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9EFC 27
+D 0x9F17 0x9F32 col27_13  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9F17 27
+D 0x9F32 0x9F4D col27_14  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9F32 27
+D 0x9F4D 0x9F68 col27_15  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9F4D 27
+D 0x9F68 0x9F83 col27_16  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9F68 27
+D 0x9F83 0x9F9E col27_17  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9F83 27
+D 0x9F9E 0x9FB9 col27_18  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9F9E 27
+D 0x9FB9 0x9FD4 col27_19  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9FB9 27
+D 0x9FD4 0x9FEF col27_20  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0x9FD4 27
+D 0x9FEF 0xA000 col27_21  columna de 27 caracteres (sigue en el banco 15, en 0xA000); lo leen p00:5742 (17 bytes)
+F 0x9FEF 27
 # --- fin de los bloques de bloques.py ---

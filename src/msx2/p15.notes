@@ -1,8 +1,190 @@
 # Notas del banco p15 (msx2): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA000 0xA00A col27_21_cola  columna de 27 caracteres (sigue del banco 14); lo leen p00:5742 (10 bytes)
+F 0xA000 27
+D 0xA00A 0xA025 col27_22  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA00A 27
+D 0xA025 0xA040 col27_23  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA025 27
+D 0xA040 0xA05B col27_24  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA040 27
+D 0xA05B 0xA076 col27_25  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA05B 27
+D 0xA076 0xA091 col27_26  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA076 27
+D 0xA091 0xA0AC col27_27  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA091 27
+D 0xA0AC 0xA0C7 col27_28  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA0AC 27
+D 0xA0C7 0xA0E2 col27_29  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA0C7 27
+D 0xA0E2 0xA0FD col27_30  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA0E2 27
+D 0xA0FD 0xA118 col27_31  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA0FD 27
+D 0xA118 0xA133 col27_32  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA118 27
+D 0xA133 0xA14E col27_33  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA133 27
+D 0xA14E 0xA169 col27_34  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA14E 27
+D 0xA169 0xA184 col27_35  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA169 27
+D 0xA184 0xA19F col27_36  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA184 27
+D 0xA19F 0xA1BA col27_37  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA19F 27
+D 0xA1BA 0xA1D5 col27_38  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA1BA 27
+D 0xA1D5 0xA1F0 col27_39  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA1D5 27
+D 0xA1F0 0xA20B col27_40  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA1F0 27
+D 0xA20B 0xA226 col27_41  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA20B 27
+D 0xA226 0xA241 col27_42  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA226 27
+D 0xA241 0xA25C col27_43  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA241 27
+D 0xA25C 0xA277 col27_44  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA25C 27
+D 0xA277 0xA292 col27_45  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA277 27
+D 0xA292 0xA2AD col27_46  columna de 27 caracteres; lo leen p00:5742 (27 bytes)
+F 0xA292 27
+D 0xA2C8 0xA358 rect_A2C8  12 x 12 caracteres (p00:573B: B filas de C); lo leen p00:59C1 (144 bytes)
+F 0xA2C8 12
+D 0xA358 0xA3E8 rect_A358  12 x 12 caracteres (p00:573B: B filas de C); lo leen p00:59B2 (144 bytes)
+F 0xA358 12
+D 0xA3E8 0xA4C7 dibujo_A3E8  dibujo de caracteres (las secuencias): 0xFE [dx] baja una fila, 0xFF acaba; lo leen p00:5A5F (223 bytes)
+F 0xA3E8 16
+D 0xA4C7 0xA5A6 dibujo_A4C7  dibujo de caracteres (las secuencias): 0xFE [dx] baja una fila, 0xFF acaba; lo leen p00:5A68 (223 bytes)
+F 0xA4C7 16
+D 0xA5A6 0xA5BE rect_A5A6  2 x 12 caracteres (p00:573B: B filas de C); lo leen p00:5A1A (24 bytes)
+F 0xA5A6 12
+D 0xA5BE 0xA5EE rect_A5BE  4 x 12 caracteres (p00:573B: B filas de C); lo leen p00:5A2C (48 bytes)
+F 0xA5BE 12
+D 0xA5EE 0xA642 rect_A5EE  6 x 14 caracteres (p00:573B: B filas de C); lo leen p00:5A3E (84 bytes)
+F 0xA5EE 14
+D 0xA642 0xA6B1 dibujo_A642  dibujo de caracteres (las secuencias): 0xFE [dx] baja una fila, 0xFF acaba; lo leen p00:5A77 (111 bytes)
+F 0xA642 16
+D 0xA6B1 0xA6E0 dibujo_A6B1  dibujo de caracteres (las secuencias): 0xFE [dx] baja una fila, 0xFF acaba; lo leen p00:5A80 (47 bytes)
+F 0xA6B1 16
+D 0xA6E0 0xA702 dibujo_A6E0  dibujo de caracteres (las secuencias): 0xFE [dx] baja una fila, 0xFF acaba; lo leen p00:5A50 (34 bytes)
+F 0xA6E0 16
+D 0xA702 0xA792 rect_A702  12 x 12 caracteres (p00:573B: B filas de C); lo leen p00:59D0 (144 bytes)
+F 0xA702 12
+D 0xA792 0xA7CE fundidos  12 fundidos de 5 bytes [colores de partida][colores de llegada][cada cuantos cuadros]; lo leen p01:77F4 (60 bytes)
+F 0xA792 5
+D 0xA7CE 0xA7FF paleta_A7CE  paleta del titulo: 16 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:560E (49 bytes)
+F 0xA7CE 3
+D 0xA7FF 0xA830 paleta_A7FF  paleta de la entrada: 16 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5B58 (49 bytes)
+F 0xA7FF 3
+D 0xA830 0xA850 pal_A830  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA830 2
+D 0xA850 0xA870 pal_A850  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA850 2
+D 0xA870 0xA89B paleta_A870  paleta de la piramide acabada: 14 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p01:6F93 (43 bytes)
+F 0xA870 3
+D 0xA89B 0xA8BB pal_A89B  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA89B 2
+D 0xA8BB 0xA8E6 paleta_A8BB  paleta del final: 14 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5B64 (43 bytes)
+F 0xA8BB 3
+D 0xA8E6 0xA906 pal_A8E6  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA8E6 2
+D 0xA906 0xA926 pal_A906  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA906 2
+D 0xA926 0xA946 pal_A926  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA926 2
+D 0xA948 0xA968 pal_A948  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA948 2
+D 0xA96A 0xA98A pal_A96A  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA96A 2
+D 0xA98A 0xA9B6 pal_A98A  16 colores de paleta (2 bytes cada uno); se solapan 5 bloques: (pal_A996 A996-A9B6) (pal_A996 A996-A9B6) (pal_A996 A996-A9B6) (pal_A996 A996-A9B6); lo leen p01:77FE (44 bytes)
+F 0xA98A 2
+D 0xA9B6 0xA9D6 pal_A9B6  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA9B6 2
+D 0xA9D6 0xA9F6 pal_A9D6  16 colores de paleta (2 bytes cada uno); lo leen p01:77FE (32 bytes)
+F 0xA9D6 2
+D 0xA9F6 0xA9FB rachas_A9F6  rachas a la VRAM (sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5ACF (5 bytes)
+F 0xA9F6 16
+D 0xA9FB 0xAA00 rachas_A9FB  rachas a la VRAM (sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5A9B (5 bytes)
+F 0xA9FB 16
+D 0xAA00 0xAB59 rachas_AA00  rachas a la VRAM (sprites de la pausa): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5946 (345 bytes)
+F 0xAA00 16
+D 0xAB59 0xABB9 rachas_AB59  rachas a la VRAM (sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5AAB (96 bytes)
+F 0xAB59 16
+D 0xABB9 0xAE08 rachas_ABB9  rachas a la VRAM (dibujos de los sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:568D (591 bytes)
+F 0xABB9 16
+D 0xAE08 0xAF21 rachas_AE08  rachas a la VRAM (sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5AC6 (281 bytes)
+F 0xAE08 16
+D 0xAF21 0xB116 rachas_AF21  rachas a la VRAM (sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:5A92 (501 bytes)
+F 0xAF21 16
+D 0xB116 0xB118 colores_B116  1 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (2 bytes)
+F 0xB116 w8
+D 0xB118 0xB120 col_B118  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0xB118 8
+D 0xB120 0xB12B graf_B120  2 fichas de graficos (el titulo) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0xB116; lo leen p00:54A0 (11 bytes)
+F 0xB120 5
+D 0xB12B 0xB72B car_B12B  64 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0xB120; lo leen p00:54A0 (1536 bytes)
+F 0xB12B 8
+D 0xB72B 0xB8DB car_B72B  18 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0xB120; lo leen p00:54A0 (432 bytes)
+F 0xB72B 8
+D 0xB8DB 0xB95D dibujo_B8DB  dibujo de caracteres (las secuencias): 0xFE [dx] baja una fila, 0xFF acaba; lo leen p00:5628 (130 bytes)
+F 0xB8DB 16
+D 0xB95D 0xB97C paleta_B95D  paleta comun de las piramides: 10 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5681 (31 bytes)
+F 0xB95D 3
+D 0xB97C 0xB988 paletas_B97A  6 punteros, uno por piramide (0xE241, desde 0xB97A): la paleta de sus fases 1-2, 5-6 y 9-10; lo leen p00:5672 (12 bytes)
+F 0xB97C w8
+D 0xB988 0xB99B paleta_B988  paleta de la piramide 1: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xB988 3
+D 0xB99B 0xB9AE paleta_B99B  paleta de la piramide 2: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xB99B 3
+D 0xB9AE 0xB9C1 paleta_B9AE  paleta de la piramide 3: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xB9AE 3
+D 0xB9C1 0xB9D4 paleta_B9C1  paleta de la piramide 4: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xB9C1 3
+D 0xB9D4 0xB9E7 paleta_B9D4  paleta de la piramide 5: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xB9D4 3
+D 0xB9E7 0xB9FA paleta_B9E7  paleta de la piramide 6: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xB9E7 3
+D 0xB9FA 0xBA06 paletas_B9F8  6 punteros, uno por piramide (0xE241, desde 0xB9F8): la paleta de sus fases 3-4 y 7-8; lo leen p00:5672 (12 bytes)
+F 0xB9FA w8
+D 0xBA06 0xBA19 paleta_BA06  paleta de la piramide 1: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xBA06 3
+D 0xBA19 0xBA2C paleta_BA19  paleta de la piramide 2: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xBA19 3
+D 0xBA2C 0xBA3F paleta_BA2C  paleta de la piramide 3: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xBA2C 3
+D 0xBA3F 0xBA52 paleta_BA3F  paleta de la piramide 4: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xBA3F 3
+D 0xBA52 0xBA65 paleta_BA52  paleta de la piramide 5: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xBA52 3
+D 0xBA65 0xBA78 paleta_BA65  paleta de la piramide 6: 6 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5675 (19 bytes)
+F 0xBA65 3
+D 0xBA78 0xBA9A paleta_BA78  paleta de las musicas: 11 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:57C1 (34 bytes)
+F 0xBA78 3
+D 0xBA9A 0xBB05 rachas_BA9A  rachas a la VRAM (dibujos de los sprites): [n < 0x80] repite el byte siguiente, [0x80 + n] copia n, [0x80] otro destino, 0 acaba; lo leen p00:57D3 (107 bytes)
+F 0xBA9A 16
+D 0xBB05 0xBC05 sprites_titulo  256 bytes de dibujos de sprites a 0xF800 (8 sprites de 16 x 16); lo leen p00:5608 (256 bytes)
+F 0xBB05 16
+D 0xBC05 0xBD57 rect_BC05  13 x 26 caracteres (p00:573B: B filas de C); lo leen p00:579D (338 bytes)
+F 0xBC05 26
+D 0xBD57 0xBD75 colores_vivos  5 bytes por piramide (desde 0xBD52): el color de la paleta, cuantos pasos, cada cuantos cuadros y sus colores; lo leen p00:5C24 (30 bytes)
+F 0xBD57 5
+D 0xBD75 0xBD93 vivos_1  los 15 pasos del color que cambia solo en la piramide 1; lo leen p00:5C79 (30 bytes)
+F 0xBD75 2
+D 0xBD93 0xBDA3 vivos_2  los 8 pasos del color que cambia solo en la piramide 2; lo leen p00:5C79 (16 bytes)
+F 0xBD93 2
+D 0xBDA3 0xBDAB vivos_3  los 4 pasos del color que cambia solo en la piramide 3; lo leen p00:5C79 (8 bytes)
+F 0xBDA3 2
+D 0xBDAB 0xBDAF vivos_4  los 2 pasos del color que cambia solo en la piramide 4; lo leen p00:5C79 (4 bytes)
+F 0xBDAB 2
+D 0xBDAF 0xBDBB vivos_4b  los 6 pasos del otro color que cambia en la piramide 4; se solapan 2 bloques: (vivos_5 BDB3-BDBB); lo leen p00:5C79 (12 bytes)
+F 0xBDAF 2
+D 0xBDBB 0xBDCB vivos_6  los 8 pasos del color que cambia solo en la piramide 6; lo leen p00:5C79 (16 bytes)
+F 0xBDBB 2
 D 0xBDCB 0xC000 relleno_ff  565 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (565 bytes)
 F 0xBDCB 16
-D 0xA000 0xBDCB resto_A000  lo apuntan con el banco puesto p00:5A41 (0xA030), p00:59C1 (0xA2C8), p00:59B2 (0xA358), p00:5A5F (0xA3E8), p00:5A68 (0xA4C7), p00:5A1A (0xA5A6); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5A41, p00:59C1, p00:59B2, p00:5A5F, p00:5A68, p00:5A1A (7627 bytes)
-F 0xA000 16
 # --- fin de los bloques de bloques.py ---

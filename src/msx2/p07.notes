@@ -1,6 +1,152 @@
 # Notas del banco p07 (msx2): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
-D 0x6000 0x8000 resto_6000  lo apuntan con el banco puesto p00:5658 (0x6000), p00:5655 (0x602A), p00:5644 (0x6065), p00:564C (0x6177), p00:4193 (0x7000), p00:5B98 (0x7000); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5658, p00:5655, p00:5644, p00:564C, p00:4193, p00:5B98 (8192 bytes)
-F 0x6000 16
+D 0x6000 0x600A colores_6000  5 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (10 bytes)
+F 0x6000 w8
+D 0x600C 0x600E col_600C  2 colores (de 4 bits) para los graficos de 1 bits por punto; lo leen p00:54AC (2 bytes)
+F 0x600C 2
+D 0x600E 0x6012 col_600E  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x600E 4
+D 0x6012 0x6016 col_6012  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x6012 4
+D 0x6016 0x601A col_6016  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x6016 4
+D 0x601A 0x6022 col_601A  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x601A 8
+D 0x602A 0x6067 graf_602A  12 fichas de graficos (comunes a las piramides) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x6000; lo leen p00:54A0 (61 bytes)
+F 0x602A 5
+D 0x6067 0x6073 colores_piramides  6 punteros, uno por piramide (0xE241, desde 0x6065): su tabla de colores; lo leen p00:5647 (12 bytes)
+F 0x6067 w8
+D 0x6073 0x607F colores_pir1  6 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (12 bytes)
+F 0x6073 w8
+D 0x607F 0x6089 colores_pir2  5 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (10 bytes)
+F 0x607F w8
+D 0x6089 0x6091 colores_pir3  4 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (8 bytes)
+F 0x6089 w8
+D 0x6091 0x609F colores_pir4  7 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (14 bytes)
+F 0x6091 w8
+D 0x609F 0x60A7 colores_pir5  4 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (8 bytes)
+F 0x609F w8
+D 0x60A7 0x60AD colores_pir6  3 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (6 bytes)
+F 0x60A7 w8
+D 0x60AD 0x60B5 col_60AD  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x60AD 8
+D 0x60B5 0x60B9 col_60B5  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x60B5 4
+D 0x60B9 0x60C1 col_60B9  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x60B9 8
+D 0x60C1 0x60C5 col_60C1  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x60C1 4
+D 0x60C5 0x60CD col_60C5  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x60C5 8
+D 0x60CD 0x60D5 col_60CD  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x60CD 8
+D 0x60D5 0x60DD col_60D5  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x60D5 8
+D 0x60DD 0x60E1 col_60DD  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x60DD 4
+D 0x60E1 0x60E9 col_60E1  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x60E1 8
+D 0x60E9 0x60F1 col_60E9  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x60E9 8
+D 0x60F1 0x60F9 col_60F1  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x60F1 8
+D 0x60F9 0x6101 col_60F9  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x60F9 8
+D 0x6101 0x6109 col_6101  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x6101 8
+D 0x6109 0x610D col_6109  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x6109 4
+D 0x610D 0x6115 col_610D  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x610D 8
+D 0x6115 0x611D col_6115  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x6115 8
+D 0x611D 0x6125 col_611D  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x611D 8
+D 0x6125 0x6129 col_6125  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x6125 4
+D 0x6129 0x612D col_6129  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x6129 4
+D 0x612D 0x6135 col_612D  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x612D 8
+D 0x6135 0x613D col_6135  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x6135 8
+D 0x613D 0x6145 col_613D  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x613D 8
+D 0x6145 0x614D col_6145  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x6145 8
+D 0x614D 0x6151 col_614D  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0x614D 4
+D 0x6151 0x6159 col_6151  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x6151 8
+D 0x6159 0x6161 col_6159  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x6159 8
+D 0x6161 0x6169 col_6161  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x6161 8
+D 0x6169 0x6171 col_6169  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x6169 8
+D 0x6171 0x6179 col_6171  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x6171 8
+D 0x6179 0x6185 graficos_piramides  6 punteros, uno por piramide (desde 0x6177): su lista de graficos; lo leen p00:564F (12 bytes)
+F 0x6179 w8
+D 0x6185 0x61A4 graf_pir1  6 fichas de graficos (piramide 1) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x6073; lo leen p00:54A0 (31 bytes)
+F 0x6185 5
+D 0x61A4 0x61BE graf_pir2  5 fichas de graficos (piramide 2) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x607F; lo leen p00:54A0 (26 bytes)
+F 0x61A4 5
+D 0x61BE 0x61D3 graf_pir3  4 fichas de graficos (piramide 3) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x6089; lo leen p00:54A0 (21 bytes)
+F 0x61BE 5
+D 0x61D3 0x61F7 graf_pir4  7 fichas de graficos (piramide 4) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x6091; lo leen p00:54A0 (36 bytes)
+F 0x61D3 5
+D 0x61F7 0x620C graf_pir5  4 fichas de graficos (piramide 5) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x609F; lo leen p00:54A0 (21 bytes)
+F 0x61F7 5
+D 0x620C 0x621C graf_pir6  3 fichas de graficos (piramide 6) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x60A7; lo leen p00:54A0 (16 bytes)
+F 0x620C 5
+D 0x621C 0x624C car_621C  6 caracteres de 1 bit por punto (8 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (48 bytes)
+F 0x621C 8
+D 0x624C 0x640C car_624C  28 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (448 bytes)
+F 0x624C 8
+D 0x640C 0x646C car_640C  6 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (96 bytes)
+F 0x640C 8
+D 0x646C 0x651C car_646C  11 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (176 bytes)
+F 0x646C 8
+D 0x656C 0x659C car_656C  3 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (48 bytes)
+F 0x656C 8
+D 0x659C 0x68E4 car_659C  35 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (840 bytes)
+F 0x659C 8
+D 0x68E4 0x6974 car_68E4  6 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (144 bytes)
+F 0x68E4 8
+D 0x6974 0x69D4 car_6974  4 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (96 bytes)
+F 0x6974 8
+D 0x69D4 0x6A34 car_69D4  4 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x602A; lo leen p00:54A0 (96 bytes)
+F 0x69D4 8
+D 0x6A34 0x6A64 car_6A34  2 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x6185; lo leen p00:54A0 (48 bytes)
+F 0x6A34 8
+D 0x6A64 0x6A94 car_6A64  2 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x6185; lo leen p00:54A0 (48 bytes)
+F 0x6A64 8
+D 0x6A94 0x6AB4 car_6A94  2 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x6185; lo leen p00:54A0 (32 bytes)
+F 0x6A94 8
+D 0x6AB4 0x6C7C car_6AB4  19 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x6185; lo leen p00:54A0 (456 bytes)
+F 0x6AB4 8
+D 0x6C7C 0x6EBC car_6C7C  36 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x6185; lo leen p00:54A0 (576 bytes)
+F 0x6C7C 8
+D 0x6EBC 0x70E4 car_6EBC  23 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x6185; lo leen p00:54A0 (552 bytes)
+F 0x6EBC 8
+D 0x70E4 0x72DC car_70E4  21 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61A4; lo leen p00:54A0 (504 bytes)
+F 0x70E4 8
+D 0x72DC 0x737C car_72DC  10 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x61A4; lo leen p00:54A0 (160 bytes)
+F 0x72DC 8
+D 0x737C 0x74FC car_737C  16 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61A4; lo leen p00:54A0 (384 bytes)
+F 0x737C 8
+D 0x74FC 0x785C car_74FC  33 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61A4; se solapan 2 bloques: (car_77FC 77FC-785C); lo leen p00:54A0 (864 bytes)
+F 0x74FC 8
+D 0x785C 0x7AE4 car_785C  27 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61BE; lo leen p00:54A0 (648 bytes)
+F 0x785C 8
+D 0x7AE4 0x7DC4 car_7AE4  46 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x61BE; lo leen p00:54A0 (736 bytes)
+F 0x7AE4 8
+D 0x7DC4 0x7DF4 car_7DC4  2 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61D3; lo leen p00:54A0 (48 bytes)
+F 0x7DC4 8
+D 0x7DF4 0x7FBC car_7DF4  19 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61D3; lo leen p00:54A0 (456 bytes)
+F 0x7DF4 8
+D 0x7FBC 0x8000 car_7FBC  32 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x61D3 (sigue en el banco 8, en 0x8000); lo leen p00:54A0 (68 bytes)
+F 0x7FBC 8
 # --- fin de los bloques de bloques.py ---

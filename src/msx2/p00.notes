@@ -690,12 +690,6 @@ D 0x5E43 0x5E4B tabla_5E43  4 destinos del despachador p00:4099 (call en p00:5E4
 F 0x5E43 w4
 D 0x4000 0x402E resto_4000  lo apuntan con el banco puesto p02:9221 (0x4001), p01:6F3C (0x4010), p01:6F46 (0x4011); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p02:9221, p01:6F3C, p01:6F46 (46 bytes)
 F 0x4000 16
-D 0x4271 0x427B resto_4271  lo apuntan con el banco puesto p03:AD4D (0x4271), p03:B37C (0x4276); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p03:AD4D, p03:B37C (10 bytes)
-F 0x4271 16
-D 0x42AF 0x42B7 resto_42AF  lo apuntan con el banco puesto p03:AF48 (0x42B3); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p03:AF48 (8 bytes)
-F 0x42AF 16
-D 0x4307 0x430B resto_4307  lo apuntan con el banco puesto p03:AE3F (0x4307); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p03:AE3F (4 bytes)
-F 0x4307 16
 D 0x45C9 0x45CB resto_45C9  lo apuntan con el banco puesto p00:45BC (0x45C9); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:45BC (2 bytes)
 F 0x45C9 16
 D 0x4C1A 0x4C20 resto_4C1A  lo apuntan con el banco puesto p00:4C0E (0x4C1A); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:4C0E (6 bytes)

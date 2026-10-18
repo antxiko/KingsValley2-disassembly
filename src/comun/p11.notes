@@ -1,6 +1,58 @@
 # Notas del banco p11 (comun): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
-D 0x8000 0xA000 resto_8000  lo apuntan con el banco puesto msx2 p00:5B19 (0x8030), msx2 p00:5BEE (0x8030), msx1 p00:41A1 (0x9000), msx2 p00:4199 (0x9000), msx2 p00:41D3 (0x9000), msx2 p00:5C09 (0x9870); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen msx2 p00:5B19, msx2 p00:5BEE, msx1 p00:41A1, msx2 p00:4199, msx2 p00:41D3, msx2 p00:5C09 (8192 bytes)
+D 0x8000 0x80B0 mapa_33_cola  El mapa de la fase en rachas de casillas de 2 bits de la fase 33 (sigue del banco 10); lo leen msx1 p00:43E5, msx2 p00:43DD (176 bytes)
 F 0x8000 16
+D 0x80B0 0x825D mapa_34  El mapa de la fase en rachas de casillas de 2 bits de la fase 34; lo leen msx1 p00:43E5, msx2 p00:43DD (429 bytes)
+F 0x80B0 16
+D 0x825D 0x8407 mapa_35  El mapa de la fase en rachas de casillas de 2 bits de la fase 35; lo leen msx1 p00:43E5, msx2 p00:43DD (426 bytes)
+F 0x825D 16
+D 0x8407 0x8585 mapa_36  El mapa de la fase en rachas de casillas de 2 bits de la fase 36; lo leen msx1 p00:43E5, msx2 p00:43DD (382 bytes)
+F 0x8407 16
+D 0x8585 0x86F5 mapa_37  El mapa de la fase en rachas de casillas de 2 bits de la fase 37; lo leen msx1 p00:43E5, msx2 p00:43DD (368 bytes)
+F 0x8585 16
+D 0x86F5 0x8878 mapa_38  El mapa de la fase en rachas de casillas de 2 bits de la fase 38; lo leen msx1 p00:43E5, msx2 p00:43DD (387 bytes)
+F 0x86F5 16
+D 0x8878 0x88EE mapa_39  El mapa de la fase en rachas de casillas de 2 bits de la fase 39; lo leen msx1 p00:43E5, msx2 p00:43DD (118 bytes)
+F 0x8878 16
+D 0x88EE 0x8AD4 mapa_40  El mapa de la fase en rachas de casillas de 2 bits de la fase 40; lo leen msx1 p00:43E5, msx2 p00:43DD (486 bytes)
+F 0x88EE 16
+D 0x8AD4 0x8B8C mapa_41  El mapa de la fase en rachas de casillas de 2 bits de la fase 41; lo leen msx1 p00:43E5, msx2 p00:43DD (184 bytes)
+F 0x8AD4 16
+D 0x8B8C 0x8C98 mapa_42  El mapa de la fase en rachas de casillas de 2 bits de la fase 42; lo leen msx1 p00:43E5, msx2 p00:43DD (268 bytes)
+F 0x8B8C 16
+D 0x8C98 0x8EA8 mapa_43  El mapa de la fase en rachas de casillas de 2 bits de la fase 43; lo leen msx1 p00:43E5, msx2 p00:43DD (528 bytes)
+F 0x8C98 16
+D 0x8EA8 0x913E mapa_44  El mapa de la fase en rachas de casillas de 2 bits de la fase 44; lo leen msx1 p00:43E5, msx2 p00:43DD (662 bytes)
+F 0x8EA8 16
+D 0x913E 0x923B mapa_45  El mapa de la fase en rachas de casillas de 2 bits de la fase 45; lo leen msx1 p00:43E5, msx2 p00:43DD (253 bytes)
+F 0x913E 16
+D 0x923B 0x93EE mapa_46  El mapa de la fase en rachas de casillas de 2 bits de la fase 46; lo leen msx1 p00:43E5, msx2 p00:43DD (435 bytes)
+F 0x923B 16
+D 0x93EE 0x9587 mapa_47  El mapa de la fase en rachas de casillas de 2 bits de la fase 47; lo leen msx1 p00:43E5, msx2 p00:43DD (409 bytes)
+F 0x93EE 16
+D 0x9587 0x96C9 mapa_48  El mapa de la fase en rachas de casillas de 2 bits de la fase 48; lo leen msx1 p00:43E5, msx2 p00:43DD (322 bytes)
+F 0x9587 16
+D 0x96C9 0x9727 mapa_49  El mapa de la fase en rachas de casillas de 2 bits de la fase 49; lo leen msx1 p00:43E5, msx2 p00:43DD (94 bytes)
+F 0x96C9 16
+D 0x9727 0x98DA mapa_50  El mapa de la fase en rachas de casillas de 2 bits de la fase 50; lo leen msx1 p00:43E5, msx2 p00:43DD (435 bytes)
+F 0x9727 16
+D 0x98DA 0x996E mapa_51  El mapa de la fase en rachas de casillas de 2 bits de la fase 51; lo leen msx1 p00:43E5, msx2 p00:43DD (148 bytes)
+F 0x98DA 16
+D 0x996E 0x9A7D mapa_52  El mapa de la fase en rachas de casillas de 2 bits de la fase 52; lo leen msx1 p00:43E5, msx2 p00:43DD (271 bytes)
+F 0x996E 16
+D 0x9A7D 0x9BA8 mapa_53  El mapa de la fase en rachas de casillas de 2 bits de la fase 53; lo leen msx1 p00:43E5, msx2 p00:43DD (299 bytes)
+F 0x9A7D 16
+D 0x9BA8 0x9C8A mapa_54  El mapa de la fase en rachas de casillas de 2 bits de la fase 54; lo leen msx1 p00:43E5, msx2 p00:43DD (226 bytes)
+F 0x9BA8 16
+D 0x9C8A 0x9D74 mapa_55  El mapa de la fase en rachas de casillas de 2 bits de la fase 55; lo leen msx1 p00:43E5, msx2 p00:43DD (234 bytes)
+F 0x9C8A 16
+D 0x9D74 0x9DDF mapa_56  El mapa de la fase en rachas de casillas de 2 bits de la fase 56; lo leen msx1 p00:43E5, msx2 p00:43DD (107 bytes)
+F 0x9D74 16
+D 0x9DDF 0x9E8A mapa_57  El mapa de la fase en rachas de casillas de 2 bits de la fase 57; lo leen msx1 p00:43E5, msx2 p00:43DD (171 bytes)
+F 0x9DDF 16
+D 0x9E8A 0x9F81 mapa_58  El mapa de la fase en rachas de casillas de 2 bits de la fase 58; lo leen msx1 p00:43E5, msx2 p00:43DD (247 bytes)
+F 0x9E8A 16
+D 0x9F81 0xA000 mapa_59  El mapa de la fase en rachas de casillas de 2 bits de la fase 59 (sigue en el banco 12, en 0xA000); lo leen msx1 p00:43E5, msx2 p00:43DD (127 bytes)
+F 0x9F81 16
 # --- fin de los bloques de bloques.py ---

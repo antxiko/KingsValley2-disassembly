@@ -31,6 +31,7 @@ sys.path.insert(0, AQUI)
 from paginas import PREFIJO   # noqa: E402
 
 CHORROS = ((0, 1, 2, 3), (12,))
+MIN_TRAMO = 4
 INSTR = re.compile(r"^\t([a-z][^\t;]*?)\s*;([0-9a-f]{4})")
 
 
@@ -46,7 +47,12 @@ def instrucciones(v, b):
         if not m or ln.startswith(("\tdefb", "\tdefw", "\tdefs", "\torg")):
             continue
         t = m.group(1).strip()
-        n = re.sub(r"\b(L_[0-9A-F]{4}|0[0-9a-f]{4}h|[0-9a-f]{4}h)\b", "nn", t)
+        n = re.sub(r"\bL_[0-9A-F]{4}\b", "nn", t)
+        # solo se tapan las direcciones del cartucho: la RAM, la VRAM y las
+        # constantes tienen que ser las mismas (si no, cualquier tira de
+        # `ld hl,nn / ld de,nn / call nn` casaria con cualquier otra)
+        n = re.sub(r"\b0?([0-9a-f]{4})h\b",
+                   lambda m: "nn" if 0x4000 <= int(m.group(1), 16) < 0xC000 else m.group(0), n)
         n = re.sub(r"\$[+-]\d+", "r", n)
         out.append((b, int(m.group(2), 16), t, n))
     return out
@@ -60,9 +66,35 @@ def alinea(bancos):
     a, c = chorro("msx1", bancos), chorro("msx2", bancos)
     sm = difflib.SequenceMatcher(None, [x[3] for x in a], [x[3] for x in c], autojunk=False)
     mapa = {}
+    usados_a, usados_c = set(), set()
     for i, j, n in sm.get_matching_blocks():
+        # un tramo de menos de 4 instrucciones iguales es casualidad (un
+        # `push bc` suelto casa con cualquier otro): no se cuenta
+        if n < MIN_TRAMO:
+            continue
         for k in range(n):
             mapa[a[i + k][:2]] = c[j + k][:2]
+            usados_a.add(i + k)
+            usados_c.add(j + k)
+    # Segunda pasada: lo que no ha casado en orden puede estar cambiado de
+    # sitio (una rutina que en un cartucho va antes y en el otro despues).
+    # Se alinea lo suelto de uno con lo suelto del otro, en tramos largos.
+    for _ in range(3):
+        ra = [i for i in range(len(a)) if i not in usados_a]
+        rc = [j for j in range(len(c)) if j not in usados_c]
+        sm2 = difflib.SequenceMatcher(None, [a[i][3] for i in ra], [c[j][3] for j in rc],
+                                      autojunk=False)
+        nuevos = 0
+        for i, j, n in sm2.get_matching_blocks():
+            if n < 8:
+                continue
+            for k in range(n):
+                mapa[a[ra[i + k]][:2]] = c[rc[j + k]][:2]
+                usados_a.add(ra[i + k])
+                usados_c.add(rc[j + k])
+            nuevos += n
+        if not nuevos:
+            break
     return a, c, mapa, sm
 
 

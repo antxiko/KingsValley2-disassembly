@@ -1,5 +1,345 @@
 # Notas del banco p01 (msx1): C comentario, L nombre, B bloque, D datos.
 
+# --- A MANO: comentarios escritos leyendo el codigo ---
+C 0x6007 7 filas de 8
+C 0x6013 su sitio: la casilla mas su y / 8 y su x / 8
+C 0x6030 el sprite 1, en ese sitio
+C 0x603B de color 7
+C 0x6041 la otra marca del plano: la casilla de la pantalla 0xE2F3 y el sitio de 0xE2F1
+C 0x6065 el sprite 0, de color 11
+C 0x606B pinta en el plano las 16 cosas de 0xE700 que haya (8 bytes cada una)
+C 0x6084 una: su pantalla y su sitio
+C 0x609C su dibujo, de la tabla de 0x62CC por su posicion
+C 0x60BE DE = el sitio en el plano: la casilla mas el sitio / 8 en cuartos de casilla
+C 0x60E1 pinta la rejilla: un recuadro por cada pantalla de la fase
+C 0x60FE el recuadro de 0x631E
+C 0x610B D, E = la esquina de la casilla del plano: columna (8 - B) x 32, fila (7 - C) x 24
+C 0x611F mas el margen del plano (0x20, 0x18)
+C 0x6137 lee las cosas de la fase (tabla 0xAAE0 del banco 13) a 0xE600
+C 0x6140 la palabra de la fase
+C 0x6149 16 fichas de 16 bytes en 0xE600
+C 0x614D cada una son 4 bytes: [tipo | pantalla][x][y][alto | variante]; 0 acaba
+C 0x6151 el tipo (cifra alta)
+C 0x615A la pantalla (cifra baja), en IX+04 y en IX+09
+C 0x6163 la x
+C 0x6169 la y
+C 0x616E los 5 bits altos: IX+08
+C 0x6177 los 3 bits bajos: la variante (bit 1 de IX+07 si no es 0)
+C 0x6186 IX+05 = variante x 3, solo en el tipo 1
+C 0x619B la ficha siguiente
+C 0x61A2 marca en el mapa las cosas de 0xE600 con el valor 3
+C 0x61A6 las borra del mapa (valor 0)
+C 0x61AE las 16
+C 0x61BF el tipo 3 no se marca; el 5, segun su estado
+C 0x61D0 su sitio
+C 0x61D6 el tipo 2 con variante: 8 pixeles mas abajo
+C 0x61E4 el ancho sale del tipo (tabla 0x6445)
+C 0x61F7 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0x61FE el sitio en casillas
+C 0x620A cada casilla: su byte del mapa...
+C 0x6222 ...se borran sus dos bits...
+C 0x622F ...y se pone el valor
+C 0x623B la fila siguiente, 32 casillas mas
+C 0x6243 corre A a la casilla C & 3 del byte
+C 0x6254 pinta las cosas de 0xE600 de esta pantalla (tabla 0x64D9 por tipo)
+C 0x626B las del tipo 5 de esta pantalla: 0x9661
+C 0x628D un cuadro de las 16 cosas de 0xE600: cada tipo, su rutina (tabla 0x64A4)
+C 0x62B8 con el bit 0 de IX+07, se repinta (tabla 0x64CF)
+C 0x62C6 pinta la cosa, si es de esta pantalla
+C 0x62D0 la rutina de su tipo
+C 0x62ED lee las cosas de 2 x 2 de la fase (tabla 0xA75D del banco 13) a 0xE700
+C 0x62F0 0xE700-0xE77F a cero
+C 0x6300 la palabra de la fase
+C 0x630C cada una son 3 bytes: [tipo | pantalla][x][y]; 0 acaba; en 0xE700 van de 8 en 8
+C 0x630F el tipo
+C 0x6316 la pantalla
+C 0x631D la x y la y
+C 0x6327 pinta las cosas de 0xE700 de esta pantalla
+C 0x6340 si es de esta pantalla...
+C 0x6347 ...2 x 2 caracteres de 0x9324 en su sitio
+C 0x6356 un cuadro de los 8 enemigos de 0xE500 (32 bytes cada uno)
+C 0x6363 su rutina
+C 0x6366 con el bit 0 de IX+06, se mueve en una pantalla que no se ve
+C 0x6376 el movimiento fuera de la vista: en x (IX+0B 2 o 3) o en y (0 o 1)
+C 0x637D la x de 16 bits mas o menos su velocidad (IX+09)
+C 0x638D al pasar de 0xF1: sale por la derecha
+C 0x639F la y de 16 bits mas o menos su velocidad (IX+07)
+C 0x63B6 al pasar de 0xB1: sale por abajo
+C 0x63C1 sale por la izquierda: aparece a la derecha (0xF0)
+C 0x63CB sale por la derecha: aparece a la izquierda
+C 0x63D5 sale por arriba: aparece abajo (0xB0)
+C 0x63DF sale por abajo: aparece arriba
+C 0x63E9 el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
+C 0x63EF IX+16 la casilla, IX+10 la pantalla
+C 0x6400 la rutina del tipo del enemigo (tabla detras)
+C 0x6412 entra en la pantalla en la que se esta: el sonido 0x2D y pasa al tipo 5
+C 0x6429 en MSX2, sus colores: 0x0A y 0x4B
+C 0x644F los sprites de los enemigos de esta pantalla; en MSX2, sus colores a 0xD300
+C 0x645F 16 colores por sprite, el color de su atributo
+C 0x646E los atributos de los sprites de los enemigos, desde 0xE840
+C 0x6477 en MSX1, un sprite por enemigo; en MSX2, dos
+C 0x648C IX+11: su dibujo (0xFF: no se ve)
+C 0x6499 de la tabla de 0xBEED (dos bytes por dibujo)
+C 0x64B5 fuera de la pantalla: y = 0xE0
+C 0x64DE en MSX1, de la tabla 0xBECF (un byte)
+C 0x64FD un atributo: [y - 1][x][dibujo][color]
+C 0x6510 el enemigo se va: su sitio de salida (0xE2C0 + 5 x IX+15) se marca para que salga otro
+C 0x6527 cada 4 cuadros, los 8 sitios de salida de 0xE2C0
+C 0x6535 con el bit 7, su cuenta baja...
+C 0x653B ...y al acabar sale un enemigo nuevo (0xAC6D) y la cuenta vuelve a 0x30
+C 0x6559 lee los sitios de salida de la fase (tabla 0xB7CD del banco 13) a 0xE2C0
+C 0x655C 0xE2C0-0xE2E7 a cero
+C 0x6572 cada uno son 4 bytes: [tipo] y 3 mas; un 0 acaba
+C 0x6578 el tipo con el bit 7: listo para salir
+C 0x657C su cuenta: 0x14
+C 0x6588 el menu de grabar y cargar (estado 3): el letrero de 0xB185
+C 0x6597 lo elegido: 0
+C 0x659E un cuadro del menu: arriba y abajo mueven la flecha, disparo elige
+C 0x65B2 elegido: 0xE24A = 1
+C 0x65B8 arriba: el sonido 0x32 y la opcion anterior (de 0 a 2)
+C 0x65C4 abajo: la siguiente
+C 0x65CF la flecha (sprite 0) en la fila de la opcion
+C 0x65E8 en MSX2, de color 7
+C 0x65F6 el dibujo de la flecha, 32 bytes de 0xB1B6 (en 0xF8A0 en MSX2, 0x18A0 en MSX1)
+C 0x6611 la entrada (opcion 0 del menu, antes de empezar): graficos y paleta
+C 0x661F 32 columnas de la tabla de 0x9D58 desde la 4
+C 0x6622 0xE257 = 0: el paso de la entrada
+C 0x6639 un cuadro de la entrada; con disparo se salta
+C 0x6648 el paso; en los primeros (hasta 9) tambien 0x7786
+C 0x6656 cada paso, su rutina (tabla detras)
+C 0x6676 espera 0x10 cuadros
+C 0x667F el paso siguiente
+C 0x6690 cada dos cuadros 0xEDCC sube hasta 0x60
+C 0x66AD 0xEDCB se mueve por la tabla de 0x68DD (30 pasos)
+C 0x66F7 0xEDCC sigue hasta 0xD8
+C 0x6752 la pantalla de la contrasena: el dibujo de 0xA358 y el letrero
+C 0x6772 espera y vuelve
+C 0x677D la contrasena: se calcula y se pinta
+C 0x6795 la contrasena: la fase, las vidas y un numero al azar (el registro R)...
+C 0x67A4 ...el azar dice cuantas vueltas se da a la fase y las vidas
+C 0x67B8 cada byte, dos letras
+C 0x67D2 y la suma de los tres, de control
+C 0x67E1 dos letras de A: una por cifra
+C 0x67F6 la letra de la cifra: 0xE1 + la cifra
+C 0x680C la pantalla de meter la contrasena: 0xEDD9-0xEDFE a cero y el letrero de 0xBE91
+C 0x681E 0xEDEE = 0x20
+C 0x6833 un cuadro de la contrasena; tras el letrero de bien o mal, una espera (0xEDEC) y se sale con 0xEDED
+C 0x684B la flecha y las teclas
+C 0x6851 izquierda y derecha mueven la letra en la que se escribe (0xEDEF, de 0 a 7)
+C 0x685E el teclado entero a 0xEDF0
+C 0x6861 la letra que se ha pulsado
+C 0x686A una letra nueva: se pinta y se pasa a la siguiente
+C 0x686D sin RETURN (bit 7 de 0xEDF7) no se comprueba
+C 0x6872 las 8 letras a valores: las 0xE1-... dan 0-..., las 0xD0-0xD9 tambien
+C 0x6884 primero las dos contrasenas especiales
+C 0x688A ninguna letra puede ser 0 ni pasar de 15
+C 0x68A9 la cuarta pareja de letras es la suma de las tres primeras
+C 0x68B5 cada pareja de letras, un byte
+C 0x68CB D = la fase, E = las vidas, con las vueltas que diga el tercer byte
+C 0x68D6 se les quitan las vueltas que dio p01:6795
+C 0x68E1 la fase no puede pasar de 60
+C 0x68E7 partida nueva con esa fase y esas vidas
+C 0x68F9 bien: el letrero de 0xBEBE y 0xEDEE = 1
+C 0x6906 mal: el letrero de 0xBEAD y 0xEDEE = 2
+C 0x6925 las contrasenas especiales: FESTIVAL (0x6B57) y TRYAGAIN (0x6B5F)
+C 0x6934 TRYAGAIN: partida nueva y 0xE217 = 1 (se puede seguir tras el fin de la partida)
+C 0x693E FESTIVAL: partida nueva y 0xE255 = 1
+C 0x6948 compara las 8 letras con las de DE (en ASCII, A = 0)
+C 0x6968 la flecha debajo de la letra 0xEDEF (x de la tabla 0x6C26)
+C 0x6980 izquierda: la letra anterior
+C 0x6987 derecha: la siguiente (hasta la 7)
+C 0x698F que tecla se ha pulsado: las filas 0-1 (cifras), 5-6 (letras)...
+C 0x69C6 ...o el espacio; con nada, 0xE0
+C 0x69F5 solo cuenta si no estaba ya pulsada (0xEDEE)
+C 0x6A02 pinta la letra 0xEDED en su sitio y la guarda en 0xEDD9 + n
+C 0x6A2F lee las 11 filas del teclado a 0xEDF0-0xEDFA
+C 0x6A86 la cabecera para el Game Master 2 en 0xEE00: el nombre de 0xE270 (5 bytes)...
+C 0x6A95 ...8 ceros...
+C 0x6AA3 ...y el slot de este cartucho
+C 0x6AA8 graba: abre el fichero (orden 0), lo prepara (2) y escribe los seis trozos (9)
+C 0x6AAC el Game Master 2 en 0x8000 (ENASLT al slot de 0xF0F7)
+C 0x6AB6 su banco 4 en 0x8000
+C 0x6AB9 orden 0 con la cabecera de 0xF0E0
+C 0x6ABF la llamada al Game Master 2
+C 0x6AC3 vuelve este cartucho a 0x8000
+C 0x6AF0 los seis trozos de RAM de la tabla 0x6C6D: [desde][cuantos]
+C 0x6AF6 a 0xEE0D, con la cabecera
+C 0x6B10 orden 9: escribe el trozo
+C 0x6B25 si falla, se acaba con error
+C 0x6B3C orden 1: cierra
+C 0x6B53 0xE27F = 0: bien
+C 0x6B58 carga: orden 0, 2 y los seis trozos con la orden 8
+C 0x6BC0 orden 8: lee el trozo
+C 0x6BE8 orden 1: cierra
+C 0x6C03 error: orden 6 y 0xE27F = 2
+C 0x6C2E cuenta los ficheros del Game Master 2 que se llaman FILE (hasta 3) en 0xF0E5
+C 0x6C3A 0xEE50-0xEE70 a cero y la cabecera FILE? en 0xEE00
+C 0x6C6C orden 3: el primero
+C 0x6C9A orden 4: el siguiente, hasta que no haya
+C 0x6CBD cada nombre de la lista: si es FILE...
+C 0x6CE0 ...se cuenta
+C 0x6CEB mira que hay para grabar: disco (H.PHYD) bit 0 y Game Master 2 bit 1, en 0xF0F9
+C 0x6D07 busca el Game Master 2 en los cuatro slots (y sus secundarios)
+C 0x6D24 no hay: 0xF0F7 = 0xFF
+C 0x6D3A el slot A lleva 'YZ' en 0x4010: es el Game Master 2 (acarreo)
+C 0x6DC9 un cuadro de la piramide acabada (estado 10, cada 10 fases), por pasos (0xE257)
+C 0x6DEE paso 1: borra, la paleta de 0xA870 y sus graficos
+C 0x6E19 el sonido 0x0D y espera 0x3C cuadros
+C 0x6E1E 0xE204 = A
+C 0x6E22 el paso siguiente
+C 0x6E27 paso 2: espera
+C 0x6E3F paso 3 de la piramide acabada: con disparo o el segundo boton se acaba antes
+C 0x6E7C la direccion del paso (tabla 0xBA57)
+C 0x6E7F hasta el numero de pasos de la piramide (tabla 0x7177)
+C 0x6E84 un paso
+C 0x6EC2 paso: 14 x 6 de 0xA5EE y los dibujos de 0xA642 y 0xA6B1
+C 0x6ED1 paso: 0xEDC8 = 6 y la primera imagen
+C 0x6EDE cada 0x10 cuadros otra imagen (0xEDC8 baja); en la 5 el sonido 0x3E
+C 0x6EF7 acabadas: el fundido 4
+C 0x6F01 cada 0x10 cuadros otra imagen (0xEDC8 sube); sonidos 0x3E y 0x25
+C 0x6F1F a la 7: calla la musica y espera 0xC0 cuadros
+C 0x6F27 se acaba: la musica, la secuencia a 0 y el marcador
+C 0x6F3C un paso del personaje segun 0xEDCA (1 abajo, 2 izquierda, 3 derecha, si no arriba)
+C 0x6F55 cada B cuadros cambia el dibujo del personaje (0xEDD8 xor 3)
+C 0x6F64 Z si 0xEDC8 ha llegado al numero de pasos de la piramide (tabla 0x7177)
+C 0x6F78 la direccion del paso 0xEDC8 de la piramide (banco 13)
+C 0x6F81 la lista de la piramide en la tabla 0xBA57: [paso][direccion]..., 0xFF acaba
+C 0x6FA1 el letrero de la piramide (tabla 0xAC13 del banco 12)
+C 0x6FB4 el personaje de la secuencia (banco 12, 0xBDD7)
+C 0x6FBD lo mismo con 0xBDDA
+C 0x6FDA un cuadro del final (estado 13), por pasos (0xE257)
+C 0x6FE0 cada paso, su rutina (tabla detras)
+C 0x7070 paso 1: borra, la paleta a negro, la fuente y el fundido 0x0A
+C 0x7099 el fundido 3
+C 0x70CA el paso siguiente
+C 0x70F2 0xE204 = A y el paso siguiente
+C 0x7137 la imagen de 0xA2C8
+C 0x715F a 0x30 del final, 0xE902 = 1
+C 0x7180 cada 8 cuadros un caracter de la lista de 0xAF37 (banco 12) y el sonido 0x3D
+C 0x720E los colores 10 y 12 parpadean; luego el letrero de 0xAD58
+C 0x7227 con disparo: los colores cambian, se copia la imagen y el sonido 0x39
+C 0x724B parpadea el borde y, a 0x80, el sonido 0x3A
+C 0x726A el letrero de 0xAEDD y el fundido 0x0A
+C 0x72CF el personaje en (0x9F, 0x80), el fundido 6
+C 0x72F3 el letrero de 0xAF21 y el fundido 0x0B
+C 0x737C los letreros de la tabla 0xAD76, uno por paso (0xEDCF)
+C 0x73A0 hasta el 9, el fundido 3 entre ellos
+C 0x73C1 al final, con disparo se vuelve a empezar
+C 0x73CC el dibujo de 0xBCD2 (banco 12)
+C 0x73D5 el borde parpadea: color 0 o 11 cada 4 cuadros
+C 0x73EE pinta el letrero de HL del banco 12
+C 0x73F7 el letrero 0xEDCF de la tabla 0xAD76 (banco 12)
+C 0x7409 el color 10 parpadea cada 16 cuadros
+C 0x7485 cada 16 cuadros, el dibujo siguiente del personaje (tabla 0x7782)
+C 0x751A el editor (estado 11), por pasos (0xE25A)
+C 0x752D paso 1: los graficos de la piramide 1, su paleta, el personaje y la rejilla
+C 0x7543 0xE2C0-0xEFFF a cero
+C 0x7553 0xE25C-0xE26F a cero
+C 0x7560 el nombre (0xE270, 12 bytes) en blanco
+C 0x756E paso 2: el menu del editor (0x8B95); al acabar, segun 0xE27E
+C 0x758D la rejilla de pantallas en blanco
+C 0x7596 el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
+C 0x759E paso: la rejilla de pantallas, con su cursor
+C 0x75A1 RETURN acaba; los cursores mueven (0xE25C fila, 0xE25D columna); el disparo pone y el segundo boton quita
+C 0x75D8 poner una pantalla: si la casilla esta libre, tiene que tocar a otra
+C 0x75E2 hasta 6 pantallas (0xE25E)
+C 0x75E9 la casilla: 1 puesta, 0 quitada; y su recuadro
+C 0x762B una mas (hasta 5) con el sonido 0x32
+C 0x7633 una menos (hasta 0) con el sonido 0x32
+C 0x763A RETURN: numera las pantallas por orden (hasta 6) y sigue
+C 0x7656 0xE260 y 0xE261 a cero, la fuente del menu y el paso siguiente
+C 0x7660 el cursor de la rejilla: el sprite 0 en la casilla
+C 0x76EA los sprites, el personaje mirando a la derecha sin nada en la mano y sus dibujos
+C 0x76FA las rachas de 0xBBFC a 0xF880 (banco 13)
+C 0x7709 HL = la casilla del cursor en la rejilla (0xE788 + fila x 8 + columna)
+C 0x7717 se puede poner si toca a una pantalla puesta (arriba, abajo, izquierda o derecha); NZ si se puede
+C 0x773D NZ si en la casilla del cursor hay pantalla
+C 0x7743 el menu del editor por pasos (0xE25B)
+C 0x7755 paso 0: la pantalla de editar y su cursor
+C 0x7769 el paso siguiente del menu (0xE25B + 1)
+C 0x776E 13 x 2 caracteres de la fuente de 0xBC44 en 0xF038
+C 0x778B RETURN: segun la opcion 0xE260 (9 probar, 10 grabar o cargar, 4-6 editar)
+C 0x77AD elegir una de las 11 opciones (0xE260) con arriba y abajo; disparo elige
+C 0x77E5 las opciones 0-3 y 7-8: al paso de editar
+C 0x77EB la opcion 10: grabar o cargar (paso 5)
+C 0x7806 la opcion anterior (de 0 se pasa a la 10)
+C 0x7810 la siguiente (de 10 a 0)
+C 0x781B la flecha en la opcion, parpadeando cada 8 cuadros
+C 0x783C el submenu de la opcion (tabla 0xBCBB): cuantas tiene (0xE263) y su letrero
+C 0x786F elige en el submenu (0xE261) con arriba y abajo; disparo sigue
+C 0x78B4 elige la pantalla a editar en la rejilla (0xE262) con los cursores
+C 0x78E2 a editar la pantalla: el cursor en (0x0B, 0x0F) y lo que se pone (tabla 0x7CE4, 3 bytes por opcion)
+C 0x792E 0xE262 = la casilla de la pantalla 1
+C 0x7940 a la casilla de arriba si hay pantalla
+C 0x7949 a la de abajo
+C 0x7960 a la de la izquierda
+C 0x7968 a la de la derecha
+C 0x7972 el cursor de la rejilla (sprite 2) en la casilla 0xE262, parpadeando
+C 0x7998 probar la fase (opcion 9): solo con 0xE26A y 0xE26B puestos
+C 0x79B1 cuenta las cosas de 2 x 2 puestas (0xE700) a 0xE2F4 y 0xE2F5
+C 0x79CB pinta la pantalla que se edita: ladrillos, cosas, salida y lo de 0xE300
+C 0x79D9 las cosas de 2 x 2 de esta pantalla
+C 0x79F7 la salida (0xE2F1-0xE2F3), 4 x 4 de 0x9340
+C 0x7A14 las 64 cosas de 0xE300 (8 bytes cada una) de esta pantalla
+C 0x7A60 los ladrillos de la pantalla que se edita
+C 0x7A74 el menu de grabar y cargar (0x8A38)
+C 0x7A86 en la pantalla: RETURN vuelve al menu; si no, lo de la opcion (tabla detras)
+C 0x7AAC poner o quitar ladrillos: 0xEFD0 = el valor (disparo pone, segundo boton quita)
+C 0x7AC7 el valor en la casilla del cursor
+C 0x7AEC se marca en el mapa y se pinta
+C 0x7B1F lo mismo en la pantalla de al lado si el cursor esta en el borde
+C 0x7B3B en el borde izquierdo o derecho (x 0 o 0xF8): la pantalla de al lado
+C 0x7B55 D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7B64 A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7B6F lo mismo con otro tamano (0x5E03)
+C 0x7B75 poner o quitar una cosa de 1 x 2
+C 0x7BE0 en el borde de arriba o de abajo (y 0 o 0xB8): la pantalla de al lado
+C 0x7C0C en el borde de arriba o abajo
+C 0x7C1B limites del cursor: 0x20 x 0x00
+C 0x7C20 limites del cursor: 0x28 x 0x08
+C 0x7C2C C si (HL) es la pantalla que se edita y el cursor esta dentro del rectangulo de HL
+C 0x7C43 editor: poner al personaje (disparo) en el cursor, o quitarlo (segundo boton)
+C 0x7C56 su pantalla y su sitio
+C 0x7C64 quitarlo, si esta en esta pantalla
+C 0x7C6E 0xE26B: el personaje esta puesto
+C 0x7C71 los cuatro sprites del personaje en el editor (0xE808-0xE817), o fuera si no esta
+C 0x7CC4 editor: poner (disparo) o quitar un sitio de salida de enemigos (hasta 8, 0xE266)
+C 0x7CD9 no se pone donde ya hay uno
+C 0x7CE4 el primero libre de 0xE2C0
+C 0x7CEF el tipo (opcion del submenu + 1, con el bit 7), la cuenta, la pantalla y el sitio
+C 0x7D07 Z si ya hay un sitio de salida en el cursor
+C 0x7D21 quitar el del cursor
+C 0x7D3E los sprites de los sitios de salida de esta pantalla (desde 0xE840, dos por sitio)
+C 0x7D5D la y, o fuera si no hay
+C 0x7D82 Z si el sitio de HL esta en el cursor
+C 0x7D94 lo quita
+C 0x7D9B editor: poner (disparo) o quitar una cosa de 0xE600 (hasta 16, 0xE267); la opcion 7 son columnas
+C 0x7DBF la primera ficha libre de 0xE600, a cero
+C 0x7DD7 el tipo sale de la opcion del submenu
+C 0x7DEB su sitio y su pantalla
+C 0x7DFD lo propio de su tipo
+C 0x7E00 pinta las cosas de 0xE600 de la pantalla que se edita
+C 0x7E21 cada tipo, su dibujo (tabla detras)
+C 0x7E2F Z si ya hay una cosa en el cursor
+C 0x7E4A la cosa de tipo 1: su dibujo de 0x9374 (variante 0 o 3)
+C 0x7E60 la de tipo 2: segun la variante, los dibujos de 0x937C o de 0x9394
+C 0x7E7D la de tipo 3: una columna de B caracteres 0xFE
+C 0x7E92 quitar la cosa del cursor
+C 0x7EB9 se borra: su tamano de la tabla 0x82F3 y el fondo de 0x86C5
+C 0x7ED9 Z si la cosa de IX esta en el cursor
+C 0x7EED lo propio de cada opcion (tabla detras)
+C 0x7F01 cuanto mide hacia abajo hasta el suelo (hasta 3): si no cabe, no se pone
+C 0x7F27 hasta 0x1E
+C 0x7F3B C = cuantas casillas libres hay debajo del cursor (hasta B)
+C 0x7F53 NC si la casilla de D, E del mapa es de ladrillo (2 o 3)
+C 0x7F87 poner una columna (hasta 16, 0xE26C): crece hacia abajo hasta el suelo
+C 0x7F98 la primera libre de 0xE7C0
+C 0x7FAD pantalla, x, y y alto | 0x80
+C 0x7FC5 pinta las columnas de esta pantalla (C = 1) o las borra (C = 0)
+C 0x7FE0 una columna: B caracteres hacia abajo
+C 0x7FFC Z si ya hay una columna en el cursor
+# --- fin de lo escrito a mano ---
+
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
 D 0x6000 0x6002 partida_6000  los 2 ultimos bytes de la instruccion de p00:5FFF (3A 43 E2), que empieza en el banco 0; lo leen p00:5FFF (2 bytes)
 F 0x6000 2
@@ -56,3 +396,450 @@ F 0x74E2 16
 D 0x7913 0x792E resto_7913  lo apuntan con el banco puesto p01:78FE (0x7913); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p01:78FE (27 bytes)
 F 0x7913 16
 # --- fin de los bloques de bloques.py ---
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x6016 D, E = la esquina de la casilla del plano: columna (8 - B) x 32, fila (7 - C) x 24
+C 0x602D mas el margen del plano (0x20, 0x18)
+C 0x6055 apunta a la salida de la fase: y, x y pantalla (0xE2F3)
+C 0x6058 DE = el sitio en el plano: la casilla mas el sitio / 8 en cuartos de casilla
+C 0x605B mas el margen del plano (0x20, 0x18)
+C 0x605E apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0x607E una: su pantalla y su sitio
+C 0x6087 guarda un dato de paso de la rutina en curso y el byte siguiente (16 bits)
+C 0x609F DE = el sitio en el plano: la casilla mas el sitio / 8 en cuartos de casilla
+C 0x60A2 mas el margen del plano (0x20, 0x18)
+C 0x60B6 suma A a HL (HL = HL + A)
+C 0x60BA pinta el caracter como diga 0xEFC0
+C 0x60F7 el recuadro de 0x631E
+C 0x6101 mas el margen del plano (0x20, 0x18)
+C 0x613A la palabra de la fase
+C 0x6146 HL = la palabra A de la tabla de HL
+C 0x61AA apunta a las cosas de la fase (16 x 16 bytes)
+C 0x61B3 el tipo 3 no se marca; el 5, segun su estado
+C 0x61EA suma A a DE (DE = DE + A)
+C 0x621B HL = 0xE900 + HL x 0xC0: el mapa de la pantalla HL (0-5)
+C 0x621E suma A a HL (HL = HL + A)
+C 0x6224 corre A a la casilla C & 3 del byte
+C 0x6229 lee un dato de paso de la rutina en curso
+C 0x623D suma A a HL (HL = HL + A)
+C 0x625F pinta la cosa, si es de esta pantalla
+C 0x6279 lee la pantalla de la fase (desde 1)
+C 0x6281 guarda el fondo del bloque y lo pinta
+C 0x6297 con el bit 0 de IX+07, se repinta (tabla 0x64CF)
+C 0x62AB el despachador de Konami: la tabla va detras del call
+C 0x62C9 lee la pantalla de la fase (desde 1)
+C 0x62F7 pone el banco 13 en 0xA000
+C 0x62FA la palabra de la fase
+C 0x6306 HL = la palabra A de la tabla de HL
+C 0x6309 apunta a la tabla de colores al cargar graficos; en la partida, las cosas de 2 x 2 de la fase (16 x 8 bytes)
+C 0x632A apunta a la tabla de colores al cargar graficos; en la partida, las cosas de 2 x 2 de la fase (16 x 8 bytes)
+C 0x6333 si es de esta pantalla...
+C 0x636A el movimiento fuera de la vista: en x (IX+0B 2 o 3) o en y (0 o 1)
+C 0x63C3 el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
+C 0x63CD el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
+C 0x63D7 el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
+C 0x63E1 el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
+C 0x63F6 DE = el mapa de la pantalla A
+C 0x6405 el despachador de Konami: la tabla va detras del call
+C 0x6418 pide el sonido 0x2D
+C 0x643D el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
+C 0x6452 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0x6484 lee la pantalla de la fase (desde 1)
+C 0x6496 pone el banco 13 en 0xA000
+C 0x64A0 un atributo: [y - 1][x][dibujo][color]
+C 0x64A6 un atributo: [y - 1][x][dibujo][color]
+C 0x64A9 pone los bancos 1-2-3 (el juego)
+C 0x64CA lee la pantalla de la fase (desde 1)
+C 0x64DB pone el banco 13 en 0xA000
+C 0x64E5 un atributo: [y - 1][x][dibujo][color]
+C 0x64E8 pone los bancos 1-2-3 (el juego)
+C 0x651E apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
+C 0x6521 suma A a HL (HL = HL + A)
+C 0x652D apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
+C 0x654B crea un enemigo del tipo C (1-4) en (E, D) de la pantalla A, si hay ficha libre en 0xE500
+C 0x6569 lee la fase (1-60)
+C 0x656C HL = la palabra A de la tabla de HL
+C 0x656F apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
+C 0x658B pone el banco 12 en 0xA000
+C 0x6591 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x6594 pone los bancos 1-2-3 (el juego)
+C 0x65A4 lee el mando: lo que se acaba de pulsar
+C 0x65B4 guarda lo elegido en el menu
+C 0x65D6 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0x65E3 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0x65F9 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0x660B escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
+C 0x6617 los sprites de 0xAB59, 0x86D4, 0x8FD9, 0xAE08 y 0xA9F6
+C 0x661A los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x6623 guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x6640 lee el mando: lo que se acaba de pulsar
+C 0x664B lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x665A lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x665D el despachador de Konami: la tabla va detras del call
+C 0x667B apunta a la espera del paso (en cuadros)
+C 0x6684 apunta a la espera del paso (en cuadros)
+C 0x66BE suma A a HL (HL = HL + A)
+C 0x6710 apunta a la espera del paso (en cuadros)
+C 0x671F apunta a la espera del paso (en cuadros)
+C 0x672D apunta a la espera del paso (en cuadros)
+C 0x6732 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x674D apunta a la espera del paso (en cuadros)
+C 0x6758 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x675E 12 x 12 caracteres de 0xA358 en (D, E)
+C 0x6769 guarda la espera del paso (en cuadros)
+C 0x676E guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x6779 guarda lo elegido en el menu
+C 0x6788 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x6798 lee la fase (1-60)
+C 0x679E lee las vidas (BCD)
+C 0x67BF dos letras de A: una por cifra
+C 0x67C7 dos letras de A: una por cifra
+C 0x67CF dos letras de A: una por cifra
+C 0x67DD dos letras de A: una por cifra
+C 0x67E8 la letra de la cifra: 0xE1 + la cifra
+C 0x67F0 la letra de la cifra: 0xE1 + la cifra
+C 0x680F las rachas de 0xBBFC a 0xF880 (banco 13)
+C 0x6824 guarda el mando: lo que se acaba de pulsar
+C 0x6827 pone el banco 13 en 0xA000
+C 0x682D pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x6842 guarda lo elegido en el menu
+C 0x68EF guarda la fase (1-60)
+C 0x68F6 guarda las vidas (BCD)
+C 0x6911 pone el banco 13 en 0xA000
+C 0x6914 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x6917 pone los bancos 1-2-3 (el juego)
+C 0x691A los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x6928 compara las 8 letras con las de DE (en ASCII, A = 0)
+C 0x6930 compara las 8 letras con las de DE (en ASCII, A = 0)
+C 0x6939 guarda la marca de TRYAGAIN (se puede seguir tras el fin de la partida)
+C 0x6943 guarda la marca de FESTIVAL (invencible: p02:9AB1 no mira los enemigos)
+C 0x6974 suma A a DE (DE = DE + A)
+C 0x6A08 suma A a HL (HL = HL + A)
+C 0x6A11 pinta el caracter como diga 0xEFC0
+C 0x6A1A suma A a HL (HL = HL + A)
+C 0x6A49 la cabecera para el Game Master 2 en 0xEE00: el nombre de 0xE270 (5 bytes)...
+C 0x6A4C graba: abre el fichero (orden 0), lo prepara (2) y escribe los seis trozos (9)
+C 0x6A61 la cabecera para el Game Master 2 en 0xEE00: el nombre de 0xE270 (5 bytes)...
+C 0x6A64 carga: orden 0, 2 y los seis trozos con la orden 8
+C 0x6A89 apunta a la cabecera para el Game Master 2
+C 0x6AD0 lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6AE7 lee el slot de este cartucho
+C 0x6B03 lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6B1A lee el slot de este cartucho
+C 0x6B2F lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6B46 lee el slot de este cartucho
+C 0x6B54 guarda el resultado de grabar o cargar (0 bien, 2 error)
+C 0x6B5C lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6B73 lee el slot de este cartucho
+C 0x6B80 lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6B97 lee el slot de este cartucho
+C 0x6BB3 lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6BCA lee el slot de este cartucho
+C 0x6BDB lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6BF2 lee el slot de este cartucho
+C 0x6BFF guarda el resultado de grabar o cargar (0 bien, 2 error)
+C 0x6C1A lee el slot de este cartucho
+C 0x6C25 guarda el resultado de grabar o cargar (0 bien, 2 error)
+C 0x6C4A apunta a la cabecera para el Game Master 2
+C 0x6C52 apunta a la lista de las cosas de 0xE300 por orden de pintado
+C 0x6C58 apunta a la cabecera para el Game Master 2
+C 0x6C5F lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6C76 lee el slot de este cartucho
+C 0x6C87 suma A a HL (HL = HL + A)
+C 0x6C8D lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6CA4 lee el slot de este cartucho
+C 0x6CBA apunta a la lista de las cosas de 0xE300 por orden de pintado
+C 0x6CDB suma A a DE (DE = DE + A)
+C 0x6CF6 busca el Game Master 2 en los cuatro slots (y sus secundarios)
+C 0x6CFA lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6D03 guarda lo que hay para grabar (bit 0 disco, bit 1 Game Master 2)
+C 0x6D15 el slot A lleva 'YZ' en 0x4010: es el Game Master 2 (acarreo)
+C 0x6D26 guarda el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6D30 el slot A lleva 'YZ' en 0x4010: es el Game Master 2 (acarreo)
+C 0x6D4A lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6D54 lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6D59 lee el slot del cartucho de la otra ranura (0xFF si no hay)
+C 0x6DD3 lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x6DD7 el despachador de Konami: la tabla va detras del call
+C 0x6DF1 la paleta de 0xA7FF
+C 0x6DF4 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x6DF7 lee la piramide (1-6)
+C 0x6DFF suma A a HL (HL = HL + A)
+C 0x6E10 12 x 12 caracteres de 0xA358 en 0x1818
+C 0x6E13 rachas de 0xAF21 a 0xF820 y de 0xA9FB a 0xFE80 (sprites)
+C 0x6E16 lo mismo con 0xBDDA
+C 0x6E2A apunta a la espera del paso (en cuadros)
+C 0x6E37 el letrero de la piramide (tabla 0xAC13 del banco 12)
+C 0x6E46 lee la piramide (1-6)
+C 0x6E4E suma A a HL (HL = HL + A)
+C 0x6E66 cada B cuadros cambia el dibujo del personaje (0xEDD8 xor 3)
+C 0x6E74 apunta a la espera del paso (en cuadros)
+C 0x6E93 cada B cuadros cambia el dibujo del personaje (0xEDD8 xor 3)
+C 0x6E96 apunta a la espera del paso (en cuadros)
+C 0x6EA1 12 x 2 caracteres de 0xA5A6 en 0xB038
+C 0x6EA6 0xE204 = A
+C 0x6EAE cada B cuadros cambia el dibujo del personaje (0xEDD8 xor 3)
+C 0x6EB1 apunta a la espera del paso (en cuadros)
+C 0x6EBD 12 x 4 de 0xA5BE en 0xA838
+C 0x6ECB 14 x 6 de 0xA5EE en 0xA030
+C 0x6EED pide el sonido 0x3E
+C 0x6EF9 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x6F0F pide el sonido 0x3E
+C 0x6F16 pide el sonido 0x25
+C 0x6F2C orden 0x82 (p04:61BB), con 0xE21A a cero
+C 0x6F2F pide el sonido 1
+C 0x6F33 guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x6F6B suma A a HL (HL = HL + A)
+C 0x6F7B la lista de la piramide en la tabla 0xBA57: [paso][direccion]..., 0xFF acaba
+C 0x6F84 lee la piramide (1-6)
+C 0x6F88 HL = la palabra A de la tabla de HL
+C 0x6FA7 lee la piramide (1-6)
+C 0x6FAB HL = la palabra A de la tabla de HL
+C 0x6FAE pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x6FE4 apunta a el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x6FE9 el despachador de Konami: la tabla va detras del call
+C 0x7076 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x7079 la paleta de 0xA7FF
+C 0x70BB los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x70C1 12 x 12 caracteres de 0xA358 en (D, E)
+C 0x70C7 pide el sonido 0x12
+C 0x70F8 apunta a la espera del paso (en cuadros)
+C 0x7127 pone el banco 12 en 0xA000
+C 0x712A las estrellas del final: 0xE910 (32 de 16 bytes) a cero
+C 0x712D pone los bancos 1-2-3 (el juego)
+C 0x7130 el dibujo de 0xBCD2 (banco 12)
+C 0x713A apunta a la espera del paso (en cuadros)
+C 0x7142 12 x 12 de 0xA2C8
+C 0x7150 el dibujo de 0xBCD2 (banco 12)
+C 0x717A 0xE204 = A y el paso siguiente
+C 0x7183 apunta a la espera del paso (en cuadros)
+C 0x718D pone el banco 12 en 0xA000
+C 0x7199 suma A a HL (HL = HL + A)
+C 0x71A1 pinta el caracter como diga 0xEFC0
+C 0x71A8 pone los bancos 1-2-3 (el juego)
+C 0x71B3 apunta a la espera del paso (en cuadros)
+C 0x71E7 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x71F5 12 x 12 de 0xA702
+C 0x7208 0xE204 = A y el paso siguiente
+C 0x7214 apunta a la espera del paso (en cuadros)
+C 0x722A lee el mando: lo pulsado
+C 0x7240 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x7245 0xE204 = A y el paso siguiente
+C 0x728D apunta a la espera del paso (en cuadros)
+C 0x72A9 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x72B4 pide el sonido 0x0E
+C 0x72F6 apunta a la espera del paso (en cuadros)
+C 0x7300 la paleta de 0xA7FF
+C 0x7323 apunta a la espera del paso (en cuadros)
+C 0x7332 cada 16 cuadros, el dibujo siguiente del personaje (tabla 0x7782)
+C 0x7347 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x736F la paleta de 0xA7FF
+C 0x738B el letrero 0xEDCF de la tabla 0xAD76 (banco 12)
+C 0x73C8 guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x73CF un cuadro de las estrellas
+C 0x73E5 pone el banco 12 en 0xA000
+C 0x73E8 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x73F1 lo mismo, borrando (caracter 0)
+C 0x7400 HL = la palabra A de la tabla de HL
+C 0x7403 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x741C lee la espera del paso (en cuadros)
+C 0x742E llena BC bytes de la VRAM con A (BIGFIL)
+C 0x7495 suma A a HL (HL = HL + A)
+C 0x74AD suma A a DE (DE = DE + A)
+C 0x751E el despachador de Konami: la tabla va detras del call
+C 0x7532 guarda la piramide (1-6)
+C 0x7535 carga los graficos de la piramide (bancos 7-8-9)
+C 0x7538 los sprites, el personaje mirando a la derecha sin nada en la mano y sus dibujos
+C 0x753B el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
+C 0x7540 guarda el paso dentro del menu del editor
+C 0x7550 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x7571 lee el paso dentro del menu del editor
+C 0x7576 el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
+C 0x7581 el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
+C 0x7589 guarda el paso del editor
+C 0x75A8 lee el mando: lo que se acaba de pulsar
+C 0x75CD NZ si en la casilla del cursor hay pantalla
+C 0x75DD se puede poner si toca a una pantalla puesta (arriba, abajo, izquierda o derecha); NZ si se puede
+C 0x75FE suma A a HL (HL = HL + A)
+C 0x7618 escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
+C 0x7620 suma A a HL (HL = HL + A)
+C 0x7625 suma A a DE (DE = DE + A)
+C 0x7650 prepara los saltos de la fase hecha en el editor: las listas de 0xED80-0xEDB0
+C 0x7653 0xE262 = la casilla de la pantalla 1
+C 0x7657 apunta a la opcion del menu del editor (0-10)
+C 0x76A4 llena BC bytes de la VRAM con A (BIGFIL)
+C 0x76B9 suma A a HL (HL = HL + A)
+C 0x76C2 suma A a HL (HL = HL + A)
+C 0x76E4 suma A a HL (HL = HL + A)
+C 0x76EE guarda hacia donde mira el personaje
+C 0x76F1 guarda la marca de personaje muerto
+C 0x76F4 guarda la postura del personaje
+C 0x76F7 los dibujos de los sprites del personaje, con los bancos 14-15
+C 0x7703 lo mismo con el destino en HL
+C 0x772B suma A a HL (HL = HL + A)
+C 0x7746 el despachador de Konami: la tabla va detras del call
+C 0x7758 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x775B 13 x 2 caracteres de la fuente de 0xBC44 en 0xF038
+C 0x775E la rejilla con el numero de cada pantalla
+C 0x7761 el cursor de la rejilla (sprite 2) en la casilla 0xE262, parpadeando
+C 0x777D pone los bancos 1-2-3 (el juego)
+C 0x7791 lee la opcion del menu del editor (0-10)
+C 0x77B0 apunta a la opcion del menu del editor (0-10)
+C 0x77B3 lee el mando: lo que se acaba de pulsar
+C 0x77DC guarda la opcion del submenu del editor
+C 0x77DF el submenu de la opcion (tabla 0xBCBB): cuantas tiene (0xE263) y su letrero
+C 0x77ED guarda el paso dentro del menu del editor
+C 0x77F0 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x77F7 pinta el fondo del editor: el dibujo A de la tabla 0xBB38 (banco 13), un bit por caracter
+C 0x77FA pone el banco 13 en 0xA000
+C 0x7800 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x781D lee la opcion del menu del editor (0-10)
+C 0x7820 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0x7830 lee la cuenta de cuadros
+C 0x783F lee la opcion del menu del editor (0-10)
+C 0x7847 HL = la palabra A de la tabla de HL
+C 0x784F pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0x785E llena BC bytes de la VRAM con A (BIGFIL)
+C 0x7863 suma A a HL (HL = HL + A)
+C 0x7879 apunta a la opcion del submenu del editor
+C 0x787C lee el mando: lo que se acaba de pulsar
+C 0x7891 pide el sonido 0x32
+C 0x789D pide el sonido 0x32
+C 0x78AB lee la opcion del submenu del editor
+C 0x78BB el cursor de la rejilla (sprite 2) en la casilla 0xE262, parpadeando
+C 0x78BE apunta a la casilla de la pantalla que se edita
+C 0x78C4 lee el mando: lo que se acaba de pulsar
+C 0x78DE guarda el paso dentro del menu del editor
+C 0x78E5 apunta a la y del cursor del editor (en caracteres)
+C 0x78ED los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x78F0 pinta la pantalla que se edita: ladrillos, cosas, salida y lo de 0xE300
+C 0x78F5 guarda el paso dentro del menu del editor
+C 0x78F8 lee la opcion del menu del editor (0-10)
+C 0x7901 suma A a HL (HL = HL + A)
+C 0x793C guarda la casilla de la pantalla que se edita
+C 0x7956 suma A a DE (DE = DE + A)
+C 0x798C lee la cuenta de cuadros
+C 0x799F cuenta las cosas de 2 x 2 puestas (0xE700) a 0xE2F4 y 0xE2F5
+C 0x79A5 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0x79A8 el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
+C 0x79AD guarda el paso dentro del menu del editor
+C 0x79BE suma A a HL (HL = HL + A)
+C 0x79C4 guarda cuantas cosas de 2 x 2 hay que coger
+C 0x79C7 guarda cuantas cosas de 2 x 2 quedan por coger (con 0 se abre la salida)
+C 0x79CE lee cuantas columnas hay en el editor
+C 0x79D2 pinta las columnas de esta pantalla (C = 1) o las borra (C = 0)
+C 0x79D5 A = la pantalla que se edita (de la casilla 0xE262)
+C 0x79EC ...2 x 2 caracteres de 0x9324 en su sitio
+C 0x7A18 apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
+C 0x7A2F HL = el dibujo de la cosa A (0x9328 + 4 x A)
+C 0x7A3B suma A a HL (HL = HL + A)
+C 0x7A41 lee cuantas cosas de 0xE600 hay en el editor
+C 0x7A45 pinta las cosas de 0xE600 de la pantalla que se edita
+C 0x7A48 lee cuantos sitios de salida de enemigos hay en el editor
+C 0x7A4C los sprites de los sitios de salida de esta pantalla (desde 0xE840, dos por sitio)
+C 0x7A4F lee la marca de personaje puesto en el editor
+C 0x7A54 lee la pantalla de la fase (desde 1)
+C 0x7A58 A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7A5C los cuatro sprites del personaje en el editor (0xE808-0xE817), o fuera si no esta
+C 0x7A67 HL = 0xE900 + HL x 0xC0: el mapa de la pantalla HL (0-5)
+C 0x7A6E guarda un dato de paso de la rutina en curso
+C 0x7A7D guarda el paso dentro del menu del editor
+C 0x7A82 guarda el paso del editor
+C 0x7A8D guarda el paso dentro del menu del editor
+C 0x7A91 el cursor del editor: el sprite 0 en (0xE264, 0xE265), parpadeando
+C 0x7A94 lee la opcion del menu del editor (0-10)
+C 0x7A97 el despachador de Konami: la tabla va detras del call
+C 0x7AB2 mueve el cursor del editor de 1 en 1 (limites en 0xE27C y 0xE2FB)
+C 0x7AB5 limites del cursor: 0x20 x 0x00
+C 0x7AB9 lee el mando: lo que se acaba de pulsar
+C 0x7ACB A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7ACF D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7AD6 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
+C 0x7ADA A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0x7AF3 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0x7B03 pinta el caracter como diga 0xEFC0
+C 0x7B08 en el borde izquierdo o derecho (x 0 o 0xF8): la pantalla de al lado
+C 0x7B17 lo mismo en la pantalla de al lado si el cursor esta en el borde
+C 0x7B29 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0x7B2C A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7B35 pinta el caracter como diga 0xEFC0
+C 0x7B49 lee la casilla de la pantalla que se edita
+C 0x7B5C lee la x del cursor del editor (en caracteres)
+C 0x7B67 lee la casilla de la pantalla que se edita
+C 0x7B6A suma A a DE (DE = DE + A)
+C 0x7B78 limites del cursor: 0x28 x 0x08
+C 0x7B7C lee el mando: lo que se acaba de pulsar
+C 0x7B8D A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7B92 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
+C 0x7B95 guarda el mapa de la pantalla en la que se esta (16 bits)
+C 0x7B9A D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7BA5 lee el mapa de la pantalla en la que se esta (16 bits)
+C 0x7BAA A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0x7BC1 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0x7BC5 en el borde de arriba o de abajo (y 0 o 0xB8): la pantalla de al lado
+C 0x7BD1 pinta el caracter como diga 0xEFC0
+C 0x7BE1 en el borde de arriba o abajo
+C 0x7BF7 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0x7BFA A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7C23 lee la marca de salida puesta en el editor
+C 0x7C33 D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7C46 lee el mando: lo que se acaba de pulsar
+C 0x7C4E apunta a la y del personaje
+C 0x7C53 A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7C59 D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7C68 A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7C84 lee la y del personaje
+C 0x7C9B lee la x del personaje
+C 0x7CC7 lee el mando: lo que se acaba de pulsar
+C 0x7CCF apunta a cuantos sitios de salida de enemigos hay en el editor
+C 0x7CE1 apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
+C 0x7CEA suma A a HL (HL = HL + A)
+C 0x7CFA A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7CFF D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7D11 Z si el sitio de HL esta en el cursor
+C 0x7D18 suma A a HL (HL = HL + A)
+C 0x7D24 apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
+C 0x7D2E Z si el sitio de HL esta en el cursor
+C 0x7D33 lo quita
+C 0x7D39 suma A a HL (HL = HL + A)
+C 0x7D48 A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7D6A HL = la palabra A de la tabla de HL
+C 0x7D77 suma A a HL (HL = HL + A)
+C 0x7D7C suma A a DE (DE = DE + A)
+C 0x7D89 D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7D96 apunta a cuantos sitios de salida de enemigos hay en el editor
+C 0x7D9E lee el mando: lo que se acaba de pulsar
+C 0x7DA6 apunta a cuantas cosas de 0xE600 hay en el editor
+C 0x7DAC lee la opcion del submenu del editor
+C 0x7DB9 Z si ya hay una cosa en el cursor
+C 0x7DC8 suma A a HL (HL = HL + A)
+C 0x7DF4 A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7E04 apunta a las cosas de la fase (16 x 16 bytes)
+C 0x7E15 cada tipo, su dibujo (tabla detras)
+C 0x7E22 el despachador de Konami: la tabla va detras del call
+C 0x7E3B Z si la cosa de IX esta en el cursor
+C 0x7E88 pinta el caracter como diga 0xEFC0
+C 0x7E9D apunta a las cosas de la fase (16 x 16 bytes)
+C 0x7EAA Z si la cosa de IX esta en el cursor
+C 0x7EAD se borra: su tamano de la tabla 0x82F3 y el fondo de 0x86C5
+C 0x7EC4 suma A a HL (HL = HL + A)
+C 0x7ECB D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7EE0 D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7EF0 el despachador de Konami: la tabla va detras del call
+C 0x7F0C C = cuantas casillas libres hay debajo del cursor (hasta B)
+C 0x7F18 apunta a cuantas cosas de 0xE600 hay en el editor
+C 0x7F3D D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7F49 NC si la casilla de D, E del mapa es de ladrillo (2 o 3)
+C 0x7F54 A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7F5B HL = 0xE900 + HL x 0xC0: el mapa de la pantalla HL (0-5)
+C 0x7F61 pasa la posicion de caracter de HL a direccion de la VRAM
+C 0x7F75 suma A a HL (HL = HL + A)
+C 0x7F8F Z si ya hay una columna en el cursor
+C 0x7F95 apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
+C 0x7F9E suma A a HL (HL = HL + A)
+C 0x7FB2 D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
+C 0x7FBB C = cuantas casillas libres hay debajo del cursor (hasta B)
+C 0x7FC7 apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
+C 0x7FCE A = la pantalla que se edita (de la casilla 0xE262)
+C 0x7FD4 una columna: B caracteres hacia abajo
+# --- fin de las anotaciones de anota.py ---

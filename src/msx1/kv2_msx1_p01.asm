@@ -33,7 +33,7 @@ L_6002:
 	ld hl,0e788h		;6002
 	ld c,007h		;6005
 L_6007:
-	ld b,008h		;6007
+	ld b,008h		;6007   ; 7 filas de 8
 L_6009:
 	cp (hl)			;6009
 	jr z,L_6013		;600a
@@ -43,8 +43,8 @@ L_6009:
 	jr nz,L_6007		;6010
 	ret			;6012
 L_6013:
-	ld hl,0e282h		;6013
-	call L_610B		;6016
+	ld hl,0e282h		;6013   ; su sitio: la casilla mas su y / 8 y su x / 8
+	call L_610B		;6016   ; D, E = la esquina de la casilla del plano: columna (8 - B) x 32, fila (7 - C) x 24
 	ld a,(hl)			;6019
 	ld c,a			;601a
 	inc hl			;601b
@@ -63,8 +63,8 @@ L_6013:
 	and 01fh		;6029
 	add a,d			;602b
 	ld d,a			;602c
-	call L_611F		;602d
-	ld hl,0e804h		;6030
+	call L_611F		;602d   ; mas el margen del plano (0x20, 0x18)
+	ld hl,0e804h		;6030   ; el sprite 1, en ese sitio
 	dec e			;6033
 	ld (hl),e			;6034
 	inc hl			;6035
@@ -72,12 +72,12 @@ L_6013:
 	sub 003h		;6037
 	ld (hl),a			;6039
 	inc hl			;603a
-	ld (hl),004h		;603b
+	ld (hl),004h		;603b   ; de color 7
 	inc hl			;603d
 	ld (hl),006h		;603e
 	ret			;6040
 L_6041:
-	ld a,(0e2f3h)		;6041
+	ld a,(0e2f3h)		;6041   ; la otra marca del plano: la casilla de la pantalla 0xE2F3 y el sitio de 0xE2F1
 	ld hl,0e788h		;6044
 	ld c,007h		;6047
 L_6049:
@@ -91,20 +91,20 @@ L_604B:
 	jr nz,L_6049		;6052
 	ret			;6054
 L_6055:
-	ld hl,0e2f1h		;6055
-	call L_60BE		;6058
-	call L_611F		;605b
-	ld hl,0e800h		;605e
+	ld hl,0e2f1h		;6055   ; apunta a la salida de la fase: y, x y pantalla (0xE2F3)
+	call L_60BE		;6058   ; DE = el sitio en el plano: la casilla mas el sitio / 8 en cuartos de casilla
+	call L_611F		;605b   ; mas el margen del plano (0x20, 0x18)
+	ld hl,0e800h		;605e   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld (hl),e			;6061
 	inc hl			;6062
 	ld (hl),d			;6063
 	inc hl			;6064
-	ld (hl),000h		;6065
+	ld (hl),000h		;6065   ; el sprite 0, de color 11
 	inc hl			;6067
 	ld (hl),00fh		;6068
 	ret			;606a
 L_606B:
-	ld hl,0e700h		;606b
+	ld hl,0e700h		;606b   ; pinta en el plano las 16 cosas de 0xE700 que haya (8 bytes cada una)
 	ld b,010h		;606e
 L_6070:
 	ld a,(hl)			;6070
@@ -117,15 +117,15 @@ L_6070:
 L_607C:
 	push hl			;607c
 	push bc			;607d
-	call L_6084		;607e
+	call L_6084		;607e   ; una: su pantalla y su sitio
 	pop bc			;6081
 	pop hl			;6082
 	ret			;6083
 L_6084:
-	inc hl			;6084
+	inc hl			;6084   ; una: su pantalla y su sitio
 	ld a,(hl)			;6085
 	inc hl			;6086
-	ld (0efc0h),hl		;6087
+	ld (0efc0h),hl		;6087   ; guarda un dato de paso de la rutina en curso y el byte siguiente (16 bits)
 	ld hl,0e788h		;608a
 	ld c,007h		;608d
 L_608F:
@@ -140,9 +140,9 @@ L_6091:
 	pop hl			;609a
 	ret			;609b
 L_609C:
-	ld hl,(0efc0h)		;609c
-	call L_60BE		;609f
-	call L_611F		;60a2
+	ld hl,(0efc0h)		;609c   ; su dibujo, de la tabla de 0x62CC por su posicion
+	call L_60BE		;609f   ; DE = el sitio en el plano: la casilla mas el sitio / 8 en cuartos de casilla
+	call L_611F		;60a2   ; mas el margen del plano (0x20, 0x18)
 	ld a,b			;60a5
 	rlca			;60a6
 	rlca			;60a7
@@ -156,12 +156,12 @@ L_609C:
 	and 00ch		;60b0
 	add a,b			;60b2
 	ld hl,060d5h		;60b3
-	call 04094h		;60b6
+	call 04094h		;60b6   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;60b9
-	call 053efh		;60ba
+	call 053efh		;60ba   ; pinta el caracter como diga 0xEFC0
 	ret			;60bd
 L_60BE:
-	call L_610B		;60be
+	call L_610B		;60be   ; DE = el sitio en el plano: la casilla mas el sitio / 8 en cuartos de casilla
 	ld a,(hl)			;60c1
 	ld c,a			;60c2
 	inc hl			;60c3
@@ -195,7 +195,7 @@ DATA_resto_60D5:
 
 
 L_60E1:
-	ld hl,0e788h		;60e1
+	ld hl,0e788h		;60e1   ; pinta la rejilla: un recuadro por cada pantalla de la fase
 	ld c,007h		;60e4
 L_60E6:
 	ld b,008h		;60e6
@@ -212,19 +212,19 @@ L_60F4:
 	push af			;60f4
 	push bc			;60f5
 	push hl			;60f6
-	call L_60FE		;60f7
+	call L_60FE		;60f7   ; el recuadro de 0x631E
 	pop hl			;60fa
 	pop bc			;60fb
 	pop af			;60fc
 	ret			;60fd
 L_60FE:
-	call L_610B		;60fe
-	call L_611F		;6101
+	call L_610B		;60fe   ; el recuadro de 0x631E
+	call L_611F		;6101   ; mas el margen del plano (0x20, 0x18)
 	ld hl,06128h		;6104
 	call 04f4bh		;6107
 	ret			;610a
 L_610B:
-	ld a,008h		;610b
+	ld a,008h		;610b   ; D, E = la esquina de la casilla del plano: columna (8 - B) x 32, fila (7 - C) x 24
 	sub b			;610d
 	add a,a			;610e
 	add a,a			;610f
@@ -243,7 +243,7 @@ L_610B:
 	ld e,a			;611d
 	ret			;611e
 L_611F:
-	ld a,d			;611f
+	ld a,d			;611f   ; mas el margen del plano (0x20, 0x18)
 	add a,020h		;6120
 	ld d,a			;6122
 	ld a,e			;6123
@@ -265,43 +265,43 @@ DATA_resto_6128:
 
 
 L_6137:
-	call 041c7h		;6137
-	call L_6140		;613a
+	call 041c7h		;6137   ; lee las cosas de la fase (tabla 0xAAE0 del banco 13) a 0xE600
+	call L_6140		;613a   ; la palabra de la fase
 	jp 04192h		;613d
 L_6140:
-	ld a,(0e242h)		;6140
+	ld a,(0e242h)		;6140   ; la palabra de la fase
 	ld hl,0aae0h		;6143
-	call 04d4dh		;6146
-	ld ix,0e600h		;6149
+	call 04d4dh		;6146   ; HL = la palabra A de la tabla de HL
+	ld ix,0e600h		;6149   ; 16 fichas de 16 bytes en 0xE600
 L_614D:
-	ld a,(hl)			;614d
+	ld a,(hl)			;614d   ; cada una son 4 bytes: [tipo | pantalla][x][y][alto | variante]; 0 acaba
 	ld b,a			;614e
 	and a			;614f
 	ret z			;6150
-	rrca			;6151
+	rrca			;6151   ; el tipo (cifra alta)
 	rrca			;6152
 	rrca			;6153
 	rrca			;6154
 	and 00fh		;6155
 	ld (ix+000h),a		;6157
-	ld a,(hl)			;615a
+	ld a,(hl)			;615a   ; la pantalla (cifra baja), en IX+04 y en IX+09
 	and 00fh		;615b
 	ld (ix+004h),a		;615d
 	ld (ix+009h),a		;6160
-	inc hl			;6163
+	inc hl			;6163   ; la x
 	ld a,(hl)			;6164
 	ld (ix+002h),a		;6165
 	inc hl			;6168
-	ld a,(hl)			;6169
+	ld a,(hl)			;6169   ; la y
 	ld (ix+003h),a		;616a
 	inc hl			;616d
-	ld a,(hl)			;616e
+	ld a,(hl)			;616e   ; los 5 bits altos: IX+08
 	rrca			;616f
 	rrca			;6170
 	rrca			;6171
 	and 01fh		;6172
 	ld (ix+008h),a		;6174
-	ld a,(hl)			;6177
+	ld a,(hl)			;6177   ; los 3 bits bajos: la variante (bit 1 de IX+07 si no es 0)
 	and 007h		;6178
 	jr z,L_6182		;617a
 	set 1,(ix+007h)		;617c
@@ -309,7 +309,7 @@ L_614D:
 L_6182:
 	res 1,(ix+007h)		;6182
 L_6186:
-	ld b,a			;6186
+	ld b,a			;6186   ; IX+05 = variante x 3, solo en el tipo 1
 	add a,a			;6187
 	add a,b			;6188
 	ld b,a			;6189
@@ -321,29 +321,29 @@ L_6193:
 	ld (ix+005h),b		;6193
 	ld (ix+006h),000h		;6196
 	inc hl			;619a
-	ld de,00010h		;619b
+	ld de,00010h		;619b   ; la ficha siguiente
 	add ix,de		;619e
 	jr L_614D		;61a0
 L_61A2:
-	ld c,003h		;61a2
+	ld c,003h		;61a2   ; marca en el mapa las cosas de 0xE600 con el valor 3
 	jr L_61A8		;61a4
 L_61A6:
-	ld c,000h		;61a6
+	ld c,000h		;61a6   ; las borra del mapa (valor 0)
 L_61A8:
 	ld b,010h		;61a8
-	ld ix,0e600h		;61aa
+	ld ix,0e600h		;61aa   ; apunta a las cosas de la fase (16 x 16 bytes)
 L_61AE:
-	push bc			;61ae
+	push bc			;61ae   ; las 16
 	ld a,(ix+000h)		;61af
 	and a			;61b2
-	call nz,L_61BF		;61b3
+	call nz,L_61BF		;61b3   ; el tipo 3 no se marca; el 5, segun su estado
 	ld bc,00010h		;61b6
 	add ix,bc		;61b9
 	pop bc			;61bb
 	djnz L_61AE		;61bc
 	ret			;61be
 L_61BF:
-	cp 003h		;61bf
+	cp 003h		;61bf   ; el tipo 3 no se marca; el 5, segun su estado
 	ret z			;61c1
 	cp 005h		;61c2
 	jr nz,L_61D0		;61c4
@@ -354,9 +354,9 @@ L_61BF:
 	and a			;61ce
 	ret nz			;61cf
 L_61D0:
-	ld h,(ix+003h)		;61d0
+	ld h,(ix+003h)		;61d0   ; su sitio
 	ld l,(ix+002h)		;61d3
-	cp 002h		;61d6
+	cp 002h		;61d6   ; el tipo 2 con variante: 8 pixeles mas abajo
 	jr nz,L_61E4		;61d8
 	bit 1,(ix+007h)		;61da
 	jr z,L_61E4		;61de
@@ -364,9 +364,9 @@ L_61D0:
 	add a,008h		;61e1
 	ld h,a			;61e3
 L_61E4:
-	ld a,(ix+000h)		;61e4
+	ld a,(ix+000h)		;61e4   ; el ancho sale del tipo (tabla 0x6445)
 	ld de,l624eh		;61e7
-	call 04099h		;61ea
+	call 04099h		;61ea   ; suma A a DE (DE = DE + A)
 	ld a,(de)			;61ed
 	ld d,a			;61ee
 	ld a,c			;61ef
@@ -374,10 +374,10 @@ L_61E4:
 	ld c,d			;61f3
 	ld d,(ix+004h)		;61f4
 L_61F7:
-	ld (0efc0h),a		;61f7
+	ld (0efc0h),a		;61f7   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 	ld a,d			;61fa
 	ld (0efc1h),a		;61fb
-	call 04d7ch		;61fe
+	call 04d7ch		;61fe   ; el sitio en casillas
 	ld de,03800h		;6201
 	or a			;6204
 	sbc hl,de		;6205
@@ -386,7 +386,7 @@ L_6207:
 	push bc			;6208
 	ld b,c			;6209
 L_620A:
-	push hl			;620a
+	push hl			;620a   ; cada casilla: su byte del mapa...
 	ld c,l			;620b
 	srl h		;620c
 	rr l		;620e
@@ -396,17 +396,17 @@ L_620A:
 	ld hl,(0efc1h)		;6215
 	dec l			;6218
 	ld h,000h		;6219
-	call 05b29h		;621b
-	call 04094h		;621e
+	call 05b29h		;621b   ; HL = 0xE900 + HL x 0xC0: el mapa de la pantalla HL (0-5)
+	call 04094h		;621e   ; suma A a HL (HL = HL + A)
 	push bc			;6221
-	ld a,0fch		;6222
-	call L_6243		;6224
+	ld a,0fch		;6222   ; ...se borran sus dos bits...
+	call L_6243		;6224   ; corre A a la casilla C & 3 del byte
 	and (hl)			;6227
 	ld (hl),a			;6228
-	ld a,(0efc0h)		;6229
+	ld a,(0efc0h)		;6229   ; lee un dato de paso de la rutina en curso
 	and a			;622c
 	jr z,L_6234		;622d
-	call L_6243		;622f
+	call L_6243		;622f   ; ...y se pone el valor
 	or (hl)			;6232
 	ld (hl),a			;6233
 L_6234:
@@ -416,12 +416,12 @@ L_6234:
 	djnz L_620A		;6237
 	pop bc			;6239
 	pop hl			;623a
-	ld a,020h		;623b
-	call 04094h		;623d
+	ld a,020h		;623b   ; la fila siguiente, 32 casillas mas
+	call 04094h		;623d   ; suma A a HL (HL = HL + A)
 	djnz L_6207		;6240
 	ret			;6242
 L_6243:
-	push af			;6243
+	push af			;6243   ; corre A a la casilla C & 3 del byte
 	ld a,c			;6244
 	and 003h		;6245
 	inc a			;6247
@@ -445,30 +445,30 @@ DATA_624F:
 
 
 L_6254:
-	ld ix,0e600h		;6254
+	ld ix,0e600h		;6254   ; pinta las cosas de 0xE600 de esta pantalla (tabla 0x64D9 por tipo)
 	ld b,010h		;6258
 L_625A:
 	push bc			;625a
 	ld a,(ix+000h)		;625b
 	and a			;625e
-	call nz,L_62C6		;625f
+	call nz,L_62C6		;625f   ; pinta la cosa, si es de esta pantalla
 	ld bc,00010h		;6262
 	add ix,bc		;6265
 	pop bc			;6267
 	djnz L_625A		;6268
 	ret			;626a
 L_626B:
-	ld ix,0e600h		;626b
+	ld ix,0e600h		;626b   ; las del tipo 5 de esta pantalla: 0x9661
 	ld b,010h		;626f
 L_6271:
 	push bc			;6271
 	ld a,(ix+000h)		;6272
 	cp 005h		;6275
 	jr nz,L_6284		;6277
-	ld a,(0e243h)		;6279
+	ld a,(0e243h)		;6279   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;627c
 	jr nz,L_6284		;627f
-	call 0937ah		;6281
+	call 0937ah		;6281   ; guarda el fondo del bloque y lo pinta
 L_6284:
 	ld bc,00010h		;6284
 	add ix,bc		;6287
@@ -476,12 +476,12 @@ L_6284:
 	djnz L_6271		;628a
 	ret			;628c
 L_628D:
-	ld ix,0e600h		;628d
+	ld ix,0e600h		;628d   ; un cuadro de las 16 cosas de 0xE600: cada tipo, su rutina (tabla 0x64A4)
 	ld b,010h		;6291
 L_6293:
 	push bc			;6293
 	call L_62A5		;6294
-	call L_62B8		;6297
+	call L_62B8		;6297   ; con el bit 0 de IX+07, se repinta (tabla 0x64CF)
 	ld bc,00010h		;629a
 	add ix,bc		;629d
 	pop bc			;629f
@@ -492,7 +492,7 @@ L_62A5:
 	and a			;62a8
 	ret z			;62a9
 	dec a			;62aa
-	call 0409eh		;62ab
+	call 0409eh		;62ab   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_62AE: 5 destinos del despachador p00:409E (call en p01:62AB, el
@@ -507,19 +507,19 @@ DATA_tabla_62AE:
 
 
 L_62B8:
-	ld a,(ix+007h)		;62b8
+	ld a,(ix+007h)		;62b8   ; con el bit 0 de IX+07, se repinta (tabla 0x64CF)
 	rra			;62bb
 	ret nc			;62bc
 	res 0,(ix+007h)		;62bd
 	ld hl,062d9h		;62c1
 	jr L_62D0		;62c4
 L_62C6:
-	ld hl,062e3h		;62c6
-	ld a,(0e243h)		;62c9
+	ld hl,062e3h		;62c6   ; pinta la cosa, si es de esta pantalla
+	ld a,(0e243h)		;62c9   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;62cc
 	ret nz			;62cf
 L_62D0:
-	ld a,(ix+000h)		;62d0
+	ld a,(ix+000h)		;62d0   ; la rutina de su tipo
 	and a			;62d3
 	ret z			;62d4
 	dec a			;62d5
@@ -540,38 +540,38 @@ DATA_resto_62D9:
 
 
 L_62ED:
-	ld hl,0e700h		;62ed
-	ld b,080h		;62f0
+	ld hl,0e700h		;62ed   ; lee las cosas de 2 x 2 de la fase (tabla 0xA75D del banco 13) a 0xE700
+	ld b,080h		;62f0   ; 0xE700-0xE77F a cero
 	xor a			;62f2
 L_62F3:
 	ld (hl),a			;62f3
 	inc hl			;62f4
 	djnz L_62F3		;62f5
-	call 041c7h		;62f7
-	call L_6300		;62fa
+	call 041c7h		;62f7   ; pone el banco 13 en 0xA000
+	call L_6300		;62fa   ; la palabra de la fase
 	jp 04192h		;62fd
 L_6300:
-	ld a,(0e242h)		;6300
+	ld a,(0e242h)		;6300   ; la palabra de la fase
 	ld hl,0a75dh		;6303
-	call 04d4dh		;6306
-	ld de,0e700h		;6309
+	call 04d4dh		;6306   ; HL = la palabra A de la tabla de HL
+	ld de,0e700h		;6309   ; apunta a la tabla de colores al cargar graficos; en la partida, las cosas de 2 x 2 de la fase (16 x 8 bytes)
 L_630C:
-	ld a,(hl)			;630c
+	ld a,(hl)			;630c   ; cada una son 3 bytes: [tipo | pantalla][x][y]; 0 acaba; en 0xE700 van de 8 en 8
 	and a			;630d
 	ret z			;630e
-	rra			;630f
+	rra			;630f   ; el tipo
 	rra			;6310
 	rra			;6311
 	rra			;6312
 	and 00fh		;6313
 	ld (de),a			;6315
-	ld a,(hl)			;6316
+	ld a,(hl)			;6316   ; la pantalla
 	and 00fh		;6317
 	inc e			;6319
 	ld (de),a			;631a
 	inc e			;631b
 	inc hl			;631c
-	ldi		;631d
+	ldi		;631d   ; la x y la y
 	ldi		;631f
 	inc e			;6321
 	inc e			;6322
@@ -579,13 +579,13 @@ L_630C:
 	inc e			;6324
 	jr L_630C		;6325
 L_6327:
-	ld bc,01000h		;6327
-	ld ix,0e700h		;632a
+	ld bc,01000h		;6327   ; pinta las cosas de 0xE700 de esta pantalla
+	ld ix,0e700h		;632a   ; apunta a la tabla de colores al cargar graficos; en la partida, las cosas de 2 x 2 de la fase (16 x 8 bytes)
 L_632E:
 	push bc			;632e
 	ld a,(ix+000h)		;632f
 	and a			;6332
-	call nz,L_6340		;6333
+	call nz,L_6340		;6333   ; si es de esta pantalla...
 	ld de,00008h		;6336
 	add ix,de		;6339
 	pop bc			;633b
@@ -593,26 +593,26 @@ L_632E:
 	djnz L_632E		;633d
 	ret			;633f
 L_6340:
-	ld a,(0e243h)		;6340
+	ld a,(0e243h)		;6340   ; si es de esta pantalla...
 	cp (ix+001h)		;6343
 	ret nz			;6346
 L_6347:
-	ld hl,0903dh		;6347
+	ld hl,0903dh		;6347   ; ...2 x 2 caracteres de 0x9324 en su sitio
 	ld e,(ix+002h)		;634a
 	ld d,(ix+003h)		;634d
 	ld bc,00202h		;6350
 	jp 053d6h		;6353
 L_6356:
-	ld ix,0e500h		;6356
+	ld ix,0e500h		;6356   ; un cuadro de los 8 enemigos de 0xE500 (32 bytes cada uno)
 	ld b,008h		;635a
 L_635C:
 	push bc			;635c
 	ld a,(ix+000h)		;635d
 	and a			;6360
 	jr z,L_636D		;6361
-	call L_6400		;6363
-	bit 0,(ix+006h)		;6366
-	call nz,L_6376		;636a
+	call L_6400		;6363   ; su rutina
+	bit 0,(ix+006h)		;6366   ; con el bit 0 de IX+06, se mueve en una pantalla que no se ve
+	call nz,L_6376		;636a   ; el movimiento fuera de la vista: en x (IX+0B 2 o 3) o en y (0 o 1)
 L_636D:
 	ld de,00020h		;636d
 	add ix,de		;6370
@@ -620,17 +620,17 @@ L_636D:
 	djnz L_635C		;6373
 	ret			;6375
 L_6376:
-	ld a,(ix+00bh)		;6376
+	ld a,(ix+00bh)		;6376   ; el movimiento fuera de la vista: en x (IX+0B 2 o 3) o en y (0 o 1)
 	cp 002h		;6379
 	jr c,L_639F		;637b
-	ld l,(ix+004h)		;637d
+	ld l,(ix+004h)		;637d   ; la x de 16 bits mas o menos su velocidad (IX+09)
 	ld h,(ix+005h)		;6380
 	ld e,(ix+009h)		;6383
 	ld d,(ix+00ah)		;6386
 	jr z,L_6398		;6389
 	add hl,de			;638b
 	ld a,h			;638c
-	cp 0f1h		;638d
+	cp 0f1h		;638d   ; al pasar de 0xF1: sale por la derecha
 	jr nc,L_63CB		;638f
 L_6391:
 	ld (ix+004h),l		;6391
@@ -642,7 +642,7 @@ L_6398:
 	jr c,L_63C1		;639b
 	jr L_6391		;639d
 L_639F:
-	ld l,(ix+002h)		;639f
+	ld l,(ix+002h)		;639f   ; la y de 16 bits mas o menos su velocidad (IX+07)
 	ld h,(ix+003h)		;63a2
 	ld e,(ix+007h)		;63a5
 	ld d,(ix+008h)		;63a8
@@ -654,47 +654,47 @@ L_639F:
 L_63B4:
 	add hl,de			;63b4
 	ld a,h			;63b5
-	cp 0b1h		;63b6
+	cp 0b1h		;63b6   ; al pasar de 0xB1: sale por abajo
 	jr nc,L_63DF		;63b8
 L_63BA:
 	ld (ix+002h),l		;63ba
 	ld (ix+003h),h		;63bd
 	ret			;63c0
 L_63C1:
-	ld a,003h		;63c1
-	call L_63E9		;63c3
+	ld a,003h		;63c1   ; sale por la izquierda: aparece a la derecha (0xF0)
+	call L_63E9		;63c3   ; el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
 	ld hl,0f000h		;63c6
 	jr L_6391		;63c9
 L_63CB:
-	ld a,004h		;63cb
-	call L_63E9		;63cd
+	ld a,004h		;63cb   ; sale por la derecha: aparece a la izquierda
+	call L_63E9		;63cd   ; el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
 	ld hl,00000h		;63d0
 	jr L_6391		;63d3
 L_63D5:
-	ld a,001h		;63d5
-	call L_63E9		;63d7
+	ld a,001h		;63d5   ; sale por arriba: aparece abajo (0xB0)
+	call L_63E9		;63d7   ; el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
 	ld hl,0b000h		;63da
 	jr L_63BA		;63dd
 L_63DF:
-	ld a,002h		;63df
-	call L_63E9		;63e1
+	ld a,002h		;63df   ; sale por abajo: aparece arriba
+	call L_63E9		;63e1   ; el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
 	ld hl,00000h		;63e4
 	jr L_63BA		;63e7
 L_63E9:
-	ld b,(ix+016h)		;63e9
+	ld b,(ix+016h)		;63e9   ; el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
 	call 05c2fh		;63ec
-	ld (ix+016h),h		;63ef
+	ld (ix+016h),h		;63ef   ; IX+16 la casilla, IX+10 la pantalla
 	ld (ix+010h),l		;63f2
 	ld a,l			;63f5
-	call 0aa90h		;63f6
+	call 0aa90h		;63f6   ; DE = el mapa de la pantalla A
 	ld (ix+00ch),e		;63f9
 	ld (ix+00dh),d		;63fc
 	ret			;63ff
 L_6400:
-	ld a,(ix+000h)		;6400
+	ld a,(ix+000h)		;6400   ; la rutina del tipo del enemigo (tabla detras)
 	dec a			;6403
 	ret m			;6404
-	call 0409eh		;6405
+	call 0409eh		;6405   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_6408: 5 destinos del despachador p00:409E (call en p01:6405, el
@@ -709,15 +709,15 @@ DATA_tabla_6408:
 
 
 L_6412:
-	ld a,(0e243h)		;6412
+	ld a,(0e243h)		;6412   ; entra en la pantalla en la que se esta: el sonido 0x2D y pasa al tipo 5
 	cp (ix+010h)		;6415
-	call z,042bfh		;6418
+	call z,042bfh		;6418   ; pide el sonido 0x2D
 	ld (ix+000h),005h		;641b
 	xor a			;641f
 	ld (ix+013h),a		;6420
 	ld (ix+014h),a		;6423
 	ld (ix+006h),a		;6426
-	ld a,(0f0f4h)		;6429
+	ld a,(0f0f4h)		;6429   ; en MSX2, sus colores: 0x0A y 0x4B
 	and a			;642c
 	ret z			;642d
 	ld (ix+01eh),00ah		;642e
@@ -726,7 +726,7 @@ L_6412:
 L_6437:
 	ld hl,06447h		;6437
 	ld de,0644bh		;643a
-	call 0b45bh		;643d
+	call 0b45bh		;643d   ; el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
 	jp z,L_6510		;6440
 	ld (ix+011h),a		;6443
 	ret			;6446
@@ -745,15 +745,15 @@ DATA_resto_6447:
 
 
 L_644F:
-	call L_646E		;644f
-	ld a,(0f0f4h)		;6452
+	call L_646E		;644f   ; los sprites de los enemigos de esta pantalla; en MSX2, sus colores a 0xD300
+	ld a,(0f0f4h)		;6452   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;6455
 	ret z			;6456
 	ld hl,0e843h		;6457
 	ld de,0d300h		;645a
 	ld c,010h		;645d
 L_645F:
-	ld a,(hl)			;645f
+	ld a,(hl)			;645f   ; 16 colores por sprite, el color de su atributo
 	ld b,010h		;6460
 L_6462:
 	ld (de),a			;6462
@@ -767,10 +767,10 @@ L_6462:
 	jr nz,L_645F		;646b
 	ret			;646d
 L_646E:
-	ld ix,0e500h		;646e
+	ld ix,0e500h		;646e   ; los atributos de los sprites de los enemigos, desde 0xE840
 	ld de,0e840h		;6472
 	ld b,008h		;6475
-	ld a,(0f0f4h)		;6477
+	ld a,(0f0f4h)		;6477   ; en MSX1, un sprite por enemigo; en MSX2, dos
 	and a			;647a
 	jr z,L_64C3		;647b
 L_647D:
@@ -778,23 +778,23 @@ L_647D:
 	ld a,(ix+000h)		;647e
 	and a			;6481
 	jr z,L_64B5		;6482
-	ld a,(0e243h)		;6484
+	ld a,(0e243h)		;6484   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;6487
 	jr nz,L_64B5		;648a
-	ld l,(ix+011h)		;648c
+	ld l,(ix+011h)		;648c   ; IX+11: su dibujo (0xFF: no se ve)
 	ld a,l			;648f
 	inc a			;6490
 	jr z,L_64B5		;6491
 	ld h,000h		;6493
 	add hl,hl			;6495
-	call 041c7h		;6496
-	ld bc,0beedh		;6499
+	call 041c7h		;6496   ; pone el banco 13 en 0xA000
+	ld bc,0beedh		;6499   ; de la tabla de 0xBEED (dos bytes por dibujo)
 	add hl,bc			;649c
 	ld c,(ix+01eh)		;649d
-	call L_64FD		;64a0
+	call L_64FD		;64a0   ; un atributo: [y - 1][x][dibujo][color]
 	ld c,(ix+01fh)		;64a3
-	call L_64FD		;64a6
-	call 04192h		;64a9
+	call L_64FD		;64a6   ; un atributo: [y - 1][x][dibujo][color]
+	call 04192h		;64a9   ; pone los bancos 1-2-3 (el juego)
 L_64AC:
 	ld bc,00020h		;64ac
 	add ix,bc		;64af
@@ -802,7 +802,7 @@ L_64AC:
 	djnz L_647D		;64b2
 	ret			;64b4
 L_64B5:
-	ld a,0e0h		;64b5
+	ld a,0e0h		;64b5   ; fuera de la pantalla: y = 0xE0
 	ld (de),a			;64b7
 	inc e			;64b8
 	inc e			;64b9
@@ -819,7 +819,7 @@ L_64C3:
 	ld a,(ix+000h)		;64c4
 	and a			;64c7
 	jr z,L_64F4		;64c8
-	ld a,(0e243h)		;64ca
+	ld a,(0e243h)		;64ca   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;64cd
 	jr nz,L_64F4		;64d0
 	ld l,(ix+011h)		;64d2
@@ -827,12 +827,12 @@ L_64C3:
 	inc a			;64d6
 	jr z,L_64F4		;64d7
 	ld h,000h		;64d9
-	call 041c7h		;64db
-	ld bc,0becfh		;64de
+	call 041c7h		;64db   ; pone el banco 13 en 0xA000
+	ld bc,0becfh		;64de   ; en MSX1, de la tabla 0xBECF (un byte)
 	add hl,bc			;64e1
 	ld c,(ix+01eh)		;64e2
-	call L_64FD		;64e5
-	call 04192h		;64e8
+	call L_64FD		;64e5   ; un atributo: [y - 1][x][dibujo][color]
+	call 04192h		;64e8   ; pone los bancos 1-2-3 (el juego)
 L_64EB:
 	ld bc,00020h		;64eb
 	add ix,bc		;64ee
@@ -848,7 +848,7 @@ L_64F4:
 	inc e			;64fa
 	jr L_64EB		;64fb
 L_64FD:
-	ld a,(ix+003h)		;64fd
+	ld a,(ix+003h)		;64fd   ; un atributo: [y - 1][x][dibujo][color]
 	dec a			;6500
 	ld (de),a			;6501
 	inc e			;6502
@@ -864,7 +864,7 @@ L_64FD:
 	inc e			;650e
 	ret			;650f
 L_6510:
-	xor a			;6510
+	xor a			;6510   ; el enemigo se va: su sitio de salida (0xE2C0 + 5 x IX+15) se marca para que salga otro
 	ld (ix+000h),a		;6511
 	ld (ix+013h),a		;6514
 	ld a,(ix+015h)		;6517
@@ -872,24 +872,24 @@ L_6510:
 	add a,a			;651b
 	add a,a			;651c
 	add a,c			;651d
-	ld hl,0e2c0h		;651e
-	call 04094h		;6521
+	ld hl,0e2c0h		;651e   ; apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
+	call 04094h		;6521   ; suma A a HL (HL = HL + A)
 	set 7,(hl)		;6524
 	ret			;6526
 L_6527:
-	ld a,(0e203h)		;6527
+	ld a,(0e203h)		;6527   ; cada 4 cuadros, los 8 sitios de salida de 0xE2C0
 	and 003h		;652a
 	ret nz			;652c
-	ld hl,0e2c0h		;652d
+	ld hl,0e2c0h		;652d   ; apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
 	ld bc,00800h		;6530
 L_6533:
 	push bc			;6533
 	push hl			;6534
-	bit 7,(hl)		;6535
+	bit 7,(hl)		;6535   ; con el bit 7, su cuenta baja...
 	jr z,L_654E		;6537
 	inc hl			;6539
 	dec (hl)			;653a
-	jr nz,L_654E		;653b
+	jr nz,L_654E		;653b   ; ...y al acabar sale un enemigo nuevo (0xAC6D) y la cuenta vuelve a 0x30
 	ld b,c			;653d
 	dec hl			;653e
 	res 7,(hl)		;653f
@@ -902,7 +902,7 @@ L_6533:
 	ld e,(hl)			;6548
 	inc hl			;6549
 	ld d,(hl)			;654a
-	call 0a9e8h		;654b
+	call 0a9e8h		;654b   ; crea un enemigo del tipo C (1-4) en (E, D) de la pantalla A, si hay ficha libre en 0xE500
 L_654E:
 	pop hl			;654e
 	pop bc			;654f
@@ -915,8 +915,8 @@ L_654E:
 	djnz L_6533		;6556
 	ret			;6558
 L_6559:
-	call 041c7h		;6559
-	ld hl,0e2c0h		;655c
+	call 041c7h		;6559   ; lee los sitios de salida de la fase (tabla 0xB7CD del banco 13) a 0xE2C0
+	ld hl,0e2c0h		;655c   ; 0xE2C0-0xE2E7 a cero
 	ld b,028h		;655f
 	xor a			;6561
 L_6562:
@@ -924,18 +924,18 @@ L_6562:
 	inc hl			;6563
 	djnz L_6562		;6564
 	ld hl,0b7cdh		;6566
-	ld a,(0e242h)		;6569
-	call 04d4dh		;656c
-	ld de,0e2c0h		;656f
+	ld a,(0e242h)		;6569   ; lee la fase (1-60)
+	call 04d4dh		;656c   ; HL = la palabra A de la tabla de HL
+	ld de,0e2c0h		;656f   ; apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
 L_6572:
-	ld a,(hl)			;6572
+	ld a,(hl)			;6572   ; cada uno son 4 bytes: [tipo] y 3 mas; un 0 acaba
 	inc hl			;6573
 	and a			;6574
 	jp z,04192h		;6575
-	or 080h		;6578
+	or 080h		;6578   ; el tipo con el bit 7: listo para salir
 	ld (de),a			;657a
 	inc e			;657b
-	ld a,014h		;657c
+	ld a,014h		;657c   ; su cuenta: 0x14
 	ld (de),a			;657e
 	inc e			;657f
 	ldi		;6580
@@ -943,18 +943,18 @@ L_6572:
 	ldi		;6584
 	jr L_6572		;6586
 L_6588:
-	call 04ec7h		;6588
-	call 041bdh		;658b
+	call 04ec7h		;6588   ; el menu de grabar y cargar (estado 3): el letrero de 0xB185
+	call 041bdh		;658b   ; pone el banco 12 en 0xA000
 	ld hl,0b185h		;658e
-	call 04f0bh		;6591
-	call 04192h		;6594
-	xor a			;6597
+	call 04f0bh		;6591   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 04192h		;6594   ; pone los bancos 1-2-3 (el juego)
+	xor a			;6597   ; lo elegido: 0
 	ld (0e24bh),a		;6598
 	jp L_65F6		;659b
 L_659E:
-	call 0564ah		;659e
+	call 0564ah		;659e   ; un cuadro del menu: arriba y abajo mueven la flecha, disparo elige
 	ld hl,0e24bh		;65a1
-	ld a,(0e207h)		;65a4
+	ld a,(0e207h)		;65a4   ; lee el mando: lo que se acaba de pulsar
 	rra			;65a7
 	jr c,L_65B8		;65a8
 	rra			;65aa
@@ -963,11 +963,11 @@ L_659E:
 	rra			;65ae
 	rra			;65af
 	jr nc,L_65CF		;65b0
-	ld a,001h		;65b2
-	ld (0e24ah),a		;65b4
+	ld a,001h		;65b2   ; elegido: 0xE24A = 1
+	ld (0e24ah),a		;65b4   ; guarda lo elegido en el menu
 	ret			;65b7
 L_65B8:
-	call 042d3h		;65b8
+	call 042d3h		;65b8   ; arriba: el sonido 0x32 y la opcion anterior (de 0 a 2)
 	dec (hl)			;65bb
 	ld a,(hl)			;65bc
 	rla			;65bd
@@ -975,20 +975,20 @@ L_65B8:
 	ld (hl),002h		;65c0
 	jr L_65CF		;65c2
 L_65C4:
-	call 042d3h		;65c4
+	call 042d3h		;65c4   ; abajo: la siguiente
 	inc (hl)			;65c7
 	ld a,(hl)			;65c8
 	cp 003h		;65c9
 	jr c,L_65CF		;65cb
 	ld (hl),000h		;65cd
 L_65CF:
-	ld a,(hl)			;65cf
+	ld a,(hl)			;65cf   ; la flecha (sprite 0) en la fila de la opcion
 	add a,a			;65d0
 	add a,a			;65d1
 	add a,a			;65d2
 	add a,a			;65d3
 	add a,050h		;65d4
-	ld hl,0e800h		;65d6
+	ld hl,0e800h		;65d6   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld (hl),a			;65d9
 	inc hl			;65da
 	ld (hl),050h		;65db
@@ -996,18 +996,18 @@ L_65CF:
 	ld (hl),014h		;65de
 	inc hl			;65e0
 	ld (hl),008h		;65e1
-	ld a,(0f0f4h)		;65e3
+	ld a,(0f0f4h)		;65e3   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;65e6
 	ret z			;65e7
-	ld hl,0d200h		;65e8
+	ld hl,0d200h		;65e8   ; en MSX2, de color 7
 	ld de,0d201h		;65eb
 	ld (hl),007h		;65ee
 	ld bc,0000fh		;65f0
 	ldir		;65f3
 	ret			;65f5
 L_65F6:
-	call 041bdh		;65f6
-	ld a,(0f0f4h)		;65f9
+	call 041bdh		;65f6   ; el dibujo de la flecha, 32 bytes de 0xB1B6 (en 0xF8A0 en MSX2, 0x18A0 en MSX1)
+	ld a,(0f0f4h)		;65f9   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;65fc
 	ld de,018a0h		;65fd
 	jr z,L_6605		;6600
@@ -1015,17 +1015,17 @@ L_65F6:
 L_6605:
 	ld hl,0b1b6h		;6605
 	ld bc,00020h		;6608
-	call 04e06h		;660b
+	call 04e06h		;660b   ; escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
 	jp 04192h		;660e
 L_6611:
-	call 04ec7h		;6611
+	call 04ec7h		;6611   ; la entrada (opcion 0 del menu, antes de empezar): graficos y paleta
 	call 056d8h		;6614
-	call 05854h		;6617
-	call 05b38h		;661a
+	call 05854h		;6617   ; los sprites de 0xAB59, 0x86D4, 0x8FD9, 0xAE08 y 0xA9F6
+	call 05b38h		;661a   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld a,004h		;661d
-	call 05758h		;661f
-	xor a			;6622
-	ld (0e257h),a		;6623
+	call 05758h		;661f   ; 32 columnas de la tabla de 0x9D58 desde la 4
+	xor a			;6622   ; 0xE257 = 0: el paso de la entrada
+	ld (0e257h),a		;6623   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	ld (0edcch),a		;6626
 	ld (0edc9h),a		;6629
 	ld (0edceh),a		;662c
@@ -1035,23 +1035,23 @@ L_6611:
 	ld (0edcbh),a		;6635
 	ret			;6638
 L_6639:
-	ld a,(0e257h)		;6639
+	ld a,(0e257h)		;6639   ; un cuadro de la entrada; con disparo se salta
 	cp 009h		;663c
 	jr nc,L_6648		;663e
-	ld a,(0e207h)		;6640
+	ld a,(0e207h)		;6640   ; lee el mando: lo que se acaba de pulsar
 	and 010h		;6643
 	jp nz,L_6752		;6645
 L_6648:
-	call L_6656		;6648
-	ld a,(0e257h)		;664b
+	call L_6656		;6648   ; el paso; en los primeros (hasta 9) tambien 0x7786
+	ld a,(0e257h)		;664b   ; lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	cp 008h		;664e
 	call c,L_74A1		;6650
 	jp 0564ah		;6653
 L_6656:
-	ld hl,0edc9h		;6656
+	ld hl,0edc9h		;6656   ; cada paso, su rutina (tabla detras)
 	inc (hl)			;6659
-	ld a,(0e257h)		;665a
-	call 0409eh		;665d
+	ld a,(0e257h)		;665a   ; lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
+	call 0409eh		;665d   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_6660: 11 destinos del despachador p00:409E (call en p01:665D, el
@@ -1068,24 +1068,24 @@ DATA_tabla_6660:
 
 
 L_6676:
-	call 05b38h		;6676
+	call 05b38h		;6676   ; espera 0x10 cuadros
 	ld a,010h		;6679
 L_667B:
-	ld hl,0e204h		;667b
+	ld hl,0e204h		;667b   ; apunta a la espera del paso (en cuadros)
 	ld (hl),a			;667e
 L_667F:
-	ld hl,0e257h		;667f
+	ld hl,0e257h		;667f   ; el paso siguiente
 	inc (hl)			;6682
 	ret			;6683
 L_6684:
-	ld hl,0e204h		;6684
+	ld hl,0e204h		;6684   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;6687
 	ret nz			;6688
 	ld a,09fh		;6689
 	ld (0edcbh),a		;668b
 	jr L_667F		;668e
 L_6690:
-	call L_7485		;6690
+	call L_7485		;6690   ; cada dos cuadros 0xEDCC sube hasta 0x60
 	ld a,(0edc9h)		;6693
 	rra			;6696
 	ret c			;6697
@@ -1100,7 +1100,7 @@ L_6690:
 	ld (0edceh),a		;66a7
 	jp L_667F		;66aa
 L_66AD:
-	ld a,(0edc9h)		;66ad
+	ld a,(0edc9h)		;66ad   ; 0xEDCB se mueve por la tabla de 0x68DD (30 pasos)
 	rra			;66b0
 	ret c			;66b1
 	ld hl,0edceh		;66b2
@@ -1109,7 +1109,7 @@ L_66AD:
 	cp 01eh		;66b7
 	jr nc,L_66CD		;66b9
 	ld hl,066d9h		;66bb
-	call 04094h		;66be
+	call 04094h		;66be   ; suma A a HL (HL = HL + A)
 	ld a,(0edcbh)		;66c1
 	add a,(hl)			;66c4
 	ld (0edcbh),a		;66c5
@@ -1138,7 +1138,7 @@ DATA_resto_66D9:
 
 
 L_66F7:
-	call L_7485		;66f7
+	call L_7485		;66f7   ; 0xEDCC sigue hasta 0xD8
 	ld a,(0edc9h)		;66fa
 	rra			;66fd
 	ret c			;66fe
@@ -1152,7 +1152,7 @@ L_66F7:
 	ld a,010h		;670b
 	jp L_667B		;670d
 L_6710:
-	ld hl,0e204h		;6710
+	ld hl,0e204h		;6710   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;6713
 	ret nz			;6714
 	ld a,006h		;6715
@@ -1160,7 +1160,7 @@ L_6710:
 	ld a,030h		;671a
 	jp L_667B		;671c
 L_671F:
-	ld hl,0e204h		;671f
+	ld hl,0e204h		;671f   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;6722
 	ret nz			;6723
 	xor a			;6724
@@ -1168,10 +1168,10 @@ L_671F:
 	ld a,010h		;6728
 	jp L_667B		;672a
 L_672D:
-	ld hl,0e204h		;672d
+	ld hl,0e204h		;672d   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;6730
 	ret nz			;6731
-	call 05b38h		;6732
+	call 05b38h		;6732   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld a,001h		;6735
 	call 053f9h		;6737
 	call 0550bh		;673a
@@ -1184,50 +1184,50 @@ L_6740:
 	ld a,020h		;6748
 	jp L_667B		;674a
 L_674D:
-	ld hl,0e204h		;674d
+	ld hl,0e204h		;674d   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;6750
 	ret nz			;6751
 L_6752:
-	call 04ec7h		;6752
+	call 04ec7h		;6752   ; la pantalla de la contrasena: el dibujo de 0xA358 y el letrero
 	call 04eeah		;6755
-	call 05b38h		;6758
+	call 05b38h		;6758   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld de,05040h		;675b
-	call 056edh		;675e
+	call 056edh		;675e   ; 12 x 12 caracteres de 0xA358 en (D, E)
 	ld hl,0ac01h		;6761
 	call L_73E5		;6764
 	ld a,0c0h		;6767
-	ld (0e204h),a		;6769
+	ld (0e204h),a		;6769   ; guarda la espera del paso (en cuadros)
 	ld a,00ah		;676c
-	ld (0e257h),a		;676e
+	ld (0e257h),a		;676e   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	ret			;6771
 L_6772:
-	ld hl,0e204h		;6772
+	ld hl,0e204h		;6772   ; espera y vuelve
 	dec (hl)			;6775
 	ret nz			;6776
 	ld a,001h		;6777
-	ld (0e24ah),a		;6779
+	ld (0e24ah),a		;6779   ; guarda lo elegido en el menu
 	ret			;677c
 L_677D:
-	call L_6795		;677d
+	call L_6795		;677d   ; la contrasena: se calcula y se pinta
 	ld a,0ffh		;6780
 	ld (0ede1h),a		;6782
 	ld hl,06800h		;6785
-	call 04f0bh		;6788
+	call 04f0bh		;6788   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld de,05ca0h		;678b
 	ld hl,0edd9h		;678e
 	call 04f15h		;6791
 	ret			;6794
 L_6795:
-	ld de,0ede2h		;6795
-	ld a,(0e242h)		;6798
+	ld de,0ede2h		;6795   ; la contrasena: la fase, las vidas y un numero al azar (el registro R)...
+	ld a,(0e242h)		;6798   ; lee la fase (1-60)
 	ld (de),a			;679b
 	inc de			;679c
 	ld h,a			;679d
-	ld a,(0e240h)		;679e
+	ld a,(0e240h)		;679e   ; lee las vidas (BCD)
 	ld (de),a			;67a1
 	inc de			;67a2
 	ld l,a			;67a3
-	ld a,r		;67a4
+	ld a,r		;67a4   ; ...el azar dice cuantas vueltas se da a la fase y las vidas
 	ld (de),a			;67a6
 	ld c,a			;67a7
 	and 007h		;67a8
@@ -1242,19 +1242,19 @@ L_67B5:
 	or a			;67b5
 	djnz L_67AD		;67b6
 L_67B8:
-	ld de,0edd9h		;67b8
+	ld de,0edd9h		;67b8   ; cada byte, dos letras
 	ld a,h			;67bb
 	ld (0ede5h),a		;67bc
-	call L_67E1		;67bf
+	call L_67E1		;67bf   ; dos letras de A: una por cifra
 	ld h,l			;67c2
 	ld a,h			;67c3
 	ld (0ede6h),a		;67c4
-	call L_67E1		;67c7
+	call L_67E1		;67c7   ; dos letras de A: una por cifra
 	ld h,c			;67ca
 	ld a,h			;67cb
 	ld (0ede7h),a		;67cc
-	call L_67E1		;67cf
-	ld hl,0ede5h		;67d2
+	call L_67E1		;67cf   ; dos letras de A: una por cifra
+	ld hl,0ede5h		;67d2   ; y la suma de los tres, de control
 	ld a,(hl)			;67d5
 	inc hl			;67d6
 	add a,(hl)			;67d7
@@ -1263,26 +1263,26 @@ L_67B8:
 	inc hl			;67da
 	ld (hl),a			;67db
 	ld h,a			;67dc
-	call L_67E1		;67dd
+	call L_67E1		;67dd   ; dos letras de A: una por cifra
 	ret			;67e0
 L_67E1:
-	ld a,h			;67e1
+	ld a,h			;67e1   ; dos letras de A: una por cifra
 	rrca			;67e2
 	rrca			;67e3
 	rrca			;67e4
 	rrca			;67e5
 	and 00fh		;67e6
-	call L_67F6		;67e8
+	call L_67F6		;67e8   ; la letra de la cifra: 0xE1 + la cifra
 	ld (de),a			;67eb
 	inc de			;67ec
 	ld a,h			;67ed
 	and 00fh		;67ee
-	call L_67F6		;67f0
+	call L_67F6		;67f0   ; la letra de la cifra: 0xE1 + la cifra
 	ld (de),a			;67f3
 	inc de			;67f4
 	ret			;67f5
 L_67F6:
-	ld b,0e1h		;67f6
+	ld b,0e1h		;67f6   ; la letra de la cifra: 0xE1 + la cifra
 	cp 019h		;67f8
 	jr c,L_67FE		;67fa
 	ld b,0d1h		;67fc
@@ -1304,23 +1304,23 @@ DATA_resto_6800:
 
 
 L_680C:
-	call 04ec7h		;680c
-	call L_76FA		;680f
+	call 04ec7h		;680c   ; la pantalla de meter la contrasena: 0xEDD9-0xEDFE a cero y el letrero de 0xBE91
+	call L_76FA		;680f   ; las rachas de 0xBBFC a 0xF880 (banco 13)
 	ld hl,0edd9h		;6812
 	ld de,0eddah		;6815
 	ld bc,00025h		;6818
 	ld (hl),a			;681b
 	ldir		;681c
-	ld a,020h		;681e
+	ld a,020h		;681e   ; 0xEDEE = 0x20
 	ld (0edeeh),a		;6820
 	xor a			;6823
-	ld (0e207h),a		;6824
-	call 041c7h		;6827
+	ld (0e207h),a		;6824   ; guarda el mando: lo que se acaba de pulsar
+	call 041c7h		;6827   ; pone el banco 13 en 0xA000
 	ld hl,0be91h		;682a
-	call 04f0bh		;682d
+	call 04f0bh		;682d   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	jp 04192h		;6830
 L_6833:
-	call 0564ah		;6833
+	call 0564ah		;6833   ; un cuadro de la contrasena; tras el letrero de bien o mal, una espera (0xEDEC) y se sale con 0xEDED
 	ld hl,0edebh		;6836
 	ld a,(hl)			;6839
 	or a			;683a
@@ -1330,31 +1330,31 @@ L_6833:
 	ret nz			;683f
 	inc hl			;6840
 	ld a,(hl)			;6841
-	ld (0e24ah),a		;6842
+	ld (0e24ah),a		;6842   ; guarda lo elegido en el menu
 	ld hl,0edebh		;6845
 	ld (hl),000h		;6848
 	ret			;684a
 L_684B:
-	call L_6968		;684b
+	call L_6968		;684b   ; la flecha y las teclas
 	ld hl,0edefh		;684e
-	ld a,(0e207h)		;6851
+	ld a,(0e207h)		;6851   ; izquierda y derecha mueven la letra en la que se escribe (0xEDEF, de 0 a 7)
 	rra			;6854
 	rra			;6855
 	rra			;6856
 	jp c,L_6980		;6857
 	rra			;685a
 	jp c,L_6987		;685b
-	call L_6A2F		;685e
-	call L_698F		;6861
+	call L_6A2F		;685e   ; el teclado entero a 0xEDF0
+	call L_698F		;6861   ; la letra que se ha pulsado
 	ld a,(0ededh)		;6864
 	or a			;6867
 	jr z,L_686D		;6868
-	call L_6A02		;686a
+	call L_6A02		;686a   ; una letra nueva: se pinta y se pasa a la siguiente
 L_686D:
-	ld a,(0edf7h)		;686d
+	ld a,(0edf7h)		;686d   ; sin RETURN (bit 7 de 0xEDF7) no se comprueba
 	rla			;6870
 	ret c			;6871
-	ld hl,0edd9h		;6872
+	ld hl,0edd9h		;6872   ; las 8 letras a valores: las 0xE1-... dan 0-..., las 0xD0-0xD9 tambien
 	ld b,008h		;6875
 L_6877:
 	ld a,(hl)			;6877
@@ -1367,9 +1367,9 @@ L_687F:
 	ld (hl),a			;6880
 	inc hl			;6881
 	djnz L_6877		;6882
-	call L_6925		;6884
+	call L_6925		;6884   ; primero las dos contrasenas especiales
 	jp z,L_68F9		;6887
-	ld hl,0edd9h		;688a
+	ld hl,0edd9h		;688a   ; ninguna letra puede ser 0 ni pasar de 15
 	ld b,007h		;688d
 	ld a,(hl)			;688f
 	inc hl			;6890
@@ -1389,7 +1389,7 @@ L_689E:
 	jr nc,L_6906		;68a4
 	inc hl			;68a6
 	djnz L_689E		;68a7
-	ld hl,0ede2h		;68a9
+	ld hl,0ede2h		;68a9   ; la cuarta pareja de letras es la suma de las tres primeras
 	ld a,(hl)			;68ac
 	inc hl			;68ad
 	add a,(hl)			;68ae
@@ -1398,7 +1398,7 @@ L_689E:
 	inc hl			;68b1
 	cp (hl)			;68b2
 	jr nz,L_6906		;68b3
-	ld hl,0edd9h		;68b5
+	ld hl,0edd9h		;68b5   ; cada pareja de letras, un byte
 	ld de,0ede2h		;68b8
 	ld b,004h		;68bb
 L_68BD:
@@ -1414,7 +1414,7 @@ L_68BD:
 	ld (de),a			;68c7
 	inc de			;68c8
 	djnz L_68BD		;68c9
-	ld hl,0ede2h		;68cb
+	ld hl,0ede2h		;68cb   ; D = la fase, E = las vidas, con las vueltas que diga el tercer byte
 	ld d,(hl)			;68ce
 	inc hl			;68cf
 	ld e,(hl)			;68d0
@@ -1423,29 +1423,29 @@ L_68BD:
 	and 007h		;68d3
 	ld b,a			;68d5
 L_68D6:
-	rl e		;68d6
+	rl e		;68d6   ; se les quitan las vueltas que dio p01:6795
 	rl d		;68d8
 	jr nc,L_68DE		;68da
 	set 0,e		;68dc
 L_68DE:
 	or a			;68de
 	djnz L_68D6		;68df
-	ld a,d			;68e1
+	ld a,d			;68e1   ; la fase no puede pasar de 60
 	cp 03dh		;68e2
 	jr nc,L_6906		;68e4
 	push de			;68e6
-	call 04c02h		;68e7
+	call 04c02h		;68e7   ; partida nueva con esa fase y esas vidas
 	pop de			;68ea
 	ld a,d			;68eb
 	or a			;68ec
 	jr z,L_6906		;68ed
-	ld (0e242h),a		;68ef
+	ld (0e242h),a		;68ef   ; guarda la fase (1-60)
 	ld a,e			;68f2
 	or a			;68f3
 	jr z,L_6906		;68f4
-	ld (0e240h),a		;68f6
+	ld (0e240h),a		;68f6   ; guarda las vidas (BCD)
 L_68F9:
-	ld hl,0edebh		;68f9
+	ld hl,0edebh		;68f9   ; bien: el letrero de 0xBEBE y 0xEDEE = 1
 	inc (hl)			;68fc
 	inc hl			;68fd
 	inc hl			;68fe
@@ -1453,42 +1453,42 @@ L_68F9:
 	ld hl,0bebeh		;6901
 	jr L_6911		;6904
 L_6906:
-	ld hl,0edebh		;6906
+	ld hl,0edebh		;6906   ; mal: el letrero de 0xBEAD y 0xEDEE = 2
 	inc (hl)			;6909
 	inc hl			;690a
 	inc hl			;690b
 	ld (hl),002h		;690c
 	ld hl,0beadh		;690e
 L_6911:
-	call 041c7h		;6911
-	call 04f0bh		;6914
-	call 04192h		;6917
-	call 05b38h		;691a
+	call 041c7h		;6911   ; pone el banco 13 en 0xA000
+	call 04f0bh		;6914   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 04192h		;6917   ; pone los bancos 1-2-3 (el juego)
+	call 05b38h		;691a   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld hl,0edebh		;691d
 	inc (hl)			;6920
 	inc hl			;6921
 	ld (hl),080h		;6922
 	ret			;6924
 L_6925:
-	ld de,06958h		;6925
-	call L_6948		;6928
+	ld de,06958h		;6925   ; las contrasenas especiales: FESTIVAL (0x6B57) y TRYAGAIN (0x6B5F)
+	call L_6948		;6928   ; compara las 8 letras con las de DE (en ASCII, A = 0)
 	jr z,L_693E		;692b
 	ld de,06960h		;692d
-	call L_6948		;6930
+	call L_6948		;6930   ; compara las 8 letras con las de DE (en ASCII, A = 0)
 	ret nz			;6933
-	call 04c02h		;6934
+	call 04c02h		;6934   ; TRYAGAIN: partida nueva y 0xE217 = 1 (se puede seguir tras el fin de la partida)
 	ld a,001h		;6937
-	ld (0e217h),a		;6939
+	ld (0e217h),a		;6939   ; guarda la marca de TRYAGAIN (se puede seguir tras el fin de la partida)
 	xor a			;693c
 	ret			;693d
 L_693E:
-	call 04c02h		;693e
+	call 04c02h		;693e   ; FESTIVAL: partida nueva y 0xE255 = 1
 	ld a,001h		;6941
-	ld (0e255h),a		;6943
+	ld (0e255h),a		;6943   ; guarda la marca de FESTIVAL (invencible: p02:9AB1 no mira los enemigos)
 	xor a			;6946
 	ret			;6947
 L_6948:
-	ld hl,0edd9h		;6948
+	ld hl,0edd9h		;6948   ; compara las 8 letras con las de DE (en ASCII, A = 0)
 	ld b,008h		;694b
 L_694D:
 	ld a,(de)			;694d
@@ -1515,12 +1515,12 @@ DATA_resto_6958:
 
 
 L_6968:
-	ld hl,0e800h		;6968
+	ld hl,0e800h		;6968   ; la flecha debajo de la letra 0xEDEF (x de la tabla 0x6C26)
 	ld (hl),06fh		;696b
 	inc hl			;696d
 	ld a,(0edefh)		;696e
 	ld de,06a27h		;6971
-	call 04099h		;6974
+	call 04099h		;6974   ; suma A a DE (DE = DE + A)
 	ld a,(de)			;6977
 	ld (hl),a			;6978
 	inc hl			;6979
@@ -1528,19 +1528,19 @@ L_6968:
 	inc hl			;697c
 	jp 08598h		;697d
 L_6980:
-	ld a,(hl)			;6980
+	ld a,(hl)			;6980   ; izquierda: la letra anterior
 	and a			;6981
 	ret z			;6982
 	dec (hl)			;6983
 	jp 042d3h		;6984
 L_6987:
-	ld a,(hl)			;6987
+	ld a,(hl)			;6987   ; derecha: la siguiente (hasta la 7)
 	cp 007h		;6988
 	ret nc			;698a
 	inc (hl)			;698b
 	jp 042d3h		;698c
 L_698F:
-	ld a,(0edf0h)		;698f
+	ld a,(0edf0h)		;698f   ; que tecla se ha pulsado: las filas 0-1 (cifras), 5-6 (letras)...
 	ld bc,008d0h		;6992
 L_6995:
 	rra			;6995
@@ -1577,7 +1577,7 @@ L_69C3:
 	ld a,c			;69c3
 	jr L_69F5		;69c4
 L_69C6:
-	ld a,(0edf8h)		;69c6
+	ld a,(0edf8h)		;69c6   ; ...o el espacio; con nada, 0xE0
 	rra			;69c9
 	jr c,L_69D0		;69ca
 	ld a,0e0h		;69cc
@@ -1609,7 +1609,7 @@ L_69E7:
 L_69F4:
 	ld a,d			;69f4
 L_69F5:
-	ld hl,0edeeh		;69f5
+	ld hl,0edeeh		;69f5   ; solo cuenta si no estaba ya pulsada (0xEDEE)
 	ld c,(hl)			;69f8
 	ld (hl),a			;69f9
 	cp c			;69fa
@@ -1619,16 +1619,16 @@ L_69FE:
 	ld (0ededh),a		;69fe
 	ret			;6a01
 L_6A02:
-	ld a,(0edefh)		;6a02
+	ld a,(0edefh)		;6a02   ; pinta la letra 0xEDED en su sitio y la guarda en 0xEDD9 + n
 	ld hl,06a27h		;6a05
-	call 04094h		;6a08
+	call 04094h		;6a08   ; suma A a HL (HL = HL + A)
 	ld d,(hl)			;6a0b
 	ld e,070h		;6a0c
 	ld a,(0ededh)		;6a0e
-	call 053efh		;6a11
+	call 053efh		;6a11   ; pinta el caracter como diga 0xEFC0
 	ld a,(0edefh)		;6a14
 	ld hl,0edd9h		;6a17
-	call 04094h		;6a1a
+	call 04094h		;6a1a   ; suma A a HL (HL = HL + A)
 	ld a,(0ededh)		;6a1d
 	ld (hl),a			;6a20
 	ld hl,0edefh		;6a21
@@ -1648,7 +1648,7 @@ DATA_resto_6A27:
 
 
 L_6A2F:
-	ld hl,0edfah		;6a2f
+	ld hl,0edfah		;6a2f   ; lee las 11 filas del teclado a 0xEDF0-0xEDFA
 	ld b,00bh		;6a32
 L_6A34:
 	ld a,b			;6a34
@@ -1663,8 +1663,8 @@ L_6A3E:
 	ld (0f0e4h),a		;6a41
 	ld a,0c9h		;6a44
 	ld (0fd9ah),a		;6a46
-	call L_6A86		;6a49
-	call L_6AA8		;6a4c
+	call L_6A86		;6a49   ; la cabecera para el Game Master 2 en 0xEE00: el nombre de 0xE270 (5 bytes)...
+	call L_6AA8		;6a4c   ; graba: abre el fichero (orden 0), lo prepara (2) y escribe los seis trozos (9)
 	ld a,(0f0e4h)		;6a4f
 	ld (0fd9ah),a		;6a52
 	ret			;6a55
@@ -1673,8 +1673,8 @@ L_6A56:
 	ld (0f0e4h),a		;6a59
 	ld a,0c9h		;6a5c
 	ld (0fd9ah),a		;6a5e
-	call L_6A86		;6a61
-	call L_6B58		;6a64
+	call L_6A86		;6a61   ; la cabecera para el Game Master 2 en 0xEE00: el nombre de 0xE270 (5 bytes)...
+	call L_6B58		;6a64   ; carga: orden 0, 2 y los seis trozos con la orden 8
 	ld a,(0f0e4h)		;6a67
 	ld (0fd9ah),a		;6a6a
 	ret			;6a6d
@@ -1695,12 +1695,12 @@ DATA_resto_6A6E:
 
 
 L_6A86:
-	ld hl,0e270h		;6a86
-	ld de,0ee00h		;6a89
+	ld hl,0e270h		;6a86   ; la cabecera para el Game Master 2 en 0xEE00: el nombre de 0xE270 (5 bytes)...
+	ld de,0ee00h		;6a89   ; apunta a la cabecera para el Game Master 2
 	ld (0f0e0h),de		;6a8c
 	ld bc,00005h		;6a90
 	ldir		;6a93
-	ld de,0ee05h		;6a95
+	ld de,0ee05h		;6a95   ; ...8 ceros...
 	xor a			;6a98
 	ld b,008h		;6a99
 L_6A9B:
@@ -1711,26 +1711,26 @@ L_6A9B:
 	inc de			;6aa0
 	inc de			;6aa1
 	inc de			;6aa2
-	ld a,(0f0e9h)		;6aa3
+	ld a,(0f0e9h)		;6aa3   ; ...y el slot de este cartucho
 	ld (de),a			;6aa6
 	ret			;6aa7
 L_6AA8:
-	ld de,(0f0e0h)		;6aa8
-	ld a,(0f0f7h)		;6aac
+	ld de,(0f0e0h)		;6aa8   ; graba: abre el fichero (orden 0), lo prepara (2) y escribe los seis trozos (9)
+	ld a,(0f0f7h)		;6aac   ; el Game Master 2 en 0x8000 (ENASLT al slot de 0xF0F7)
 	ld h,080h		;6aaf
 	call 00024h		;6ab1   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6ab4
-	ld (08000h),a		;6ab6
-	ld c,000h		;6ab9
+	ld (08000h),a		;6ab6   ; su banco 4 en 0x8000
+	ld c,000h		;6ab9   ; orden 0 con la cabecera de 0xF0E0
 	ld de,(0f0e0h)		;6abb
-	call 08000h		;6abf
+	call 08000h		;6abf   ; la llamada al Game Master 2
 	push af			;6ac2
-	ld a,(0f0e9h)		;6ac3
+	ld a,(0f0e9h)		;6ac3   ; vuelve este cartucho a 0x8000
 	ld h,080h		;6ac6
 	call 00024h		;6ac8   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6acb
 	ld de,(0f0e0h)		;6acc
-	ld a,(0f0f7h)		;6ad0
+	ld a,(0f0f7h)		;6ad0   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	ld h,080h		;6ad3
 	call 00024h		;6ad5   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6ad8
@@ -1739,59 +1739,59 @@ L_6AA8:
 	ld de,(0f0e0h)		;6adf
 	call 08000h		;6ae3
 	push af			;6ae6
-	ld a,(0f0e9h)		;6ae7
+	ld a,(0f0e9h)		;6ae7   ; lee el slot de este cartucho
 	ld h,080h		;6aea
 	call 00024h		;6aec   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6aef
-	ld b,006h		;6af0
+	ld b,006h		;6af0   ; los seis trozos de RAM de la tabla 0x6C6D: [desde][cuantos]
 	ld hl,06a6eh		;6af2
 L_6AF5:
 	push bc			;6af5
-	ld de,0ee0dh		;6af6
+	ld de,0ee0dh		;6af6   ; a 0xEE0D, con la cabecera
 	ld bc,00004h		;6af9
 	ldir		;6afc
 	push hl			;6afe
 	ld de,(0f0e0h)		;6aff
-	ld a,(0f0f7h)		;6b03
+	ld a,(0f0f7h)		;6b03   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	ld h,080h		;6b06
 	call 00024h		;6b08   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6b0b
 	ld (08000h),a		;6b0d
-	ld c,009h		;6b10
+	ld c,009h		;6b10   ; orden 9: escribe el trozo
 	ld de,(0f0e0h)		;6b12
 	call 08000h		;6b16
 	push af			;6b19
-	ld a,(0f0e9h)		;6b1a
+	ld a,(0f0e9h)		;6b1a   ; lee el slot de este cartucho
 	ld h,080h		;6b1d
 	call 00024h		;6b1f   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6b22
 	pop hl			;6b23
 	pop bc			;6b24
-	or a			;6b25
+	or a			;6b25   ; si falla, se acaba con error
 	jp nz,L_6C03		;6b26
 	djnz L_6AF5		;6b29
 	ld de,(0f0e0h)		;6b2b
-	ld a,(0f0f7h)		;6b2f
+	ld a,(0f0f7h)		;6b2f   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	ld h,080h		;6b32
 	call 00024h		;6b34   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6b37
 	ld (08000h),a		;6b39
-	ld c,001h		;6b3c
+	ld c,001h		;6b3c   ; orden 1: cierra
 	ld de,(0f0e0h)		;6b3e
 	call 08000h		;6b42
 	push af			;6b45
-	ld a,(0f0e9h)		;6b46
+	ld a,(0f0e9h)		;6b46   ; lee el slot de este cartucho
 	ld h,080h		;6b49
 	call 00024h		;6b4b   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6b4e
 	or a			;6b4f
 	jp nz,L_6C03		;6b50
-	xor a			;6b53
-	ld (0e27fh),a		;6b54
+	xor a			;6b53   ; 0xE27F = 0: bien
+	ld (0e27fh),a		;6b54   ; guarda el resultado de grabar o cargar (0 bien, 2 error)
 	ret			;6b57
 L_6B58:
-	ld de,(0f0e0h)		;6b58
-	ld a,(0f0f7h)		;6b5c
+	ld de,(0f0e0h)		;6b58   ; carga: orden 0, 2 y los seis trozos con la orden 8
+	ld a,(0f0f7h)		;6b5c   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	ld h,080h		;6b5f
 	call 00024h		;6b61   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6b64
@@ -1800,12 +1800,12 @@ L_6B58:
 	ld de,(0f0e0h)		;6b6b
 	call 08000h		;6b6f
 	push af			;6b72
-	ld a,(0f0e9h)		;6b73
+	ld a,(0f0e9h)		;6b73   ; lee el slot de este cartucho
 	ld h,080h		;6b76
 	call 00024h		;6b78   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6b7b
 	ld de,(0f0e0h)		;6b7c
-	ld a,(0f0f7h)		;6b80
+	ld a,(0f0f7h)		;6b80   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	ld h,080h		;6b83
 	call 00024h		;6b85   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6b88
@@ -1814,7 +1814,7 @@ L_6B58:
 	ld de,(0f0e0h)		;6b8f
 	call 08000h		;6b93
 	push af			;6b96
-	ld a,(0f0e9h)		;6b97
+	ld a,(0f0e9h)		;6b97   ; lee el slot de este cartucho
 	ld h,080h		;6b9a
 	call 00024h		;6b9c   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6b9f
@@ -1827,16 +1827,16 @@ L_6BA5:
 	ldir		;6bac
 	push hl			;6bae
 	ld de,(0f0e0h)		;6baf
-	ld a,(0f0f7h)		;6bb3
+	ld a,(0f0f7h)		;6bb3   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	ld h,080h		;6bb6
 	call 00024h		;6bb8   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6bbb
 	ld (08000h),a		;6bbd
-	ld c,008h		;6bc0
+	ld c,008h		;6bc0   ; orden 8: lee el trozo
 	ld de,(0f0e0h)		;6bc2
 	call 08000h		;6bc6
 	push af			;6bc9
-	ld a,(0f0e9h)		;6bca
+	ld a,(0f0e9h)		;6bca   ; lee el slot de este cartucho
 	ld h,080h		;6bcd
 	call 00024h		;6bcf   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6bd2
@@ -1844,26 +1844,26 @@ L_6BA5:
 	pop bc			;6bd4
 	djnz L_6BA5		;6bd5
 	ld de,(0f0e0h)		;6bd7
-	ld a,(0f0f7h)		;6bdb
+	ld a,(0f0f7h)		;6bdb   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	ld h,080h		;6bde
 	call 00024h		;6be0   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6be3
 	ld (08000h),a		;6be5
-	ld c,001h		;6be8
+	ld c,001h		;6be8   ; orden 1: cierra
 	ld de,(0f0e0h)		;6bea
 	call 08000h		;6bee
 	push af			;6bf1
-	ld a,(0f0e9h)		;6bf2
+	ld a,(0f0e9h)		;6bf2   ; lee el slot de este cartucho
 	ld h,080h		;6bf5
 	call 00024h		;6bf7   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6bfa
 	or a			;6bfb
 	jr nz,L_6C23		;6bfc
 	xor a			;6bfe
-	ld (0e27fh),a		;6bff
+	ld (0e27fh),a		;6bff   ; guarda el resultado de grabar o cargar (0 bien, 2 error)
 	ret			;6c02
 L_6C03:
-	ld a,(0f0f7h)		;6c03
+	ld a,(0f0f7h)		;6c03   ; error: orden 6 y 0xE27F = 2
 	ld h,080h		;6c06
 	call 00024h		;6c08   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6c0b
@@ -1872,13 +1872,13 @@ L_6C03:
 	ld de,(0f0e0h)		;6c12
 	call 08000h		;6c16
 	push af			;6c19
-	ld a,(0f0e9h)		;6c1a
+	ld a,(0f0e9h)		;6c1a   ; lee el slot de este cartucho
 	ld h,080h		;6c1d
 	call 00024h		;6c1f   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6c22
 L_6C23:
 	ld a,002h		;6c23
-	ld (0e27fh),a		;6c25
+	ld (0e27fh),a		;6c25   ; guarda el resultado de grabar o cargar (0 bien, 2 error)
 	ret			;6c28
 
 ; ----------------------------------------------------------------------
@@ -1895,34 +1895,34 @@ DATA_resto_6C29:
 
 
 L_6C2E:
-	di			;6c2e
+	di			;6c2e   ; cuenta los ficheros del Game Master 2 que se llaman FILE (hasta 3) en 0xF0E5
 	ld a,(0fd9fh)		;6c2f
 	ld (0f0e4h),a		;6c32
 	ld a,0c9h		;6c35
 	ld (0fd9fh),a		;6c37
-	ld hl,0ee50h		;6c3a
+	ld hl,0ee50h		;6c3a   ; 0xEE50-0xEE70 a cero y la cabecera FILE? en 0xEE00
 	ld de,0ee51h		;6c3d
 	ld bc,00020h		;6c40
 	ld (hl),000h		;6c43
 	ldir		;6c45
 	ld hl,06c29h		;6c47
-	ld de,0ee00h		;6c4a
+	ld de,0ee00h		;6c4a   ; apunta a la cabecera para el Game Master 2
 	ld bc,00005h		;6c4d
 	ldir		;6c50
-	ld hl,0ee50h		;6c52
+	ld hl,0ee50h		;6c52   ; apunta a la lista de las cosas de 0xE300 por orden de pintado
 	ld (0ee0dh),hl		;6c55
-	ld de,0ee00h		;6c58
+	ld de,0ee00h		;6c58   ; apunta a la cabecera para el Game Master 2
 	ld (0f0e0h),de		;6c5b
-	ld a,(0f0f7h)		;6c5f
+	ld a,(0f0f7h)		;6c5f   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	ld h,080h		;6c62
 	call 00024h		;6c64   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6c67
 	ld (08000h),a		;6c69
-	ld c,003h		;6c6c
+	ld c,003h		;6c6c   ; orden 3: el primero
 	ld de,(0f0e0h)		;6c6e
 	call 08000h		;6c72
 	push af			;6c75
-	ld a,(0f0e9h)		;6c76
+	ld a,(0f0e9h)		;6c76   ; lee el slot de este cartucho
 	ld h,080h		;6c79
 	call 00024h		;6c7b   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6c7e
@@ -1931,18 +1931,18 @@ L_6C2E:
 L_6C82:
 	ld hl,(0ee0dh)		;6c82
 	ld a,008h		;6c85
-	call 04094h		;6c87
+	call 04094h		;6c87   ; suma A a HL (HL = HL + A)
 	ld (0ee0dh),hl		;6c8a
-	ld a,(0f0f7h)		;6c8d
+	ld a,(0f0f7h)		;6c8d   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	ld h,080h		;6c90
 	call 00024h		;6c92   ; BIOS ENASLT - Switches to specified slot and page definitively
 	ld a,004h		;6c95
 	ld (08000h),a		;6c97
-	ld c,004h		;6c9a
+	ld c,004h		;6c9a   ; orden 4: el siguiente, hasta que no haya
 	ld de,(0f0e0h)		;6c9c
 	call 08000h		;6ca0
 	push af			;6ca3
-	ld a,(0f0e9h)		;6ca4
+	ld a,(0f0e9h)		;6ca4   ; lee el slot de este cartucho
 	ld h,080h		;6ca7
 	call 00024h		;6ca9   ; BIOS ENASLT - Switches to specified slot and page definitively
 	pop af			;6cac
@@ -1953,9 +1953,9 @@ L_6CAF:
 	ei			;6cb5
 	xor a			;6cb6
 	ld (0f0e5h),a		;6cb7
-	ld de,0ee50h		;6cba
+	ld de,0ee50h		;6cba   ; apunta a la lista de las cosas de 0xE300 por orden de pintado
 L_6CBD:
-	ld a,(de)			;6cbd
+	ld a,(de)			;6cbd   ; cada nombre de la lista: si es FILE...
 	or a			;6cbe
 	ret z			;6cbf
 	push de			;6cc0
@@ -1978,10 +1978,10 @@ L_6CD8:
 	pop de			;6cd8
 L_6CD9:
 	ld a,008h		;6cd9
-	call 04099h		;6cdb
+	call 04099h		;6cdb   ; suma A a DE (DE = DE + A)
 	jr L_6CBD		;6cde
 L_6CE0:
-	pop de			;6ce0
+	pop de			;6ce0   ; ...se cuenta
 	ld hl,0f0e5h		;6ce1
 	inc (hl)			;6ce4
 	ld a,(hl)			;6ce5
@@ -1989,25 +1989,25 @@ L_6CE0:
 	ret nc			;6ce8
 	jr L_6CD9		;6ce9
 L_6CEB:
-	ld b,000h		;6ceb
+	ld b,000h		;6ceb   ; mira que hay para grabar: disco (H.PHYD) bit 0 y Game Master 2 bit 1, en 0xF0F9
 	ld a,(0ffa7h)		;6ced
 	cp 0c9h		;6cf0
 	jr z,L_6CF5		;6cf2
 	inc b			;6cf4
 L_6CF5:
 	push bc			;6cf5
-	call L_6D07		;6cf6
+	call L_6D07		;6cf6   ; busca el Game Master 2 en los cuatro slots (y sus secundarios)
 	pop bc			;6cf9
-	ld a,(0f0f7h)		;6cfa
+	ld a,(0f0f7h)		;6cfa   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	inc a			;6cfd
 	jr z,L_6D02		;6cfe
 	set 1,b		;6d00
 L_6D02:
 	ld a,b			;6d02
-	ld (0f0f9h),a		;6d03
+	ld (0f0f9h),a		;6d03   ; guarda lo que hay para grabar (bit 0 disco, bit 1 Game Master 2)
 	ret			;6d06
 L_6D07:
-	ld bc,00400h		;6d07
+	ld bc,00400h		;6d07   ; busca el Game Master 2 en los cuatro slots (y sus secundarios)
 	ld hl,0fcc1h		;6d0a
 L_6D0D:
 	push bc			;6d0d
@@ -2016,7 +2016,7 @@ L_6D0D:
 	bit 7,a		;6d10
 	jr nz,L_6D1A		;6d12
 	ld a,c			;6d14
-	call L_6D3A		;6d15
+	call L_6D3A		;6d15   ; el slot A lleva 'YZ' en 0x4010: es el Game Master 2 (acarreo)
 	jr L_6D1D		;6d18
 L_6D1A:
 	call L_6D2A		;6d1a
@@ -2027,8 +2027,8 @@ L_6D1D:
 	inc hl			;6d20
 	inc c			;6d21
 	djnz L_6D0D		;6d22
-	ld a,0ffh		;6d24
-	ld (0f0f7h),a		;6d26
+	ld a,0ffh		;6d24   ; no hay: 0xF0F7 = 0xFF
+	ld (0f0f7h),a		;6d26   ; guarda el slot del cartucho de la otra ranura (0xFF si no hay)
 	ret			;6d29
 L_6D2A:
 	and 080h		;6d2a
@@ -2036,28 +2036,28 @@ L_6D2A:
 	ld b,004h		;6d2d
 L_6D2F:
 	push bc			;6d2f
-	call L_6D3A		;6d30
+	call L_6D3A		;6d30   ; el slot A lleva 'YZ' en 0x4010: es el Game Master 2 (acarreo)
 	pop bc			;6d33
 	ret c			;6d34
 	add a,004h		;6d35
 	djnz L_6D2F		;6d37
 	ret			;6d39
 L_6D3A:
-	ld (0f0f7h),a		;6d3a
+	ld (0f0f7h),a		;6d3a   ; el slot A lleva 'YZ' en 0x4010: es el Game Master 2 (acarreo)
 	ld hl,04010h		;6d3d
 	call 0000ch		;6d40   ; BIOS RDSLT - Reads the value of an address in another slot
 	cp 059h		;6d43
 	jr nz,L_6D59		;6d45
 	ld hl,04011h		;6d47
-	ld a,(0f0f7h)		;6d4a
+	ld a,(0f0f7h)		;6d4a   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	call 0000ch		;6d4d   ; BIOS RDSLT - Reads the value of an address in another slot
 	cp 05ah		;6d50
 	jr nz,L_6D59		;6d52
-	ld a,(0f0f7h)		;6d54
+	ld a,(0f0f7h)		;6d54   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	scf			;6d57
 	ret			;6d58
 L_6D59:
-	ld a,(0f0f7h)		;6d59
+	ld a,(0f0f7h)		;6d59   ; lee el slot del cartucho de la otra ranura (0xFF si no hay)
 	and a			;6d5c
 	ret			;6d5d
 L_6D5E:
@@ -2125,14 +2125,14 @@ L_6DC4:
 	and a			;6dc7
 	ret			;6dc8
 L_6DC9:
-	call L_6DCF		;6dc9
+	call L_6DCF		;6dc9   ; un cuadro de la piramide acabada (estado 10, cada 10 fases), por pasos (0xE257)
 	jp 0564ah		;6dcc
 L_6DCF:
 	ld hl,0edc9h		;6dcf
 	inc (hl)			;6dd2
-	ld a,(0e257h)		;6dd3
+	ld a,(0e257h)		;6dd3   ; lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	dec a			;6dd6
-	call 0409eh		;6dd7
+	call 0409eh		;6dd7   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_6DDA: 10 destinos del despachador p00:409E (call en p01:6DD7, el
@@ -2149,53 +2149,53 @@ DATA_tabla_6DDA:
 
 
 L_6DEE:
-	call 056c2h		;6dee
-	call 05890h		;6df1
-	call 05b38h		;6df4
-	ld a,(0e241h)		;6df7
+	call 056c2h		;6dee   ; paso 1: borra, la paleta de 0xA870 y sus graficos
+	call 05890h		;6df1   ; la paleta de 0xA7FF
+	call 05b38h		;6df4   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	ld a,(0e241h)		;6df7   ; lee la piramide (1-6)
 	dec a			;6dfa
 	add a,a			;6dfb
 	ld hl,06fc6h		;6dfc
-	call 04094h		;6dff
+	call 04094h		;6dff   ; suma A a HL (HL = HL + A)
 	ld de,0edcbh		;6e02
 	ldi		;6e05
 	ldi		;6e07
 	xor a			;6e09
 	ld (0edc8h),a		;6e0a
 	call 04ec7h		;6e0d
-	call 056eah		;6e10
-	call 05800h		;6e13
-	call L_6FBD		;6e16
-	call 04224h		;6e19
+	call 056eah		;6e10   ; 12 x 12 caracteres de 0xA358 en 0x1818
+	call 05800h		;6e13   ; rachas de 0xAF21 a 0xF820 y de 0xA9FB a 0xFE80 (sprites)
+	call L_6FBD		;6e16   ; lo mismo con 0xBDDA
+	call 04224h		;6e19   ; el sonido 0x0D y espera 0x3C cuadros
 	ld a,03ch		;6e1c
 L_6E1E:
-	ld hl,0e204h		;6e1e
+	ld hl,0e204h		;6e1e   ; 0xE204 = A
 	ld (hl),a			;6e21
 L_6E22:
-	ld hl,0e257h		;6e22
+	ld hl,0e257h		;6e22   ; el paso siguiente
 	inc (hl)			;6e25
 	ret			;6e26
 L_6E27:
-	call L_6FBD		;6e27
-	ld hl,0e204h		;6e2a
+	call L_6FBD		;6e27   ; paso 2: espera
+	ld hl,0e204h		;6e2a   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;6e2d
 	ret nz			;6e2e
 	xor a			;6e2f
 	ld (0edd8h),a		;6e30
 	inc a			;6e33
 	ld (0edceh),a		;6e34
-	call L_6FA1		;6e37
+	call L_6FA1		;6e37   ; el letrero de la piramide (tabla 0xAC13 del banco 12)
 	ld a,005h		;6e3a
 	jp L_6E1E		;6e3c
 L_6E3F:
-	ld a,(0e207h)		;6e3f
+	ld a,(0e207h)		;6e3f   ; paso 3 de la piramide acabada: con disparo o el segundo boton se acaba antes
 	and 030h		;6e42
 	jr z,L_6E5E		;6e44
-	ld a,(0e241h)		;6e46
+	ld a,(0e241h)		;6e46   ; lee la piramide (1-6)
 	dec a			;6e49
 	add a,a			;6e4a
 	ld hl,06fd0h		;6e4b
-	call 04094h		;6e4e
+	call 04094h		;6e4e   ; suma A a HL (HL = HL + A)
 	ld de,0edcbh		;6e51
 	ldi		;6e54
 	ldi		;6e56
@@ -2206,20 +2206,20 @@ L_6E5E:
 	jp L_6FB4		;6e61
 L_6E64:
 	ld b,004h		;6e64
-	call L_6F55		;6e66
+	call L_6F55		;6e66   ; cada B cuadros cambia el dibujo del personaje (0xEDD8 xor 3)
 	ld a,(0edceh)		;6e69
 	cp 004h		;6e6c
 	ld a,(0edd8h)		;6e6e
 	call z,05782h		;6e71
-	ld hl,0e204h		;6e74
+	ld hl,0e204h		;6e74   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;6e77
 	ret nz			;6e78
 	ld a,005h		;6e79
 	ld (hl),a			;6e7b
-	call L_6F78		;6e7c
-	call L_6F64		;6e7f
+	call L_6F78		;6e7c   ; la direccion del paso (tabla 0xBA57)
+	call L_6F64		;6e7f   ; hasta el numero de pasos de la piramide (tabla 0x7177)
 	jr z,L_6E8C		;6e82
-	call L_6F3C		;6e84
+	call L_6F3C		;6e84   ; un paso
 	ld hl,0edc8h		;6e87
 	inc (hl)			;6e8a
 	ret			;6e8b
@@ -2228,43 +2228,43 @@ L_6E8C:
 	jp L_6E1E		;6e8e
 L_6E91:
 	ld b,004h		;6e91
-	call L_6F55		;6e93
-	ld hl,0e204h		;6e96
+	call L_6F55		;6e93   ; cada B cuadros cambia el dibujo del personaje (0xEDD8 xor 3)
+	ld hl,0e204h		;6e96   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;6e99
 	jp nz,L_6FB4		;6e9a
 	xor a			;6e9d
 	call 05782h		;6e9e
-	call 0579ah		;6ea1
+	call 0579ah		;6ea1   ; 12 x 2 caracteres de 0xA5A6 en 0xB038
 L_6EA4:
 	ld a,005h		;6ea4
-	call L_6E1E		;6ea6
+	call L_6E1E		;6ea6   ; 0xE204 = A
 	jp nz,L_6FB4		;6ea9
 L_6EAC:
 	ld b,004h		;6eac
-	call L_6F55		;6eae
-	ld hl,0e204h		;6eb1
+	call L_6F55		;6eae   ; cada B cuadros cambia el dibujo del personaje (0xEDD8 xor 3)
+	ld hl,0e204h		;6eb1   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;6eb4
 	jp nz,L_6FB4		;6eb5
 	ld a,001h		;6eb8
 	call 05782h		;6eba
-	call 057ach		;6ebd
+	call 057ach		;6ebd   ; 12 x 4 de 0xA5BE en 0xA838
 	jr L_6EA4		;6ec0
 L_6EC2:
-	ld hl,0e204h		;6ec2
+	ld hl,0e204h		;6ec2   ; paso: 14 x 6 de 0xA5EE y los dibujos de 0xA642 y 0xA6B1
 	dec (hl)			;6ec5
 	ret nz			;6ec6
 	xor a			;6ec7
 	call 05782h		;6ec8
-	call 057beh		;6ecb
+	call 057beh		;6ecb   ; 14 x 6 de 0xA5EE en 0xA030
 	jp L_6E22		;6ece
 L_6ED1:
-	ld a,006h		;6ed1
+	ld a,006h		;6ed1   ; paso: 0xEDC8 = 6 y la primera imagen
 	ld (0edc8h),a		;6ed3
 	call 057d0h		;6ed6
 	ld a,010h		;6ed9
 	jp L_6E1E		;6edb
 L_6EDE:
-	ld hl,0e204h		;6ede
+	ld hl,0e204h		;6ede   ; cada 0x10 cuadros otra imagen (0xEDC8 baja); en la 5 el sonido 0x3E
 	dec (hl)			;6ee1
 	ret nz			;6ee2
 	ld (hl),010h		;6ee3
@@ -2273,17 +2273,17 @@ L_6EDE:
 	ld a,(hl)			;6ee9
 	cp 005h		;6eea
 	push hl			;6eec
-	call z,04303h		;6eed
+	call z,04303h		;6eed   ; pide el sonido 0x3E
 	pop hl			;6ef0
 	ld a,(hl)			;6ef1
 	cp 0ffh		;6ef2
 	jp nz,057d0h		;6ef4
-	ld (hl),000h		;6ef7
-	call 05b38h		;6ef9
+	ld (hl),000h		;6ef7   ; acabadas: el fundido 4
+	call 05b38h		;6ef9   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld a,010h		;6efc
 	jp L_6E1E		;6efe
 L_6F01:
-	ld hl,0e204h		;6f01
+	ld hl,0e204h		;6f01   ; cada 0x10 cuadros otra imagen (0xEDC8 sube); sonidos 0x3E y 0x25
 	dec (hl)			;6f04
 	ret nz			;6f05
 	ld (hl),010h		;6f06
@@ -2292,29 +2292,29 @@ L_6F01:
 	ld a,(hl)			;6f0c
 	dec a			;6f0d
 	push hl			;6f0e
-	call z,04303h		;6f0f
+	call z,04303h		;6f0f   ; pide el sonido 0x3E
 	pop hl			;6f12
 	ld a,(hl)			;6f13
 	cp 006h		;6f14
-	call z,0429ch		;6f16
+	call z,0429ch		;6f16   ; pide el sonido 0x25
 	ld a,(hl)			;6f19
 	cp 007h		;6f1a
 	jp nz,057d0h		;6f1c
-	call 04323h		;6f1f
+	call 04323h		;6f1f   ; a la 7: calla la musica y espera 0xC0 cuadros
 	ld a,0c0h		;6f22
 	jp L_6E1E		;6f24
 L_6F27:
-	ld hl,0e204h		;6f27
+	ld hl,0e204h		;6f27   ; se acaba: la musica, la secuencia a 0 y el marcador
 	dec (hl)			;6f2a
 	ret nz			;6f2b
-	call 0431bh		;6f2c
-	call 041e8h		;6f2f
+	call 0431bh		;6f2c   ; orden 0x82 (p04:61BB), con 0xE21A a cero
+	call 041e8h		;6f2f   ; pide el sonido 1
 	xor a			;6f32
-	ld (0e257h),a		;6f33
+	ld (0e257h),a		;6f33   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	call 04ec7h		;6f36
 	jp 05a3dh		;6f39
 L_6F3C:
-	ld hl,0edcbh		;6f3c
+	ld hl,0edcbh		;6f3c   ; un paso del personaje segun 0xEDCA (1 abajo, 2 izquierda, 3 derecha, si no arriba)
 	ld a,(0edcah)		;6f3f
 	dec a			;6f42
 	jr z,L_6F4D		;6f43
@@ -2336,7 +2336,7 @@ L_6F52:
 	inc (hl)			;6f53
 	ret			;6f54
 L_6F55:
-	ld hl,0edceh		;6f55
+	ld hl,0edceh		;6f55   ; cada B cuadros cambia el dibujo del personaje (0xEDD8 xor 3)
 	dec (hl)			;6f58
 	ret nz			;6f59
 	ld (hl),b			;6f5a
@@ -2345,10 +2345,10 @@ L_6F55:
 	ld (0edd8h),a		;6f60
 	ret			;6f63
 L_6F64:
-	ld a,(0e241h)		;6f64
+	ld a,(0e241h)		;6f64   ; Z si 0xEDC8 ha llegado al numero de pasos de la piramide (tabla 0x7177)
 	dec a			;6f67
 	ld hl,06f73h		;6f68
-	call 04094h		;6f6b
+	call 04094h		;6f6b   ; suma A a HL (HL = HL + A)
 	ld a,(0edc8h)		;6f6e
 	cp (hl)			;6f71
 	ret			;6f72
@@ -2367,14 +2367,14 @@ DATA_resto_6F73:
 
 
 L_6F78:
-	call 041c7h		;6f78
-	call L_6F81		;6f7b
+	call 041c7h		;6f78   ; la direccion del paso 0xEDC8 de la piramide (banco 13)
+	call L_6F81		;6f7b   ; la lista de la piramide en la tabla 0xBA57: [paso][direccion]..., 0xFF acaba
 	jp 04192h		;6f7e
 L_6F81:
-	ld hl,0ba57h		;6f81
-	ld a,(0e241h)		;6f84
+	ld hl,0ba57h		;6f81   ; la lista de la piramide en la tabla 0xBA57: [paso][direccion]..., 0xFF acaba
+	ld a,(0e241h)		;6f84   ; lee la piramide (1-6)
 	dec a			;6f87
-	call 04d4dh		;6f88
+	call 04d4dh		;6f88   ; HL = la palabra A de la tabla de HL
 	ld d,h			;6f8b
 	ld e,l			;6f8c
 	ld a,(0edc8h)		;6f8d
@@ -2393,19 +2393,19 @@ L_6F9C:
 	ld (0edcah),a		;6f9d
 	ret			;6fa0
 L_6FA1:
-	call 041bdh		;6fa1
+	call 041bdh		;6fa1   ; el letrero de la piramide (tabla 0xAC13 del banco 12)
 	ld hl,0ac13h		;6fa4
-	ld a,(0e241h)		;6fa7
+	ld a,(0e241h)		;6fa7   ; lee la piramide (1-6)
 	dec a			;6faa
-	call 04d4dh		;6fab
-	call 04f0bh		;6fae
+	call 04d4dh		;6fab   ; HL = la palabra A de la tabla de HL
+	call 04f0bh		;6fae   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	jp 04192h		;6fb1
 L_6FB4:
-	call 041bdh		;6fb4
+	call 041bdh		;6fb4   ; el personaje de la secuencia (banco 12, 0xBDD7)
 	call 0bdb2h		;6fb7
 	jp 04192h		;6fba
 L_6FBD:
-	call 041bdh		;6fbd
+	call 041bdh		;6fbd   ; lo mismo con 0xBDDA
 	call 0bdc9h		;6fc0
 	jp 04192h		;6fc3
 
@@ -2424,15 +2424,15 @@ DATA_resto_6FC6:
 
 
 L_6FDA:
-	call L_6FE0		;6fda
+	call L_6FE0		;6fda   ; un cuadro del final (estado 13), por pasos (0xE257)
 	jp 0564ah		;6fdd
 L_6FE0:
-	ld hl,0edc9h		;6fe0
+	ld hl,0edc9h		;6fe0   ; cada paso, su rutina (tabla detras)
 	inc (hl)			;6fe3
-	ld de,0e257h		;6fe4
+	ld de,0e257h		;6fe4   ; apunta a el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	ld a,(de)			;6fe7
 	dec a			;6fe8
-	call 0409eh		;6fe9
+	call 0409eh		;6fe9   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_6FEC: 66 destinos del despachador p00:409E (call en p01:6FE9, el
@@ -2461,10 +2461,10 @@ DATA_tabla_6FEC:
 
 
 L_7070:
-	call L_7427		;7070
+	call L_7427		;7070   ; paso 1: borra, la paleta a negro, la fuente y el fundido 0x0A
 	call 04ec7h		;7073
-	call 05b38h		;7076
-	call 05890h		;7079
+	call 05b38h		;7076   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call 05890h		;7079   ; la paleta de 0xA7FF
 	ld de,01000h		;707c
 	call L_743B		;707f
 	ld hl,0acc3h		;7082
@@ -2479,7 +2479,7 @@ L_708A:
 	ld a,0f0h		;7095
 	jr L_70F2		;7097
 L_7099:
-	ld hl,0e204h		;7099
+	ld hl,0e204h		;7099   ; el fundido 3
 	dec (hl)			;709c
 	ret nz			;709d
 	ld de,01001h		;709e
@@ -2495,13 +2495,13 @@ L_70A6:
 	xor a			;70b4
 	call 05410h		;70b5
 	call 05818h		;70b8
-	call 05b38h		;70bb
+	call 05b38h		;70bb   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld de,05010h		;70be
-	call 056edh		;70c1
+	call 056edh		;70c1   ; 12 x 12 caracteres de 0xA358 en (D, E)
 	call 0541bh		;70c4
-	call 0423dh		;70c7
+	call 0423dh		;70c7   ; pide el sonido 0x12
 L_70CA:
-	ld hl,0e257h		;70ca
+	ld hl,0e257h		;70ca   ; el paso siguiente
 	inc (hl)			;70cd
 	ret			;70ce
 L_70CF:
@@ -2522,11 +2522,11 @@ L_70E5:
 	ret nz			;70ef
 	ld a,0f0h		;70f0
 L_70F2:
-	ld hl,0e204h		;70f2
+	ld hl,0e204h		;70f2   ; 0xE204 = A y el paso siguiente
 	ld (hl),a			;70f5
 	jr L_70CA		;70f6
 L_70F8:
-	ld hl,0e204h		;70f8
+	ld hl,0e204h		;70f8   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;70fb
 	ret nz			;70fc
 	xor a			;70fd
@@ -2548,25 +2548,25 @@ L_710D:
 	ret nz			;7120
 	call 04ec7h		;7121
 	call 04ec7h		;7124
-	call 041bdh		;7127
-	call 0bc54h		;712a
-	call 04192h		;712d
-	call L_73CC		;7130
+	call 041bdh		;7127   ; pone el banco 12 en 0xA000
+	call 0bc54h		;712a   ; las estrellas del final: 0xE910 (32 de 16 bytes) a cero
+	call 04192h		;712d   ; pone los bancos 1-2-3 (el juego)
+	call L_73CC		;7130   ; el dibujo de 0xBCD2 (banco 12)
 	ld a,030h		;7133
 	jr L_70F2		;7135
 L_7137:
-	call L_73CC		;7137
-	ld hl,0e204h		;713a
+	call L_73CC		;7137   ; la imagen de 0xA2C8
+	ld hl,0e204h		;713a   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;713d
 	ret nz			;713e
 	ld de,05020h		;713f
-	call 056fch		;7142
+	call 056fch		;7142   ; 12 x 12 de 0xA2C8
 	ld a,001h		;7145
 	call 05410h		;7147
 	call 0541bh		;714a
 	jp L_70CA		;714d
 L_7150:
-	call L_73CC		;7150
+	call L_73CC		;7150   ; el dibujo de 0xBCD2 (banco 12)
 	call 0541bh		;7153
 	ld a,(0edd4h)		;7156
 	and a			;7159
@@ -2574,7 +2574,7 @@ L_7150:
 	ld a,0a0h		;715b
 	jr L_70F2		;715d
 L_715F:
-	ld hl,0e204h		;715f
+	ld hl,0e204h		;715f   ; a 0x30 del final, 0xE902 = 1
 	dec (hl)			;7162
 	jr z,L_7174		;7163
 	ld a,(hl)			;7165
@@ -2589,38 +2589,38 @@ L_7174:
 	xor a			;7174
 	ld (0edceh),a		;7175
 	ld a,0a0h		;7178
-	call L_70F2		;717a
+	call L_70F2		;717a   ; 0xE204 = A y el paso siguiente
 	jp 05890h		;717d
 L_7180:
-	call L_73CC		;7180
-	ld hl,0e204h		;7183
+	call L_73CC		;7180   ; cada 8 cuadros un caracter de la lista de 0xAF37 (banco 12) y el sonido 0x3D
+	ld hl,0e204h		;7183   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;7186
 	jr z,L_71AE		;7187
 	ld a,(hl)			;7189
 	and 00fh		;718a
 	ret nz			;718c
-	call 041bdh		;718d
+	call 041bdh		;718d   ; pone el banco 12 en 0xA000
 	ld hl,0af37h		;7190
 	ld a,(0edceh)		;7193
 	ld b,a			;7196
 	add a,a			;7197
 	add a,b			;7198
-	call 04094h		;7199
+	call 04094h		;7199   ; suma A a HL (HL = HL + A)
 	ld d,(hl)			;719c
 	inc hl			;719d
 	ld e,(hl)			;719e
 	inc hl			;719f
 	ld a,(hl)			;71a0
-	call 053efh		;71a1
+	call 053efh		;71a1   ; pinta el caracter como diga 0xEFC0
 	ld hl,0edceh		;71a4
 	inc (hl)			;71a7
-	call 04192h		;71a8
+	call 04192h		;71a8   ; pone los bancos 1-2-3 (el juego)
 	jp 042ffh		;71ab
 L_71AE:
 	ld a,050h		;71ae
 	jp L_70F2		;71b0
 L_71B3:
-	ld hl,0e204h		;71b3
+	ld hl,0e204h		;71b3   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;71b6
 	ret nz			;71b7
 	ld de,01001h		;71b8
@@ -2644,12 +2644,12 @@ L_71D6:
 	call 04ec7h		;71de
 	call 04ec7h		;71e1
 	call 056e1h		;71e4
-	call 05b38h		;71e7
+	call 05b38h		;71e7   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld a,080h		;71ea
 	call L_746F		;71ec
 	call 04eeah		;71ef
 	ld de,05020h		;71f2
-	call 0570eh		;71f5
+	call 0570eh		;71f5   ; 12 x 12 de 0xA702
 	xor a			;71f8
 	call 05740h		;71f9
 	xor a			;71fc
@@ -2657,12 +2657,12 @@ L_71D6:
 	ld hl,0ad69h		;7200
 	call L_73E5		;7203
 	ld a,080h		;7206
-	call L_70F2		;7208
+	call L_70F2		;7208   ; 0xE204 = A y el paso siguiente
 	jp 042e7h		;720b
 L_720E:
-	call L_7409		;720e
+	call L_7409		;720e   ; los colores 10 y 12 parpadean; luego el letrero de 0xAD58
 	call L_7419		;7211
-	ld hl,0e204h		;7214
+	ld hl,0e204h		;7214   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;7217
 	ret nz			;7218
 	ld a,0f0h		;7219
@@ -2671,8 +2671,8 @@ L_720E:
 	call L_73E5		;7221
 	jp L_70CA		;7224
 L_7227:
-	call L_7409		;7227
-	ld a,(0e208h)		;722a
+	call L_7409		;7227   ; con disparo: los colores cambian, se copia la imagen y el sonido 0x39
+	ld a,(0e208h)		;722a   ; lee el mando: lo pulsado
 	and 030h		;722d
 	ret z			;722f
 	xor a			;7230
@@ -2682,12 +2682,12 @@ L_7227:
 	xor a			;7239
 	call 05728h		;723a
 	call 05716h		;723d
-	call 05b38h		;7240
+	call 05b38h		;7240   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld a,000h		;7243
-	call L_70F2		;7245
+	call L_70F2		;7245   ; 0xE204 = A y el paso siguiente
 	jp 042efh		;7248
 L_724B:
-	ld hl,0e204h		;724b
+	ld hl,0e204h		;724b   ; parpadea el borde y, a 0x80, el sonido 0x3A
 	dec (hl)			;724e
 	ld a,(hl)			;724f
 	or a			;7250
@@ -2703,7 +2703,7 @@ L_725C:
 	ld a,078h		;7265
 	jp L_70F2		;7267
 L_726A:
-	ld hl,0e204h		;726a
+	ld hl,0e204h		;726a   ; el letrero de 0xAEDD y el fundido 0x0A
 	dec (hl)			;726d
 	ret nz			;726e
 	ld hl,0aeddh		;726f
@@ -2720,7 +2720,7 @@ L_727E:
 	xor a			;7289
 	jp L_70F2		;728a
 L_728D:
-	ld hl,0e204h		;728d
+	ld hl,0e204h		;728d   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;7290
 	ret nz			;7291
 	ld de,01001h		;7292
@@ -2733,11 +2733,11 @@ L_729B:
 	or a			;72a4
 	ret nz			;72a5
 	call 04ec7h		;72a6
-	call 05b38h		;72a9
+	call 05b38h		;72a9   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	call L_7427		;72ac
 	ld a,00fh		;72af
 	call 05758h		;72b1
-	call 04229h		;72b4
+	call 04229h		;72b4   ; pide el sonido 0x0E
 	ld a,002h		;72b7
 	call 05410h		;72b9
 	call 0541bh		;72bc
@@ -2750,7 +2750,7 @@ L_72C2:
 	ld a,020h		;72ca
 	jp L_70F2		;72cc
 L_72CF:
-	ld hl,0e204h		;72cf
+	ld hl,0e204h		;72cf   ; el personaje en (0x9F, 0x80), el fundido 6
 	dec (hl)			;72d2
 	ret nz			;72d3
 	ld a,097h		;72d4
@@ -2767,13 +2767,13 @@ L_72EB:
 	ld a,030h		;72ee
 	jp L_70F2		;72f0
 L_72F3:
-	call L_74A1		;72f3
-	ld hl,0e204h		;72f6
+	call L_74A1		;72f3   ; el letrero de 0xAF21 y el fundido 0x0B
+	ld hl,0e204h		;72f6   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;72f9
 	ret nz			;72fa
 	ld a,004h		;72fb
 	ld (0edd8h),a		;72fd
-	call 05890h		;7300
+	call 05890h		;7300   ; la paleta de 0xA7FF
 	ld hl,0af21h		;7303
 	call L_73E5		;7306
 	ld de,01000h		;7309
@@ -2788,7 +2788,7 @@ L_7312:
 	xor a			;731f
 	jp L_70F2		;7320
 L_7323:
-	ld hl,0e204h		;7323
+	ld hl,0e204h		;7323   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;7326
 	ret nz			;7327
 	xor a			;7328
@@ -2796,7 +2796,7 @@ L_7323:
 	call L_74A1		;732c
 	jp L_70CA		;732f
 L_7332:
-	call L_7485		;7332
+	call L_7485		;7332   ; cada 16 cuadros, el dibujo siguiente del personaje (tabla 0x7782)
 	ld hl,0edc9h		;7335
 	ld a,(hl)			;7338
 	and 003h		;7339
@@ -2806,7 +2806,7 @@ L_7332:
 	ld a,(hl)			;7342
 	or a			;7343
 	jp nz,L_74A1		;7344
-	call 05b38h		;7347
+	call 05b38h		;7347   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld a,001h		;734a
 	call 053f9h		;734c
 	ld de,00101h		;734f
@@ -2824,20 +2824,20 @@ L_7358:
 	or b			;736a
 	ret nz			;736b
 	call 04ec7h		;736c
-	call 05890h		;736f
+	call 05890h		;736f   ; la paleta de 0xA7FF
 	ld hl,0edcfh		;7372
 	ld (hl),0ffh		;7375
 	ld a,060h		;7377
 	jp L_70F2		;7379
 L_737C:
-	ld hl,0e204h		;737c
+	ld hl,0e204h		;737c   ; los letreros de la tabla 0xAD76, uno por paso (0xEDCF)
 	dec (hl)			;737f
 	ret nz			;7380
 	ld hl,0edcfh		;7381
 	inc (hl)			;7384
 	ld de,00c00h		;7385
 	call L_743B		;7388
-	call L_73F7		;738b
+	call L_73F7		;738b   ; el letrero 0xEDCF de la tabla 0xAD76 (banco 12)
 	jp L_70CA		;738e
 L_7391:
 	ld de,00c00h		;7391
@@ -2848,7 +2848,7 @@ L_7391:
 	xor a			;739c
 	jp L_70F2		;739d
 L_73A0:
-	ld hl,0e204h		;73a0
+	ld hl,0e204h		;73a0   ; hasta el 9, el fundido 3 entre ellos
 	dec (hl)			;73a3
 	ret nz			;73a4
 	ld de,00c01h		;73a5
@@ -2864,18 +2864,18 @@ L_73AE:
 	ld a,020h		;73bc
 	jp L_70F2		;73be
 L_73C1:
-	ld a,(0e208h)		;73c1
+	ld a,(0e208h)		;73c1   ; al final, con disparo se vuelve a empezar
 	and 030h		;73c4
 	ret z			;73c6
 	sub a			;73c7
-	ld (0e257h),a		;73c8
+	ld (0e257h),a		;73c8   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	ret			;73cb
 L_73CC:
-	call 041bdh		;73cc
-	call 0bcb8h		;73cf
+	call 041bdh		;73cc   ; el dibujo de 0xBCD2 (banco 12)
+	call 0bcb8h		;73cf   ; un cuadro de las estrellas
 	jp 04192h		;73d2
 L_73D5:
-	ld a,(0edc9h)		;73d5
+	ld a,(0edc9h)		;73d5   ; el borde parpadea: color 0 o 11 cada 4 cuadros
 	rra			;73d8
 	rra			;73d9
 	ld bc,00007h		;73da
@@ -2883,22 +2883,22 @@ L_73D5:
 	ld b,00fh		;73e0
 	jp 00047h		;73e2   ; BIOS WRTVDP - Writes data in the VDP-register
 L_73E5:
-	call 041bdh		;73e5
-	call 04f0bh		;73e8
+	call 041bdh		;73e5   ; pone el banco 12 en 0xA000
+	call 04f0bh		;73e8   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	jp 04192h		;73eb
 L_73EE:
-	call 041bdh		;73ee
-	call 04f0fh		;73f1
+	call 041bdh		;73ee   ; pinta el letrero de HL del banco 12
+	call 04f0fh		;73f1   ; lo mismo, borrando (caracter 0)
 	jp 04192h		;73f4
 L_73F7:
-	call 041bdh		;73f7
+	call 041bdh		;73f7   ; el letrero 0xEDCF de la tabla 0xAD76 (banco 12)
 	ld a,(0edcfh)		;73fa
 	ld hl,0ad76h		;73fd
-	call 04d4dh		;7400
-	call 04f0bh		;7403
+	call 04d4dh		;7400   ; HL = la palabra A de la tabla de HL
+	call 04f0bh		;7403   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	jp 04192h		;7406
 L_7409:
-	ld a,(0edc9h)		;7409
+	ld a,(0edc9h)		;7409   ; el color 10 parpadea cada 16 cuadros
 	rra			;740c
 	rra			;740d
 	rra			;740e
@@ -2909,7 +2909,7 @@ L_7409:
 	jp 05728h		;7416
 L_7419:
 	ld hl,0ad69h		;7419
-	ld a,(0e204h)		;741c
+	ld a,(0e204h)		;741c   ; lee la espera del paso (en cuadros)
 	rra			;741f
 	rra			;7420
 	rra			;7421
@@ -2920,7 +2920,7 @@ L_7427:
 	ld hl,02000h		;7427
 	ld bc,01800h		;742a
 	xor a			;742d
-	call 04e10h		;742e
+	call 04e10h		;742e   ; llena BC bytes de la VRAM con A (BIGFIL)
 	ld hl,00000h		;7431
 	ld bc,01800h		;7434
 	xor a			;7437
@@ -2979,7 +2979,7 @@ DATA_resto_747D:
 
 
 L_7485:
-	ld a,(0edc9h)		;7485
+	ld a,(0edc9h)		;7485   ; cada 16 cuadros, el dibujo siguiente del personaje (tabla 0x7782)
 	and 00fh		;7488
 	ret nz			;748a
 	ld hl,0edceh		;748b
@@ -2987,7 +2987,7 @@ L_7485:
 	ld a,(hl)			;748f
 	and 003h		;7490
 	ld hl,0749dh		;7492
-	call 04094h		;7495
+	call 04094h		;7495   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;7498
 	ld (0edd8h),a		;7499
 	ret			;749c
@@ -3012,7 +3012,7 @@ L_74A1:
 	add a,a			;74aa
 	add a,a			;74ab
 	add a,a			;74ac
-	call 04099h		;74ad
+	call 04099h		;74ad   ; suma A a DE (DE = DE + A)
 	exx			;74b0
 	ld b,007h		;74b1
 	exx			;74b3
@@ -3068,9 +3068,9 @@ DATA_resto_74E2:
 
 
 L_751A:
-	ld a,(0e25ah)		;751a
+	ld a,(0e25ah)		;751a   ; el editor (estado 11), por pasos (0xE25A)
 	dec a			;751d
-	call 0409eh		;751e
+	call 0409eh		;751e   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_7521: 6 destinos del despachador p00:409E (call en p01:751E, el
@@ -3086,65 +3086,65 @@ DATA_tabla_7521:
 
 
 L_752D:
-	call 04ec7h		;752d
+	call 04ec7h		;752d   ; paso 1: los graficos de la piramide 1, su paleta, el personaje y la rejilla
 	ld a,001h		;7530
-	ld (0e241h),a		;7532
-	call 052fdh		;7535
-	call L_76EA		;7538
-	call L_7596		;753b
+	ld (0e241h),a		;7532   ; guarda la piramide (1-6)
+	call 052fdh		;7535   ; carga los graficos de la piramide (bancos 7-8-9)
+	call L_76EA		;7538   ; los sprites, el personaje mirando a la derecha sin nada en la mano y sus dibujos
+	call L_7596		;753b   ; el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
 	ld a,001h		;753e
-	ld (0e25bh),a		;7540
-	ld hl,0e2c0h		;7543
+	ld (0e25bh),a		;7540   ; guarda el paso dentro del menu del editor
+	ld hl,0e2c0h		;7543   ; 0xE2C0-0xEFFF a cero
 	ld de,0e2c1h		;7546
 	ld bc,00d3fh		;7549
 	ld (hl),000h		;754c
 	ldir		;754e
-	call 05b38h		;7550
-	ld hl,0e25ch		;7553
+	call 05b38h		;7550   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	ld hl,0e25ch		;7553   ; 0xE25C-0xE26F a cero
 	ld de,0e25dh		;7556
 	ld bc,00013h		;7559
 	ld (hl),000h		;755c
 	ldir		;755e
 L_7560:
-	ld hl,0e270h		;7560
+	ld hl,0e270h		;7560   ; el nombre (0xE270, 12 bytes) en blanco
 	ld de,0e271h		;7563
 	ld bc,0000bh		;7566
 	ld (hl),020h		;7569
 	ldir		;756b
 	ret			;756d
 L_756E:
-	call 0879fh		;756e
-	ld a,(0e25bh)		;7571
+	call 0879fh		;756e   ; paso 2: el menu del editor (0x8B95); al acabar, segun 0xE27E
+	ld a,(0e25bh)		;7571   ; lee el paso dentro del menu del editor
 	and a			;7574
 	ret nz			;7575
-	call L_7596		;7576
+	call L_7596		;7576   ; el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
 	ld a,(0e27eh)		;7579
 	and a			;757c
 	ret z			;757d
 	dec a			;757e
 	jr nz,L_7587		;757f
-	call L_7596		;7581
+	call L_7596		;7581   ; el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
 	jp L_7656		;7584
 L_7587:
 	ld a,001h		;7587
-	ld (0e25ah),a		;7589
+	ld (0e25ah),a		;7589   ; guarda el paso del editor
 	ret			;758c
 L_758D:
-	call 04ec7h		;758d
+	call 04ec7h		;758d   ; la rejilla de pantallas en blanco
 	call L_7682		;7590
 	call L_7694		;7593
 L_7596:
-	ld hl,0e25ah		;7596
+	ld hl,0e25ah		;7596   ; el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
 	inc (hl)			;7599
 	inc hl			;759a
 	ld (hl),000h		;759b
 	ret			;759d
 L_759E:
-	call L_7660		;759e
-	ld a,(0e20ch)		;75a1
+	call L_7660		;759e   ; paso: la rejilla de pantallas, con su cursor
+	ld a,(0e20ch)		;75a1   ; RETURN acaba; los cursores mueven (0xE25C fila, 0xE25D columna); el disparo pone y el segundo boton quita
 	rla			;75a4
 	jp c,L_763A		;75a5
-	ld a,(0e207h)		;75a8
+	ld a,(0e207h)		;75a8   ; lee el mando: lo que se acaba de pulsar
 	rra			;75ab
 	ld hl,0e25ch		;75ac
 	jp c,L_7633		;75af
@@ -3164,28 +3164,28 @@ L_759E:
 	and a			;75ca
 	ret z			;75cb
 	push hl			;75cc
-	call L_773D		;75cd
+	call L_773D		;75cd   ; NZ si en la casilla del cursor hay pantalla
 	pop hl			;75d0
 	ret z			;75d1
 	dec (hl)			;75d2
 	ld b,000h		;75d3
 	jp L_75E9		;75d5
 L_75D8:
-	ld a,(hl)			;75d8
+	ld a,(hl)			;75d8   ; poner una pantalla: si la casilla esta libre, tiene que tocar a otra
 	and a			;75d9
 	jr z,L_75E2		;75da
 	push hl			;75dc
-	call L_7717		;75dd
+	call L_7717		;75dd   ; se puede poner si toca a una pantalla puesta (arriba, abajo, izquierda o derecha); NZ si se puede
 	pop hl			;75e0
 	ret z			;75e1
 L_75E2:
-	ld a,(hl)			;75e2
+	ld a,(hl)			;75e2   ; hasta 6 pantallas (0xE25E)
 	cp 006h		;75e3
 	ret nc			;75e5
 	inc (hl)			;75e6
 	ld b,001h		;75e7
 L_75E9:
-	call L_7709		;75e9
+	call L_7709		;75e9   ; la casilla: 1 puesta, 0 quitada; y su recuadro
 	ld (hl),b			;75ec
 	ld hl,(0e25ch)		;75ed
 	ld a,h			;75f0
@@ -3201,7 +3201,7 @@ L_75E9:
 	add hl,de			;75fb
 	add a,a			;75fc
 	add a,a			;75fd
-	call 04094h		;75fe
+	call 04094h		;75fe   ; suma A a HL (HL = HL + A)
 	ld de,03864h		;7601
 	add hl,de			;7604
 	ex de,hl			;7605
@@ -3217,30 +3217,30 @@ L_7613:
 	push de			;7614
 	push bc			;7615
 	ld b,000h		;7616
-	call 04e06h		;7618
+	call 04e06h		;7618   ; escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
 	pop bc			;761b
 	pop de			;761c
 	pop hl			;761d
 	ld a,004h		;761e
-	call 04094h		;7620
+	call 04094h		;7620   ; suma A a HL (HL = HL + A)
 	ld a,020h		;7623
-	call 04099h		;7625
+	call 04099h		;7625   ; suma A a DE (DE = DE + A)
 	djnz L_7613		;7628
 	ret			;762a
 L_762B:
-	ld a,(hl)			;762b
+	ld a,(hl)			;762b   ; una mas (hasta 5) con el sonido 0x32
 	cp 005h		;762c
 	ret nc			;762e
 	inc (hl)			;762f
 	jp 042d3h		;7630
 L_7633:
-	ld a,(hl)			;7633
+	ld a,(hl)			;7633   ; una menos (hasta 0) con el sonido 0x32
 	and a			;7634
 	ret z			;7635
 	dec (hl)			;7636
 	jp 042d3h		;7637
 L_763A:
-	ld hl,0e788h		;763a
+	ld hl,0e788h		;763a   ; RETURN: numera las pantallas por orden (hasta 6) y sigue
 	ld bc,03001h		;763d
 L_7640:
 	ld a,(hl)			;7640
@@ -3257,17 +3257,17 @@ L_7646:
 	dec c			;764e
 	ret z			;764f
 L_7650:
-	call 083bfh		;7650
-	call L_792E		;7653
+	call 083bfh		;7650   ; prepara los saltos de la fase hecha en el editor: las listas de 0xED80-0xEDB0
+	call L_792E		;7653   ; 0xE262 = la casilla de la pantalla 1
 L_7656:
-	xor a			;7656
-	ld hl,0e260h		;7657
+	xor a			;7656   ; 0xE260 y 0xE261 a cero, la fuente del menu y el paso siguiente
+	ld hl,0e260h		;7657   ; apunta a la opcion del menu del editor (0-10)
 	ld (hl),a			;765a
 	inc hl			;765b
 	ld (hl),a			;765c
 	jp L_7596		;765d
 L_7660:
-	ld hl,0e800h		;7660
+	ld hl,0e800h		;7660   ; el cursor de la rejilla: el sprite 0 en la casilla
 	ld a,(0e25ch)		;7663
 	add a,a			;7666
 	add a,a			;7667
@@ -3305,7 +3305,7 @@ L_7694:
 	ld hl,03844h		;769c
 	ld bc,00018h		;769f
 	ld a,0d9h		;76a2
-	call 04e10h		;76a4
+	call 04e10h		;76a4   ; llena BC bytes de la VRAM con A (BIGFIL)
 	ld hl,03863h		;76a7
 	ld bc,00712h		;76aa
 L_76AD:
@@ -3318,12 +3318,12 @@ L_76B0:
 	call 0004dh		;76b3   ; BIOS WRTVRM - Writes data in VRAM
 	pop hl			;76b6
 	ld a,020h		;76b7
-	call 04094h		;76b9
+	call 04094h		;76b9   ; suma A a HL (HL = HL + A)
 	djnz L_76B0		;76bc
 	pop bc			;76be
 	pop hl			;76bf
 	ld a,004h		;76c0
-	call 04094h		;76c2
+	call 04094h		;76c2   ; suma A a HL (HL = HL + A)
 	djnz L_76AD		;76c5
 	ld hl,038a4h		;76c7
 	ld bc,00618h		;76ca
@@ -3345,24 +3345,24 @@ L_76DA:
 	pop bc			;76e0
 	pop hl			;76e1
 	ld a,060h		;76e2
-	call 04094h		;76e4
+	call 04094h		;76e4   ; suma A a HL (HL = HL + A)
 	djnz L_76CD		;76e7
 	ret			;76e9
 L_76EA:
-	call 0532eh		;76ea
+	call 0532eh		;76ea   ; los sprites, el personaje mirando a la derecha sin nada en la mano y sus dibujos
 	xor a			;76ed
-	ld (0e285h),a		;76ee
-	ld (0e298h),a		;76f1
-	ld (0e287h),a		;76f4
-	call 0565fh		;76f7
+	ld (0e285h),a		;76ee   ; guarda hacia donde mira el personaje
+	ld (0e298h),a		;76f1   ; guarda la marca de personaje muerto
+	ld (0e287h),a		;76f4   ; guarda la postura del personaje
+	call 0565fh		;76f7   ; los dibujos de los sprites del personaje, con los bancos 14-15
 L_76FA:
-	call 041c7h		;76fa
+	call 041c7h		;76fa   ; las rachas de 0xBBFC a 0xF880 (banco 13)
 	ld de,0bbfch		;76fd
 	ld hl,01880h		;7700
-	call 04e55h		;7703
+	call 04e55h		;7703   ; lo mismo con el destino en HL
 	jp 04192h		;7706
 L_7709:
-	ld hl,(0e25ch)		;7709
+	ld hl,(0e25ch)		;7709   ; HL = la casilla del cursor en la rejilla (0xE788 + fila x 8 + columna)
 	ld a,l			;770c
 	add a,a			;770d
 	add a,a			;770e
@@ -3371,7 +3371,7 @@ L_7709:
 	ld hl,0e788h		;7711
 	jp 04094h		;7714
 L_7717:
-	call L_7709		;7717
+	call L_7709		;7717   ; se puede poner si toca a una pantalla puesta (arriba, abajo, izquierda o derecha); NZ si se puede
 	ld a,(hl)			;771a
 	and a			;771b
 	jr nz,L_773B		;771c
@@ -3387,7 +3387,7 @@ L_7717:
 	and a			;7727
 	ret nz			;7728
 	ld a,007h		;7729
-	call 04094h		;772b
+	call 04094h		;772b   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;772e
 	and a			;772f
 	ret nz			;7730
@@ -3402,13 +3402,13 @@ L_773B:
 	xor a			;773b
 	ret			;773c
 L_773D:
-	call L_7709		;773d
+	call L_7709		;773d   ; NZ si en la casilla del cursor hay pantalla
 	ld a,(hl)			;7740
 	and a			;7741
 	ret			;7742
 L_7743:
-	ld a,(0e25bh)		;7743
-	call 0409eh		;7746
+	ld a,(0e25bh)		;7743   ; el menu del editor por pasos (0xE25B)
+	call 0409eh		;7746   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_7749: 6 destinos del despachador p00:409E (call en p01:7746, el
@@ -3424,33 +3424,33 @@ DATA_tabla_7749:
 
 
 L_7755:
-	call 04ec7h		;7755
-	call 05b38h		;7758
-	call L_776E		;775b
-	call 0825bh		;775e
-	call L_7972		;7761
+	call 04ec7h		;7755   ; paso 0: la pantalla de editar y su cursor
+	call 05b38h		;7758   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call L_776E		;775b   ; 13 x 2 caracteres de la fuente de 0xBC44 en 0xF038
+	call 0825bh		;775e   ; la rejilla con el numero de cada pantalla
+	call L_7972		;7761   ; el cursor de la rejilla (sprite 2) en la casilla 0xE262, parpadeando
 	ld a,008h		;7764
 	ld (0e80bh),a		;7766
 L_7769:
-	ld hl,0e25bh		;7769
+	ld hl,0e25bh		;7769   ; el paso siguiente del menu (0xE25B + 1)
 	inc (hl)			;776c
 	ret			;776d
 L_776E:
-	call 041c7h		;776e
+	call 041c7h		;776e   ; 13 x 2 caracteres de la fuente de 0xBC44 en 0xF038
 	ld hl,0bc44h		;7771
 	ld de,027f0h		;7774
 	ld bc,00010h		;7777
 	call 04e99h		;777a
-	call 04192h		;777d
+	call 04192h		;777d   ; pone los bancos 1-2-3 (el juego)
 	ld hl,007f0h		;7780
 	ld bc,00010h		;7783
 	ld a,050h		;7786
 	jp 04ea8h		;7788
 L_778B:
-	ld a,(0e20ch)		;778b
+	ld a,(0e20ch)		;778b   ; RETURN: segun la opcion 0xE260 (9 probar, 10 grabar o cargar, 4-6 editar)
 	rla			;778e
 	jr nc,L_77AD		;778f
-	ld a,(0e260h)		;7791
+	ld a,(0e260h)		;7791   ; lee la opcion del menu del editor (0-10)
 	sub 009h		;7794
 	jp z,L_7998		;7796
 	dec a			;7799
@@ -3463,9 +3463,9 @@ L_778B:
 	ld (0e803h),a		;77a8
 	jr L_77DB		;77ab
 L_77AD:
-	call L_781B		;77ad
-	ld hl,0e260h		;77b0
-	ld a,(0e207h)		;77b3
+	call L_781B		;77ad   ; elegir una de las 11 opciones (0xE260) con arriba y abajo; disparo elige
+	ld hl,0e260h		;77b0   ; apunta a la opcion del menu del editor (0-10)
+	ld a,(0e207h)		;77b3   ; lee el mando: lo que se acaba de pulsar
 	rra			;77b6
 	jr c,L_7806		;77b7
 	rra			;77b9
@@ -3489,27 +3489,27 @@ L_77AD:
 	jr nc,L_77E5		;77d9
 L_77DB:
 	xor a			;77db
-	ld (0e261h),a		;77dc
-	call L_783C		;77df
+	ld (0e261h),a		;77dc   ; guarda la opcion del submenu del editor
+	call L_783C		;77df   ; el submenu de la opcion (tabla 0xBCBB): cuantas tiene (0xE263) y su letrero
 	jp L_7769		;77e2
 L_77E5:
-	ld hl,0e25bh		;77e5
+	ld hl,0e25bh		;77e5   ; las opciones 0-3 y 7-8: al paso de editar
 	inc (hl)			;77e8
 	inc (hl)			;77e9
 	ret			;77ea
 L_77EB:
-	ld a,005h		;77eb
-	ld (0e25bh),a		;77ed
-	call 05b38h		;77f0
+	ld a,005h		;77eb   ; la opcion 10: grabar o cargar (paso 5)
+	ld (0e25bh),a		;77ed   ; guarda el paso dentro del menu del editor
+	call 05b38h		;77f0   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	call 04ec7h		;77f3
 	xor a			;77f6
-	call 08474h		;77f7
-	call 041c7h		;77fa
+	call 08474h		;77f7   ; pinta el fondo del editor: el dibujo A de la tabla 0xBB38 (banco 13), un bit por caracter
+	call 041c7h		;77fa   ; pone el banco 13 en 0xA000
 	ld hl,0be77h		;77fd
-	call 04f0bh		;7800
+	call 04f0bh		;7800   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	jp 04192h		;7803
 L_7806:
-	call 042d3h		;7806
+	call 042d3h		;7806   ; la opcion anterior (de 0 se pasa a la 10)
 	dec (hl)			;7809
 	ld a,(hl)			;780a
 	rla			;780b
@@ -3517,7 +3517,7 @@ L_7806:
 	ld (hl),00ah		;780d
 	ret			;780f
 L_7810:
-	call 042d3h		;7810
+	call 042d3h		;7810   ; la siguiente (de 10 a 0)
 	inc (hl)			;7813
 	ld a,(hl)			;7814
 	cp 00bh		;7815
@@ -3525,9 +3525,9 @@ L_7810:
 	ld (hl),000h		;7818
 	ret			;781a
 L_781B:
-	ld b,010h		;781b
-	ld a,(0e260h)		;781d
-	ld hl,0e800h		;7820
+	ld b,010h		;781b   ; la flecha en la opcion, parpadeando cada 8 cuadros
+	ld a,(0e260h)		;781d   ; lee la opcion del menu del editor (0-10)
+	ld hl,0e800h		;7820   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 L_7823:
 	add a,a			;7823
 	add a,a			;7824
@@ -3540,7 +3540,7 @@ L_7823:
 	inc hl			;782c
 	ld (hl),014h		;782d
 	inc hl			;782f
-	ld a,(0e203h)		;7830
+	ld a,(0e203h)		;7830   ; lee la cuenta de cuadros
 	and 008h		;7833
 	ld a,008h		;7835
 	jr z,L_783A		;7837
@@ -3549,15 +3549,15 @@ L_783A:
 	ld (hl),a			;783a
 	ret			;783b
 L_783C:
-	call 041c7h		;783c
-	ld a,(0e260h)		;783f
+	call 041c7h		;783c   ; el submenu de la opcion (tabla 0xBCBB): cuantas tiene (0xE263) y su letrero
+	ld a,(0e260h)		;783f   ; lee la opcion del menu del editor (0-10)
 	sub 004h		;7842
 	ld hl,0bcbbh		;7844
-	call 04d4dh		;7847
+	call 04d4dh		;7847   ; HL = la palabra A de la tabla de HL
 	ld a,(hl)			;784a
 	ld (0e263h),a		;784b
 	inc hl			;784e
-	call 04f0bh		;784f
+	call 04f0bh		;784f   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	jp 04192h		;7852
 L_7855:
 	ld hl,03854h		;7855
@@ -3565,21 +3565,21 @@ L_7855:
 L_785A:
 	ld bc,0000ah		;785a
 	xor a			;785d
-	call 04e10h		;785e
+	call 04e10h		;785e   ; llena BC bytes de la VRAM con A (BIGFIL)
 	ld a,020h		;7861
-	call 04094h		;7863
+	call 04094h		;7863   ; suma A a HL (HL = HL + A)
 	dec d			;7866
 	jr nz,L_785A		;7867
 	ld a,0e0h		;7869
 	ld (0e804h),a		;786b
 	ret			;786e
 L_786F:
-	ld a,(0e20ch)		;786f
+	ld a,(0e20ch)		;786f   ; elige en el submenu (0xE261) con arriba y abajo; disparo sigue
 	rla			;7872
 	jp c,L_78E2		;7873
 	call L_78A9		;7876
-	ld hl,0e261h		;7879
-	ld a,(0e207h)		;787c
+	ld hl,0e261h		;7879   ; apunta a la opcion del submenu del editor
+	ld a,(0e207h)		;787c   ; lee el mando: lo que se acaba de pulsar
 	rra			;787f
 	jr c,L_7891		;7880
 	rra			;7882
@@ -3592,7 +3592,7 @@ L_786F:
 	ld (0e807h),a		;788b
 	jp L_7769		;788e
 L_7891:
-	call 042d3h		;7891
+	call 042d3h		;7891   ; pide el sonido 0x32
 	dec (hl)			;7894
 	ld a,(hl)			;7895
 	rla			;7896
@@ -3601,7 +3601,7 @@ L_7891:
 	ld (hl),a			;789b
 	ret			;789c
 L_789D:
-	call 042d3h		;789d
+	call 042d3h		;789d   ; pide el sonido 0x32
 	inc (hl)			;78a0
 	ld a,(0e263h)		;78a1
 	cp (hl)			;78a4
@@ -3610,17 +3610,17 @@ L_789D:
 	ret			;78a8
 L_78A9:
 	ld b,088h		;78a9
-	ld a,(0e261h)		;78ab
+	ld a,(0e261h)		;78ab   ; lee la opcion del submenu del editor
 	ld hl,0e804h		;78ae
 	jp L_7823		;78b1
 L_78B4:
-	ld a,(0e20ch)		;78b4
+	ld a,(0e20ch)		;78b4   ; elige la pantalla a editar en la rejilla (0xE262) con los cursores
 	rla			;78b7
 	jp c,L_78E2		;78b8
-	call L_7972		;78bb
-	ld hl,0e262h		;78be
+	call L_7972		;78bb   ; el cursor de la rejilla (sprite 2) en la casilla 0xE262, parpadeando
+	ld hl,0e262h		;78be   ; apunta a la casilla de la pantalla que se edita
 	ld de,0e788h		;78c1
-	ld a,(0e207h)		;78c4
+	ld a,(0e207h)		;78c4   ; lee el mando: lo que se acaba de pulsar
 	rra			;78c7
 	jr c,$+120		;78c8
 	rra			;78ca
@@ -3634,24 +3634,24 @@ L_78B4:
 	ld a,008h		;78d7
 	ld (0e80bh),a		;78d9
 	ld a,001h		;78dc
-	ld (0e25bh),a		;78de
+	ld (0e25bh),a		;78de   ; guarda el paso dentro del menu del editor
 	ret			;78e1
 L_78E2:
-	call 04ec7h		;78e2
-	ld hl,0e264h		;78e5
+	call 04ec7h		;78e2   ; a editar la pantalla: el cursor en (0x0B, 0x0F) y lo que se pone (tabla 0x7CE4, 3 bytes por opcion)
+	ld hl,0e264h		;78e5   ; apunta a la y del cursor del editor (en caracteres)
 	ld (hl),00bh		;78e8
 	inc hl			;78ea
 	ld (hl),00fh		;78eb
-	call 05b38h		;78ed
-	call L_79CB		;78f0
+	call 05b38h		;78ed   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call L_79CB		;78f0   ; pinta la pantalla que se edita: ladrillos, cosas, salida y lo de 0xE300
 	ld a,004h		;78f3
-	ld (0e25bh),a		;78f5
-	ld a,(0e260h)		;78f8
+	ld (0e25bh),a		;78f5   ; guarda el paso dentro del menu del editor
+	ld a,(0e260h)		;78f8   ; lee la opcion del menu del editor (0-10)
 	ld b,a			;78fb
 	add a,a			;78fc
 	add a,b			;78fd
 	ld hl,07913h		;78fe
-	call 04094h		;7901
+	call 04094h		;7901   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;7904
 	ld (0e27ch),a		;7905
 	inc hl			;7908
@@ -3677,7 +3677,7 @@ DATA_resto_7913:
 
 
 L_792E:
-	ld hl,0e788h		;792e
+	ld hl,0e788h		;792e   ; 0xE262 = la casilla de la pantalla 1
 	ld c,000h		;7931
 L_7933:
 	ld a,(hl)			;7933
@@ -3688,17 +3688,17 @@ L_7933:
 	jr L_7933		;7939
 L_793B:
 	ld a,c			;793b
-	ld (0e262h),a		;793c
+	ld (0e262h),a		;793c   ; guarda la casilla de la pantalla que se edita
 	ret			;793f
 L_7940:
-	ld a,(hl)			;7940
+	ld a,(hl)			;7940   ; a la casilla de arriba si hay pantalla
 	and 038h		;7941
 	ret z			;7943
 	ld a,(hl)			;7944
 	sub 008h		;7945
 	jr L_7955		;7947
 L_7949:
-	ld a,(hl)			;7949
+	ld a,(hl)			;7949   ; a la de abajo
 	and 038h		;794a
 	rrca			;794c
 	rrca			;794d
@@ -3709,21 +3709,21 @@ L_7949:
 	add a,008h		;7953
 L_7955:
 	ld b,a			;7955
-	call 04099h		;7956
+	call 04099h		;7956   ; suma A a DE (DE = DE + A)
 	ld a,(de)			;7959
 	and a			;795a
 	ret z			;795b
 	ld (hl),b			;795c
 	jp 042d3h		;795d
 L_7960:
-	ld a,(hl)			;7960
+	ld a,(hl)			;7960   ; a la de la izquierda
 	and 007h		;7961
 	ret z			;7963
 	ld a,(hl)			;7964
 	dec a			;7965
 	jr L_7955		;7966
 L_7968:
-	ld a,(hl)			;7968
+	ld a,(hl)			;7968   ; a la de la derecha
 	and 007h		;7969
 	cp 005h		;796b
 	ret nc			;796d
@@ -3731,7 +3731,7 @@ L_7968:
 	inc a			;796f
 	jr L_7955		;7970
 L_7972:
-	ld a,(0e262h)		;7972
+	ld a,(0e262h)		;7972   ; el cursor de la rejilla (sprite 2) en la casilla 0xE262, parpadeando
 	ld b,a			;7975
 	and 038h		;7976
 	add a,08fh		;7978
@@ -3748,7 +3748,7 @@ L_7972:
 	inc hl			;7988
 	ld (hl),018h		;7989
 	inc hl			;798b
-	ld a,(0e203h)		;798c
+	ld a,(0e203h)		;798c   ; lee la cuenta de cuadros
 	and 008h		;798f
 	ld a,008h		;7991
 	jr z,L_7996		;7993
@@ -3757,20 +3757,20 @@ L_7996:
 	ld (hl),a			;7996
 	ret			;7997
 L_7998:
-	ld hl,0e26ah		;7998
+	ld hl,0e26ah		;7998   ; probar la fase (opcion 9): solo con 0xE26A y 0xE26B puestos
 	ld a,(hl)			;799b
 	inc hl			;799c
 	and (hl)			;799d
 	ret z			;799e
-	call L_79B1		;799f
+	call L_79B1		;799f   ; cuenta las cosas de 2 x 2 puestas (0xE700) a 0xE2F4 y 0xE2F5
 	call 04ec7h		;79a2
-	call 05b38h		;79a5
-	call L_7596		;79a8
+	call 05b38h		;79a5   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call L_7596		;79a8   ; el paso siguiente del editor (0xE25A + 1, 0xE25B = 0)
 	ld a,001h		;79ab
-	ld (0e25bh),a		;79ad
+	ld (0e25bh),a		;79ad   ; guarda el paso dentro del menu del editor
 	ret			;79b0
 L_79B1:
-	ld hl,0e700h		;79b1
+	ld hl,0e700h		;79b1   ; cuenta las cosas de 2 x 2 puestas (0xE700) a 0xE2F4 y 0xE2F5
 	ld bc,01000h		;79b4
 L_79B7:
 	ld a,(hl)			;79b7
@@ -3779,20 +3779,20 @@ L_79B7:
 	inc c			;79bb
 L_79BC:
 	ld a,008h		;79bc
-	call 04094h		;79be
+	call 04094h		;79be   ; suma A a HL (HL = HL + A)
 	djnz L_79B7		;79c1
 	ld a,c			;79c3
-	ld (0e2f4h),a		;79c4
-	ld (0e2f5h),a		;79c7
+	ld (0e2f4h),a		;79c4   ; guarda cuantas cosas de 2 x 2 hay que coger
+	ld (0e2f5h),a		;79c7   ; guarda cuantas cosas de 2 x 2 quedan por coger (con 0 se abre la salida)
 	ret			;79ca
 L_79CB:
-	call L_7A60		;79cb
-	ld a,(0e26ch)		;79ce
+	call L_7A60		;79cb   ; pinta la pantalla que se edita: ladrillos, cosas, salida y lo de 0xE300
+	ld a,(0e26ch)		;79ce   ; lee cuantas columnas hay en el editor
 	and a			;79d1
-	call nz,L_7FC5		;79d2
-	call L_7B64		;79d5
+	call nz,L_7FC5		;79d2   ; pinta las columnas de esta pantalla (C = 1) o las borra (C = 0)
+	call L_7B64		;79d5   ; A = la pantalla que se edita (de la casilla 0xE262)
 	ld c,a			;79d8
-	ld ix,0e700h		;79d9
+	ld ix,0e700h		;79d9   ; las cosas de 2 x 2 de esta pantalla
 	ld b,010h		;79dd
 L_79DF:
 	push bc			;79df
@@ -3802,13 +3802,13 @@ L_79DF:
 	ld a,(ix+001h)		;79e6
 	cp c			;79e9
 	jr nz,L_79EF		;79ea
-	call L_6347		;79ec
+	call L_6347		;79ec   ; ...2 x 2 caracteres de 0x9324 en su sitio
 L_79EF:
 	ld bc,00008h		;79ef
 	add ix,bc		;79f2
 	pop bc			;79f4
 	djnz L_79DF		;79f5
-	call L_7B64		;79f7
+	call L_7B64		;79f7   ; la salida (0xE2F1-0xE2F3), 4 x 4 de 0x9340
 	ld hl,0e2f3h		;79fa
 	cp (hl)			;79fd
 	jr nz,L_7A14		;79fe
@@ -3825,9 +3825,9 @@ L_79EF:
 	pop bc			;7a10
 	call 081f0h		;7a11
 L_7A14:
-	call L_7B64		;7a14
+	call L_7B64		;7a14   ; las 64 cosas de 0xE300 (8 bytes cada una) de esta pantalla
 	ld c,a			;7a17
-	ld hl,0e300h		;7a18
+	ld hl,0e300h		;7a18   ; apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
 	ld b,040h		;7a1b
 L_7A1D:
 	push bc			;7a1d
@@ -3846,65 +3846,65 @@ L_7A1D:
 	cp c			;7a2b
 	jr nz,L_7A38		;7a2c
 	ld a,b			;7a2e
-	call 08119h		;7a2f
+	call 08119h		;7a2f   ; HL = el dibujo de la cosa A (0x9328 + 4 x A)
 	ld bc,00202h		;7a32
 	call 053d6h		;7a35
 L_7A38:
 	pop hl			;7a38
 	ld a,008h		;7a39
-	call 04094h		;7a3b
+	call 04094h		;7a3b   ; suma A a HL (HL = HL + A)
 	pop bc			;7a3e
 	djnz L_7A1D		;7a3f
-	ld a,(0e267h)		;7a41
+	ld a,(0e267h)		;7a41   ; lee cuantas cosas de 0xE600 hay en el editor
 	and a			;7a44
-	call nz,L_7E00		;7a45
-	ld a,(0e266h)		;7a48
+	call nz,L_7E00		;7a45   ; pinta las cosas de 0xE600 de la pantalla que se edita
+	ld a,(0e266h)		;7a48   ; lee cuantos sitios de salida de enemigos hay en el editor
 	and a			;7a4b
-	call nz,L_7D3E		;7a4c
-	ld a,(0e26bh)		;7a4f
+	call nz,L_7D3E		;7a4c   ; los sprites de los sitios de salida de esta pantalla (desde 0xE840, dos por sitio)
+	ld a,(0e26bh)		;7a4f   ; lee la marca de personaje puesto en el editor
 	and a			;7a52
 	ret z			;7a53
-	ld a,(0e243h)		;7a54
+	ld a,(0e243h)		;7a54   ; lee la pantalla de la fase (desde 1)
 	ld b,a			;7a57
-	call L_7B64		;7a58
+	call L_7B64		;7a58   ; A = la pantalla que se edita (de la casilla 0xE262)
 	cp b			;7a5b
-	call z,L_7C71		;7a5c
+	call z,L_7C71		;7a5c   ; los cuatro sprites del personaje en el editor (0xE808-0xE817), o fuera si no esta
 	ret			;7a5f
 L_7A60:
-	call L_7B64		;7a60
+	call L_7B64		;7a60   ; los ladrillos de la pantalla que se edita
 	dec a			;7a63
 	ld h,000h		;7a64
 	ld l,a			;7a66
-	call 05b29h		;7a67
+	call 05b29h		;7a67   ; HL = 0xE900 + HL x 0xC0: el mapa de la pantalla HL (0-5)
 	push hl			;7a6a
 	pop ix		;7a6b
 	xor a			;7a6d
-	ld (0efc0h),a		;7a6e
+	ld (0efc0h),a		;7a6e   ; guarda un dato de paso de la rutina en curso
 	jp 0455bh		;7a71
 L_7A74:
-	call 08642h		;7a74
+	call 08642h		;7a74   ; el menu de grabar y cargar (0x8A38)
 	and a			;7a77
 	ret z			;7a78
 	dec a			;7a79
 	jr z,L_7A81		;7a7a
 	xor a			;7a7c
-	ld (0e25bh),a		;7a7d
+	ld (0e25bh),a		;7a7d   ; guarda el paso dentro del menu del editor
 	ret			;7a80
 L_7A81:
 	xor a			;7a81
-	ld (0e25ah),a		;7a82
+	ld (0e25ah),a		;7a82   ; guarda el paso del editor
 	ret			;7a85
 L_7A86:
-	ld a,(0e20ch)		;7a86
+	ld a,(0e20ch)		;7a86   ; en la pantalla: RETURN vuelve al menu; si no, lo de la opcion (tabla detras)
 	rla			;7a89
 	jr nc,L_7A91		;7a8a
 	xor a			;7a8c
-	ld (0e25bh),a		;7a8d
+	ld (0e25bh),a		;7a8d   ; guarda el paso dentro del menu del editor
 	ret			;7a90
 L_7A91:
-	call 08223h		;7a91
-	ld a,(0e260h)		;7a94
-	call 0409eh		;7a97
+	call 08223h		;7a91   ; el cursor del editor: el sprite 0 en (0xE264, 0xE265), parpadeando
+	ld a,(0e260h)		;7a94   ; lee la opcion del menu del editor (0-10)
+	call 0409eh		;7a97   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_7A9A: 9 destinos del despachador p00:409E (call en p01:7A97, el
@@ -3921,13 +3921,13 @@ DATA_tabla_7A9A:
 
 
 L_7AAC:
-	ld hl,00502h		;7aac
+	ld hl,00502h		;7aac   ; poner o quitar ladrillos: 0xEFD0 = el valor (disparo pone, segundo boton quita)
 L_7AAF:
 	ld (0efd0h),hl		;7aaf
-	call 08325h		;7ab2
-	call L_7C1B		;7ab5
+	call 08325h		;7ab2   ; mueve el cursor del editor de 1 en 1 (limites en 0xE27C y 0xE2FB)
+	call L_7C1B		;7ab5   ; limites del cursor: 0x20 x 0x00
 	ret c			;7ab8
-	ld a,(0e207h)		;7ab9
+	ld a,(0e207h)		;7ab9   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;7abc
 	ret z			;7abe
 	and 010h		;7abf
@@ -3935,18 +3935,18 @@ L_7AAF:
 	xor a			;7ac3
 	ld (0efd0h),a		;7ac4
 L_7AC7:
-	ld a,(0efd0h)		;7ac7
+	ld a,(0efd0h)		;7ac7   ; el valor en la casilla del cursor
 	ld b,a			;7aca
-	call L_7B64		;7acb
+	call L_7B64		;7acb   ; A = la pantalla que se edita (de la casilla 0xE262)
 	ld h,a			;7ace
-	call L_7B55		;7acf
+	call L_7B55		;7acf   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	ex de,hl			;7ad2
 	push hl			;7ad3
 	ld a,d			;7ad4
 	exx			;7ad5
-	call 0928ah		;7ad6
+	call 0928ah		;7ad6   ; DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 	pop hl			;7ad9
-	call 09d5fh		;7ada
+	call 09d5fh		;7ada   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	exx			;7add
 	ld c,a			;7ade
 	ld a,b			;7adf
@@ -3961,12 +3961,12 @@ L_7AE9:
 	dec a			;7aea
 	ret z			;7aeb
 L_7AEC:
-	ld a,b			;7aec
+	ld a,b			;7aec   ; se marca en el mapa y se pinta
 	push hl			;7aed
 	push hl			;7aee
 	push af			;7aef
 	ld bc,00101h		;7af0
-	call L_61F7		;7af3
+	call L_61F7		;7af3   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 	pop af			;7af6
 	pop de			;7af7
 	and a			;7af8
@@ -3975,10 +3975,10 @@ L_7AEC:
 	ld (0efd1h),a		;7afd
 L_7B00:
 	ld a,(0efd1h)		;7b00
-	call 053efh		;7b03
+	call 053efh		;7b03   ; pinta el caracter como diga 0xEFC0
 	pop de			;7b06
 	push de			;7b07
-	call L_7B3B		;7b08
+	call L_7B3B		;7b08   ; en el borde izquierdo o derecho (x 0 o 0xF8): la pantalla de al lado
 	pop hl			;7b0b
 	and a			;7b0c
 	ret z			;7b0d
@@ -3989,31 +3989,31 @@ L_7B00:
 	jr nz,L_7B1B		;7b12
 	push hl			;7b14
 	ld h,0f8h		;7b15
-	call L_7B1F		;7b17
+	call L_7B1F		;7b17   ; lo mismo en la pantalla de al lado si el cursor esta en el borde
 	pop hl			;7b1a
 L_7B1B:
 	dec c			;7b1b
 	ret nz			;7b1c
 	ld h,000h		;7b1d
 L_7B1F:
-	push bc			;7b1f
+	push bc			;7b1f   ; lo mismo en la pantalla de al lado si el cursor esta en el borde
 	push de			;7b20
 	ld bc,00101h		;7b21
 	ld a,(0efd0h)		;7b24
 	push hl			;7b27
 	push de			;7b28
-	call L_61F7		;7b29
-	call L_7B64		;7b2c
+	call L_61F7		;7b29   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+	call L_7B64		;7b2c   ; A = la pantalla que se edita (de la casilla 0xE262)
 	pop bc			;7b2f
 	pop de			;7b30
 	cp b			;7b31
 	ld a,(0efd1h)		;7b32
-	call z,053efh		;7b35
+	call z,053efh		;7b35   ; pinta el caracter como diga 0xEFC0
 	pop de			;7b38
 	pop bc			;7b39
 	ret			;7b3a
 L_7B3B:
-	ld c,003h		;7b3b
+	ld c,003h		;7b3b   ; en el borde izquierdo o derecho (x 0 o 0xF8): la pantalla de al lado
 	ld a,d			;7b3d
 	and a			;7b3e
 	jr z,L_7B49		;7b3f
@@ -4024,7 +4024,7 @@ L_7B3B:
 	ld c,a			;7b47
 	ret			;7b48
 L_7B49:
-	ld a,(0e262h)		;7b49
+	ld a,(0e262h)		;7b49   ; lee la casilla de la pantalla que se edita
 	ld b,a			;7b4c
 	ld a,c			;7b4d
 	push bc			;7b4e
@@ -4033,31 +4033,31 @@ L_7B49:
 	ld a,l			;7b53
 	ret			;7b54
 L_7B55:
-	ld a,(0e264h)		;7b55
+	ld a,(0e264h)		;7b55   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	add a,a			;7b58
 	add a,a			;7b59
 	add a,a			;7b5a
 	ld e,a			;7b5b
-	ld a,(0e265h)		;7b5c
+	ld a,(0e265h)		;7b5c   ; lee la x del cursor del editor (en caracteres)
 	add a,a			;7b5f
 	add a,a			;7b60
 	add a,a			;7b61
 	ld d,a			;7b62
 	ret			;7b63
 L_7B64:
-	ld de,0e788h		;7b64
-	ld a,(0e262h)		;7b67
-	call 04099h		;7b6a
+	ld de,0e788h		;7b64   ; A = la pantalla que se edita (de la casilla 0xE262)
+	ld a,(0e262h)		;7b67   ; lee la casilla de la pantalla que se edita
+	call 04099h		;7b6a   ; suma A a DE (DE = DE + A)
 	ld a,(de)			;7b6d
 	ret			;7b6e
 L_7B6F:
-	ld hl,06203h		;7b6f
+	ld hl,06203h		;7b6f   ; lo mismo con otro tamano (0x5E03)
 	jp L_7AAF		;7b72
 L_7B75:
-	call 08325h		;7b75
-	call L_7C20		;7b78
+	call 08325h		;7b75   ; poner o quitar una cosa de 1 x 2
+	call L_7C20		;7b78   ; limites del cursor: 0x28 x 0x08
 	ret c			;7b7b
-	ld a,(0e207h)		;7b7c
+	ld a,(0e207h)		;7b7c   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;7b7f
 	ret z			;7b81
 	and 010h		;7b82
@@ -4067,13 +4067,13 @@ L_7B75:
 L_7B89:
 	ld (0efd0h),a		;7b89
 	ld b,a			;7b8c
-	call L_7B64		;7b8d
+	call L_7B64		;7b8d   ; A = la pantalla que se edita (de la casilla 0xE262)
 	ld h,a			;7b90
 	exx			;7b91
-	call 0928ah		;7b92
-	ld (0e250h),de		;7b95
+	call 0928ah		;7b92   ; DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
+	ld (0e250h),de		;7b95   ; guarda el mapa de la pantalla en la que se esta (16 bits)
 	exx			;7b99
-	call L_7B55		;7b9a
+	call L_7B55		;7b9a   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	ex de,hl			;7b9d
 	ld a,b			;7b9e
 	and a			;7b9f
@@ -4081,9 +4081,9 @@ L_7B89:
 	push hl			;7ba2
 	exx			;7ba3
 	pop hl			;7ba4
-	ld de,(0e250h)		;7ba5
+	ld de,(0e250h)		;7ba5   ; lee el mapa de la pantalla en la que se esta (16 bits)
 	push hl			;7ba9
-	call 09d5fh		;7baa
+	call 09d5fh		;7baa   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	pop hl			;7bad
 	dec a			;7bae
 	ret nz			;7baf
@@ -4099,9 +4099,9 @@ L_7BBA:
 	push af			;7bbc
 	ld bc,00102h		;7bbd
 	push hl			;7bc0
-	call L_61F7		;7bc1
+	call L_61F7		;7bc1   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 	pop de			;7bc4
-	call L_7BE0		;7bc5
+	call L_7BE0		;7bc5   ; en el borde de arriba o de abajo (y 0 o 0xB8): la pantalla de al lado
 	pop af			;7bc8
 	pop de			;7bc9
 	and a			;7bca
@@ -4110,7 +4110,7 @@ L_7BBA:
 L_7BCF:
 	push af			;7bcf
 	push de			;7bd0
-	call 053efh		;7bd1
+	call 053efh		;7bd1   ; pinta el caracter como diga 0xEFC0
 	pop de			;7bd4
 	ld a,d			;7bd5
 	add a,008h		;7bd6
@@ -4121,8 +4121,8 @@ L_7BCF:
 L_7BDD:
 	jp 053efh		;7bdd
 L_7BE0:
-	push de			;7be0
-	call L_7C0C		;7be1
+	push de			;7be0   ; en el borde de arriba o de abajo (y 0 o 0xB8): la pantalla de al lado
+	call L_7C0C		;7be1   ; en el borde de arriba o abajo
 	pop hl			;7be4
 	and a			;7be5
 	ret z			;7be6
@@ -4136,8 +4136,8 @@ L_7BEF:
 	ld a,(0efd0h)		;7bf2
 	push hl			;7bf5
 	push de			;7bf6
-	call L_61F7		;7bf7
-	call L_7B64		;7bfa
+	call L_61F7		;7bf7   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+	call L_7B64		;7bfa   ; A = la pantalla que se edita (de la casilla 0xE262)
 	pop bc			;7bfd
 	pop de			;7bfe
 	cp b			;7bff
@@ -4149,7 +4149,7 @@ L_7BEF:
 L_7C09:
 	jp L_7BCF		;7c09
 L_7C0C:
-	ld c,001h		;7c0c
+	ld c,001h		;7c0c   ; en el borde de arriba o abajo
 	ld a,e			;7c0e
 	and a			;7c0f
 	jp z,L_7B49		;7c10
@@ -4159,20 +4159,20 @@ L_7C0C:
 	xor a			;7c19
 	ret			;7c1a
 L_7C1B:
-	ld bc,02000h		;7c1b
+	ld bc,02000h		;7c1b   ; limites del cursor: 0x20 x 0x00
 	jr L_7C23		;7c1e
 L_7C20:
-	ld bc,02808h		;7c20
+	ld bc,02808h		;7c20   ; limites del cursor: 0x28 x 0x08
 L_7C23:
-	ld a,(0e26ah)		;7c23
+	ld a,(0e26ah)		;7c23   ; lee la marca de salida puesta en el editor
 	and a			;7c26
 	jr z,L_7C41		;7c27
 	ld hl,0e2f3h		;7c29
-	call L_7B64		;7c2c
+	call L_7B64		;7c2c   ; C si (HL) es la pantalla que se edita y el cursor esta dentro del rectangulo de HL
 	cp (hl)			;7c2f
 	jr nz,L_7C41		;7c30
 	dec hl			;7c32
-	call L_7B55		;7c33
+	call L_7B55		;7c33   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	ld a,d			;7c36
 	add a,c			;7c37
 	sub (hl)			;7c38
@@ -4187,16 +4187,16 @@ L_7C41:
 	or a			;7c41
 	ret			;7c42
 L_7C43:
-	call 08325h		;7c43
-	ld a,(0e207h)		;7c46
+	call 08325h		;7c43   ; editor: poner al personaje (disparo) en el cursor, o quitarlo (segundo boton)
+	ld a,(0e207h)		;7c46   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;7c49
 	ret z			;7c4b
 	and 010h		;7c4c
-	ld hl,0e282h		;7c4e
+	ld hl,0e282h		;7c4e   ; apunta a la y del personaje
 	jr z,L_7C64		;7c51
-	call L_7B64		;7c53
-	ld (0e243h),a		;7c56
-	call L_7B55		;7c59
+	call L_7B64		;7c53   ; A = la pantalla que se edita (de la casilla 0xE262)
+	ld (0e243h),a		;7c56   ; su pantalla y su sitio
+	call L_7B55		;7c59   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	ld (hl),e			;7c5c
 	inc hl			;7c5d
 	inc hl			;7c5e
@@ -4204,16 +4204,16 @@ L_7C43:
 	ld a,001h		;7c60
 	jr L_7C6E		;7c62
 L_7C64:
-	ld a,(0e243h)		;7c64
+	ld a,(0e243h)		;7c64   ; quitarlo, si esta en esta pantalla
 	ld b,a			;7c67
-	call L_7B64		;7c68
+	call L_7B64		;7c68   ; A = la pantalla que se edita (de la casilla 0xE262)
 	cp b			;7c6b
 	ret nz			;7c6c
 	xor a			;7c6d
 L_7C6E:
-	ld (0e26bh),a		;7c6e
+	ld (0e26bh),a		;7c6e   ; 0xE26B: el personaje esta puesto
 L_7C71:
-	ld hl,0e808h		;7c71
+	ld hl,0e808h		;7c71   ; los cuatro sprites del personaje en el editor (0xE808-0xE817), o fuera si no esta
 	ld de,0e80ch		;7c74
 	exx			;7c77
 	ld hl,0e810h		;7c78
@@ -4222,7 +4222,7 @@ L_7C71:
 	and a			;7c7f
 	ld a,0e0h		;7c80
 	jr z,L_7C87		;7c82
-	ld a,(0e282h)		;7c84
+	ld a,(0e282h)		;7c84   ; lee la y del personaje
 L_7C87:
 	dec a			;7c87
 	ld (hl),a			;7c88
@@ -4243,7 +4243,7 @@ L_7C87:
 	inc hl			;7c98
 	inc de			;7c99
 	exx			;7c9a
-	ld a,(0e284h)		;7c9b
+	ld a,(0e284h)		;7c9b   ; lee la x del personaje
 	ld (hl),a			;7c9e
 	ld (de),a			;7c9f
 	inc hl			;7ca0
@@ -4276,92 +4276,92 @@ L_7C87:
 	exx			;7cc2
 	ret			;7cc3
 L_7CC4:
-	call 08325h		;7cc4
-	ld a,(0e207h)		;7cc7
+	call 08325h		;7cc4   ; editor: poner (disparo) o quitar un sitio de salida de enemigos (hasta 8, 0xE266)
+	ld a,(0e207h)		;7cc7   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;7cca
 	ret z			;7ccc
 	and 010h		;7ccd
-	ld hl,0e266h		;7ccf
+	ld hl,0e266h		;7ccf   ; apunta a cuantos sitios de salida de enemigos hay en el editor
 	jr z,L_7D21		;7cd2
 	ld a,(hl)			;7cd4
 	cp 008h		;7cd5
 	ret nc			;7cd7
 	push hl			;7cd8
-	call L_7D07		;7cd9
+	call L_7D07		;7cd9   ; no se pone donde ya hay uno
 	pop hl			;7cdc
 	ret z			;7cdd
 	inc (hl)			;7cde
 	ld b,008h		;7cdf
-	ld hl,0e2c0h		;7ce1
+	ld hl,0e2c0h		;7ce1   ; apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
 L_7CE4:
-	ld a,(hl)			;7ce4
+	ld a,(hl)			;7ce4   ; el primero libre de 0xE2C0
 	and a			;7ce5
 	jr z,L_7CEF		;7ce6
 	ld a,005h		;7ce8
-	call 04094h		;7cea
+	call 04094h		;7cea   ; suma A a HL (HL = HL + A)
 	jr L_7CE4		;7ced
 L_7CEF:
-	ld a,(0e261h)		;7cef
+	ld a,(0e261h)		;7cef   ; el tipo (opcion del submenu + 1, con el bit 7), la cuenta, la pantalla y el sitio
 	inc a			;7cf2
 	or 080h		;7cf3
 	ld (hl),a			;7cf5
 	inc hl			;7cf6
 	ld (hl),020h		;7cf7
 	inc hl			;7cf9
-	call L_7B64		;7cfa
+	call L_7B64		;7cfa   ; A = la pantalla que se edita (de la casilla 0xE262)
 	ld (hl),a			;7cfd
 	inc hl			;7cfe
-	call L_7B55		;7cff
+	call L_7B55		;7cff   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	ld (hl),e			;7d02
 	inc hl			;7d03
 	ld (hl),d			;7d04
 	jr L_7D3E		;7d05
 L_7D07:
-	ld hl,0e2c0h		;7d07
+	ld hl,0e2c0h		;7d07   ; Z si ya hay un sitio de salida en el cursor
 	ld b,008h		;7d0a
 L_7D0C:
 	ld a,(hl)			;7d0c
 	and a			;7d0d
 	jr z,L_7D16		;7d0e
 	push hl			;7d10
-	call L_7D82		;7d11
+	call L_7D82		;7d11   ; Z si el sitio de HL esta en el cursor
 	pop hl			;7d14
 	ret z			;7d15
 L_7D16:
 	ld a,005h		;7d16
-	call 04094h		;7d18
+	call 04094h		;7d18   ; suma A a HL (HL = HL + A)
 	djnz L_7D0C		;7d1b
 	ld a,001h		;7d1d
 	and a			;7d1f
 	ret			;7d20
 L_7D21:
-	ld a,(hl)			;7d21
+	ld a,(hl)			;7d21   ; quitar el del cursor
 	and a			;7d22
 	ret z			;7d23
-	ld hl,0e2c0h		;7d24
+	ld hl,0e2c0h		;7d24   ; apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
 	ld b,008h		;7d27
 L_7D29:
 	ld a,(hl)			;7d29
 	and a			;7d2a
 	jr z,L_7D37		;7d2b
 	push hl			;7d2d
-	call L_7D82		;7d2e
+	call L_7D82		;7d2e   ; Z si el sitio de HL esta en el cursor
 	pop hl			;7d31
 	push hl			;7d32
-	call z,L_7D94		;7d33
+	call z,L_7D94		;7d33   ; lo quita
 	pop hl			;7d36
 L_7D37:
 	ld a,005h		;7d37
-	call 04094h		;7d39
+	call 04094h		;7d39   ; suma A a HL (HL = HL + A)
 	djnz L_7D29		;7d3c
 L_7D3E:
-	ld hl,0e2c0h		;7d3e
+	ld hl,0e2c0h		;7d3e   ; los sprites de los sitios de salida de esta pantalla (desde 0xE840, dos por sitio)
 	ld b,008h		;7d41
 	ld de,0e840h		;7d43
 L_7D46:
 	push hl			;7d46
 	exx			;7d47
-	call L_7B64		;7d48
+	call L_7B64		;7d48   ; A = la pantalla que se edita (de la casilla 0xE262)
 	exx			;7d4b
 	inc hl			;7d4c
 	inc hl			;7d4d
@@ -4378,7 +4378,7 @@ L_7D46:
 	inc hl			;7d5a
 	inc hl			;7d5b
 	ld a,(hl)			;7d5c
-	jr nz,L_7D61		;7d5d
+	jr nz,L_7D61		;7d5d   ; la y, o fuera si no hay
 	ld a,0e0h		;7d5f
 L_7D61:
 	ld (de),a			;7d61
@@ -4387,7 +4387,7 @@ L_7D61:
 	ldi		;7d64
 	ld a,c			;7d66
 	ld hl,082adh		;7d67
-	call 04d4dh		;7d6a
+	call 04d4dh		;7d6a   ; HL = la palabra A de la tabla de HL
 	ld a,l			;7d6d
 	ld (de),a			;7d6e
 	inc de			;7d6f
@@ -4398,18 +4398,18 @@ L_7D61:
 	pop bc			;7d74
 L_7D75:
 	ld a,005h		;7d75
-	call 04094h		;7d77
+	call 04094h		;7d77   ; suma A a HL (HL = HL + A)
 	ld a,004h		;7d7a
-	call 04099h		;7d7c
+	call 04099h		;7d7c   ; suma A a DE (DE = DE + A)
 	djnz L_7D46		;7d7f
 	ret			;7d81
 L_7D82:
-	call L_7B64		;7d82
+	call L_7B64		;7d82   ; Z si el sitio de HL esta en el cursor
 	inc hl			;7d85
 	inc hl			;7d86
 	cp (hl)			;7d87
 	ret nz			;7d88
-	call L_7B55		;7d89
+	call L_7B55		;7d89   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	inc hl			;7d8c
 	ld a,(hl)			;7d8d
 	cp e			;7d8e
@@ -4419,36 +4419,36 @@ L_7D82:
 	cp d			;7d92
 	ret			;7d93
 L_7D94:
-	ld (hl),000h		;7d94
-	ld hl,0e266h		;7d96
+	ld (hl),000h		;7d94   ; lo quita
+	ld hl,0e266h		;7d96   ; apunta a cuantos sitios de salida de enemigos hay en el editor
 	dec (hl)			;7d99
 	ret			;7d9a
 L_7D9B:
-	call 08312h		;7d9b
-	ld a,(0e207h)		;7d9e
+	call 08312h		;7d9b   ; editor: poner (disparo) o quitar una cosa de 0xE600 (hasta 16, 0xE267); la opcion 7 son columnas
+	ld a,(0e207h)		;7d9e   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;7da1
 	ret z			;7da3
 	and 010h		;7da4
-	ld hl,0e267h		;7da6
+	ld hl,0e267h		;7da6   ; apunta a cuantas cosas de 0xE600 hay en el editor
 	jp z,L_7E92		;7da9
-	ld a,(0e261h)		;7dac
+	ld a,(0e261h)		;7dac   ; lee la opcion del submenu del editor
 	cp 007h		;7daf
 	jp z,L_7F87		;7db1
 	ld a,(hl)			;7db4
 	cp 010h		;7db5
 	ret nc			;7db7
 	push hl			;7db8
-	call L_7E2F		;7db9
+	call L_7E2F		;7db9   ; Z si ya hay una cosa en el cursor
 	pop hl			;7dbc
 	ret z			;7dbd
 	inc (hl)			;7dbe
-	ld hl,0e600h		;7dbf
+	ld hl,0e600h		;7dbf   ; la primera ficha libre de 0xE600, a cero
 L_7DC2:
 	ld a,(hl)			;7dc2
 	and a			;7dc3
 	jr z,L_7DCD		;7dc4
 	ld a,010h		;7dc6
-	call 04094h		;7dc8
+	call 04094h		;7dc8   ; suma A a HL (HL = HL + A)
 	jr L_7DC2		;7dcb
 L_7DCD:
 	push hl			;7dcd
@@ -4458,7 +4458,7 @@ L_7DD2:
 	ld (hl),000h		;7dd2
 	inc hl			;7dd4
 	djnz L_7DD2		;7dd5
-	ld a,(0e261h)		;7dd7
+	ld a,(0e261h)		;7dd7   ; el tipo sale de la opcion del submenu
 	ld b,a			;7dda
 	dec b			;7ddb
 	cp 004h		;7ddc
@@ -4470,17 +4470,17 @@ L_7DD2:
 L_7DE7:
 	ld a,b			;7de7
 	ld (ix+000h),a		;7de8
-	call L_7B55		;7deb
+	call L_7B55		;7deb   ; su sitio y su pantalla
 	ld (ix+002h),e		;7dee
 	ld (ix+003h),d		;7df1
-	call L_7B64		;7df4
+	call L_7B64		;7df4   ; A = la pantalla que se edita (de la casilla 0xE262)
 	ld (ix+004h),a		;7df7
 	ld (ix+009h),a		;7dfa
-	call L_7EED		;7dfd
+	call L_7EED		;7dfd   ; lo propio de su tipo
 L_7E00:
-	call L_7B64		;7e00
+	call L_7B64		;7e00   ; pinta las cosas de 0xE600 de la pantalla que se edita
 	ld c,a			;7e03
-	ld ix,0e600h		;7e04
+	ld ix,0e600h		;7e04   ; apunta a las cosas de la fase (16 x 16 bytes)
 	ld b,010h		;7e08
 L_7E0A:
 	push bc			;7e0a
@@ -4489,7 +4489,7 @@ L_7E0A:
 	jr nz,L_7E18		;7e0f
 	ld a,(ix+000h)		;7e11
 	and a			;7e14
-	call nz,L_7E21		;7e15
+	call nz,L_7E21		;7e15   ; cada tipo, su dibujo (tabla detras)
 L_7E18:
 	ld bc,00010h		;7e18
 	add ix,bc		;7e1b
@@ -4497,8 +4497,8 @@ L_7E18:
 	djnz L_7E0A		;7e1e
 	ret			;7e20
 L_7E21:
-	dec a			;7e21
-	call 0409eh		;7e22
+	dec a			;7e21   ; cada tipo, su dibujo (tabla detras)
+	call 0409eh		;7e22   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_7E25: 5 destinos del despachador p00:409E (call en p01:7E22, el
@@ -4513,13 +4513,13 @@ DATA_tabla_7E25:
 
 
 L_7E2F:
-	ld ix,0e600h		;7e2f
+	ld ix,0e600h		;7e2f   ; Z si ya hay una cosa en el cursor
 	ld b,010h		;7e33
 L_7E35:
 	ld a,(ix+000h)		;7e35
 	and a			;7e38
 	jr z,L_7E3F		;7e39
-	call L_7ED9		;7e3b
+	call L_7ED9		;7e3b   ; Z si la cosa de IX esta en el cursor
 	ret z			;7e3e
 L_7E3F:
 	ld de,00010h		;7e3f
@@ -4529,7 +4529,7 @@ L_7E3F:
 	and a			;7e48
 	ret			;7e49
 L_7E4A:
-	ld a,(ix+007h)		;7e4a
+	ld a,(ix+007h)		;7e4a   ; la cosa de tipo 1: su dibujo de 0x9374 (variante 0 o 3)
 	and 002h		;7e4d
 	ld a,003h		;7e4f
 	jr nz,L_7E54		;7e51
@@ -4540,7 +4540,7 @@ L_7E54:
 	ld bc,0908dh		;7e5a
 	jp 0b8deh		;7e5d
 L_7E60:
-	ld a,(ix+007h)		;7e60
+	ld a,(ix+007h)		;7e60   ; la de tipo 2: segun la variante, los dibujos de 0x937C o de 0x9394
 	rra			;7e63
 	rra			;7e64
 	ld hl,09095h		;7e65
@@ -4552,33 +4552,33 @@ L_7E60:
 	ld bc,090bdh		;7e77
 	jp 0b8deh		;7e7a
 L_7E7D:
-	ld e,(ix+002h)		;7e7d
+	ld e,(ix+002h)		;7e7d   ; la de tipo 3: una columna de B caracteres 0xFE
 	ld d,(ix+003h)		;7e80
 	ld b,(ix+008h)		;7e83
 L_7E86:
 	ld a,0feh		;7e86
-	call 053efh		;7e88
+	call 053efh		;7e88   ; pinta el caracter como diga 0xEFC0
 	ld a,e			;7e8b
 	add a,008h		;7e8c
 	ld e,a			;7e8e
 	djnz L_7E86		;7e8f
 	ret			;7e91
 L_7E92:
-	ld a,(0e261h)		;7e92
+	ld a,(0e261h)		;7e92   ; quitar la cosa del cursor
 	cp 007h		;7e95
 	jp z,08017h		;7e97
 	ld a,(hl)			;7e9a
 	and a			;7e9b
 	ret z			;7e9c
-	ld ix,0e600h		;7e9d
+	ld ix,0e600h		;7e9d   ; apunta a las cosas de la fase (16 x 16 bytes)
 	ld b,010h		;7ea1
 L_7EA3:
 	ld a,(ix+000h)		;7ea3
 	and a			;7ea6
 	jr z,L_7EB1		;7ea7
 	push hl			;7ea9
-	call L_7ED9		;7eaa
-	call z,L_7EB9		;7ead
+	call L_7ED9		;7eaa   ; Z si la cosa de IX esta en el cursor
+	call z,L_7EB9		;7ead   ; se borra: su tamano de la tabla 0x82F3 y el fondo de 0x86C5
 	pop hl			;7eb0
 L_7EB1:
 	ld de,00010h		;7eb1
@@ -4586,14 +4586,14 @@ L_7EB1:
 	djnz L_7EA3		;7eb6
 	ret			;7eb8
 L_7EB9:
-	ld a,(ix+000h)		;7eb9
+	ld a,(ix+000h)		;7eb9   ; se borra: su tamano de la tabla 0x82F3 y el fondo de 0x86C5
 	ld (ix+000h),000h		;7ebc
 	dec (hl)			;7ec0
 	ld hl,07ed3h		;7ec1
-	call 04094h		;7ec4
+	call 04094h		;7ec4   ; suma A a HL (HL = HL + A)
 	ld c,(hl)			;7ec7
 	ld b,(ix+008h)		;7ec8
-	call L_7B55		;7ecb
+	call L_7B55		;7ecb   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	ld hl,082b5h		;7ece
 	jp 053d6h		;7ed1
 
@@ -4608,10 +4608,10 @@ DATA_7ED4:
 
 
 L_7ED9:
-	call L_7B64		;7ed9
+	call L_7B64		;7ed9   ; Z si la cosa de IX esta en el cursor
 	cp (ix+004h)		;7edc
 	ret nz			;7edf
-	call L_7B55		;7ee0
+	call L_7B55		;7ee0   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	ld a,(ix+002h)		;7ee3
 	cp e			;7ee6
 	ret nz			;7ee7
@@ -4619,8 +4619,8 @@ L_7ED9:
 	cp d			;7eeb
 	ret			;7eec
 L_7EED:
-	ld a,(0e261h)		;7eed
-	call 0409eh		;7ef0
+	ld a,(0e261h)		;7eed   ; lo propio de cada opcion (tabla detras)
+	call 0409eh		;7ef0   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_7EF3: 7 destinos del despachador p00:409E (call en p01:7EF0, el
@@ -4636,18 +4636,18 @@ DATA_tabla_7EF3:
 
 
 L_7F01:
-	ld c,000h		;7f01
+	ld c,000h		;7f01   ; cuanto mide hacia abajo hasta el suelo (hasta 3): si no cabe, no se pone
 	xor a			;7f03
 	ld b,003h		;7f04
 L_7F06:
 	ld (ix+005h),c		;7f06
 	ld (ix+007h),a		;7f09
-	call L_7F3B		;7f0c
+	call L_7F3B		;7f0c   ; C = cuantas casillas libres hay debajo del cursor (hasta B)
 	ld (ix+008h),c		;7f0f
 	dec c			;7f12
 	ret nz			;7f13
 	ld (ix+000h),000h		;7f14
-	ld hl,0e267h		;7f18
+	ld hl,0e267h		;7f18   ; apunta a cuantas cosas de 0xE600 hay en el editor
 	dec (hl)			;7f1b
 	ret			;7f1c
 L_7F1D:
@@ -4657,7 +4657,7 @@ L_7F22:
 	ld (ix+008h),002h		;7f22
 	ret			;7f26
 L_7F27:
-	xor a			;7f27
+	xor a			;7f27   ; hasta 0x1E
 	ld c,000h		;7f28
 	ld b,01eh		;7f2a
 	jp L_7F06		;7f2c
@@ -4671,8 +4671,8 @@ L_7F35:
 	ld b,003h		;7f37
 	jr L_7F06		;7f39
 L_7F3B:
-	ld c,001h		;7f3b
-	call L_7B55		;7f3d
+	ld c,001h		;7f3b   ; C = cuantas casillas libres hay debajo del cursor (hasta B)
+	call L_7B55		;7f3d   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 L_7F40:
 	ld a,e			;7f40
 	add a,008h		;7f41
@@ -4681,7 +4681,7 @@ L_7F40:
 	ret nc			;7f46
 	push bc			;7f47
 	push de			;7f48
-	call L_7F53		;7f49
+	call L_7F53		;7f49   ; NC si la casilla de D, E del mapa es de ladrillo (2 o 3)
 	pop de			;7f4c
 	pop bc			;7f4d
 	ret nc			;7f4e
@@ -4689,16 +4689,16 @@ L_7F40:
 	djnz L_7F40		;7f50
 	ret			;7f52
 L_7F53:
-	push de			;7f53
-	call L_7B64		;7f54
+	push de			;7f53   ; NC si la casilla de D, E del mapa es de ladrillo (2 o 3)
+	call L_7B64		;7f54   ; A = la pantalla que se edita (de la casilla 0xE262)
 	dec a			;7f57
 	ld l,a			;7f58
 	ld h,000h		;7f59
-	call 05b29h		;7f5b
+	call 05b29h		;7f5b   ; HL = 0xE900 + HL x 0xC0: el mapa de la pantalla HL (0-5)
 	pop de			;7f5e
 	push hl			;7f5f
 	ex de,hl			;7f60
-	call 04d7ch		;7f61
+	call 04d7ch		;7f61   ; pasa la posicion de caracter de HL a direccion de la VRAM
 	or a			;7f64
 	ld de,03800h		;7f65
 	sbc hl,de		;7f68
@@ -4709,7 +4709,7 @@ L_7F53:
 	rr l		;7f71
 	ld a,l			;7f73
 	pop hl			;7f74
-	call 04094h		;7f75
+	call 04094h		;7f75   ; suma A a HL (HL = HL + A)
 	ld a,c			;7f78
 	and 003h		;7f79
 	inc a			;7f7b
@@ -4723,22 +4723,22 @@ L_7F7E:
 	cp 002h		;7f84
 	ret			;7f86
 L_7F87:
-	ld hl,0e26ch		;7f87
+	ld hl,0e26ch		;7f87   ; poner una columna (hasta 16, 0xE26C): crece hacia abajo hasta el suelo
 	ld a,(hl)			;7f8a
 	cp 010h		;7f8b
 	ret nc			;7f8d
 	push hl			;7f8e
-	call L_7FFC		;7f8f
+	call L_7FFC		;7f8f   ; Z si ya hay una columna en el cursor
 	pop hl			;7f92
 	ret z			;7f93
 	inc (hl)			;7f94
-	ld hl,0e7c0h		;7f95
+	ld hl,0e7c0h		;7f95   ; apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
 L_7F98:
-	ld a,(hl)			;7f98
+	ld a,(hl)			;7f98   ; la primera libre de 0xE7C0
 	and a			;7f99
 	jr z,L_7FA3		;7f9a
 	ld a,004h		;7f9c
-	call 04094h		;7f9e
+	call 04094h		;7f9e   ; suma A a HL (HL = HL + A)
 	jr L_7F98		;7fa1
 L_7FA3:
 	ld d,h			;7fa3
@@ -4750,16 +4750,16 @@ L_7FA8:
 	inc de			;7fa9
 	djnz L_7FA8		;7faa
 	push hl			;7fac
-	call L_7B64		;7fad
+	call L_7B64		;7fad   ; pantalla, x, y y alto | 0x80
 	ld (hl),a			;7fb0
 	inc hl			;7fb1
-	call L_7B55		;7fb2
+	call L_7B55		;7fb2   ; D, E = el cursor en pixeles (0xE264 x 8, 0xE265 x 8)
 	ld (hl),e			;7fb5
 	inc hl			;7fb6
 	ld (hl),d			;7fb7
 	ld b,01eh		;7fb8
 	push hl			;7fba
-	call L_7F3B		;7fbb
+	call L_7F3B		;7fbb   ; C = cuantas casillas libres hay debajo del cursor (hasta B)
 	pop hl			;7fbe
 	inc hl			;7fbf
 	ld a,080h		;7fc0
@@ -4767,21 +4767,21 @@ L_7FA8:
 	ld (hl),a			;7fc3
 	pop hl			;7fc4
 L_7FC5:
-	ld c,001h		;7fc5
-	ld ix,0e7c0h		;7fc7
+	ld c,001h		;7fc5   ; pinta las columnas de esta pantalla (C = 1) o las borra (C = 0)
+	ld ix,0e7c0h		;7fc7   ; apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
 	ld b,010h		;7fcb
 L_7FCD:
 	push bc			;7fcd
-	call L_7B64		;7fce
+	call L_7B64		;7fce   ; A = la pantalla que se edita (de la casilla 0xE262)
 	cp (ix+000h)		;7fd1
-	call z,L_7FE0		;7fd4
+	call z,L_7FE0		;7fd4   ; una columna: B caracteres hacia abajo
 	ld bc,00004h		;7fd7
 	add ix,bc		;7fda
 	pop bc			;7fdc
 	djnz L_7FCD		;7fdd
 	ret			;7fdf
 L_7FE0:
-	ld a,(ix+003h)		;7fe0
+	ld a,(ix+003h)		;7fe0   ; una columna: B caracteres hacia abajo
 	and 01fh		;7fe3
 	ld b,a			;7fe5
 	ld d,(ix+002h)		;7fe6
@@ -4800,4 +4800,4 @@ L_7FEC:
 	djnz L_7FEC		;7ff9
 	ret			;7ffb
 L_7FFC:
-	ld ix,0e7c0h		;7ffc
+	ld ix,0e7c0h		;7ffc   ; Z si ya hay una columna en el cursor

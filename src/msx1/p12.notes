@@ -1,6 +1,287 @@
 # Notas del banco p12 (msx1): C comentario, L nombre, B bloque, D datos.
 
+# --- A MANO: comentarios escritos leyendo el codigo ---
+C 0xB400 el sitio escondido de la fase, si lo tiene: tabla 0xB548, 5 bytes [fase][tipo][pantalla][y][x], un 0 acaba
+C 0xB413 lo copia a 0xEF10: tipo, paso (0) y pantalla, y, x
+C 0xB422 un cuadro del sitio escondido, por pasos (0xEF11)
+C 0xB437 paso 0: aparece si el personaje salta (estado 1) justo en el sitio
+C 0xB446 el paso siguiente, una espera de 0x40 y se pinta, con el sonido 0x3B
+C 0xB462 paso 1: espera
+C 0xB46C paso 2: al tocarlo, el sonido 0x2E y su dibujo de 0xB1D6
+C 0xB48F paso 3: en el sitio pulsando abajo, se entra (estado 12) con el sonido 0x30
+C 0xB4AC C si el personaje esta a menos de 4 pixeles del sitio
+C 0xB4C9 C si esta a menos de 4 en y y de 8 en x
+C 0xB4E3 guarda el fondo del sitio y pinta 2 x 2 caracteres de 0xB4F8
+C 0xB4FC guarda en la pagina 1 (0xB0) los 16 x 16 pixeles del sitio
+C 0xB509 devuelve el fondo
+C 0xB518 al pintar la pantalla, el sitio si ya ha aparecido
+C 0xB530 un cuadro del minijuego del sitio escondido (estado 12)
+C 0xB536 tipo 1: las musicas; tipo 2: el puzle
+C 0xB6AC el puzle: ESC sale; por pasos (IX+01)
+C 0xB6C6 paso 0: la fuente, las piezas en orden (1-24 y el hueco) y el letrero
+C 0xB6EE paso 1: espera el disparo
+C 0xB6FD paso 2: un puzle revuelto de los 4 de la tabla 0xB5E0 (al azar con 0xE203)
+C 0xB71A pinta las 25 casillas (5 x 5) y el letrero
+C 0xB745 paso 3: los cursores mueven la mano; el disparo mueve la pieza al hueco de al lado
+C 0xB786 la pieza: si tiene el hueco al lado, se corre
+C 0xB7A9 al hueco de abajo
+C 0xB7B4 al de la izquierda
+C 0xB7CE al de la derecha
+C 0xB7DD al de arriba
+C 0xB7E8 pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
+C 0xB7F6 B = la pieza de la casilla de la mano (Z si es el hueco)
+C 0xB80B D, E = la casilla de la mano en pixeles
+C 0xB820 C = hacia donde esta el hueco (1 arriba, 2 abajo, 3 izquierda, 4 derecha; 0 no esta al lado)
+C 0xB85A paso 4: si las piezas estan en orden (1-24)...
+C 0xB876 ...resuelto: 3 vidas mas (hasta 99) y el letrero de 0xB5C7
+C 0xB899 paso 5: el disparo sale
+C 0xB89F sale: el borde a 0 y el sonido 1
+C 0xB8CB la mano (cuatro sprites con los colores de 0xB913)
+C 0xB909 las musicas: por pasos
+C 0xB910 paso 0: graficos, el dibujo de 0xBC05 y el letrero
+C 0xB92A paso 1: arriba y abajo eligen (19, IX+02), el disparo la pone; RETURN sale
+C 0xB973 la pone (tabla detras, una peticion de sonido por musica)
+C 0xB9A2 los sprites de la flecha (tablas 0xB9FA y 0xBA0D)
+C 0xB9F7 la demostracion: la fase de la tabla 0xBA3A (una de 6, 0xE219 va dando la vuelta)
+C 0xB9FA 0xE209/0xE20A: el mando grabado
+C 0xBA13 cuenta a cero, empieza la fase y la musica
+C 0xBA27 un cuadro de la demostracion: la partida con el mando grabado; si muere, se acaba
+C 0xBA3D sale de la pantalla: a la de al lado
+C 0xBA4C el mando de la demostracion: [teclas][cuadros] de la tabla de la piramide (0xBA92)
+C 0xBA58 0xFF acaba la demostracion
+C 0xBA60 las teclas, como si se pulsaran
+C 0xBA66 A = las teclas y C = los cuadros del paso 0xE209 de la piramide
+C 0xBC54 las estrellas del final: 0xE910 (32 de 16 bytes) a cero
+C 0xBC6C cada 2 cuadros sale una estrella nueva del centro (0x70, 0x80)
+C 0xBC8C su velocidad, de las tablas 0xBDB7 y 0xBD97 por la direccion
+C 0xBCB8 un cuadro de las estrellas
+C 0xBCDA una estrella se mueve; al salir de la pantalla se quita
+C 0xBD16 los sprites fuera, de color 5
+C 0xBD24 los sprites de las estrellas (dibujo 0xD0)
+C 0xBD4F HL, DE = la velocidad en y y en x de la direccion A, por B
+C 0xBE12 carga de cinta: el letrero de buscar y el nombre
+C 0xBE1B TAPION: la cabecera de la cinta
+C 0xBE21 16 bytes 0xAA seguidos
+C 0xBE32 el nombre de la fase (8 letras)
+C 0xBE40 si no es el que se busca, otra vez
+C 0xBE50 encontrado: el letrero y los seis trozos
+C 0xBE83 la suma tiene que dar el ultimo byte
+C 0xBE90 pinta el nombre de 0xEE50
+C 0xBE99 error: el letrero de 0xBF0E y 0xE27F = 2
+C 0xBEB8 lee BC bytes de la cinta a HL, sumandolos en D
+C 0xBEC8 graba en cinta: TAPOON con la cabecera larga
+C 0xBED2 16 bytes 0xAA
+C 0xBEDD el nombre (8 letras)
+C 0xBEEB otra cabecera, corta
+C 0xBEF1 los seis trozos, sumando
+C 0xBF16 y la suma
+C 0xBF1F error: el letrero de 0xBF94 y 0xE27F = 2
+C 0xBF3E escribe BC bytes de HL en la cinta, sumandolos en D
+# --- fin de lo escrito a mano ---
+
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA000 0xA121 mapa_59_cola  El mapa de la fase en rachas de casillas de 2 bits de la fase 59 (sigue del banco 11); lo leen p00:43E5 (289 bytes)
+F 0xA000 16
+D 0xA121 0xA363 mapa_60  El mapa de la fase en rachas de casillas de 2 bits de la fase 60; lo leen p00:43E5 (578 bytes)
+F 0xA121 16
+D 0xA363 0xA36A casillas_01  Las columnas que se marcan en el mapa sin apuntarlas de la fase 1; lo leen p00:443C (7 bytes)
+F 0xA363 16
+D 0xA36A 0xA36B casillas_02  Las columnas que se marcan en el mapa sin apuntarlas de la fase 2; lo leen p00:443C (1 bytes)
+F 0xA36A 16
+D 0xA36B 0xA377 casillas_03  Las columnas que se marcan en el mapa sin apuntarlas de la fase 3; lo leen p00:443C (12 bytes)
+F 0xA36B 16
+D 0xA377 0xA395 casillas_04  Las columnas que se marcan en el mapa sin apuntarlas de la fase 4; lo leen p00:443C (30 bytes)
+F 0xA377 16
+D 0xA395 0xA39D casillas_05  Las columnas que se marcan en el mapa sin apuntarlas de la fase 5; lo leen p00:443C (8 bytes)
+F 0xA395 16
+D 0xA39D 0xA3A3 casillas_06  Las columnas que se marcan en el mapa sin apuntarlas de la fase 6; lo leen p00:443C (6 bytes)
+F 0xA39D 16
+D 0xA3A3 0xA3B7 casillas_07  Las columnas que se marcan en el mapa sin apuntarlas de la fase 7; lo leen p00:443C (20 bytes)
+F 0xA3A3 16
+D 0xA3B7 0xA3DA casillas_08  Las columnas que se marcan en el mapa sin apuntarlas de la fase 8; lo leen p00:443C (35 bytes)
+F 0xA3B7 16
+D 0xA3DA 0xA3DD casillas_09  Las columnas que se marcan en el mapa sin apuntarlas de la fase 9; lo leen p00:443C (3 bytes)
+F 0xA3DA 16
+D 0xA3DD 0xA3DE casillas_10  Las columnas que se marcan en el mapa sin apuntarlas de la fase 10; lo leen p00:443C (1 bytes)
+F 0xA3DD 16
+D 0xA3DE 0xA3DF columnas_01  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fases 1, 2, 3, 4, 5, 6, 7, 8; lo leen p00:443C (1 bytes)
+F 0xA3DE 16
+D 0xA3DF 0xA3E2 columnas_09  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 9; lo leen p00:443C (3 bytes)
+F 0xA3DF 16
+D 0xA3E2 0xA3E6 columnas_10  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 10; lo leen p00:443C (4 bytes)
+F 0xA3E2 16
+D 0xA3E6 0xA3F3 casillas_11  Las columnas que se marcan en el mapa sin apuntarlas de la fase 11; lo leen p00:443C (13 bytes)
+F 0xA3E6 16
+D 0xA3F3 0xA3F4 casillas_12  Las columnas que se marcan en el mapa sin apuntarlas de la fase 12; lo leen p00:443C (1 bytes)
+F 0xA3F3 16
+D 0xA3F4 0xA40D casillas_13  Las columnas que se marcan en el mapa sin apuntarlas de la fase 13; lo leen p00:443C (25 bytes)
+F 0xA3F4 16
+D 0xA40D 0xA440 casillas_14  Las columnas que se marcan en el mapa sin apuntarlas de la fase 14; lo leen p00:443C (51 bytes)
+F 0xA40D 16
+D 0xA440 0xA459 casillas_15  Las columnas que se marcan en el mapa sin apuntarlas de la fase 15; lo leen p00:443C (25 bytes)
+F 0xA440 16
+D 0xA459 0xA465 casillas_16  Las columnas que se marcan en el mapa sin apuntarlas de la fase 16; lo leen p00:443C (12 bytes)
+F 0xA459 16
+D 0xA465 0xA46A casillas_17  Las columnas que se marcan en el mapa sin apuntarlas de la fase 17; lo leen p00:443C (5 bytes)
+F 0xA465 16
+D 0xA46A 0xA48B casillas_18  Las columnas que se marcan en el mapa sin apuntarlas de la fase 18; lo leen p00:443C (33 bytes)
+F 0xA46A 16
+D 0xA48B 0xA492 casillas_19  Las columnas que se marcan en el mapa sin apuntarlas de la fase 19; lo leen p00:443C (7 bytes)
+F 0xA48B 16
+D 0xA492 0xA4B0 casillas_20  Las columnas que se marcan en el mapa sin apuntarlas de la fase 20; lo leen p00:443C (30 bytes)
+F 0xA492 16
+D 0xA4B0 0xA4B3 columnas_12  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 12; se solapan 2 bloques: (columnas_11 A4B2-A4B3); lo leen p00:443C (3 bytes)
+F 0xA4B0 16
+D 0xA4B3 0xA4BC columnas_16  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 16; lo leen p00:443C (9 bytes)
+F 0xA4B3 16
+D 0xA4BC 0xA4D5 columnas_17  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 17; lo leen p00:443C (25 bytes)
+F 0xA4BC 16
+D 0xA4D5 0xA4D8 columnas_18  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 18; se solapan 2 bloques: (columnas_19 A4D7-A4D8); lo leen p00:443C (3 bytes)
+F 0xA4D5 16
+D 0xA4D8 0xA4E7 casillas_21  Las columnas que se marcan en el mapa sin apuntarlas de la fase 21; lo leen p00:443C (15 bytes)
+F 0xA4D8 16
+D 0xA4E7 0xA506 casillas_22  Las columnas que se marcan en el mapa sin apuntarlas de la fase 22; lo leen p00:443C (31 bytes)
+F 0xA4E7 16
+D 0xA506 0xA546 casillas_23  Las columnas que se marcan en el mapa sin apuntarlas de la fase 23; lo leen p00:443C (64 bytes)
+F 0xA506 16
+D 0xA546 0xA574 casillas_24  Las columnas que se marcan en el mapa sin apuntarlas de la fase 24; lo leen p00:443C (46 bytes)
+F 0xA546 16
+D 0xA574 0xA597 casillas_25  Las columnas que se marcan en el mapa sin apuntarlas de la fase 25; lo leen p00:443C (35 bytes)
+F 0xA574 16
+D 0xA597 0xA5AC casillas_26  Las columnas que se marcan en el mapa sin apuntarlas de la fase 26; lo leen p00:443C (21 bytes)
+F 0xA597 16
+D 0xA5AC 0xA5D5 casillas_27  Las columnas que se marcan en el mapa sin apuntarlas de la fase 27; lo leen p00:443C (41 bytes)
+F 0xA5AC 16
+D 0xA5D5 0xA5F6 casillas_28  Las columnas que se marcan en el mapa sin apuntarlas de la fase 28; lo leen p00:443C (33 bytes)
+F 0xA5D5 16
+D 0xA5F6 0xA5FB casillas_29  Las columnas que se marcan en el mapa sin apuntarlas de la fase 29; lo leen p00:443C (5 bytes)
+F 0xA5F6 16
+D 0xA5FB 0xA613 casillas_30  Las columnas que se marcan en el mapa sin apuntarlas de la fase 30; lo leen p00:443C (24 bytes)
+F 0xA5FB 16
+D 0xA613 0xA614 columnas_21  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 21; lo leen p00:443C (1 bytes)
+F 0xA613 16
+D 0xA614 0xA618 columnas_22  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 22; se solapan 2 bloques: (columnas_23 A617-A618); lo leen p00:443C (4 bytes)
+F 0xA614 16
+D 0xA618 0xA61E columnas_24  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 24; se solapan 2 bloques: (columnas_25 A61D-A61E); lo leen p00:443C (6 bytes)
+F 0xA618 16
+D 0xA61E 0xA625 columnas_27  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 27; lo leen p00:443C (7 bytes)
+F 0xA61E 16
+D 0xA625 0xA62A columnas_28  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 28; lo leen p00:443C (5 bytes)
+F 0xA625 16
+D 0xA62A 0xA62D columnas_29  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 29; se solapan 2 bloques: (columnas_30 A62C-A62D); lo leen p00:443C (3 bytes)
+F 0xA62A 16
+D 0xA62D 0xA64C casillas_31  Las columnas que se marcan en el mapa sin apuntarlas de la fase 31; lo leen p00:443C (31 bytes)
+F 0xA62D 16
+D 0xA64C 0xA66D casillas_32  Las columnas que se marcan en el mapa sin apuntarlas de la fase 32; lo leen p00:443C (33 bytes)
+F 0xA64C 16
+D 0xA66D 0xA688 casillas_33  Las columnas que se marcan en el mapa sin apuntarlas de la fase 33; lo leen p00:443C (27 bytes)
+F 0xA66D 16
+D 0xA688 0xA6CC casillas_34  Las columnas que se marcan en el mapa sin apuntarlas de la fase 34; lo leen p00:443C (68 bytes)
+F 0xA688 16
+D 0xA6CC 0xA6D4 casillas_35  Las columnas que se marcan en el mapa sin apuntarlas de la fase 35; lo leen p00:443C (8 bytes)
+F 0xA6CC 16
+D 0xA6D4 0xA702 casillas_36  Las columnas que se marcan en el mapa sin apuntarlas de la fase 36; lo leen p00:443C (46 bytes)
+F 0xA6D4 16
+D 0xA702 0xA71A casillas_37  Las columnas que se marcan en el mapa sin apuntarlas de la fase 37; lo leen p00:443C (24 bytes)
+F 0xA702 16
+D 0xA71A 0xA734 casillas_38  Las columnas que se marcan en el mapa sin apuntarlas de la fase 38; lo leen p00:443C (26 bytes)
+F 0xA71A 16
+D 0xA734 0xA739 casillas_39  Las columnas que se marcan en el mapa sin apuntarlas de la fase 39; lo leen p00:443C (5 bytes)
+F 0xA734 16
+D 0xA739 0xA779 casillas_40  Las columnas que se marcan en el mapa sin apuntarlas de la fase 40; lo leen p00:443C (64 bytes)
+F 0xA739 16
+D 0xA779 0xA77A columnas_31  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 31; lo leen p00:443C (1 bytes)
+F 0xA779 16
+D 0xA77A 0xA77B columnas_32  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 32; lo leen p00:443C (1 bytes)
+F 0xA77A 16
+D 0xA77B 0xA77C columnas_33  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 33; lo leen p00:443C (1 bytes)
+F 0xA77B 16
+D 0xA77C 0xA77D columnas_34  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 34; lo leen p00:443C (1 bytes)
+F 0xA77C 16
+D 0xA77D 0xA795 columnas_35  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 35; lo leen p00:443C (24 bytes)
+F 0xA77D 16
+D 0xA795 0xA796 columnas_36  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 36; lo leen p00:443C (1 bytes)
+F 0xA795 16
+D 0xA796 0xA797 columnas_37  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 37; lo leen p00:443C (1 bytes)
+F 0xA796 16
+D 0xA797 0xA798 columnas_38  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 38; lo leen p00:443C (1 bytes)
+F 0xA797 16
+D 0xA798 0xA7A7 columnas_39  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 39; lo leen p00:443C (15 bytes)
+F 0xA798 16
+D 0xA7A7 0xA7A8 columnas_40  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 40; lo leen p00:443C (1 bytes)
+F 0xA7A7 16
+D 0xA7A8 0xA7B5 casillas_41  Las columnas que se marcan en el mapa sin apuntarlas de la fase 41; lo leen p00:443C (13 bytes)
+F 0xA7A8 16
+D 0xA7B5 0xA7BF casillas_42  Las columnas que se marcan en el mapa sin apuntarlas de la fase 42; lo leen p00:443C (10 bytes)
+F 0xA7B5 16
+D 0xA7BF 0xA7DB casillas_43  Las columnas que se marcan en el mapa sin apuntarlas de la fase 43; lo leen p00:443C (28 bytes)
+F 0xA7BF 16
+D 0xA7DB 0xA815 casillas_44  Las columnas que se marcan en el mapa sin apuntarlas de la fase 44; lo leen p00:443C (58 bytes)
+F 0xA7DB 16
+D 0xA815 0xA826 casillas_45  Las columnas que se marcan en el mapa sin apuntarlas de la fase 45; lo leen p00:443C (17 bytes)
+F 0xA815 16
+D 0xA826 0xA868 casillas_46  Las columnas que se marcan en el mapa sin apuntarlas de la fase 46; lo leen p00:443C (66 bytes)
+F 0xA826 16
+D 0xA868 0xA87B casillas_47  Las columnas que se marcan en el mapa sin apuntarlas de la fase 47; lo leen p00:443C (19 bytes)
+F 0xA868 16
+D 0xA87B 0xA88C casillas_48  Las columnas que se marcan en el mapa sin apuntarlas de la fase 48; lo leen p00:443C (17 bytes)
+F 0xA87B 16
+D 0xA88C 0xA8B1 casillas_49  Las columnas que se marcan en el mapa sin apuntarlas de la fase 49; lo leen p00:443C (37 bytes)
+F 0xA88C 16
+D 0xA8B1 0xA8C1 casillas_50  Las columnas que se marcan en el mapa sin apuntarlas de la fase 50; lo leen p00:443C (16 bytes)
+F 0xA8B1 16
+D 0xA8C1 0xA8C4 columnas_41  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 41; lo leen p00:443C (3 bytes)
+F 0xA8C1 16
+D 0xA8C4 0xA8C7 columnas_42  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 42; lo leen p00:443C (3 bytes)
+F 0xA8C4 16
+D 0xA8C7 0xA8E9 columnas_45  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 45; lo leen p00:443C (34 bytes)
+F 0xA8C7 16
+D 0xA8E9 0xA8EF columnas_46  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 46; lo leen p00:443C (6 bytes)
+F 0xA8E9 16
+D 0xA8EF 0xA8F6 columnas_48  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 48; lo leen p00:443C (7 bytes)
+F 0xA8EF 16
+D 0xA8F6 0xA8F7 columnas_43  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fases 43, 44, 47, 49, 50; lo leen p00:443C (1 bytes)
+F 0xA8F6 16
+D 0xA8F7 0xA8FA casillas_51  Las columnas que se marcan en el mapa sin apuntarlas de la fase 51; lo leen p00:443C (3 bytes)
+F 0xA8F7 16
+D 0xA8FA 0xA8FD casillas_52  Las columnas que se marcan en el mapa sin apuntarlas de la fase 52; lo leen p00:443C (3 bytes)
+F 0xA8FA 16
+D 0xA8FD 0xA90E casillas_53  Las columnas que se marcan en el mapa sin apuntarlas de la fase 53; lo leen p00:443C (17 bytes)
+F 0xA8FD 16
+D 0xA90E 0xA916 casillas_54  Las columnas que se marcan en el mapa sin apuntarlas de la fase 54; lo leen p00:443C (8 bytes)
+F 0xA90E 16
+D 0xA916 0xA922 casillas_55  Las columnas que se marcan en el mapa sin apuntarlas de la fase 55; lo leen p00:443C (12 bytes)
+F 0xA916 16
+D 0xA922 0xA92A casillas_57  Las columnas que se marcan en el mapa sin apuntarlas de la fase 57; lo leen p00:443C (8 bytes)
+F 0xA922 16
+D 0xA92A 0xA932 casillas_58  Las columnas que se marcan en el mapa sin apuntarlas de la fase 58; lo leen p00:443C (8 bytes)
+F 0xA92A 16
+D 0xA932 0xA933 casillas_56  Las columnas que se marcan en el mapa sin apuntarlas de la fase 56; lo leen p00:443C (1 bytes)
+F 0xA932 16
+D 0xA933 0xA97D casillas_59  Las columnas que se marcan en el mapa sin apuntarlas de la fase 59; lo leen p00:443C (74 bytes)
+F 0xA933 16
+D 0xA97D 0xA9A0 columnas_59  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 59; lo leen p00:443C (35 bytes)
+F 0xA97D 16
+D 0xA9A0 0xA9D4 casillas_60  Las columnas que se marcan en el mapa sin apuntarlas de la fase 60; lo leen p00:443C (52 bytes)
+F 0xA9A0 16
+D 0xA9D4 0xA9D9 columnas_51  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 51; lo leen p00:443C (5 bytes)
+F 0xA9D4 16
+D 0xA9D9 0xA9E9 columnas_52  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 52; lo leen p00:443C (16 bytes)
+F 0xA9D9 16
+D 0xA9E9 0xA9EE columnas_53  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 53; lo leen p00:443C (5 bytes)
+F 0xA9E9 16
+D 0xA9EE 0xA9F1 columnas_54  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 54; lo leen p00:443C (3 bytes)
+F 0xA9EE 16
+D 0xA9F1 0xA9F7 columnas_55  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 55; lo leen p00:443C (6 bytes)
+F 0xA9F1 16
+D 0xA9F7 0xAA06 columnas_56  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 56; lo leen p00:443C (15 bytes)
+F 0xA9F7 16
+D 0xAA06 0xAA14 columnas_57  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 57; lo leen p00:443C (14 bytes)
+F 0xAA06 16
+D 0xAA14 0xAA1E columnas_58  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 58; lo leen p00:443C (10 bytes)
+F 0xAA14 16
+D 0xAA1E 0xAA29 columnas_60  Las columnas que se marcan en el mapa y se apuntan en 0xE7C0 de la fase 60; lo leen p00:443C (11 bytes)
+F 0xAA1E 16
 D 0xB42F 0xB437 tabla_B42F  4 destinos del despachador p00:409E (call en p12:B42C, el indice en A): B437, B462, B46C, B48F; lo leen p12:B42C (8 bytes)
 F 0xB42F w4
 D 0xB6BA 0xB6C6 tabla_B6BA  6 destinos del despachador p00:409E (call en p12:B6B7, el indice en A): B6C6, B6EE, B6FD, B745, B85A, B899; lo leen p12:B6B7 (12 bytes)
@@ -11,8 +292,8 @@ D 0xB97C 0xB9A2 tabla_B97C  19 destinos del despachador p00:409E (call en p12:B9
 F 0xB97C w8
 D 0xBF50 0xC000 relleno_ff  176 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (176 bytes)
 F 0xBF50 16
-D 0xA000 0xB400 resto_A000  lo apuntan con el banco puesto p00:5893 (0xAA29), p00:5A40 (0xAA29), p00:589F (0xAA89), p00:5A4C (0xAA89), p00:58AB (0xAB79), p00:5A58 (0xABA1); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5893, p00:5A40, p00:589F, p00:5A4C, p00:58AB, p00:5A58 (5120 bytes)
-F 0xA000 16
+D 0xAA29 0xB400 resto_AA29  lo apuntan con el banco puesto p00:5893 (0xAA29), p00:5A40 (0xAA29), p00:589F (0xAA89), p00:5A4C (0xAA89), p00:58AB (0xAB79), p00:5A58 (0xABA1); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5893, p00:5A40, p00:589F, p00:5A4C, p00:58AB, p00:5A58 (2519 bytes)
+F 0xAA29 16
 D 0xB4F8 0xB4FC resto_B4F8  lo apuntan con el banco puesto p12:B4EF (0xB4F8); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B4EF (4 bytes)
 F 0xB4F8 16
 D 0xB544 0xB6AC resto_B544  lo apuntan con el banco puesto p12:B400 (0xB544), p12:B924 (0xB581), p12:B73F (0xB5B4), p12:B893 (0xB5C3), p12:B6FD (0xB5DC), p12:B7EA (0xB648); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B400, p12:B924, p12:B73F, p12:B893, p12:B6FD, p12:B7EA (360 bytes)
@@ -32,3 +313,108 @@ F 0xBEAB 16
 D 0xBF31 0xBF3E resto_BF31  lo apuntan con el banco puesto p12:BF25 (0xBF31); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BF25 (13 bytes)
 F 0xBF31 16
 # --- fin de los bloques de bloques.py ---
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0xB406 lee la fase (1-60)
+C 0xB40E suma A a HL (HL = HL + A)
+C 0xB414 apunta a el sitio escondido de la fase: tipo, paso, pantalla, y, x (0xEF10-0xEF15)
+C 0xB42C el despachador de Konami: la tabla va detras del call
+C 0xB438 lee la pantalla de la fase (desde 1)
+C 0xB43D lee el estado del personaje
+C 0xB442 C si el personaje esta a menos de 4 pixeles del sitio
+C 0xB450 devuelve el fondo de los bloques de esta pantalla
+C 0xB453 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xB456 guarda el fondo del sitio y pinta 2 x 2 caracteres de 0xB4F8
+C 0xB459 las de la lista, al reves: guarda el fondo y pinta la cosa
+C 0xB45C pinta los bloques de esta pantalla
+C 0xB46D lee la pantalla de la fase (desde 1)
+C 0xB472 C si esta a menos de 4 en y y de 8 en x
+C 0xB476 pide el sonido 0x2E
+C 0xB47D devuelve el fondo de los bloques de esta pantalla
+C 0xB480 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xB483 devuelve el fondo
+C 0xB489 las de la lista, al reves: guarda el fondo y pinta la cosa
+C 0xB490 lee la pantalla de la fase (desde 1)
+C 0xB495 C si esta a menos de 4 en y y de 8 en x
+C 0xB499 lee el mando: lo pulsado
+C 0xB4A3 guarda el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final) y el byte siguiente (16 bits)
+C 0xB4B1 lee la y del personaje
+C 0xB4BE lee la x del personaje
+C 0xB4CB lee la y del personaje
+C 0xB4D8 lee la x del personaje
+C 0xB4E6 guarda en la pagina 1 (0xB0) los 16 x 16 pixeles del sitio
+C 0xB500 pasa la posicion de caracter de HL a direccion de la VRAM
+C 0xB520 lee la pantalla de la fase (desde 1)
+C 0xB6B7 el despachador de Konami: la tabla va detras del call
+C 0xB6C9 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0xB6CC la fuente: 0x35 caracteres de 0xAFDD
+C 0xB6CF las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
+C 0xB6DF pinta las 25 casillas (5 x 5) y el letrero
+C 0xB6E5 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xB700 lee la cuenta de cuadros
+C 0xB705 HL = la palabra A de la tabla de HL
+C 0xB708 apunta a el puzle: las 25 casillas
+C 0xB72A pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
+C 0xB748 lee el mando: lo que se acaba de pulsar
+C 0xB78C C = hacia donde esta el hueco (1 arriba, 2 abajo, 3 izquierda, 4 derecha; 0 no esta al lado)
+C 0xB79E el despachador de Konami: la tabla va detras del call
+C 0xB7C4 D, E = la casilla de la mano en pixeles
+C 0xB7C8 pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
+C 0xB7ED suma A a HL (HL = HL + A)
+C 0xB801 apunta a el puzle: las 25 casillas
+C 0xB804 suma A a HL (HL = HL + A)
+C 0xB87C lee las vidas (BCD)
+C 0xB88A guarda las vidas (BCD)
+C 0xB890 lo mismo, borrando (caracter 0)
+C 0xB915 los graficos de la lista 0xB7DF (bancos 7-8-9) y la paleta de 0xBA78
+C 0xB918 las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
+C 0xB91E los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0xB92D lee el mando: lo que se acaba de pulsar
+C 0xB93B lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
+C 0xB94C pide el sonido 0x32
+C 0xB95C pide el sonido 0x32
+C 0xB979 el despachador de Konami: la tabla va detras del call
+C 0xB9B3 suma A a DE (DE = DE + A)
+C 0xB9FD apunta a la demostracion siguiente (1-6)
+C 0xBA04 suma A a DE (DE = DE + A)
+C 0xBA08 guarda la fase (1-60)
+C 0xBA14 guarda la cuenta de cuadros
+C 0xBA18 guarda la marca de fase empezada
+C 0xBA1B con los bancos 1-2-3, llama a 0x5C80 y pone el 12 en 0xA000
+C 0xBA2D con los bancos 1-2-3, llama a 0x5D63 y pone el 12 en 0xA000
+C 0xBA30 lee el estado del personaje
+C 0xBA37 guarda la marca de fase empezada
+C 0xBA3E guarda la marca de borde sin pantalla al otro lado
+C 0xBA41 pasa a la pantalla de al lado al salir por el borde 0xE248 (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xBA44 lee la marca de borde sin pantalla al otro lado
+C 0xBA55 A = las teclas y C = los cuadros del paso 0xE209 de la piramide
+C 0xBA68 lee la piramide (1-6)
+C 0xBA6E HL = la palabra A de la tabla de HL
+C 0xBA73 suma A a HL (HL = HL + A)
+C 0xBC55 apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
+C 0xBC68 guarda el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
+C 0xBC71 apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
+C 0xBC78 apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
+C 0xBCA8 HL, DE = la velocidad en y y en x de la direccion A, por B
+C 0xBCBB los sprites fuera, de color 5
+C 0xBCC3 apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
+C 0xBCCE una estrella se mueve; al salir de la pantalla se quita
+C 0xBD28 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0xBD53 HL = la palabra A de la tabla de HL
+C 0xBD65 HL = la palabra A de la tabla de HL
+C 0xBDBE suma A a HL (HL = HL + A)
+C 0xBDC1 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0xBE15 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBE18 pinta el nombre de 0xEE50
+C 0xBE38 lee BC bytes de la cinta a HL, sumandolos en D
+C 0xBE43 apunta a el nombre de la fase del editor (11 letras)
+C 0xBE53 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBE56 pinta el nombre de 0xEE50
+C 0xBE73 lee BC bytes de la cinta a HL, sumandolos en D
+C 0xBEA2 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBEA7 guarda el resultado de grabar o cargar (0 bien, 2 error)
+C 0xBEE3 escribe BC bytes de HL en la cinta, sumandolos en D
+C 0xBF06 escribe BC bytes de HL en la cinta, sumandolos en D
+C 0xBF28 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBF2D guarda el resultado de grabar o cargar (0 bien, 2 error)
+# --- fin de las anotaciones de anota.py ---

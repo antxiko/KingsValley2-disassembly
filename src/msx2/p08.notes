@@ -1,6 +1,48 @@
 # Notas del banco p08 (msx2): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
-D 0x8000 0xA000 resto_8000  lo apuntan con el banco puesto p00:54D1 (0x8000), p00:5967 (0x8FFC), p00:5976 (0x8FFC), p00:5985 (0x8FFC), p00:5994 (0x8FFC), p00:59A3 (0x8FFC); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:54D1, p00:5967, p00:5976, p00:5985, p00:5994, p00:59A3 (8192 bytes)
-F 0x8000 16
+D 0x8000 0x81BC car_7FBC_cola  32 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x61D3 (sigue del banco 7); lo leen p00:54A0 (444 bytes)
+F 0x8000 8
+D 0x81BC 0x820C car_81BC  5 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x61D3; lo leen p00:54A0 (80 bytes)
+F 0x81BC 8
+D 0x820C 0x8344 car_820C  13 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61D3; lo leen p00:54A0 (312 bytes)
+F 0x820C 8
+D 0x8344 0x8374 car_8344  2 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61D3; lo leen p00:54A0 (48 bytes)
+F 0x8344 8
+D 0x8374 0x859C car_8374  23 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61F7; lo leen p00:54A0 (552 bytes)
+F 0x8374 8
+D 0x859C 0x884C car_859C  43 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0x61F7; lo leen p00:54A0 (688 bytes)
+F 0x859C 8
+D 0x884C 0x8A2C car_884C  20 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x61F7; lo leen p00:54A0 (480 bytes)
+F 0x884C 8
+D 0x8A2C 0x8FFC car_8A2C  62 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x620C; lo leen p00:54A0 (1488 bytes)
+F 0x8A2C 8
+D 0x8FFC 0x9006 colores_8FFC  5 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (10 bytes)
+F 0x8FFC w8
+D 0x9006 0x900E col_9006  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x9006 8
+D 0x900E 0x9016 col_900E  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x900E 8
+D 0x9016 0x901E col_9016  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x9016 8
+D 0x901E 0x9026 col_901E  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x901E 8
+D 0x9026 0x902E col_9026  8 colores (de 4 bits) para los graficos de 3 bits por punto; lo leen p00:54AC (8 bytes)
+F 0x9026 8
+D 0x902E 0x9043 graf_902E  4 fichas de graficos (la entrada) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x8FFC; lo leen p00:54A0 (21 bytes)
+F 0x902E 5
+D 0x9043 0x9058 graf_9043  4 fichas de graficos (la entrada) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x8FFC; lo leen p00:54A0 (21 bytes)
+F 0x9043 5
+D 0x9063 0x9069 graf_9063  1 fichas de graficos (el final) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x8FFC; lo leen p00:54A0 (6 bytes)
+F 0x9063 5
+D 0x9069 0x9074 graf_9069  2 fichas de graficos (el final) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x8FFC; lo leen p00:54A0 (11 bytes)
+F 0x9069 5
+D 0x9074 0x907F graf_9074  2 fichas de graficos (el titulo) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0x8FFC; lo leen p00:54A0 (11 bytes)
+F 0x9074 5
+D 0x907F 0x9667 car_907F  63 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x9043; lo leen p00:54A0 (1512 bytes)
+F 0x907F 8
+D 0x9667 0x9D27 car_9667  25 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x9043; se solapan 2 bloques: (car_982F 982F-9D27); lo leen p00:54A0 (1728 bytes)
+F 0x9667 8
+D 0x9D27 0xA000 car_9D27  63 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x902E (sigue en el banco 9, en 0xA000); lo leen p00:54A0 (729 bytes)
+F 0x9D27 8
 # --- fin de los bloques de bloques.py ---

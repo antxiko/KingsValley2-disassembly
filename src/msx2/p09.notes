@@ -1,8 +1,62 @@
 # Notas del banco p09 (msx2): C comentario, L nombre, B bloque, D datos.
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA000 0xA30F car_9D27_cola  63 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x902E (sigue del banco 8); lo leen p00:54A0 (783 bytes)
+F 0xA000 8
+D 0xA30F 0xA4A7 car_A30F  17 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x902E; lo leen p00:54A0 (408 bytes)
+F 0xA30F 8
+D 0xA4A7 0xAA77 car_A4A7  62 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x902E; lo leen p00:54A0 (1488 bytes)
+F 0xA4A7 8
+D 0xAA77 0xB077 car_AA77  64 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x902E; lo leen p00:54A0 (1536 bytes)
+F 0xAA77 8
+D 0xB077 0xB65F car_B077  63 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x9069; lo leen p00:54A0 (1512 bytes)
+F 0xB077 8
+D 0xB65F 0xB7C7 car_B65F  15 caracteres de 3 bits por punto (24 bytes cada uno), de la lista 0x9069; lo leen p00:54A0 (360 bytes)
+F 0xB65F 8
+D 0xB7C7 0xB7D1 colores_B7C7  5 punteros a las tablas de colores de los graficos (el modo / 8 de la lista elige una); lo leen p00:54AC (10 bytes)
+F 0xB7C7 w8
+D 0xB7D1 0xB7D3 col_B7D1  2 colores (de 4 bits) para los graficos de 1 bits por punto; lo leen p00:54AC (2 bytes)
+F 0xB7D1 2
+D 0xB7D3 0xB7D5 col_B7D3  2 colores (de 4 bits) para los graficos de 1 bits por punto; lo leen p00:54AC (2 bytes)
+F 0xB7D3 2
+D 0xB7D5 0xB7D9 col_B7D5  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0xB7D5 4
+D 0xB7D9 0xB7DB col_B7D9  2 colores (de 4 bits) para los graficos de 1 bits por punto; lo leen p00:54AC (2 bytes)
+F 0xB7D9 2
+D 0xB7DB 0xB7DF col_B7DB  4 colores (de 4 bits) para los graficos de 2 bits por punto; lo leen p00:54AC (4 bytes)
+F 0xB7DB 4
+D 0xB7DF 0xB82B graf_B7DF  15 fichas de graficos (las musicas) de 5 bytes [modo][sitio en la pagina 1][cuantos][puntero], 0xFF acaba: caracteres de 1, 2 o 3 bits por punto que se pasan a 4 bits con la tabla de colores de 0xB7C7; lo leen p00:54A0 (76 bytes)
+F 0xB7DF 5
+D 0xB82B 0xB833 car_B82B  1 caracteres de 1 bit por punto (8 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (8 bytes)
+F 0xB82B 8
+D 0xB833 0xB83B car_B833  1 caracteres de 1 bit por punto (8 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (8 bytes)
+F 0xB833 8
+D 0xB83B 0xB843 car_B83B  1 caracteres de 1 bit por punto (8 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (8 bytes)
+F 0xB83B 8
+D 0xB843 0xB84B car_B843  1 caracteres de 1 bit por punto (8 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (8 bytes)
+F 0xB843 8
+D 0xB84B 0xB8BB car_B84B  7 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (112 bytes)
+F 0xB84B 8
+D 0xB8BB 0xB90B car_B8BB  5 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (80 bytes)
+F 0xB8BB 8
+D 0xB90B 0xB91B car_B90B  2 caracteres de 1 bit por punto (8 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (16 bytes)
+F 0xB90B 8
+D 0xB91B 0xB92B car_B91B  2 caracteres de 1 bit por punto (8 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (16 bytes)
+F 0xB91B 8
+D 0xB92B 0xBB7B car_B92B  37 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (592 bytes)
+F 0xB92B 8
+D 0xBB7B 0xBB8B car_BB7B  1 caracteres de 2 bits por punto (16 bytes cada uno), de la lista 0xB7DF; lo leen p00:54A0 (16 bytes)
+F 0xBB7B 8
+D 0xBB8B 0xBB9B paleta_BB8B  paleta de la presentacion: 5 colores [color][rojo y azul][verde], 0xFF acaba; lo leen p00:5B73 (16 bytes)
+F 0xBB8B 3
+D 0xBB9B 0xBBDC dibujo_BB9B  dibujo de caracteres (la presentacion): 0xFE [dx] baja una fila, 0xFF acaba; lo leen p00:576E (65 bytes)
+F 0xBB9B 16
+D 0xBBDC 0xBC44 fuente_BBDC  13 caracteres de 1 bit por punto de la presentacion; lo leen p00:5155 (104 bytes)
+F 0xBBDC 8
+D 0xBC44 0xBCAC fuente_BC44  13 caracteres de 1 bit por punto de la presentacion; lo leen p00:5155 (104 bytes)
+F 0xBC44 8
+D 0xBCAC 0xBD7C fuente_BCAC  26 caracteres de 1 bit por punto de la presentacion; lo leen p00:5155 (208 bytes)
+F 0xBCAC 8
 D 0xBD7C 0xC000 relleno_ff  644 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (644 bytes)
 F 0xBD7C 16
-D 0xA000 0xBD7C resto_A000  lo apuntan con el banco puesto p00:5B80 (0xA848), p00:419F (0xB000), p00:57AF (0xB7C7), p00:57B2 (0xB7DF), p00:5B70 (0xBB8B), p00:5BB0 (0xBB9B); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5B80, p00:419F, p00:57AF, p00:57B2, p00:5B70, p00:5BB0 (7548 bytes)
-F 0xA000 16
 # --- fin de los bloques de bloques.py ---

@@ -18,13 +18,10 @@
 lba92h:	equ 0x0ba92
 
 ; ----------------------------------------------------------------------
-; DATOS resto_A000: lo apuntan con el banco puesto p12:BE04 (0xA868), p12:BE0A
-;   (0xA878), p12:BE10 (0xA888), p00:5B1C (0xAA29), p00:5BF1 (0xAA29),
-;   p00:5BFD (0xAA89); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p12:BE04, p12:BE0A, p12:BE10, p00:5B1C, p00:5BF1,
-;   p00:5BFD (5120 bytes)
-;   0xa000..0xb400  (5120 bytes)
-DATA_resto_A000:
+; DATOS mapa_59_cola: El mapa de la fase en rachas de casillas de 2 bits de la
+;   fase 59 (sigue del banco 11); lo leen p00:43DD (289 bytes)
+;   0xa000..0xa121  (289 bytes)
+DATA_mapa_59_cola:
 	defb 008h,083h,0c2h,083h,008h,0c8h,008h,088h,008h,0c8h,008h,088h,008h,0c8h,008h,081h	; a000  ................
 	defb 006h,081h,008h,0c8h,008h,081h,006h,081h,008h,0c8h,089h,006h,087h,0cah,089h,006h	; a010  ................
 	defb 087h,0cah,089h,006h,087h,0cah,008h,081h,006h,081h,008h,0c8h,008h,081h,006h,081h	; a020  ................
@@ -43,308 +40,1288 @@ DATA_resto_A000:
 	defb 006h,0c2h,004h,0c8h,004h,082h,002h,082h,006h,0c2h,006h,0c8h,004h,082h,002h,082h	; a0f0  ................
 	defb 006h,0c2h,006h,0c8h,004h,084h,006h,084h,006h,0c8h,004h,084h,006h,084h,006h,0c8h	; a100  ................
 	defb 006h,088h,004h,0ceh,006h,088h,004h,0dch,004h,0cah,01dh,0c3h,01dh,0c3h,01dh,0e3h	; a110  ................
-	defb 000h,0c1h,01fh,0c1h,01fh,0c1h,01fh,0c4h,09bh,0c5h,09bh,0c5h,01ch,0c4h,01ch,0c4h	; a120  ................
-	defb 01ch,0c4h,002h,08ah,004h,084h,0c2h,085h,0c5h,002h,08ah,004h,084h,0c2h,085h,0c5h	; a130  ................
-	defb 014h,0c2h,006h,0c4h,014h,0c2h,006h,0c4h,014h,0c2h,006h,0c4h,014h,0c2h,006h,0c4h	; a140  ................
-	defb 014h,0c2h,006h,0c4h,002h,0c2h,086h,00ah,0c2h,006h,0c4h,002h,0c2h,086h,00ah,0c2h	; a150  ................
-	defb 006h,0c4h,002h,0c2h,018h,0c4h,002h,0c2h,018h,0c4h,002h,0c2h,018h,0c4h,002h,0c2h	; a160  ................
-	defb 00ch,08ah,002h,0c4h,002h,0c2h,00ch,08ah,002h,0ffh,0c1h,03fh,021h,0c1h,09eh,0c2h	; a170  ...........?!...
-	defb 09eh,0c1h,03fh,021h,0c1h,083h,0c2h,006h,0c2h,008h,082h,008h,0c1h,083h,0c2h,006h	; a180  ..?!............
-	defb 0c2h,008h,082h,00ch,0c2h,006h,0c2h,006h,082h,002h,082h,00ah,0c2h,006h,0c2h,006h	; a190  ................
-	defb 082h,002h,082h,00ah,0c2h,082h,004h,0c2h,004h,0c2h,006h,0c2h,008h,0c2h,082h,004h	; a1a0  ................
-	defb 0c2h,004h,0c2h,006h,0c2h,008h,0c2h,082h,004h,0c2h,004h,0c2h,082h,002h,082h,0c2h	; a1b0  ................
-	defb 008h,0c2h,082h,004h,0c2h,004h,0c2h,082h,002h,082h,0c2h,008h,0c2h,002h,082h,002h	; a1c0  ................
-	defb 0c2h,004h,0c2h,006h,0c2h,008h,0c2h,002h,082h,002h,0c2h,004h,0c2h,006h,0c2h,008h	; a1d0  ................
-	defb 0c2h,002h,082h,002h,0c2h,004h,0c2h,006h,0c2h,008h,0c2h,002h,082h,002h,0c2h,016h	; a1e0  ................
-	defb 0c2h,004h,082h,0c2h,016h,0c2h,004h,082h,0c2h,012h,0c8h,002h,0deh,002h,0d6h,01fh	; a1f0  ................
-	defb 0c1h,01fh,0c1h,01fh,0c2h,09bh,0c5h,09bh,0c4h,01ch,0c4h,01ch,0c4h,01ch,0c4h,012h	; a200  ................
-	defb 0c2h,086h,002h,0c4h,012h,0c2h,086h,002h,0c4h,012h,0c2h,008h,0c4h,012h,0c2h,008h	; a210  ................
-	defb 0c4h,012h,0c2h,008h,0c4h,012h,0c2h,008h,0c4h,012h,0c2h,086h,002h,0c4h,012h,0c2h	; a220  ................
-	defb 086h,002h,0c4h,012h,0c2h,008h,0c4h,012h,0c2h,008h,0c4h,012h,0c2h,008h,0c4h,012h	; a230  ................
-	defb 0c2h,008h,0c4h,004h,0c2h,088h,004h,0c2h,086h,003h,0c3h,004h,0c2h,088h,004h,0c2h	; a240  ................
-	defb 086h,003h,0ffh,0e7h,011h,084h,0c2h,084h,002h,0c3h,011h,084h,0c2h,084h,002h,0c6h	; a250  ................
-	defb 012h,0c2h,006h,0c6h,012h,0c2h,006h,0c6h,002h,086h,0c2h,008h,0c2h,006h,0c6h,002h	; a260  ................
-	defb 086h,0c2h,008h,0c2h,006h,0c6h,012h,0c2h,006h,0c6h,01ah,0c6h,01ah,0c6h,01ah,0c6h	; a270  ................
-	defb 002h,086h,0c2h,004h,08ah,002h,0c6h,002h,086h,0c2h,004h,08ah,002h,0c6h,01ah,0c6h	; a280  ................
-	defb 01ah,0c6h,01ah,0c6h,01ah,0c6h,098h,0c8h,098h,0c3h,01fh,0c1h,01fh,0c1h,01fh,0ffh	; a290  ................
-	defb 0c9h,002h,0d6h,004h,0c2h,006h,0c2h,004h,0c2h,006h,0c6h,004h,0c2h,006h,0c2h,004h	; a2a0  ................
-	defb 0c2h,006h,0c6h,004h,0c2h,006h,0c2h,004h,0c2h,006h,0c6h,004h,0c2h,006h,0c2h,004h	; a2b0  ................
-	defb 0c2h,082h,0c2h,082h,0c6h,004h,0c2h,006h,0c2h,004h,0c2h,082h,0c2h,082h,0c6h,004h	; a2c0  ................
-	defb 0c2h,006h,0c2h,004h,0c2h,006h,0c6h,004h,0c2h,006h,0c2h,004h,0c2h,006h,0c6h,004h	; a2d0  ................
-	defb 0c2h,006h,0c2h,004h,0c2h,006h,0c6h,004h,0c2h,006h,0c2h,006h,082h,002h,082h,004h	; a2e0  ................
-	defb 0c2h,004h,0c2h,006h,0c2h,006h,082h,002h,082h,004h,0c2h,004h,0c2h,006h,0c2h,008h	; a2f0  ................
-	defb 082h,006h,0c2h,004h,0c2h,006h,0c2h,008h,082h,006h,0c2h,01eh,0c2h,01eh,0c2h,01eh	; a300  ................
-	defb 0c2h,01eh,0c3h,09dh,0c3h,09dh,0c2h,03fh,021h,0ffh,0e5h,088h,006h,086h,005h,0c7h	; a310  .......?!.......
-	defb 088h,006h,086h,005h,0c7h,088h,010h,0c8h,088h,010h,0c6h,01ah,0c6h,010h,086h,0c2h	; a320  ................
-	defb 002h,0c6h,010h,086h,0c2h,002h,0c6h,016h,0c2h,002h,0c6h,016h,0c2h,002h,0c6h,016h	; a330  ................
-	defb 0c2h,002h,0c6h,010h,086h,0c2h,002h,0c6h,010h,086h,0c2h,002h,0c6h,01ah,0c6h,01ah	; a340  ................
-	defb 0c6h,01ah,0c6h,01ah,0c8h,096h,002h,0c8h,096h,002h,0c4h,01dh,0c3h,01dh,0c3h,01dh	; a350  ................
-	defb 0ffh,0c4h,000h,026h,003h,0a6h,041h,022h,05bh,000h,000h,050h,018h,090h,01bh,0ffh	; a360  ...&..A"[..P....
-	defb 04ah,01ah,005h,02dh,0c6h,042h,000h,007h,001h,0c7h,002h,048h,01ch,088h,01fh,007h	; a370  J..-.B.....H....
-	defb 03dh,0c7h,03eh,082h,05bh,0ffh,087h,003h,088h,01ch,048h,01fh,047h,03ch,087h,03fh	; a380  =.>.[.....H.G<.?
-	defb 002h,059h,0c2h,05ah,000h,034h,00ch,0ffh,08bh,01ah,0b4h,00fh,000h,095h,013h,0ffh	; a390  .Y.Z.4..........
-	defb 096h,003h,000h,0c5h,022h,005h,037h,0c5h,04ah,001h,05fh,0ffh,003h,003h,0c5h,00eh	; a3a0  ....".7.J._.....
-	defb 005h,023h,0c5h,036h,005h,04bh,000h,005h,04dh,0e5h,04dh,0e5h,04eh,0a1h,05fh,0ffh	; a3b0  .#.6.K..M.M.N._.
-	defb 0c5h,011h,045h,025h,0c5h,038h,0ffh,004h,001h,0eah,001h,0e4h,002h,0b7h,003h,0a4h	; a3c0  ..E%.8..........
-	defb 012h,0ech,022h,06ah,028h,023h,053h,023h,050h,000h,092h,017h,000h,000h,000h,086h	; a3d0  .."j(#S#P.......
-	defb 03eh,000h,0ffh,06eh,014h,000h,0a6h,018h,028h,021h,024h,023h,0a4h,032h,0a9h,039h	; a3e0  >..n....(!$#.2.9
-	defb 026h,042h,000h,000h,0d2h,01ah,082h,058h,082h,05bh,0ffh,08eh,000h,0c6h,002h,098h	; a3f0  &B.....X.[......
-	defb 003h,084h,050h,004h,052h,0ffh,090h,000h,007h,002h,094h,003h,000h,044h,019h,0c4h	; a400  ..P.R........D..
-	defb 019h,044h,01bh,0c6h,028h,046h,02ah,046h,040h,046h,041h,0c8h,042h,082h,058h,0c2h	; a410  .D..(F*F@FA.B.X.
-	defb 059h,0ffh,08fh,018h,04fh,01bh,047h,039h,087h,03ah,0ffh,086h,000h,0c6h,001h,0c6h	; a420  Y...O.G9.:......
-	defb 002h,046h,019h,04ch,01ah,048h,01bh,046h,030h,0c4h,039h,0c6h,042h,0c4h,048h,000h	; a430  .F.L.H.F0.9.B.H.
+	defb 000h	; a120
+
+; ----------------------------------------------------------------------
+; DATOS mapa_60: El mapa de la fase en rachas de casillas de 2 bits de la fase
+;   60; lo leen p00:43DD (578 bytes)
+;   0xa121..0xa363  (578 bytes)
+DATA_mapa_60:
+	defb 0c1h,01fh,0c1h,01fh,0c1h,01fh,0c4h,09bh,0c5h,09bh,0c5h,01ch,0c4h,01ch,0c4h,01ch	; a121  ................
+	defb 0c4h,002h,08ah,004h,084h,0c2h,085h,0c5h,002h,08ah,004h,084h,0c2h,085h,0c5h,014h	; a131  ................
+	defb 0c2h,006h,0c4h,014h,0c2h,006h,0c4h,014h,0c2h,006h,0c4h,014h,0c2h,006h,0c4h,014h	; a141  ................
+	defb 0c2h,006h,0c4h,002h,0c2h,086h,00ah,0c2h,006h,0c4h,002h,0c2h,086h,00ah,0c2h,006h	; a151  ................
+	defb 0c4h,002h,0c2h,018h,0c4h,002h,0c2h,018h,0c4h,002h,0c2h,018h,0c4h,002h,0c2h,00ch	; a161  ................
+	defb 08ah,002h,0c4h,002h,0c2h,00ch,08ah,002h,0ffh,0c1h,03fh,021h,0c1h,09eh,0c2h,09eh	; a171  ..........?!....
+	defb 0c1h,03fh,021h,0c1h,083h,0c2h,006h,0c2h,008h,082h,008h,0c1h,083h,0c2h,006h,0c2h	; a181  .?!.............
+	defb 008h,082h,00ch,0c2h,006h,0c2h,006h,082h,002h,082h,00ah,0c2h,006h,0c2h,006h,082h	; a191  ................
+	defb 002h,082h,00ah,0c2h,082h,004h,0c2h,004h,0c2h,006h,0c2h,008h,0c2h,082h,004h,0c2h	; a1a1  ................
+	defb 004h,0c2h,006h,0c2h,008h,0c2h,082h,004h,0c2h,004h,0c2h,082h,002h,082h,0c2h,008h	; a1b1  ................
+	defb 0c2h,082h,004h,0c2h,004h,0c2h,082h,002h,082h,0c2h,008h,0c2h,002h,082h,002h,0c2h	; a1c1  ................
+	defb 004h,0c2h,006h,0c2h,008h,0c2h,002h,082h,002h,0c2h,004h,0c2h,006h,0c2h,008h,0c2h	; a1d1  ................
+	defb 002h,082h,002h,0c2h,004h,0c2h,006h,0c2h,008h,0c2h,002h,082h,002h,0c2h,016h,0c2h	; a1e1  ................
+	defb 004h,082h,0c2h,016h,0c2h,004h,082h,0c2h,012h,0c8h,002h,0deh,002h,0d6h,01fh,0c1h	; a1f1  ................
+	defb 01fh,0c1h,01fh,0c2h,09bh,0c5h,09bh,0c4h,01ch,0c4h,01ch,0c4h,01ch,0c4h,012h,0c2h	; a201  ................
+	defb 086h,002h,0c4h,012h,0c2h,086h,002h,0c4h,012h,0c2h,008h,0c4h,012h,0c2h,008h,0c4h	; a211  ................
+	defb 012h,0c2h,008h,0c4h,012h,0c2h,008h,0c4h,012h,0c2h,086h,002h,0c4h,012h,0c2h,086h	; a221  ................
+	defb 002h,0c4h,012h,0c2h,008h,0c4h,012h,0c2h,008h,0c4h,012h,0c2h,008h,0c4h,012h,0c2h	; a231  ................
+	defb 008h,0c4h,004h,0c2h,088h,004h,0c2h,086h,003h,0c3h,004h,0c2h,088h,004h,0c2h,086h	; a241  ................
+	defb 003h,0ffh,0e7h,011h,084h,0c2h,084h,002h,0c3h,011h,084h,0c2h,084h,002h,0c6h,012h	; a251  ................
+	defb 0c2h,006h,0c6h,012h,0c2h,006h,0c6h,002h,086h,0c2h,008h,0c2h,006h,0c6h,002h,086h	; a261  ................
+	defb 0c2h,008h,0c2h,006h,0c6h,012h,0c2h,006h,0c6h,01ah,0c6h,01ah,0c6h,01ah,0c6h,002h	; a271  ................
+	defb 086h,0c2h,004h,08ah,002h,0c6h,002h,086h,0c2h,004h,08ah,002h,0c6h,01ah,0c6h,01ah	; a281  ................
+	defb 0c6h,01ah,0c6h,01ah,0c6h,098h,0c8h,098h,0c3h,01fh,0c1h,01fh,0c1h,01fh,0ffh,0c9h	; a291  ................
+	defb 002h,0d6h,004h,0c2h,006h,0c2h,004h,0c2h,006h,0c6h,004h,0c2h,006h,0c2h,004h,0c2h	; a2a1  ................
+	defb 006h,0c6h,004h,0c2h,006h,0c2h,004h,0c2h,006h,0c6h,004h,0c2h,006h,0c2h,004h,0c2h	; a2b1  ................
+	defb 082h,0c2h,082h,0c6h,004h,0c2h,006h,0c2h,004h,0c2h,082h,0c2h,082h,0c6h,004h,0c2h	; a2c1  ................
+	defb 006h,0c2h,004h,0c2h,006h,0c6h,004h,0c2h,006h,0c2h,004h,0c2h,006h,0c6h,004h,0c2h	; a2d1  ................
+	defb 006h,0c2h,004h,0c2h,006h,0c6h,004h,0c2h,006h,0c2h,006h,082h,002h,082h,004h,0c2h	; a2e1  ................
+	defb 004h,0c2h,006h,0c2h,006h,082h,002h,082h,004h,0c2h,004h,0c2h,006h,0c2h,008h,082h	; a2f1  ................
+	defb 006h,0c2h,004h,0c2h,006h,0c2h,008h,082h,006h,0c2h,01eh,0c2h,01eh,0c2h,01eh,0c2h	; a301  ................
+	defb 01eh,0c3h,09dh,0c3h,09dh,0c2h,03fh,021h,0ffh,0e5h,088h,006h,086h,005h,0c7h,088h	; a311  ......?!........
+	defb 006h,086h,005h,0c7h,088h,010h,0c8h,088h,010h,0c6h,01ah,0c6h,010h,086h,0c2h,002h	; a321  ................
+	defb 0c6h,010h,086h,0c2h,002h,0c6h,016h,0c2h,002h,0c6h,016h,0c2h,002h,0c6h,016h,0c2h	; a331  ................
+	defb 002h,0c6h,010h,086h,0c2h,002h,0c6h,010h,086h,0c2h,002h,0c6h,01ah,0c6h,01ah,0c6h	; a341  ................
+	defb 01ah,0c6h,01ah,0c8h,096h,002h,0c8h,096h,002h,0c4h,01dh,0c3h,01dh,0c3h,01dh,0ffh	; a351  ................
+	defb 0c4h,000h	; a361
+
+; ----------------------------------------------------------------------
+; DATOS casillas_01: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 1; lo leen p00:4434 (7 bytes)
+;   0xa363..0xa36a  (7 bytes)
+DATA_casillas_01:
+	defb 026h,003h,0a6h,041h,022h,05bh,000h	; a363
+
+; ----------------------------------------------------------------------
+; DATOS casillas_02: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 2; lo leen p00:4434 (1 bytes)
+;   0xa36a..0xa36b  (1 bytes)
+DATA_casillas_02:
+	defb 000h	; a36a
+
+; ----------------------------------------------------------------------
+; DATOS casillas_03: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 3; lo leen p00:4434 (12 bytes)
+;   0xa36b..0xa377  (12 bytes)
+DATA_casillas_03:
+	defb 050h,018h,090h,01bh,0ffh,04ah,01ah,005h,02dh,0c6h,042h,000h	; a36b  P....J..-.B.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_04: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 4; lo leen p00:4434 (30 bytes)
+;   0xa377..0xa395  (30 bytes)
+DATA_casillas_04:
+	defb 007h,001h,0c7h,002h,048h,01ch,088h,01fh,007h,03dh,0c7h,03eh,082h,05bh,0ffh,087h	; a377  ....H....=.>.[..
+	defb 003h,088h,01ch,048h,01fh,047h,03ch,087h,03fh,002h,059h,0c2h,05ah,000h	; a387  ...H.G<.?.Y.Z.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_05: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 5; lo leen p00:4434 (8 bytes)
+;   0xa395..0xa39d  (8 bytes)
+DATA_casillas_05:
+	defb 034h,00ch,0ffh,08bh,01ah,0b4h,00fh,000h	; a395  4.......
+
+; ----------------------------------------------------------------------
+; DATOS casillas_06: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 6; lo leen p00:4434 (6 bytes)
+;   0xa39d..0xa3a3  (6 bytes)
+DATA_casillas_06:
+	defb 095h,013h,0ffh,096h,003h,000h	; a39d
+
+; ----------------------------------------------------------------------
+; DATOS casillas_07: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 7; lo leen p00:4434 (20 bytes)
+;   0xa3a3..0xa3b7  (20 bytes)
+DATA_casillas_07:
+	defb 0c5h,022h,005h,037h,0c5h,04ah,001h,05fh,0ffh,003h,003h,0c5h,00eh,005h,023h,0c5h	; a3a3  .".7.J._......#.
+	defb 036h,005h,04bh,000h	; a3b3
+
+; ----------------------------------------------------------------------
+; DATOS casillas_08: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 8; lo leen p00:4434 (35 bytes)
+;   0xa3b7..0xa3da  (35 bytes)
+DATA_casillas_08:
+	defb 005h,04dh,0e5h,04dh,0e5h,04eh,0a1h,05fh,0ffh,0c5h,011h,045h,025h,0c5h,038h,0ffh	; a3b7  .M.M.N._...E%.8.
+	defb 004h,001h,0eah,001h,0e4h,002h,0b7h,003h,0a4h,012h,0ech,022h,06ah,028h,023h,053h	; a3c7  ..........."j(#S
+	defb 023h,050h,000h	; a3d7
+
+; ----------------------------------------------------------------------
+; DATOS casillas_09: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 9; lo leen p00:4434 (3 bytes)
+;   0xa3da..0xa3dd  (3 bytes)
+DATA_casillas_09:
+	defb 092h,017h,000h	; a3da
+
+; ----------------------------------------------------------------------
+; DATOS casillas_10: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 10; lo leen p00:4434 (1 bytes)
+;   0xa3dd..0xa3de  (1 bytes)
+DATA_casillas_10:
+	defb 000h	; a3dd
+
+; ----------------------------------------------------------------------
+; DATOS columnas_01: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fases 1, 2, 3, 4, 5, 6, 7, 8; lo leen p00:4434 (1 bytes)
+;   0xa3de..0xa3df  (1 bytes)
+DATA_columnas_01:
+	defb 000h	; a3de
+
+; ----------------------------------------------------------------------
+; DATOS columnas_09: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 9; lo leen p00:4434 (3 bytes)
+;   0xa3df..0xa3e2  (3 bytes)
+DATA_columnas_09:
+	defb 086h,03eh,000h	; a3df
+
+; ----------------------------------------------------------------------
+; DATOS columnas_10: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 10; lo leen p00:4434 (4 bytes)
+;   0xa3e2..0xa3e6  (4 bytes)
+DATA_columnas_10:
+	defb 0ffh,06eh,014h,000h	; a3e2
+
+; ----------------------------------------------------------------------
+; DATOS casillas_11: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 11; lo leen p00:4434 (13 bytes)
+;   0xa3e6..0xa3f3  (13 bytes)
+DATA_casillas_11:
+	defb 0a6h,018h,028h,021h,024h,023h,0a4h,032h,0a9h,039h,026h,042h,000h	; a3e6  ..(!$#.2.9&B.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_12: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 12; lo leen p00:4434 (1 bytes)
+;   0xa3f3..0xa3f4  (1 bytes)
+DATA_casillas_12:
+	defb 000h	; a3f3
+
+; ----------------------------------------------------------------------
+; DATOS casillas_13: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 13; lo leen p00:4434 (25 bytes)
+;   0xa3f4..0xa40d  (25 bytes)
+DATA_casillas_13:
+	defb 0d2h,01ah,082h,058h,082h,05bh,0ffh,08eh,000h,0c6h,002h,098h,003h,084h,050h,004h	; a3f4  ...X.[........P.
+	defb 052h,0ffh,090h,000h,007h,002h,094h,003h,000h	; a404  R........
+
+; ----------------------------------------------------------------------
+; DATOS casillas_14: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 14; lo leen p00:4434 (51 bytes)
+;   0xa40d..0xa440  (51 bytes)
+DATA_casillas_14:
+	defb 044h,019h,0c4h,019h,044h,01bh,0c6h,028h,046h,02ah,046h,040h,046h,041h,0c8h,042h	; a40d  D...D..(F*F@FA.B
+	defb 082h,058h,0c2h,059h,0ffh,08fh,018h,04fh,01bh,047h,039h,087h,03ah,0ffh,086h,000h	; a41d  .X.Y...O.G9.:...
+	defb 0c6h,001h,0c6h,002h,046h,019h,04ch,01ah,048h,01bh,046h,030h,0c4h,039h,0c6h,042h	; a42d  ....F.L.H.F0.9.B
+	defb 0c4h,048h,000h	; a43d
+
+; ----------------------------------------------------------------------
+; DATOS casillas_15: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 15; lo leen p00:4434 (25 bytes)
+;   0xa440..0xa459  (25 bytes)
+DATA_casillas_15:
 	defb 0a9h,015h,0a9h,017h,0a9h,038h,0a9h,03ah,0ffh,0a9h,021h,0a9h,023h,0a9h,02ch,0a9h	; a440  .....8.:..!.#.,.
-	defb 02eh,0ffh,026h,014h,0b2h,017h,029h,038h,000h,0a1h,05fh,0ffh,0a4h,003h,046h,029h	; a450  ..&...)8.._...F)
-	defb 086h,039h,044h,042h,000h,0ffh,0ffh,0b2h,017h,000h,005h,00fh,069h,01eh,007h,033h	; a460  .9DB........i..3
-	defb 084h,04eh,0ffh,0a4h,020h,006h,029h,0c6h,02ah,0a3h,040h,0ffh,045h,00ch,064h,011h	; a470  .N.. .).*.@.E.d.
-	defb 024h,021h,0a8h,023h,0c7h,031h,047h,043h,004h,04dh,000h,066h,002h,085h,02ah,062h	; a480  $!.#.1GC.M.f..*b
-	defb 05ah,000h,0a4h,013h,064h,023h,0a4h,033h,064h,043h,0a4h,053h,0c4h,052h,0ffh,0c4h	; a490  Z...d#.3dC.S.R..
-	defb 002h,0a4h,003h,064h,013h,0a4h,023h,066h,027h,0a6h,037h,064h,04fh,024h,03fh,000h	; a4a0  ...d..#f'.7dO$?.
-	defb 086h,019h,000h,084h,015h,004h,026h,084h,036h,004h,047h,000h,0e5h,04ah,0ffh,02bh	; a4b0  ......&.6.G..J.+
-	defb 01ch,045h,049h,0a5h,04ah,0ffh,066h,014h,0edh,014h,044h,027h,005h,037h,045h,048h	; a4c0  .EI.J.f...D'.7EH
-	defb 005h,04ah,0c5h,04ah,000h,028h,03dh,000h,032h,014h,0abh,017h,024h,021h,0a4h,022h	; a4d0  .J.J.(=.2...$!."
-	defb 0a3h,042h,003h,04eh,063h,016h,000h,046h,010h,042h,027h,047h,029h,002h,037h,0c6h	; a4e0  .B.Nc..F.B'G).7.
-	defb 03eh,0ffh,043h,010h,086h,044h,006h,045h,0ffh,089h,010h,046h,013h,0c5h,021h,045h	; a4f0  >.C..D.E...F..!E
-	defb 035h,047h,043h,005h,04ah,000h,037h,004h,0c4h,010h,0ceh,021h,04eh,023h,0c6h,030h	; a500  5GC.J.7....!N#.0
-	defb 046h,032h,042h,05ah,0ffh,0c8h,011h,0b7h,007h,0c4h,028h,046h,029h,044h,032h,044h	; a510  F2BZ......(F)D2D
-	defb 038h,0c4h,051h,042h,058h,0ffh,037h,000h,04eh,002h,0d0h,011h,04ch,01bh,0c6h,020h	; a520  8.QBX.7.N...L..
-	defb 0c5h,048h,085h,04bh,0ffh,0b7h,003h,048h,000h,0c6h,001h,044h,011h,044h,012h,004h	; a530  .H.K...H...D.D..
-	defb 021h,08dh,028h,087h,042h,000h,048h,013h,044h,021h,0c4h,031h,084h,042h,0c4h,050h	; a540  !.(.B.H.D!.1.B.P
-	defb 0ffh,0c4h,000h,0c8h,022h,044h,031h,0c4h,040h,044h,043h,084h,051h,0c4h,052h,0ffh	; a550  ...."D1.@DC.Q.R.
-	defb 0c7h,020h,08eh,023h,004h,02fh,0ffh,083h,001h,0c3h,002h,084h,01dh,048h,03fh,024h	; a560  . .#./.......H?$
-	defb 02ch,084h,04eh,000h,0e2h,016h,022h,01fh,0a2h,02fh,022h,02fh,0e2h,036h,062h,037h	; a570  ,.N..."../"/.6b7
-	defb 0a2h,03eh,022h,03fh,0a2h,03fh,062h,046h,0e2h,046h,062h,047h,022h,044h,062h,04ch	; a580  .>"?.?bF.FbG"DbL
-	defb 0a2h,04fh,022h,054h,062h,027h,000h,051h,014h,0cbh,015h,0ffh,045h,034h,02dh,015h	; a590  .O"Tb'.Q....E4-.
-	defb 0c5h,048h,0ffh,085h,014h,00eh,015h,08ch,017h,006h,047h,000h,065h,01ch,083h,025h	; a5a0  .H........G.e..%
-	defb 044h,033h,0e3h,040h,0ffh,084h,010h,00ch,003h,0c5h,01dh,0abh,030h,067h,031h,003h	; a5b0  D3.@........0g1.
-	defb 041h,0a4h,04fh,001h,05dh,0ffh,004h,001h,084h,013h,084h,020h,044h,021h,087h,032h	; a5c0  A.O.]...... D!.2
-	defb 004h,04dh,001h,05fh,000h,086h,018h,0c6h,01ah,082h,032h,042h,03ah,082h,042h,046h	; a5d0  .M._......2B:.BF
-	defb 048h,006h,04ah,082h,05bh,0ffh,0d0h,019h,0ffh,045h,000h,005h,002h,085h,003h,089h	; a5e0  H.J.[....E......
-	defb 014h,08ah,033h,007h,017h,000h,023h,018h,003h,01bh,000h,034h,00ch,084h,00eh,084h	; a5f0  ..3...#....4....
-	defb 02ch,024h,04dh,084h,04fh,0ffh,0a4h,01fh,0a4h,02dh,004h,02fh,0a4h,03ch,004h,03eh	; a600  ,$M.O....-./.<.>
-	defb 0a4h,04fh,000h,000h,0ffh,06ah,02fh,000h,0ffh,0ffh,0ffh,0c6h,044h,000h,027h,040h	; a610  .O...j/.....D.'@
-	defb 0ffh,0ffh,0a4h,033h,000h,0ffh,0ffh,046h,038h,000h,0abh,01bh,000h,024h,01ch,026h	; a620  ...3...F8....$.&
-	defb 015h,0e2h,015h,0a2h,016h,0a4h,017h,0a2h,024h,062h,02ch,0e2h,02ch,022h,035h,062h	; a630  ........$b,.,"5b
-	defb 03dh,0a2h,045h,0e4h,03eh,024h,02fh,064h,01fh,0a4h,04fh,000h,003h,003h,004h,019h	; a640  =.E.>$/d..O.....
-	defb 0c4h,01ah,0c4h,03ah,021h,05ch,0ffh,024h,000h,02ah,038h,0cah,010h,0d3h,011h,0c9h	; a650  ...:!\.$.*8.....
-	defb 012h,0b4h,013h,0ffh,026h,000h,0a6h,003h,00ch,01ah,005h,04fh,000h,087h,002h,0c6h	; a660  ....&......O....
-	defb 01ch,086h,034h,08bh,036h,0ffh,085h,001h,0cch,01ch,046h,037h,004h,04eh,081h,05dh	; a670  ..4.6.....F7.N.]
-	defb 046h,01eh,0ffh,00ch,01eh,006h,01fh,000h,037h,004h,086h,048h,0c7h,02ch,0c5h,035h	; a680  F.......7..H.,.5
-	defb 006h,026h,047h,012h,0ffh,066h,034h,0b3h,013h,001h,05fh,0ffh,037h,000h,08ah,000h	; a690  .&G..f4..._.7...
-	defb 0c2h,020h,042h,021h,042h,022h,0c2h,022h,002h,029h,082h,029h,082h,02ah,0c2h,030h	; a6a0  . B!B".".).).*.0
-	defb 042h,031h,042h,032h,0c2h,032h,002h,039h,082h,039h,082h,03ah,044h,042h,083h,052h	; a6b0  B1B2.2.9.9.:DB.R
-	defb 0ffh,048h,014h,08ah,034h,0c6h,00eh,003h,003h,082h,00ch,000h,0ffh,0c1h,05eh,0ffh	; a6c0  .H..4.........^.
-	defb 0ffh,0c5h,002h,000h,046h,003h,089h,03fh,0ffh,0c8h,028h,048h,032h,08eh,02bh,084h	; a6d0  ....F..?..(H2.+.
-	defb 050h,084h,051h,002h,05bh,0ffh,084h,003h,046h,028h,00dh,029h,0cbh,02ah,0c5h,049h	; a6e0  P.Q.[...F(.).*.I
-	defb 048h,043h,0ffh,088h,000h,086h,001h,008h,003h,084h,003h,0cah,028h,0c8h,021h,0aeh	; a6f0  HC..........(.!.
-	defb 023h,000h,051h,014h,0ffh,047h,014h,046h,02ah,088h,02bh,0ffh,0ffh,0c5h,000h,0c8h	; a700  #.Q..G.F*.+.....
-	defb 040h,045h,02eh,084h,03ah,0c4h,04ah,08dh,017h,000h,053h,014h,025h,01ah,00bh,02dh	; a710  @E..:.J...S.%..-
-	defb 086h,02fh,0ffh,0d1h,015h,086h,016h,046h,02fh,0c2h,05ah,0ffh,056h,000h,0ffh,0ceh	; a720  ./.....F/.Z.V...
-	defb 002h,046h,031h,000h,022h,04ch,0a2h,04fh,000h,041h,05ch,082h,042h,002h,03bh,082h	; a730  .F1."L.O.A\.B...
-	defb 043h,0ffh,042h,040h,0c2h,038h,042h,041h,081h,05fh,0ffh,045h,000h,082h,014h,002h	; a740  C.B@.8BA._.E....
-	defb 01dh,082h,025h,002h,02eh,082h,036h,002h,03fh,0ffh,082h,014h,082h,015h,082h,016h	; a750  ..%...6.?.......
-	defb 002h,01dh,002h,01eh,0c2h,01eh,082h,024h,082h,025h,042h,026h,002h,02dh,0c2h,02dh	; a760  .......$.%B&.-.-
-	defb 082h,034h,042h,035h,0c2h,03ch,083h,003h,000h,000h,000h,000h,000h,02bh,030h,0abh	; a770  .4B5.<.......+0.
-	defb 033h,0ffh,04bh,033h,0b1h,01bh,0ffh,0ffh,066h,014h,066h,017h,0e6h,02ch,0e6h,02eh	; a780  3.K3....f.f..,..
-	defb 086h,045h,046h,046h,000h,000h,000h,000h,024h,01ch,064h,01dh,0e4h,01eh,0e6h,015h	; a790  .EFF....$.d.....
-	defb 024h,034h,024h,036h,024h,037h,000h,000h,086h,028h,046h,021h,046h,02bh,002h,043h	; a7a0  $4$6$7...(F!F+.C
-	defb 0c2h,04ah,082h,052h,000h,082h,021h,0ffh,0c2h,035h,044h,01fh,004h,03fh,000h,06bh	; a7b0  .J.R..!..5D..?.k
-	defb 034h,0a2h,02dh,0e4h,025h,022h,026h,0a9h,002h,0ffh,028h,001h,0ach,002h,0ffh,066h	; a7c0  4.-.%"&...(....f
-	defb 000h,0a1h,05eh,0ffh,068h,018h,021h,05dh,0a1h,05eh,000h,08bh,000h,04bh,003h,085h	; a7d0  ..^.h.!].^...K..
-	defb 04ch,045h,04fh,0ffh,08bh,000h,04bh,003h,081h,05ch,041h,05fh,0ffh,08bh,000h,04bh	; a7e0  LEO...K..\A_...K
-	defb 003h,085h,04ch,045h,04fh,04ah,02eh,0ffh,08bh,000h,04bh,003h,085h,04ch,045h,04fh	; a7f0  ..LEOJ....K..LEO
-	defb 0ffh,08bh,000h,04bh,003h,085h,04ch,045h,04fh,0e8h,02dh,0ffh,08bh,000h,04bh,003h	; a800  ...K..LEO.-...K.
-	defb 088h,040h,048h,043h,000h,0ffh,086h,040h,004h,01ah,0ffh,044h,018h,006h,042h,082h	; a810  .@HC...@...D..B.
-	defb 03ah,002h,033h,087h,017h,000h,082h,018h,082h,028h,082h,038h,0c2h,020h,0c2h,030h	; a820  :.3......(.8. .0
-	defb 0c2h,040h,002h,029h,002h,039h,002h,049h,042h,031h,042h,041h,082h,032h,082h,042h	; a830  .@.).9.IB1BA.2.B
-	defb 0c2h,02ah,0c2h,03ah,0c2h,04ah,002h,023h,002h,033h,002h,043h,042h,01bh,042h,02bh	; a840  .*.:.J.#.3.CB.B+
-	defb 042h,03bh,0c2h,050h,0ffh,04ah,032h,0c8h,012h,0ffh,046h,002h,004h,051h,042h,05bh	; a850  B..P.J2...F..QB[
-	defb 0ffh,004h,001h,04ah,003h,042h,05ah,000h,053h,014h,0a3h,045h,0e4h,035h,022h,052h	; a860  ...J.BZ.S..E.5"R
-	defb 082h,05bh,0ffh,056h,000h,064h,04ah,096h,003h,0ffh,000h,044h,014h,044h,034h,084h	; a870  .[.V.dJ....D.D4.
-	defb 024h,083h,044h,0ffh,0ffh,044h,027h,045h,047h,084h,037h,000h,0e2h,014h,0e2h,016h	; a880  $.D..D'EG.7.....
-	defb 0a2h,01ch,022h,01fh,067h,024h,067h,027h,0a4h,034h,024h,037h,0e6h,03ch,0e2h,03dh	; a890  ..".g$g'.4$7.<.=
-	defb 0e6h,03eh,0a2h,045h,022h,046h,022h,04dh,0e2h,04dh,0a2h,04eh,0a2h,055h,022h,056h	; a8a0  .>.E"F"M.M.N.U"V
-	defb 000h,0e6h,02ch,024h,023h,0ffh,002h,01ah,0b0h,023h,0ffh,0ffh,010h,01ah,0a6h,003h	; a8b0  ..,$#....#......
-	defb 000h,088h,022h,000h,086h,037h,000h,064h,028h,064h,029h,064h,02ah,064h,02bh,0a4h	; a8c0  .."..7.d(d)d*d+.
-	defb 038h,024h,039h,0a4h,039h,024h,03ah,0a4h,03ah,024h,03bh,0e4h,048h,0e4h,049h,0e4h	; a8d0  8$9.9$:.:$..H.I.
-	defb 04ah,0ffh,002h,039h,082h,031h,0c6h,019h,000h,0ffh,0ffh,0ffh,008h,022h,000h,0ffh	; a8e0  J..9.1......."..
-	defb 00ah,025h,0ffh,084h,017h,000h,000h,0e5h,045h,000h,0c5h,048h,000h,0ffh,052h,014h	; a8f0  .%......E..H..R.
-	defb 042h,022h,082h,01ah,0c2h,022h,002h,01bh,042h,023h,085h,017h,0ffh,000h,0e4h,052h	; a900  B"..."..B#.....R
-	defb 0ffh,0e4h,002h,0e5h,015h,000h,0a5h,000h,048h,017h,006h,02dh,002h,037h,0ffh,0a1h	; a910  ........H..-.7..
-	defb 05ch,000h,02fh,010h,0a4h,013h,0ffh,024h,010h,000h,0ach,024h,0ffh,02eh,017h,0e4h	; a920  \./....$...$....
-	defb 04eh,000h,000h,034h,010h,0c9h,018h,046h,035h,045h,042h,0c7h,02ah,049h,013h,0b4h	; a930  N..4...F5EB.*I..
-	defb 013h,0ffh,034h,010h,0c5h,014h,042h,019h,0c3h,01ah,047h,013h,0b4h,013h,085h,04ch	; a940  ..4...B...G....L
-	defb 083h,042h,003h,04bh,041h,05eh,0ffh,037h,000h,0b7h,003h,0c2h,044h,004h,03dh,046h	; a950  .B.KA^.7....D.=F
-	defb 035h,048h,026h,088h,01eh,0ffh,037h,000h,0b7h,003h,093h,000h,005h,00dh,043h,00dh	; a960  5H&...7.......C.
-	defb 081h,00dh,043h,002h,084h,026h,0c4h,01eh,0c4h,036h,006h,02fh,000h,089h,010h,007h	; a970  ..C..&...6./....
-	defb 029h,085h,041h,086h,036h,008h,01fh,0ffh,087h,010h,003h,019h,082h,01ah,005h,017h	; a980  ).A.6...........
-	defb 0c3h,048h,043h,041h,0c3h,046h,044h,04fh,003h,045h,0ffh,088h,02dh,007h,00fh,000h	; a990  .HCA.FDO.E..-...
+	defb 02eh,0ffh,026h,014h,0b2h,017h,029h,038h,000h	; a450  ..&...)8.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_16: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 16; lo leen p00:4434 (12 bytes)
+;   0xa459..0xa465  (12 bytes)
+DATA_casillas_16:
+	defb 0a1h,05fh,0ffh,0a4h,003h,046h,029h,086h,039h,044h,042h,000h	; a459  ._...F).9DB.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_17: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 17; lo leen p00:4434 (5 bytes)
+;   0xa465..0xa46a  (5 bytes)
+DATA_casillas_17:
+	defb 0ffh,0ffh,0b2h,017h,000h	; a465
+
+; ----------------------------------------------------------------------
+; DATOS casillas_18: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 18; lo leen p00:4434 (33 bytes)
+;   0xa46a..0xa48b  (33 bytes)
+DATA_casillas_18:
+	defb 005h,00fh,069h,01eh,007h,033h,084h,04eh,0ffh,0a4h,020h,006h,029h,0c6h,02ah,0a3h	; a46a  ..i..3.N.. .).*.
+	defb 040h,0ffh,045h,00ch,064h,011h,024h,021h,0a8h,023h,0c7h,031h,047h,043h,004h,04dh	; a47a  @.E.d.$!.#.1GC.M
+	defb 000h	; a48a
+
+; ----------------------------------------------------------------------
+; DATOS casillas_19: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 19; lo leen p00:4434 (7 bytes)
+;   0xa48b..0xa492  (7 bytes)
+DATA_casillas_19:
+	defb 066h,002h,085h,02ah,062h,05ah,000h	; a48b
+
+; ----------------------------------------------------------------------
+; DATOS casillas_20: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 20; lo leen p00:4434 (30 bytes)
+;   0xa492..0xa4b0  (30 bytes)
+DATA_casillas_20:
+	defb 0a4h,013h,064h,023h,0a4h,033h,064h,043h,0a4h,053h,0c4h,052h,0ffh,0c4h,002h,0a4h	; a492  ..d#.3dC.S.R....
+	defb 003h,064h,013h,0a4h,023h,066h,027h,0a6h,037h,064h,04fh,024h,03fh,000h	; a4a2  .d..#f'.7dO$?.
+
+; ----------------------------------------------------------------------
+; DATOS columnas_12: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 12; se solapan 2 bloques: (columnas_11 A4B2-A4B3); lo
+;   leen p00:4434 (3 bytes)
+;   0xa4b0..0xa4b3  (3 bytes)
+DATA_columnas_12:
+	defb 086h,019h,000h	; a4b0
+
+; ----------------------------------------------------------------------
+; DATOS columnas_16: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 16; lo leen p00:4434 (9 bytes)
+;   0xa4b3..0xa4bc  (9 bytes)
+DATA_columnas_16:
+	defb 084h,015h,004h,026h,084h,036h,004h,047h,000h	; a4b3  ...&.6.G.
+
+; ----------------------------------------------------------------------
+; DATOS columnas_17: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 17; lo leen p00:4434 (25 bytes)
+;   0xa4bc..0xa4d5  (25 bytes)
+DATA_columnas_17:
+	defb 0e5h,04ah,0ffh,02bh,01ch,045h,049h,0a5h,04ah,0ffh,066h,014h,0edh,014h,044h,027h	; a4bc  .J.+.EI.J.f...D'
+	defb 005h,037h,045h,048h,005h,04ah,0c5h,04ah,000h	; a4cc  .7EH.J.J.
+
+; ----------------------------------------------------------------------
+; DATOS columnas_18: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 18; se solapan 2 bloques: (columnas_19 A4D7-A4D8); lo
+;   leen p00:4434 (3 bytes)
+;   0xa4d5..0xa4d8  (3 bytes)
+DATA_columnas_18:
+	defb 028h,03dh,000h	; a4d5
+
+; ----------------------------------------------------------------------
+; DATOS casillas_21: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 21; lo leen p00:4434 (15 bytes)
+;   0xa4d8..0xa4e7  (15 bytes)
+DATA_casillas_21:
+	defb 032h,014h,0abh,017h,024h,021h,0a4h,022h,0a3h,042h,003h,04eh,063h,016h,000h	; a4d8  2...$!.".B.Nc..
+
+; ----------------------------------------------------------------------
+; DATOS casillas_22: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 22; lo leen p00:4434 (31 bytes)
+;   0xa4e7..0xa506  (31 bytes)
+DATA_casillas_22:
+	defb 046h,010h,042h,027h,047h,029h,002h,037h,0c6h,03eh,0ffh,043h,010h,086h,044h,006h	; a4e7  F.B'G).7.>.C..D.
+	defb 045h,0ffh,089h,010h,046h,013h,0c5h,021h,045h,035h,047h,043h,005h,04ah,000h	; a4f7  E...F..!E5GC.J.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_23: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 23; lo leen p00:4434 (64 bytes)
+;   0xa506..0xa546  (64 bytes)
+DATA_casillas_23:
+	defb 037h,004h,0c4h,010h,0ceh,021h,04eh,023h,0c6h,030h,046h,032h,042h,05ah,0ffh,0c8h	; a506  7....!N#.0F2BZ..
+	defb 011h,0b7h,007h,0c4h,028h,046h,029h,044h,032h,044h,038h,0c4h,051h,042h,058h,0ffh	; a516  ....(F)D2D8.QBX.
+	defb 037h,000h,04eh,002h,0d0h,011h,04ch,01bh,0c6h,020h,0c5h,048h,085h,04bh,0ffh,0b7h	; a526  7.N...L.. .H.K..
+	defb 003h,048h,000h,0c6h,001h,044h,011h,044h,012h,004h,021h,08dh,028h,087h,042h,000h	; a536  .H...D.D..!.(.B.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_24: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 24; lo leen p00:4434 (46 bytes)
+;   0xa546..0xa574  (46 bytes)
+DATA_casillas_24:
+	defb 048h,013h,044h,021h,0c4h,031h,084h,042h,0c4h,050h,0ffh,0c4h,000h,0c8h,022h,044h	; a546  H.D!.1.B.P...."D
+	defb 031h,0c4h,040h,044h,043h,084h,051h,0c4h,052h,0ffh,0c7h,020h,08eh,023h,004h,02fh	; a556  1.@DC.Q.R.. .#./
+	defb 0ffh,083h,001h,0c3h,002h,084h,01dh,048h,03fh,024h,02ch,084h,04eh,000h	; a566  .......H?$,.N.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_25: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 25; lo leen p00:4434 (35 bytes)
+;   0xa574..0xa597  (35 bytes)
+DATA_casillas_25:
+	defb 0e2h,016h,022h,01fh,0a2h,02fh,022h,02fh,0e2h,036h,062h,037h,0a2h,03eh,022h,03fh	; a574  .."../"/.6b7.>"?
+	defb 0a2h,03fh,062h,046h,0e2h,046h,062h,047h,022h,044h,062h,04ch,0a2h,04fh,022h,054h	; a584  .?bF.FbG"DbL.O"T
+	defb 062h,027h,000h	; a594
+
+; ----------------------------------------------------------------------
+; DATOS casillas_26: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 26; lo leen p00:4434 (21 bytes)
+;   0xa597..0xa5ac  (21 bytes)
+DATA_casillas_26:
+	defb 051h,014h,0cbh,015h,0ffh,045h,034h,02dh,015h,0c5h,048h,0ffh,085h,014h,00eh,015h	; a597  Q....E4-..H.....
+	defb 08ch,017h,006h,047h,000h	; a5a7
+
+; ----------------------------------------------------------------------
+; DATOS casillas_27: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 27; lo leen p00:4434 (41 bytes)
+;   0xa5ac..0xa5d5  (41 bytes)
+DATA_casillas_27:
+	defb 065h,01ch,083h,025h,044h,033h,0e3h,040h,0ffh,084h,010h,00ch,003h,0c5h,01dh,0abh	; a5ac  e..%D3.@........
+	defb 030h,067h,031h,003h,041h,0a4h,04fh,001h,05dh,0ffh,004h,001h,084h,013h,084h,020h	; a5bc  0g1.A.O.]......
+	defb 044h,021h,087h,032h,004h,04dh,001h,05fh,000h	; a5cc  D!.2.M._.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_28: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 28; lo leen p00:4434 (33 bytes)
+;   0xa5d5..0xa5f6  (33 bytes)
+DATA_casillas_28:
+	defb 086h,018h,0c6h,01ah,082h,032h,042h,03ah,082h,042h,046h,048h,006h,04ah,082h,05bh	; a5d5  .....2B:.BFH.J.[
+	defb 0ffh,0d0h,019h,0ffh,045h,000h,005h,002h,085h,003h,089h,014h,08ah,033h,007h,017h	; a5e5  ....E........3..
+	defb 000h	; a5f5
+
+; ----------------------------------------------------------------------
+; DATOS casillas_29: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 29; lo leen p00:4434 (5 bytes)
+;   0xa5f6..0xa5fb  (5 bytes)
+DATA_casillas_29:
+	defb 023h,018h,003h,01bh,000h	; a5f6
+
+; ----------------------------------------------------------------------
+; DATOS casillas_30: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 30; lo leen p00:4434 (24 bytes)
+;   0xa5fb..0xa613  (24 bytes)
+DATA_casillas_30:
+	defb 034h,00ch,084h,00eh,084h,02ch,024h,04dh,084h,04fh,0ffh,0a4h,01fh,0a4h,02dh,004h	; a5fb  4....,$M.O....-.
+	defb 02fh,0a4h,03ch,004h,03eh,0a4h,04fh,000h	; a60b  /.<.>.O.
+
+; ----------------------------------------------------------------------
+; DATOS columnas_21: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 21; lo leen p00:4434 (1 bytes)
+;   0xa613..0xa614  (1 bytes)
+DATA_columnas_21:
+	defb 000h	; a613
+
+; ----------------------------------------------------------------------
+; DATOS columnas_22: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 22; se solapan 2 bloques: (columnas_23 A617-A618); lo
+;   leen p00:4434 (4 bytes)
+;   0xa614..0xa618  (4 bytes)
+DATA_columnas_22:
+	defb 0ffh,06ah,02fh,000h	; a614
+
+; ----------------------------------------------------------------------
+; DATOS columnas_24: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 24; se solapan 2 bloques: (columnas_25 A61D-A61E); lo
+;   leen p00:4434 (6 bytes)
+;   0xa618..0xa61e  (6 bytes)
+DATA_columnas_24:
+	defb 0ffh,0ffh,0ffh,0c6h,044h,000h	; a618
+
+; ----------------------------------------------------------------------
+; DATOS columnas_27: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 27; lo leen p00:4434 (7 bytes)
+;   0xa61e..0xa625  (7 bytes)
+DATA_columnas_27:
+	defb 027h,040h,0ffh,0ffh,0a4h,033h,000h	; a61e
+
+; ----------------------------------------------------------------------
+; DATOS columnas_28: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 28; lo leen p00:4434 (5 bytes)
+;   0xa625..0xa62a  (5 bytes)
+DATA_columnas_28:
+	defb 0ffh,0ffh,046h,038h,000h	; a625
+
+; ----------------------------------------------------------------------
+; DATOS columnas_29: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 29; se solapan 2 bloques: (columnas_30 A62C-A62D); lo
+;   leen p00:4434 (3 bytes)
+;   0xa62a..0xa62d  (3 bytes)
+DATA_columnas_29:
+	defb 0abh,01bh,000h	; a62a
+
+; ----------------------------------------------------------------------
+; DATOS casillas_31: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 31; lo leen p00:4434 (31 bytes)
+;   0xa62d..0xa64c  (31 bytes)
+DATA_casillas_31:
+	defb 024h,01ch,026h,015h,0e2h,015h,0a2h,016h,0a4h,017h,0a2h,024h,062h,02ch,0e2h,02ch	; a62d  $.&........$b,.,
+	defb 022h,035h,062h,03dh,0a2h,045h,0e4h,03eh,024h,02fh,064h,01fh,0a4h,04fh,000h	; a63d  "5b=.E.>$/d..O.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_32: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 32; lo leen p00:4434 (33 bytes)
+;   0xa64c..0xa66d  (33 bytes)
+DATA_casillas_32:
+	defb 003h,003h,004h,019h,0c4h,01ah,0c4h,03ah,021h,05ch,0ffh,024h,000h,02ah,038h,0cah	; a64c  .......:!\.$.*8.
+	defb 010h,0d3h,011h,0c9h,012h,0b4h,013h,0ffh,026h,000h,0a6h,003h,00ch,01ah,005h,04fh	; a65c  ........&......O
+	defb 000h	; a66c
+
+; ----------------------------------------------------------------------
+; DATOS casillas_33: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 33; lo leen p00:4434 (27 bytes)
+;   0xa66d..0xa688  (27 bytes)
+DATA_casillas_33:
+	defb 087h,002h,0c6h,01ch,086h,034h,08bh,036h,0ffh,085h,001h,0cch,01ch,046h,037h,004h	; a66d  .....4.6.....F7.
+	defb 04eh,081h,05dh,046h,01eh,0ffh,00ch,01eh,006h,01fh,000h	; a67d  N.]F.......
+
+; ----------------------------------------------------------------------
+; DATOS casillas_34: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 34; lo leen p00:4434 (68 bytes)
+;   0xa688..0xa6cc  (68 bytes)
+DATA_casillas_34:
+	defb 037h,004h,086h,048h,0c7h,02ch,0c5h,035h,006h,026h,047h,012h,0ffh,066h,034h,0b3h	; a688  7..H.,.5.&G..f4.
+	defb 013h,001h,05fh,0ffh,037h,000h,08ah,000h,0c2h,020h,042h,021h,042h,022h,0c2h,022h	; a698  .._.7.... B!B"."
+	defb 002h,029h,082h,029h,082h,02ah,0c2h,030h,042h,031h,042h,032h,0c2h,032h,002h,039h	; a6a8  .).).*.0B1B2.2.9
+	defb 082h,039h,082h,03ah,044h,042h,083h,052h,0ffh,048h,014h,08ah,034h,0c6h,00eh,003h	; a6b8  .9.:DB.R.H..4...
+	defb 003h,082h,00ch,000h	; a6c8
+
+; ----------------------------------------------------------------------
+; DATOS casillas_35: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 35; lo leen p00:4434 (8 bytes)
+;   0xa6cc..0xa6d4  (8 bytes)
+DATA_casillas_35:
+	defb 0ffh,0c1h,05eh,0ffh,0ffh,0c5h,002h,000h	; a6cc  ..^.....
+
+; ----------------------------------------------------------------------
+; DATOS casillas_36: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 36; lo leen p00:4434 (46 bytes)
+;   0xa6d4..0xa702  (46 bytes)
+DATA_casillas_36:
+	defb 046h,003h,089h,03fh,0ffh,0c8h,028h,048h,032h,08eh,02bh,084h,050h,084h,051h,002h	; a6d4  F..?..(H2.+.P.Q.
+	defb 05bh,0ffh,084h,003h,046h,028h,00dh,029h,0cbh,02ah,0c5h,049h,048h,043h,0ffh,088h	; a6e4  [...F(.).*.IHC..
+	defb 000h,086h,001h,008h,003h,084h,003h,0cah,028h,0c8h,021h,0aeh,023h,000h	; a6f4  ........(.!.#.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_37: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 37; lo leen p00:4434 (24 bytes)
+;   0xa702..0xa71a  (24 bytes)
+DATA_casillas_37:
+	defb 051h,014h,0ffh,047h,014h,046h,02ah,088h,02bh,0ffh,0ffh,0c5h,000h,0c8h,040h,045h	; a702  Q..G.F*.+.....@E
+	defb 02eh,084h,03ah,0c4h,04ah,08dh,017h,000h	; a712  ..:.J...
+
+; ----------------------------------------------------------------------
+; DATOS casillas_38: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 38; lo leen p00:4434 (26 bytes)
+;   0xa71a..0xa734  (26 bytes)
+DATA_casillas_38:
+	defb 053h,014h,025h,01ah,00bh,02dh,086h,02fh,0ffh,0d1h,015h,086h,016h,046h,02fh,0c2h	; a71a  S.%..-./.....F/.
+	defb 05ah,0ffh,056h,000h,0ffh,0ceh,002h,046h,031h,000h	; a72a  Z.V....F1.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_39: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 39; lo leen p00:4434 (5 bytes)
+;   0xa734..0xa739  (5 bytes)
+DATA_casillas_39:
+	defb 022h,04ch,0a2h,04fh,000h	; a734
+
+; ----------------------------------------------------------------------
+; DATOS casillas_40: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 40; lo leen p00:4434 (64 bytes)
+;   0xa739..0xa779  (64 bytes)
+DATA_casillas_40:
+	defb 041h,05ch,082h,042h,002h,03bh,082h,043h,0ffh,042h,040h,0c2h,038h,042h,041h,081h	; a739  A\.B...C.B@.8BA.
+	defb 05fh,0ffh,045h,000h,082h,014h,002h,01dh,082h,025h,002h,02eh,082h,036h,002h,03fh	; a749  _.E......%...6.?
+	defb 0ffh,082h,014h,082h,015h,082h,016h,002h,01dh,002h,01eh,0c2h,01eh,082h,024h,082h	; a759  ..............$.
+	defb 025h,042h,026h,002h,02dh,0c2h,02dh,082h,034h,042h,035h,0c2h,03ch,083h,003h,000h	; a769  %B&.-.-.4B5.<...
+
+; ----------------------------------------------------------------------
+; DATOS columnas_31: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 31; lo leen p00:4434 (1 bytes)
+;   0xa779..0xa77a  (1 bytes)
+DATA_columnas_31:
+	defb 000h	; a779
+
+; ----------------------------------------------------------------------
+; DATOS columnas_32: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 32; lo leen p00:4434 (1 bytes)
+;   0xa77a..0xa77b  (1 bytes)
+DATA_columnas_32:
+	defb 000h	; a77a
+
+; ----------------------------------------------------------------------
+; DATOS columnas_33: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 33; lo leen p00:4434 (1 bytes)
+;   0xa77b..0xa77c  (1 bytes)
+DATA_columnas_33:
+	defb 000h	; a77b
+
+; ----------------------------------------------------------------------
+; DATOS columnas_34: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 34; lo leen p00:4434 (1 bytes)
+;   0xa77c..0xa77d  (1 bytes)
+DATA_columnas_34:
+	defb 000h	; a77c
+
+; ----------------------------------------------------------------------
+; DATOS columnas_35: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 35; lo leen p00:4434 (24 bytes)
+;   0xa77d..0xa795  (24 bytes)
+DATA_columnas_35:
+	defb 02bh,030h,0abh,033h,0ffh,04bh,033h,0b1h,01bh,0ffh,0ffh,066h,014h,066h,017h,0e6h	; a77d  +0.3.K3....f.f..
+	defb 02ch,0e6h,02eh,086h,045h,046h,046h,000h	; a78d  ,...EFF.
+
+; ----------------------------------------------------------------------
+; DATOS columnas_36: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 36; lo leen p00:4434 (1 bytes)
+;   0xa795..0xa796  (1 bytes)
+DATA_columnas_36:
+	defb 000h	; a795
+
+; ----------------------------------------------------------------------
+; DATOS columnas_37: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 37; lo leen p00:4434 (1 bytes)
+;   0xa796..0xa797  (1 bytes)
+DATA_columnas_37:
+	defb 000h	; a796
+
+; ----------------------------------------------------------------------
+; DATOS columnas_38: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 38; lo leen p00:4434 (1 bytes)
+;   0xa797..0xa798  (1 bytes)
+DATA_columnas_38:
+	defb 000h	; a797
+
+; ----------------------------------------------------------------------
+; DATOS columnas_39: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 39; lo leen p00:4434 (15 bytes)
+;   0xa798..0xa7a7  (15 bytes)
+DATA_columnas_39:
+	defb 024h,01ch,064h,01dh,0e4h,01eh,0e6h,015h,024h,034h,024h,036h,024h,037h,000h	; a798  $.d.....$4$6$7.
+
+; ----------------------------------------------------------------------
+; DATOS columnas_40: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 40; lo leen p00:4434 (1 bytes)
+;   0xa7a7..0xa7a8  (1 bytes)
+DATA_columnas_40:
+	defb 000h	; a7a7
+
+; ----------------------------------------------------------------------
+; DATOS casillas_41: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 41; lo leen p00:4434 (13 bytes)
+;   0xa7a8..0xa7b5  (13 bytes)
+DATA_casillas_41:
+	defb 086h,028h,046h,021h,046h,02bh,002h,043h,0c2h,04ah,082h,052h,000h	; a7a8  .(F!F+.C.J.R.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_42: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 42; lo leen p00:4434 (10 bytes)
+;   0xa7b5..0xa7bf  (10 bytes)
+DATA_casillas_42:
+	defb 082h,021h,0ffh,0c2h,035h,044h,01fh,004h,03fh,000h	; a7b5  .!..5D..?.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_43: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 43; lo leen p00:4434 (28 bytes)
+;   0xa7bf..0xa7db  (28 bytes)
+DATA_casillas_43:
+	defb 06bh,034h,0a2h,02dh,0e4h,025h,022h,026h,0a9h,002h,0ffh,028h,001h,0ach,002h,0ffh	; a7bf  k4.-.%"&...(....
+	defb 066h,000h,0a1h,05eh,0ffh,068h,018h,021h,05dh,0a1h,05eh,000h	; a7cf  f..^.h.!].^.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_44: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 44; lo leen p00:4434 (58 bytes)
+;   0xa7db..0xa815  (58 bytes)
+DATA_casillas_44:
+	defb 08bh,000h,04bh,003h,085h,04ch,045h,04fh,0ffh,08bh,000h,04bh,003h,081h,05ch,041h	; a7db  ..K..LEO...K..\A
+	defb 05fh,0ffh,08bh,000h,04bh,003h,085h,04ch,045h,04fh,04ah,02eh,0ffh,08bh,000h,04bh	; a7eb  _...K..LEOJ....K
+	defb 003h,085h,04ch,045h,04fh,0ffh,08bh,000h,04bh,003h,085h,04ch,045h,04fh,0e8h,02dh	; a7fb  ..LEO...K..LEO.-
+	defb 0ffh,08bh,000h,04bh,003h,088h,040h,048h,043h,000h	; a80b  ...K..@HC.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_45: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 45; lo leen p00:4434 (17 bytes)
+;   0xa815..0xa826  (17 bytes)
+DATA_casillas_45:
+	defb 0ffh,086h,040h,004h,01ah,0ffh,044h,018h,006h,042h,082h,03ah,002h,033h,087h,017h	; a815  ..@...D..B.:.3..
+	defb 000h	; a825
+
+; ----------------------------------------------------------------------
+; DATOS casillas_46: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 46; lo leen p00:4434 (66 bytes)
+;   0xa826..0xa868  (66 bytes)
+DATA_casillas_46:
+	defb 082h,018h,082h,028h,082h,038h,0c2h,020h,0c2h,030h,0c2h,040h,002h,029h,002h,039h	; a826  ...(.8. .0.@.).9
+	defb 002h,049h,042h,031h,042h,041h,082h,032h,082h,042h,0c2h,02ah,0c2h,03ah,0c2h,04ah	; a836  .IB1BA.2.B.*.:.J
+	defb 002h,023h,002h,033h,002h,043h,042h,01bh,042h,02bh,042h,03bh,0c2h,050h,0ffh,04ah	; a846  .#.3.CB.B+B..P.J
+	defb 032h,0c8h,012h,0ffh,046h,002h,004h,051h,042h,05bh,0ffh,004h,001h,04ah,003h,042h	; a856  2...F..QB[...J.B
+	defb 05ah,000h	; a866
+
+; ----------------------------------------------------------------------
+; DATOS casillas_47: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 47; lo leen p00:4434 (19 bytes)
+;   0xa868..0xa87b  (19 bytes)
+DATA_casillas_47:
+	defb 053h,014h,0a3h,045h,0e4h,035h,022h,052h,082h,05bh,0ffh,056h,000h,064h,04ah,096h	; a868  S..E.5"R.[.V.dJ.
+	defb 003h,0ffh,000h	; a878
+
+; ----------------------------------------------------------------------
+; DATOS casillas_48: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 48; lo leen p00:4434 (17 bytes)
+;   0xa87b..0xa88c  (17 bytes)
+DATA_casillas_48:
+	defb 044h,014h,044h,034h,084h,024h,083h,044h,0ffh,0ffh,044h,027h,045h,047h,084h,037h	; a87b  D.D4.$.D..D'EG.7
+	defb 000h	; a88b
+
+; ----------------------------------------------------------------------
+; DATOS casillas_49: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 49; lo leen p00:4434 (37 bytes)
+;   0xa88c..0xa8b1  (37 bytes)
+DATA_casillas_49:
+	defb 0e2h,014h,0e2h,016h,0a2h,01ch,022h,01fh,067h,024h,067h,027h,0a4h,034h,024h,037h	; a88c  ......".g$g'.4$7
+	defb 0e6h,03ch,0e2h,03dh,0e6h,03eh,0a2h,045h,022h,046h,022h,04dh,0e2h,04dh,0a2h,04eh	; a89c  .<.=.>.E"F"M.M.N
+	defb 0a2h,055h,022h,056h,000h	; a8ac
+
+; ----------------------------------------------------------------------
+; DATOS casillas_50: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 50; lo leen p00:4434 (16 bytes)
+;   0xa8b1..0xa8c1  (16 bytes)
+DATA_casillas_50:
+	defb 0e6h,02ch,024h,023h,0ffh,002h,01ah,0b0h,023h,0ffh,0ffh,010h,01ah,0a6h,003h,000h	; a8b1  .,$#....#.......
+
+; ----------------------------------------------------------------------
+; DATOS columnas_41: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 41; lo leen p00:4434 (3 bytes)
+;   0xa8c1..0xa8c4  (3 bytes)
+DATA_columnas_41:
+	defb 088h,022h,000h	; a8c1
+
+; ----------------------------------------------------------------------
+; DATOS columnas_42: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 42; lo leen p00:4434 (3 bytes)
+;   0xa8c4..0xa8c7  (3 bytes)
+DATA_columnas_42:
+	defb 086h,037h,000h	; a8c4
+
+; ----------------------------------------------------------------------
+; DATOS columnas_45: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 45; lo leen p00:4434 (34 bytes)
+;   0xa8c7..0xa8e9  (34 bytes)
+DATA_columnas_45:
+	defb 064h,028h,064h,029h,064h,02ah,064h,02bh,0a4h,038h,024h,039h,0a4h,039h,024h,03ah	; a8c7  d(d)d*d+.8$9.9$:
+	defb 0a4h,03ah,024h,03bh,0e4h,048h,0e4h,049h,0e4h,04ah,0ffh,002h,039h,082h,031h,0c6h	; a8d7  .:$..H.I.J..9.1.
+	defb 019h,000h	; a8e7
+
+; ----------------------------------------------------------------------
+; DATOS columnas_46: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 46; lo leen p00:4434 (6 bytes)
+;   0xa8e9..0xa8ef  (6 bytes)
+DATA_columnas_46:
+	defb 0ffh,0ffh,0ffh,008h,022h,000h	; a8e9
+
+; ----------------------------------------------------------------------
+; DATOS columnas_48: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 48; lo leen p00:4434 (7 bytes)
+;   0xa8ef..0xa8f6  (7 bytes)
+DATA_columnas_48:
+	defb 0ffh,00ah,025h,0ffh,084h,017h,000h	; a8ef
+
+; ----------------------------------------------------------------------
+; DATOS columnas_43: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fases 43, 44, 47, 49, 50; lo leen p00:4434 (1 bytes)
+;   0xa8f6..0xa8f7  (1 bytes)
+DATA_columnas_43:
+	defb 000h	; a8f6
+
+; ----------------------------------------------------------------------
+; DATOS casillas_51: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 51; lo leen p00:4434 (3 bytes)
+;   0xa8f7..0xa8fa  (3 bytes)
+DATA_casillas_51:
+	defb 0e5h,045h,000h	; a8f7
+
+; ----------------------------------------------------------------------
+; DATOS casillas_52: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 52; lo leen p00:4434 (3 bytes)
+;   0xa8fa..0xa8fd  (3 bytes)
+DATA_casillas_52:
+	defb 0c5h,048h,000h	; a8fa
+
+; ----------------------------------------------------------------------
+; DATOS casillas_53: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 53; lo leen p00:4434 (17 bytes)
+;   0xa8fd..0xa90e  (17 bytes)
+DATA_casillas_53:
+	defb 0ffh,052h,014h,042h,022h,082h,01ah,0c2h,022h,002h,01bh,042h,023h,085h,017h,0ffh	; a8fd  .R.B"..."..B#...
+	defb 000h	; a90d
+
+; ----------------------------------------------------------------------
+; DATOS casillas_54: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 54; lo leen p00:4434 (8 bytes)
+;   0xa90e..0xa916  (8 bytes)
+DATA_casillas_54:
+	defb 0e4h,052h,0ffh,0e4h,002h,0e5h,015h,000h	; a90e  .R......
+
+; ----------------------------------------------------------------------
+; DATOS casillas_55: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 55; lo leen p00:4434 (12 bytes)
+;   0xa916..0xa922  (12 bytes)
+DATA_casillas_55:
+	defb 0a5h,000h,048h,017h,006h,02dh,002h,037h,0ffh,0a1h,05ch,000h	; a916  ..H..-.7..\.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_57: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 57; lo leen p00:4434 (8 bytes)
+;   0xa922..0xa92a  (8 bytes)
+DATA_casillas_57:
+	defb 02fh,010h,0a4h,013h,0ffh,024h,010h,000h	; a922  /....$..
+
+; ----------------------------------------------------------------------
+; DATOS casillas_58: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 58; lo leen p00:4434 (8 bytes)
+;   0xa92a..0xa932  (8 bytes)
+DATA_casillas_58:
+	defb 0ach,024h,0ffh,02eh,017h,0e4h,04eh,000h	; a92a  .$....N.
+
+; ----------------------------------------------------------------------
+; DATOS casillas_56: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 56; lo leen p00:4434 (1 bytes)
+;   0xa932..0xa933  (1 bytes)
+DATA_casillas_56:
+	defb 000h	; a932
+
+; ----------------------------------------------------------------------
+; DATOS casillas_59: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 59; lo leen p00:4434 (74 bytes)
+;   0xa933..0xa97d  (74 bytes)
+DATA_casillas_59:
+	defb 034h,010h,0c9h,018h,046h,035h,045h,042h,0c7h,02ah,049h,013h,0b4h,013h,0ffh,034h	; a933  4...F5EB.*I....4
+	defb 010h,0c5h,014h,042h,019h,0c3h,01ah,047h,013h,0b4h,013h,085h,04ch,083h,042h,003h	; a943  ...B...G....L.B.
+	defb 04bh,041h,05eh,0ffh,037h,000h,0b7h,003h,0c2h,044h,004h,03dh,046h,035h,048h,026h	; a953  KA^.7....D.=F5H&
+	defb 088h,01eh,0ffh,037h,000h,0b7h,003h,093h,000h,005h,00dh,043h,00dh,081h,00dh,043h	; a963  ...7.......C...C
+	defb 002h,084h,026h,0c4h,01eh,0c4h,036h,006h,02fh,000h	; a973  ..&...6./.
+
+; ----------------------------------------------------------------------
+; DATOS columnas_59: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 59; lo leen p00:4434 (35 bytes)
+;   0xa97d..0xa9a0  (35 bytes)
+DATA_columnas_59:
+	defb 089h,010h,007h,029h,085h,041h,086h,036h,008h,01fh,0ffh,087h,010h,003h,019h,082h	; a97d  ...).A.6........
+	defb 01ah,005h,017h,0c3h,048h,043h,041h,0c3h,046h,044h,04fh,003h,045h,0ffh,088h,02dh	; a98d  ....HCA.FDO.E..-
+	defb 007h,00fh,000h	; a99d
+
+; ----------------------------------------------------------------------
+; DATOS casillas_60: Las columnas que se marcan en el mapa sin apuntarlas de
+;   la fase 60; lo leen p00:4434 (52 bytes)
+;   0xa9a0..0xa9d4  (52 bytes)
+DATA_casillas_60:
 	defb 035h,00ch,0c5h,028h,082h,058h,0c2h,059h,0ffh,0cah,03ah,082h,05bh,0ffh,091h,00ch	; a9a0  5..(.X.Y..:.[...
 	defb 046h,022h,044h,042h,0b5h,00fh,042h,058h,082h,059h,002h,05bh,0ffh,023h,000h,096h	; a9b0  F"DB..BX.Y.[.#..
 	defb 000h,0c5h,001h,0c4h,01dh,0ffh,0c4h,002h,096h,003h,0ffh,056h,000h,08ch,001h,006h	; a9c0  ...........V....
-	defb 003h,0b6h,003h,000h,066h,029h,066h,02ah,000h,04ah,020h,08ch,021h,048h,023h,0ffh	; a9d0  ....f)f*.J .!H#.
-	defb 044h,011h,008h,022h,047h,041h,005h,04bh,000h,0ffh,0ffh,005h,025h,000h,065h,03eh	; a9e0  D.."GA.K....%.e>
-	defb 000h,024h,034h,0ffh,0aeh,027h,000h,08ch,010h,04ah,013h,0e3h,029h,006h,029h,0e5h	; a9f0  .$4..'...J..).).
-	defb 039h,046h,040h,086h,043h,000h,0c4h,010h,0e8h,01dh,0ffh,0e4h,01dh,0e8h,03dh,0abh	; aa00  9F@.C.........=.
-	defb 023h,004h,013h,000h,0a4h,02eh,028h,02fh,0ffh,02ah,02eh,0b0h,015h,000h,0ffh,0ffh	; aa10  #.....(/.*......
-	defb 0ffh,0ffh,0c3h,00ch,003h,019h,043h,025h,000h,000h,01ch,022h,063h,063h,063h,022h	; aa20  ......C%..."ccc"
-	defb 01ch,000h,018h,038h,018h,018h,018h,018h,07eh,000h,03eh,063h,003h,00eh,03ch,070h	; aa30  ...8....~.>c..<p
-	defb 07fh,000h,03eh,063h,003h,00eh,003h,063h,03eh,000h,00eh,01eh,036h,066h,066h,07fh	; aa40  ..>c...c>...6ff.
-	defb 006h,000h,07fh,060h,07eh,063h,003h,063h,03eh,000h,03eh,063h,060h,07eh,063h,063h	; aa50  ...`~c.c>.>c`~cc
-	defb 03eh,000h,07fh,063h,006h,00ch,018h,018h,018h,000h,03eh,063h,063h,03eh,063h,063h	; aa60  >..c......>cc>cc
-	defb 03eh,000h,03eh,063h,063h,03fh,003h,063h,03eh,03ch,042h,099h,0a1h,0a1h,099h,042h	; aa70  >.>cc?.c><B....B
-	defb 03ch,000h,018h,018h,018h,018h,018h,000h,018h,000h,000h,000h,000h,000h,000h,000h	; aa80  <...............
-	defb 000h,000h,01ch,036h,063h,063h,07fh,063h,063h,000h,07eh,063h,063h,07eh,063h,063h	; aa90  ...6cc.cc.~cc~cc
-	defb 07eh,000h,03eh,063h,060h,060h,060h,063h,03eh,000h,07ch,066h,063h,063h,063h,066h	; aaa0  ~.>c```c>.|fcccf
-	defb 07ch,000h,07fh,060h,060h,07eh,060h,060h,07fh,000h,07fh,060h,060h,07eh,060h,060h	; aab0  |..``~``...``~``
-	defb 060h,000h,03eh,063h,060h,067h,063h,063h,03fh,000h,063h,063h,063h,07fh,063h,063h	; aac0  `.>c`gcc?.ccc.cc
-	defb 063h,000h,03ch,018h,018h,018h,018h,018h,03ch,000h,01fh,006h,006h,006h,006h,066h	; aad0  c.<.....<......f
-	defb 03ch,000h,063h,066h,06ch,078h,07ch,06eh,067h,000h,060h,060h,060h,060h,060h,060h	; aae0  <.cflx|ng.``````
-	defb 07fh,000h,063h,077h,07fh,07fh,06bh,063h,063h,000h,063h,073h,07bh,07fh,06fh,067h	; aaf0  ..cw..kcc.cs{.og
-	defb 063h,000h,03eh,063h,063h,063h,063h,063h,03eh,000h,07eh,063h,063h,063h,07eh,060h	; ab00  c.>ccccc>.~ccc~`
-	defb 060h,000h,03eh,063h,063h,063h,06fh,066h,03dh,000h,07eh,063h,063h,062h,07ch,066h	; ab10  `.>cccof=.~ccb|f
-	defb 063h,000h,03eh,063h,060h,03eh,003h,063h,03eh,000h,07eh,018h,018h,018h,018h,018h	; ab20  c.>c`>.c>.~.....
-	defb 018h,000h,063h,063h,063h,063h,063h,063h,03eh,000h,063h,063h,063h,063h,036h,01ch	; ab30  ..cccccc>.cccc6.
-	defb 008h,000h,063h,063h,06bh,06bh,07fh,077h,022h,000h,063h,076h,03ch,01ch,01eh,037h	; ab40  ..cckk.w".cv<..7
-	defb 063h,000h,066h,066h,07eh,03ch,018h,018h,018h,000h,07fh,007h,00eh,01ch,038h,070h	; ab50  c.ff~<........8p
-	defb 07fh,000h,07fh,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,07eh,000h,000h	; ab60  .............~..
-	defb 000h,000h,03ch,066h,066h,00ch,018h,000h,018h,000h,000h,000h,000h,000h,000h,030h	; ab70  ..<ff..........0
-	defb 030h,000h,000h,000h,018h,018h,000h,000h,000h,028h,028h,000h,000h,000h,000h,000h	; ab80  0........((.....
-	defb 000h,0ffh,033h,033h,033h,033h,033h,033h,0ffh,0feh,030h,030h,030h,030h,030h,030h	; ab90  ..333333..000000
-	defb 0feh,002h,002h,02ah,0aah,02ah,002h,002h,002h,000h,000h,0feh,001h,0feh,000h,000h	; aba0  ...*.*..........
-	defb 000h,091h,081h,081h,081h,081h,081h,061h,011h,051h,051h,051h,0f7h,0f1h,0f1h,0f1h	; abb0  .......a.QQQ....
-	defb 0f1h,000h,000h,000h,0f0h,00fh,0ffh,0ffh,0afh,0f7h,071h,071h,0afh,0f7h,071h,071h	; abc0  ..........qq..qq
-	defb 0afh,0fah,0afh,0afh,0afh,00fh,0ffh,0ffh,0afh,000h,000h,000h,0f0h,000h,000h,000h	; abd0  ................
-	defb 000h,000h,000h,000h,000h,0ffh,0ffh,0ffh,000h,0ddh,0ddh,0ddh,0f0h,0bbh,0bbh,0bbh	; abe0  ................
-	defb 0bfh,0bbh,0bbh,0bbh,0f0h,0ffh,0ffh,0ffh,000h,000h,000h,000h,000h,000h,000h,000h	; abf0  ................
-	defb 000h,048h,020h,0e4h,0efh,000h,0f9h,0efh,0f5h,0f2h,000h,0e2h,0e5h,0f3h,0f4h,000h	; ac00  .H .............
-	defb 0dbh,0dbh,0ffh,01dh,0ach,02ah,0ach,04fh,0ach,07ch,0ach,09fh,0ach,020h,090h,0e4h	; ac10  .....*.O.|... ..
-	defb 0ebh,0e8h,0e0h,000h,0ebh,0f1h,0f0h,0dbh,0dbh,0ffh,020h,088h,0f0h,0eeh,0f5h,000h	; ac20  .......... .....
-	defb 0f0h,0ebh,000h,0f0h,0ddh,0e7h,0e1h,0feh,020h,098h,0ddh,000h,0eah,0e1h,0f3h,000h	; ac30  ........ .......
-	defb 0efh,0f0h,0e1h,0ech,0feh,020h,0a8h,0e2h,0ebh,0eeh,0f3h,0ddh,0eeh,0e0h,0ffh,018h	; ac40  ..... ..........
-	defb 080h,0e4h,0e1h,0ddh,0f2h,0e1h,0eah,000h,0e7h,0eah,0ebh,0f3h,0efh,0feh,030h,090h	; ac50  ..............0.
-	defb 0f3h,0e4h,0e1h,0eah,0feh,020h,0a0h,0f0h,0e4h,0e5h,0efh,000h,0e3h,0ddh,0e9h,0e1h	; ac60  ..... ..........
-	defb 0feh,030h,0b0h,0f3h,0e5h,0e8h,0e8h,000h,0e1h,0eah,0e0h,0ffh,012h,088h,0ebh,0e4h	; ac70  .0..............
-	defb 0dbh,000h,0e9h,0f5h,000h,0e3h,0ebh,0e0h,0dbh,0feh,020h,098h,0e5h,000h,0deh,0e1h	; ac80  .......... .....
-	defb 0e8h,0e5h,0e1h,0f2h,0e1h,0feh,040h,0a8h,0e5h,0eah,000h,0e3h,0ebh,0e0h,0ffh,018h	; ac90  ......@.........
-	defb 088h,0ddh,0f0h,000h,0e8h,0ebh,0eah,0e3h,000h,0e8h,0ddh,0efh,0f0h,0feh,030h,098h	; aca0  ..............0.
-	defb 0e2h,0e5h,0eah,0ddh,0e8h,0feh,020h,0a8h,0dfh,0ebh,0f1h,0eah,0f0h,000h,0e0h,0ebh	; acb0  ...... .........
-	defb 0f3h,0eah,0ffh,048h,048h,0dfh,0ebh,0eah,0e3h,0eeh,0ddh,0f0h,0f1h,0e8h,0ddh,0f0h	; acc0  ...HH...........
-	defb 0e5h,0ebh,0eah,0efh,0feh,040h,058h,0f0h,0ebh,000h,0f2h,0e5h,0dfh,0e7h,000h,0f4h	; acd0  .....@X.........
-	defb 0fah,0fbh,000h,0dbh,0feh,048h,068h,0f5h,0ebh,0f1h,000h,0e4h,0e1h,0eeh,0ebh,0e5h	; ace0  .....Hh.........
-	defb 0dfh,0ddh,0e8h,0e8h,0f5h,0feh,040h,078h,0f1h,0eah,0efh,0e1h,0ddh,0e8h,0e1h,0e0h	; acf0  ......@x........
-	defb 000h,0ddh,0e8h,0e8h,000h,0f0h,0e4h,0e1h,0feh,040h,088h,0e8h,0ebh,0dfh,0e7h,0efh	; ad00  .........@......
-	defb 0f7h,0ffh,028h,080h,0ddh,0e8h,0e8h,000h,0f5h,0ebh,0f1h,000h,0e4h,0ddh,0f2h,0e1h	; ad10  ..(.............
-	defb 000h,0f0h,0ebh,000h,0e0h,0ebh,000h,0eah,0ebh,0f3h,0feh,028h,090h,0e5h,0efh,000h	; ad20  ...........(....
-	defb 0f0h,0f1h,0eeh,0eah,000h,0ebh,0e2h,0e2h,000h,0f0h,0e4h,0e1h,000h,0efh,0f3h,0e5h	; ad30  ................
-	defb 0dfh,0e4h,0feh,028h,0a0h,0f0h,0ebh,000h,0efh,0ddh,0f2h,0e1h,000h,0f0h,0e4h,0e1h	; ad40  ...(............
-	defb 000h,0f3h,0ebh,0eeh,0e8h,0e0h,0f7h,0ffh,048h,0a0h,0ech,0f1h,0efh,0e4h,000h,0efh	; ad50  ........H.......
-	defb 0ech,0ddh,0dfh,0e1h,000h,0e7h,0e1h,0f5h,0ffh,060h,0a0h,0e0h,0ddh,0eah,0e3h,0e1h	; ad60  .........`......
-	defb 0eeh,000h,0dbh,0dbh,0dbh,0ffh,092h,0adh,09ah,0adh,002h,0aeh,0cbh,0adh,046h,0aeh	; ad70  ..............F.
-	defb 05eh,0aeh,078h,0aeh,0c5h,0aeh,088h,0adh,060h,048h,0f0h,0e4h,0e1h,000h,0e1h,0eah	; ad80  ^.x.....`H......
-	defb 0e0h,0ffh,068h,048h,0efh,0f0h,0ddh,0e2h,0e2h,0ffh,040h,030h,0ech,0eeh,0ebh,0e3h	; ad90  ..hH......@0....
-	defb 0eeh,0ddh,0e9h,0feh,070h,050h,0e5h,0f7h,0ddh,0e7h,0ddh,0e0h,0ddh,0feh,070h,060h	; ada0  ....pP........p`
-	defb 0e7h,0f7h,0eah,0ddh,0e3h,0ddh,0e1h,0feh,070h,070h,0f0h,0f7h,0ebh,0e7h,0ddh,0feh	; adb0  ........pp......
-	defb 070h,080h,0f0h,0f7h,0ebh,0f0h,0efh,0f1h,0e7h,0ddh,0ffh,040h,030h,0e3h,0eeh,0ddh	; adc0  p..........@0...
-	defb 0ech,0e4h,0e5h,0dfh,0feh,070h,050h,0e4h,0f7h,0e9h,0ddh,0e7h,0e5h,0f0h,0ddh,0eah	; add0  .....pP.........
-	defb 0e5h,0feh,070h,060h,0e9h,0f7h,0f0h,0ddh,0deh,0ddh,0f0h,0ddh,0feh,070h,070h,0efh	; ade0  ..p`.........pp.
-	defb 0f7h,0f1h,0e1h,0eah,0ebh,0feh,070h,080h,0efh,0f7h,0e5h,0f3h,0ddh,0e9h,0ebh,0f0h	; adf0  ......p.........
-	defb 0ebh,0ffh,040h,030h,0efh,0ebh,0f1h,0eah,0e0h,0feh,070h,050h,0e7h,0f7h,0f1h,0e1h	; ae00  ..@0......pP....
-	defb 0e4h,0ddh,0eeh,0ddh,0feh,070h,060h,0e9h,0f7h,0e5h,0e7h,0ddh,0eeh,0e5h,0e7h,0ebh	; ae10  .....p`.........
-	defb 0feh,070h,070h,0f5h,0f7h,0e9h,0ddh,0eah,0eah,0ebh,0feh,070h,080h,0f0h,0f7h,0e2h	; ae20  .pp........p....
-	defb 0f1h,0eeh,0f1h,0e7h,0ddh,0f3h,0ddh,0feh,070h,090h,0e7h,0f7h,0f5h,0ddh,0e9h,0ddh	; ae30  ........p.......
-	defb 0efh,0e4h,0e5h,0f0h,0ddh,0ffh,040h,030h,0f0h,0e5h,0f0h,0e8h,0e1h,000h,0e0h,0e1h	; ae40  ......@0........
-	defb 0efh,0e5h,0e3h,0eah,0feh,070h,050h,0eah,0f7h,0efh,0ddh,0f0h,0ebh,0ffh,040h,030h	; ae50  .....pP.......@0
-	defb 0e3h,0ddh,0e9h,0e1h,000h,0e0h,0e1h,0efh,0e5h,0e3h,0eah,0feh,070h,050h,0efh,0f7h	; ae60  ............pP..
-	defb 0e5h,0f3h,0ddh,0e9h,0ebh,0f0h,0ebh,0ffh,040h,030h,0efh,0ech,0e1h,0dfh,0e5h,0ddh	; ae70  ........@0......
-	defb 0e8h,000h,0f0h,0e4h,0ddh,0eah,0e7h,0efh,0feh,070h,050h,0e4h,0ddh,0e8h,0feh,070h	; ae80  .........pP....p
-	defb 060h,0e5h,0e7h,0f1h,0feh,070h,070h,0efh,0ddh,0e8h,0f0h,0feh,070h,080h,0f0h,0e1h	; ae90  `....pp.....p...
-	defb 0eeh,0ddh,0feh,070h,090h,0eeh,0ebh,0ebh,0e9h,000h,000h,0d1h,0d0h,0d0h,0d8h,0feh	; aea0  ...p............
-	defb 070h,0a0h,0eeh,0ebh,0ebh,0e9h,000h,000h,0d1h,0d0h,0d1h,0d3h,0feh,070h,0b0h,0eeh	; aeb0  p............p..
-	defb 0dfh,0d7h,0d2h,0d7h,0ffh,050h,040h,0ech,0eeh,0e1h,0efh,0e1h,0eah,0f0h,0e1h,0e0h	; aec0  .....P@.........
-	defb 000h,0deh,0f5h,0feh,068h,050h,0e7h,0ebh,0eah,0ddh,0e9h,0e5h,0ffh,030h,030h,0f0h	; aed0  ....hP.......00.
-	defb 0e4h,0ddh,0eah,0e7h,0efh,000h,0f0h,0ebh,000h,0f5h,0ebh,0f1h,0eeh,000h,0dfh,0ebh	; aee0  ................
-	defb 0f1h,0eeh,0ddh,0e3h,0e1h,0feh,010h,050h,0f0h,0e4h,0e1h,000h,0f3h,0ebh,0eeh,0e8h	; aef0  .......P........
-	defb 0e0h,000h,0e4h,0ddh,0efh,000h,0deh,0e1h,0e1h,0eah,000h,0efh,0ddh,0f2h,0e1h,0e0h	; af00  ................
-	defb 000h,0dbh,0dbh,0feh,058h,070h,0f3h,0e1h,0e8h,0e8h,000h,0e0h,0ebh,0eah,0e1h,0f7h	; af10  ....Xp..........
-	defb 0ffh,038h,010h,0dfh,0ebh,0eah,0e3h,0eeh,0ddh,0f0h,0f1h,0e8h,0ddh,0f0h,0e5h,0ebh	; af20  .8..............
-	defb 0eah,0efh,000h,0dbh,0dbh,0dbh,0ffh,058h,0a0h,0e1h,060h,0a0h,0e8h,068h,0a0h,0e3h	; af30  .......X..`..h..
-	defb 070h,0a0h,0e5h,078h,0a0h,0f6h,080h,0a0h,0ddh,088h,0a0h,0f8h,090h,0a0h,0f8h,098h	; af40  p..x............
-	defb 0a0h,0f8h,06dh,0afh,07dh,0afh,08eh,0afh,09ah,0afh,0abh,0afh,0bbh,0afh,0cdh,0afh	; af50  ..m.}...........
-	defb 050h,08ch,0e4h,0e9h,0f3h,0ebh,000h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh,048h,09ch,0e4h	; af60  P............H..
-	defb 0e9h,0f3h,0ebh,000h,0e9h,0efh,000h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh,048h,09ch,0e6h	; af70  .............H..
-	defb 0e9h,0ech,0e5h,000h,0eeh,0efh,0f4h,000h,0e6h,0efh,0f5h,0eeh,0e4h,0ffh,058h,09ch	; af80  ..............X.
-	defb 0e4h,0e9h,0f3h,0ebh,000h,0e6h,0f5h,0ech,0ech,0ffh,040h,09ch,0e4h,0e9h,0f3h,0ebh	; af90  ..........@.....
-	defb 000h,0eeh,0efh,0f4h,000h,0f2h,0e5h,0e1h,0e4h,0f9h,0ffh,048h,09ch,0f7h,0f2h,0e9h	; afa0  ...........H....
-	defb 0f4h,0e5h,000h,0f0h,0f2h,0efh,0f4h,0e5h,0e3h,0f4h,0ffh,048h,09ch,0f4h,0efh,0efh	; afb0  ...........H....
-	defb 000h,0edh,0e1h,0eeh,0eeh,0f9h,000h,0e6h,0e9h,0ech,0e5h,0f3h,0ffh,048h,09ch,0e4h	; afc0  .............H..
-	defb 0e1h,0f4h,0e1h,0f4h,0f9h,0f0h,0e5h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh,000h,07fh,07fh	; afd0  ................
-	defb 07eh,07ch,078h,07eh,07eh,000h,0feh,03eh,03eh,03eh,03eh,03eh,03eh,07eh,07eh,07eh	; afe0  ~|x~~..>>>>>>~~~
-	defb 07eh,07eh,07eh,07fh,000h,03eh,03eh,03eh,03eh,03eh,03eh,0feh,000h,000h,07fh,078h	; aff0  ~~~..>>>>>>....x
-	defb 070h,071h,071h,07fh,07eh,000h,0feh,01eh,00eh,08eh,08eh,01eh,03eh,07ch,078h,071h	; b000  pqq.~.......>|xq
-	defb 071h,070h,070h,07fh,000h,07eh,0feh,0feh,0feh,00eh,00eh,0feh,000h,000h,07fh,078h	; b010  qpp..~.........x
-	defb 070h,071h,07fh,07eh,07eh,000h,0feh,01eh,00eh,08eh,08eh,01eh,00eh,07fh,071h,071h	; b020  pq.~~.........qq
-	defb 071h,070h,078h,07fh,000h,08eh,08eh,08eh,08eh,00eh,01eh,0feh,000h,000h,07fh,07fh	; b030  qpx.............
-	defb 07fh,07eh,07eh,07ch,07dh,000h,0feh,01eh,01eh,01eh,01eh,01eh,01eh,079h,07bh,070h	; b040  .~~|}........y{p
-	defb 070h,07fh,07fh,07fh,000h,01eh,01eh,00eh,00eh,01eh,01eh,0feh,000h,000h,07fh,070h	; b050  p..............p
-	defb 070h,071h,071h,070h,070h,000h,0feh,00eh,00eh,0feh,0feh,01eh,00eh,071h,07fh,07fh	; b060  pqqpp........q..
-	defb 071h,070h,078h,07fh,000h,000h,07fh,078h,070h,071h,071h,070h,070h,000h,0feh,01eh	; b070  qpx....xpqqpp...
-	defb 00eh,08eh,0feh,01eh,00eh,071h,071h,071h,071h,070h,078h,07fh,000h,000h,07fh,070h	; b080  .....qqqqpx....p
-	defb 070h,07fh,07fh,07fh,07eh,000h,0feh,00eh,00eh,08eh,01eh,01eh,03eh,07eh,07eh,07ch	; b090  p...~.......>~~|
-	defb 07ch,07ch,07ch,07fh,000h,03eh,03eh,07eh,07eh,07eh,07eh,0feh,000h,000h,07fh,078h	; b0a0  |||..>>~~~~....x
-	defb 070h,071h,071h,078h,070h,000h,07fh,078h,070h,071h,071h,071h,071h,000h,0feh,01eh	; b0b0  pqqxp..xpqqqq...
-	defb 00eh,08eh,08eh,08eh,08eh,070h,078h,07fh,071h,070h,078h,07fh,000h,00eh,00eh,08eh	; b0c0  .....px.qpx.....
-	defb 08eh,00eh,01eh,0feh,000h,000h,07fh,073h,063h,043h,043h,063h,063h,063h,063h,063h	; b0d0  .......scCCccccc
-	defb 063h,063h,063h,07fh,000h,000h,07fh,061h,040h,048h,048h,048h,078h,071h,063h,047h	; b0e0  ccc....a@HHHxqcG
-	defb 047h,040h,040h,07fh,000h,000h,0feh,086h,002h,022h,022h,022h,022h,022h,022h,022h	; b0f0  G@@......"""""""
-	defb 022h,002h,086h,0feh,000h,000h,0feh,0e6h,0c6h,086h,086h,0c6h,0c6h,0c6h,0c6h,0c6h	; b100  "...............
-	defb 0c6h,0c6h,0c6h,0feh,000h,000h,0feh,086h,002h,022h,022h,022h,0e2h,0c6h,08eh,01eh	; b110  ........."""....
-	defb 01eh,002h,002h,0feh,000h,000h,0feh,086h,002h,022h,022h,0e2h,0c6h,0c2h,0e2h,022h	; b120  .........""...."
-	defb 022h,002h,086h,0feh,000h,000h,0feh,0e6h,0e6h,0c6h,0c6h,086h,0a6h,026h,066h,002h	; b130  "............&f.
-	defb 002h,0e6h,0e6h,0feh,000h,000h,0feh,002h,002h,03eh,03eh,006h,002h,0e2h,0e2h,022h	; b140  .........>>...."
-	defb 022h,002h,086h,0feh,000h,000h,0feh,086h,002h,022h,03eh,006h,002h,000h,0feh,002h	; b150  "........">.....
-	defb 002h,0f2h,0e2h,0e6h,0c6h,0c6h,08eh,08eh,08eh,08eh,08eh,0feh,000h,000h,0feh,086h	; b160  ................
-	defb 002h,022h,022h,086h,002h,002h,082h,0e2h,022h,002h,086h,0feh,000h,000h,000h,000h	; b170  ."".....".......
-	defb 000h,000h,000h,000h,000h,040h,040h,0f3h,0f4h,0e1h,0f2h,0f4h,000h,000h,0f3h,0e5h	; b180  .....@@.........
-	defb 0ech,0e5h,0e3h,0f4h,0feh,080h,050h,0eeh,0efh,0f2h,0edh,0e1h,0ech,0feh,080h,060h	; b190  ......P........`
-	defb 0f0h,0e1h,0f3h,0f3h,0f7h,0efh,0f2h,0e4h,0feh,080h,070h,0f3h,0f4h,0e1h,0e7h,0e5h	; b1a0  ..........p.....
-	defb 000h,0ech,0efh,0e1h,0e4h,0ffh,000h,000h,000h,03fh,03fh,03fh,000h,000h,000h,000h	; b1b0  .........???....
-	defb 000h,000h,000h,000h,000h,000h,000h,080h,0c0h,0e0h,0f0h,0e0h,0c0h,080h,000h,000h	; b1c0  ................
-	defb 000h,000h,000h,000h,000h,000h,0aah,0ach,0aah,0cah,0ach,0aah,0cah,0aah,0a9h,09fh	; b1d0  ................
-	defb 099h,0f9h,09fh,099h,0f9h,09ah,0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah,0a9h,0ffh	; b1e0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,09ah,0cfh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0fch,0a9h,0ffh	; b1f0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,09ah,0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah,0cfh,0ffh	; b200  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0fch,0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah,0a9h,0ffh	; b210  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,09ah,0cfh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0fch,0a9h,0ffh	; b220  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,09ah,0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah,0cfh,0ffh	; b230  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0fch,0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah,0a9h,0ffh	; b240  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,09ah,068h,020h,0eeh,0e9h,0e3h,0e5h,000h,0dbh,0feh,038h	; b250  ......h .......8
-	defb 030h,0ech,0e5h,0f4h,0f3h,000h,0e7h,0efh,000h,0eeh,0e5h,0f8h,0f4h,000h,0f3h,0f4h	; b260  0...............
-	defb 0e1h,0e7h,0e5h,0feh,048h,050h,0f3h,0f0h,0e5h,0e3h,0e9h,0e1h,0ech,000h,0e2h,0efh	; b270  ....HP..........
-	defb 0eeh,0f5h,0f3h,0ffh,048h,040h,0f3h,0e5h,0e3h,0f2h,0e5h,0f4h,000h,0e3h,0efh,0edh	; b280  ....H@..........
-	defb 0edh,0e1h,0eeh,0e4h,0feh,060h,058h,0e6h,0fdh,0fdh,0f4h,0fdh,0fdh,0fdh,0ech,0feh	; b290  .....`X.........
-	defb 060h,068h,0fdh,0fdh,0f9h,0fdh,0fdh,0fdh,0fdh,0fdh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2a0  `h..............
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2b0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2c0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2d0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2e0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2f0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b300  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b310  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b320  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b330  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b340  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b350  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b360  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b370  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b380  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b390  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3a0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3b0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3c0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3d0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3e0  ................
-	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3f0  ................
+	defb 003h,0b6h,003h,000h	; a9d0
+
+; ----------------------------------------------------------------------
+; DATOS columnas_51: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 51; lo leen p00:4434 (5 bytes)
+;   0xa9d4..0xa9d9  (5 bytes)
+DATA_columnas_51:
+	defb 066h,029h,066h,02ah,000h	; a9d4
+
+; ----------------------------------------------------------------------
+; DATOS columnas_52: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 52; lo leen p00:4434 (16 bytes)
+;   0xa9d9..0xa9e9  (16 bytes)
+DATA_columnas_52:
+	defb 04ah,020h,08ch,021h,048h,023h,0ffh,044h,011h,008h,022h,047h,041h,005h,04bh,000h	; a9d9  J .!H#.D.."GA.K.
+
+; ----------------------------------------------------------------------
+; DATOS columnas_53: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 53; lo leen p00:4434 (5 bytes)
+;   0xa9e9..0xa9ee  (5 bytes)
+DATA_columnas_53:
+	defb 0ffh,0ffh,005h,025h,000h	; a9e9
+
+; ----------------------------------------------------------------------
+; DATOS columnas_54: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 54; lo leen p00:4434 (3 bytes)
+;   0xa9ee..0xa9f1  (3 bytes)
+DATA_columnas_54:
+	defb 065h,03eh,000h	; a9ee
+
+; ----------------------------------------------------------------------
+; DATOS columnas_55: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 55; lo leen p00:4434 (6 bytes)
+;   0xa9f1..0xa9f7  (6 bytes)
+DATA_columnas_55:
+	defb 024h,034h,0ffh,0aeh,027h,000h	; a9f1
+
+; ----------------------------------------------------------------------
+; DATOS columnas_56: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 56; lo leen p00:4434 (15 bytes)
+;   0xa9f7..0xaa06  (15 bytes)
+DATA_columnas_56:
+	defb 08ch,010h,04ah,013h,0e3h,029h,006h,029h,0e5h,039h,046h,040h,086h,043h,000h	; a9f7  ..J..).).9F@.C.
+
+; ----------------------------------------------------------------------
+; DATOS columnas_57: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 57; lo leen p00:4434 (14 bytes)
+;   0xaa06..0xaa14  (14 bytes)
+DATA_columnas_57:
+	defb 0c4h,010h,0e8h,01dh,0ffh,0e4h,01dh,0e8h,03dh,0abh,023h,004h,013h,000h	; aa06  ........=.#...
+
+; ----------------------------------------------------------------------
+; DATOS columnas_58: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 58; lo leen p00:4434 (10 bytes)
+;   0xaa14..0xaa1e  (10 bytes)
+DATA_columnas_58:
+	defb 0a4h,02eh,028h,02fh,0ffh,02ah,02eh,0b0h,015h,000h	; aa14  ..(/.*....
+
+; ----------------------------------------------------------------------
+; DATOS columnas_60: Las columnas que se marcan en el mapa y se apuntan en
+;   0xE7C0 de la fase 60; lo leen p00:4434 (11 bytes)
+;   0xaa1e..0xaa29  (11 bytes)
+DATA_columnas_60:
+	defb 0ffh,0ffh,0ffh,0ffh,0c3h,00ch,003h,019h,043h,025h,000h	; aa1e  ........C%.
+
+; ----------------------------------------------------------------------
+; DATOS fuente_AA29: 42 caracteres de 1 bit por punto: la fuente del marcador
+;   (0xAA29 los 12 primeros, 0xAA89 los 30 siguientes); lo leen p00:5155 (336
+;   bytes)
+;   0xaa29..0xab79  (336 bytes)
+DATA_fuente_AA29:
+	defb 000h,01ch,022h,063h,063h,063h,022h,01ch	; aa29  .."ccc".
+	defb 000h,018h,038h,018h,018h,018h,018h,07eh	; aa31  ..8....~
+	defb 000h,03eh,063h,003h,00eh,03ch,070h,07fh	; aa39  .>c..<p.
+	defb 000h,03eh,063h,003h,00eh,003h,063h,03eh	; aa41  .>c...c>
+	defb 000h,00eh,01eh,036h,066h,066h,07fh,006h	; aa49  ...6ff..
+	defb 000h,07fh,060h,07eh,063h,003h,063h,03eh	; aa51  ..`~c.c>
+	defb 000h,03eh,063h,060h,07eh,063h,063h,03eh	; aa59  .>c`~cc>
+	defb 000h,07fh,063h,006h,00ch,018h,018h,018h	; aa61  ..c.....
+	defb 000h,03eh,063h,063h,03eh,063h,063h,03eh	; aa69  .>cc>cc>
+	defb 000h,03eh,063h,063h,03fh,003h,063h,03eh	; aa71  .>cc?.c>
+	defb 03ch,042h,099h,0a1h,0a1h,099h,042h,03ch	; aa79  <B....B<
+	defb 000h,018h,018h,018h,018h,018h,000h,018h	; aa81  ........
+	defb 000h,000h,000h,000h,000h,000h,000h,000h	; aa89  ........
+	defb 000h,01ch,036h,063h,063h,07fh,063h,063h	; aa91  ..6cc.cc
+	defb 000h,07eh,063h,063h,07eh,063h,063h,07eh	; aa99  .~cc~cc~
+	defb 000h,03eh,063h,060h,060h,060h,063h,03eh	; aaa1  .>c```c>
+	defb 000h,07ch,066h,063h,063h,063h,066h,07ch	; aaa9  .|fcccf|
+	defb 000h,07fh,060h,060h,07eh,060h,060h,07fh	; aab1  ..``~``.
+	defb 000h,07fh,060h,060h,07eh,060h,060h,060h	; aab9  ..``~```
+	defb 000h,03eh,063h,060h,067h,063h,063h,03fh	; aac1  .>c`gcc?
+	defb 000h,063h,063h,063h,07fh,063h,063h,063h	; aac9  .ccc.ccc
+	defb 000h,03ch,018h,018h,018h,018h,018h,03ch	; aad1  .<.....<
+	defb 000h,01fh,006h,006h,006h,006h,066h,03ch	; aad9  ......f<
+	defb 000h,063h,066h,06ch,078h,07ch,06eh,067h	; aae1  .cflx|ng
+	defb 000h,060h,060h,060h,060h,060h,060h,07fh	; aae9  .``````.
+	defb 000h,063h,077h,07fh,07fh,06bh,063h,063h	; aaf1  .cw..kcc
+	defb 000h,063h,073h,07bh,07fh,06fh,067h,063h	; aaf9  .cs{.ogc
+	defb 000h,03eh,063h,063h,063h,063h,063h,03eh	; ab01  .>ccccc>
+	defb 000h,07eh,063h,063h,063h,07eh,060h,060h	; ab09  .~ccc~``
+	defb 000h,03eh,063h,063h,063h,06fh,066h,03dh	; ab11  .>cccof=
+	defb 000h,07eh,063h,063h,062h,07ch,066h,063h	; ab19  .~ccb|fc
+	defb 000h,03eh,063h,060h,03eh,003h,063h,03eh	; ab21  .>c`>.c>
+	defb 000h,07eh,018h,018h,018h,018h,018h,018h	; ab29  .~......
+	defb 000h,063h,063h,063h,063h,063h,063h,03eh	; ab31  .cccccc>
+	defb 000h,063h,063h,063h,063h,036h,01ch,008h	; ab39  .cccc6..
+	defb 000h,063h,063h,06bh,06bh,07fh,077h,022h	; ab41  .cckk.w"
+	defb 000h,063h,076h,03ch,01ch,01eh,037h,063h	; ab49  .cv<..7c
+	defb 000h,066h,066h,07eh,03ch,018h,018h,018h	; ab51  .ff~<...
+	defb 000h,07fh,007h,00eh,01ch,038h,070h,07fh	; ab59  .....8p.
+	defb 000h,07fh,000h,000h,000h,000h,000h,000h	; ab61  ........
+	defb 000h,000h,000h,000h,07eh,000h,000h,000h	; ab69  ....~...
+	defb 000h,03ch,066h,066h,00ch,018h,000h,018h	; ab71  .<ff....
+
+; ----------------------------------------------------------------------
+; DATOS fuente_AB79: 5 caracteres de 1 bit por punto; lo leen p00:5155 (40
+;   bytes)
+;   0xab79..0xaba1  (40 bytes)
+DATA_fuente_AB79:
+	defb 000h,000h,000h,000h,000h,000h,030h,030h	; ab79  ......00
+	defb 000h,000h,000h,018h,018h,000h,000h,000h	; ab81  ........
+	defb 028h,028h,000h,000h,000h,000h,000h,000h	; ab89  ((......
+	defb 0ffh,033h,033h,033h,033h,033h,033h,0ffh	; ab91  .333333.
+	defb 0feh,030h,030h,030h,030h,030h,030h,0feh	; ab99  .000000.
+
+; ----------------------------------------------------------------------
+; DATOS sin identificar  0xaba1..0xabc1  (32 bytes)
+DATA_ABA1:
+	defb 002h,002h,02ah,0aah,02ah,002h,002h,002h,000h,000h,0feh,001h,0feh,000h,000h,000h	; aba1  ..*.*...........
+	defb 091h,081h,081h,081h,081h,081h,061h,011h,051h,051h,051h,0f7h,0f1h,0f1h,0f1h,0f1h	; abb1  ......a.QQQ.....
+
+; ----------------------------------------------------------------------
+; DATOS car_ABC1: 2 caracteres ya de 4 bits (32 bytes cada uno); lo leen
+;   p00:51A2 (64 bytes)
+;   0xabc1..0xac01  (64 bytes)
+DATA_car_ABC1:
+	defb 000h,000h,000h,0f0h,00fh,0ffh,0ffh,0afh,0f7h,071h,071h,0afh,0f7h,071h,071h,0afh	; abc1  .........qq..qq.
+	defb 0fah,0afh,0afh,0afh,00fh,0ffh,0ffh,0afh,000h,000h,000h,0f0h,000h,000h,000h,000h	; abd1  ................
+	defb 000h,000h,000h,000h,0ffh,0ffh,0ffh,000h,0ddh,0ddh,0ddh,0f0h,0bbh,0bbh,0bbh,0bfh	; abe1  ................
+	defb 0bbh,0bbh,0bbh,0f0h,0ffh,0ffh,0ffh,000h,000h,000h,000h,000h,000h,000h,000h,000h	; abf1  ................
+
+; ----------------------------------------------------------------------
+; DATOS sin identificar  0xac01..0xac13  (18 bytes)
+DATA_AC01:
+	defb 048h,020h,0e4h,0efh,000h,0f9h,0efh,0f5h,0f2h,000h,0e2h,0e5h,0f3h,0f4h,000h,0dbh	; ac01  H ..............
+	defb 0dbh,0ffh	; ac11
+
+; ----------------------------------------------------------------------
+; DATOS letreros_AC13: 5 punteros a los letreros de cada piramide acabada (de
+;   la 1 a la 5: la 6 va al final) (piramide - 1); lo leen p01:71AF (10 bytes)
+;   0xac13..0xac1d  (10 bytes)
+DATA_letreros_AC13:
+	defw 0ac1dh,0ac2ah,0ac4fh,0ac7ch,0ac9fh	; ac13
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AC1D: letrero (de cada piramide acabada (de la 1 a la 5: la 6
+;   va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo
+;   leen p00:51D6 (13 bytes)
+;   0xac1d..0xac2a  (13 bytes)
+DATA_letrero_AC1D:
+	defb 020h,090h,0e4h,0ebh,0e8h,0e0h,000h,0ebh,0f1h,0f0h,0dbh,0dbh,0ffh	; ac1d   ............
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AC2A: letrero (de cada piramide acabada (de la 1 a la 5: la 6
+;   va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo
+;   leen p00:51D6 (37 bytes)
+;   0xac2a..0xac4f  (37 bytes)
+DATA_letrero_AC2A:
+	defb 020h,088h,0f0h,0eeh,0f5h,000h,0f0h,0ebh,000h,0f0h,0ddh,0e7h,0e1h,0feh,020h,098h	; ac2a   ............. .
+	defb 0ddh,000h,0eah,0e1h,0f3h,000h,0efh,0f0h,0e1h,0ech,0feh,020h,0a8h,0e2h,0ebh,0eeh	; ac3a  ........... ....
+	defb 0f3h,0ddh,0eeh,0e0h,0ffh	; ac4a
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AC4F: letrero (de cada piramide acabada (de la 1 a la 5: la 6
+;   va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo
+;   leen p00:51D6 (45 bytes)
+;   0xac4f..0xac7c  (45 bytes)
+DATA_letrero_AC4F:
+	defb 018h,080h,0e4h,0e1h,0ddh,0f2h,0e1h,0eah,000h,0e7h,0eah,0ebh,0f3h,0efh,0feh,030h	; ac4f  ...............0
+	defb 090h,0f3h,0e4h,0e1h,0eah,0feh,020h,0a0h,0f0h,0e4h,0e5h,0efh,000h,0e3h,0ddh,0e9h	; ac5f  ...... .........
+	defb 0e1h,0feh,030h,0b0h,0f3h,0e5h,0e8h,0e8h,000h,0e1h,0eah,0e0h,0ffh	; ac6f  ..0..........
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AC7C: letrero (de cada piramide acabada (de la 1 a la 5: la 6
+;   va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo
+;   leen p00:51D6 (35 bytes)
+;   0xac7c..0xac9f  (35 bytes)
+DATA_letrero_AC7C:
+	defb 012h,088h,0ebh,0e4h,0dbh,000h,0e9h,0f5h,000h,0e3h,0ebh,0e0h,0dbh,0feh,020h,098h	; ac7c  .............. .
+	defb 0e5h,000h,0deh,0e1h,0e8h,0e5h,0e1h,0f2h,0e1h,0feh,040h,0a8h,0e5h,0eah,000h,0e3h	; ac8c  ..........@.....
+	defb 0ebh,0e0h,0ffh	; ac9c
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AC9F: letrero (de cada piramide acabada (de la 1 a la 5: la 6
+;   va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo
+;   leen p00:51D6 (36 bytes)
+;   0xac9f..0xacc3  (36 bytes)
+DATA_letrero_AC9F:
+	defb 018h,088h,0ddh,0f0h,000h,0e8h,0ebh,0eah,0e3h,000h,0e8h,0ddh,0efh,0f0h,0feh,030h	; ac9f  ...............0
+	defb 098h,0e2h,0e5h,0eah,0ddh,0e8h,0feh,020h,0a8h,0dfh,0ebh,0f1h,0eah,0f0h,000h,0e0h	; acaf  ....... ........
+	defb 0ebh,0f3h,0eah,0ffh	; acbf
+
+; ----------------------------------------------------------------------
+; DATOS sin identificar  0xacc3..0xad76  (179 bytes)
+DATA_ACC3:
+	defb 048h,048h,0dfh,0ebh,0eah,0e3h,0eeh,0ddh,0f0h,0f1h,0e8h,0ddh,0f0h,0e5h,0ebh,0eah	; acc3  HH..............
+	defb 0efh,0feh,040h,058h,0f0h,0ebh,000h,0f2h,0e5h,0dfh,0e7h,000h,0f4h,0fah,0fbh,000h	; acd3  ..@X............
+	defb 0dbh,0feh,048h,068h,0f5h,0ebh,0f1h,000h,0e4h,0e1h,0eeh,0ebh,0e5h,0dfh,0ddh,0e8h	; ace3  ..Hh............
+	defb 0e8h,0f5h,0feh,040h,078h,0f1h,0eah,0efh,0e1h,0ddh,0e8h,0e1h,0e0h,000h,0ddh,0e8h	; acf3  ...@x...........
+	defb 0e8h,000h,0f0h,0e4h,0e1h,0feh,040h,088h,0e8h,0ebh,0dfh,0e7h,0efh,0f7h,0ffh,028h	; ad03  ......@........(
+	defb 080h,0ddh,0e8h,0e8h,000h,0f5h,0ebh,0f1h,000h,0e4h,0ddh,0f2h,0e1h,000h,0f0h,0ebh	; ad13  ................
+	defb 000h,0e0h,0ebh,000h,0eah,0ebh,0f3h,0feh,028h,090h,0e5h,0efh,000h,0f0h,0f1h,0eeh	; ad23  ........(.......
+	defb 0eah,000h,0ebh,0e2h,0e2h,000h,0f0h,0e4h,0e1h,000h,0efh,0f3h,0e5h,0dfh,0e4h,0feh	; ad33  ................
+	defb 028h,0a0h,0f0h,0ebh,000h,0efh,0ddh,0f2h,0e1h,000h,0f0h,0e4h,0e1h,000h,0f3h,0ebh	; ad43  (...............
+	defb 0eeh,0e8h,0e0h,0f7h,0ffh,048h,0a0h,0ech,0f1h,0efh,0e4h,000h,0efh,0ech,0ddh,0dfh	; ad53  .....H..........
+	defb 0e1h,000h,0e7h,0e1h,0f5h,0ffh,060h,0a0h,0e0h,0ddh,0eah,0e3h,0e1h,0eeh,000h,0dbh	; ad63  ......`.........
+	defb 0dbh,0dbh,0ffh	; ad73
+
+; ----------------------------------------------------------------------
+; DATOS letreros_AD76: 9 punteros a los letreros del final (paso 0xEDCF); lo
+;   leen p01:772E (18 bytes)
+;   0xad76..0xad88  (18 bytes)
+DATA_letreros_AD76:
+	defw 0ad92h,0ad9ah,0ae02h,0adcbh,0ae46h,0ae5eh,0ae78h,0aec5h	; ad76
+	defw 0ad88h	; ad86  -> DATA_letrero_AD88
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AD88: letrero (del final): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:51D6 (10 bytes)
+;   0xad88..0xad92  (10 bytes)
+DATA_letrero_AD88:
+	defb 060h,048h,0f0h,0e4h,0e1h,000h,0e1h,0eah,0e0h,0ffh	; ad88  `H........
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AD92: letrero (del final): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:51D6 (8 bytes)
+;   0xad92..0xad9a  (8 bytes)
+DATA_letrero_AD92:
+	defb 068h,048h,0efh,0f0h,0ddh,0e2h,0e2h,0ffh	; ad92  hH......
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AD9A: letrero (del final): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:51D6 (49 bytes)
+;   0xad9a..0xadcb  (49 bytes)
+DATA_letrero_AD9A:
+	defb 040h,030h,0ech,0eeh,0ebh,0e3h,0eeh,0ddh,0e9h,0feh,070h,050h,0e5h,0f7h,0ddh,0e7h	; ad9a  @0........pP....
+	defb 0ddh,0e0h,0ddh,0feh,070h,060h,0e7h,0f7h,0eah,0ddh,0e3h,0ddh,0e1h,0feh,070h,070h	; adaa  ....p`........pp
+	defb 0f0h,0f7h,0ebh,0e7h,0ddh,0feh,070h,080h,0f0h,0f7h,0ebh,0f0h,0efh,0f1h,0e7h,0ddh	; adba  ......p.........
+	defb 0ffh	; adca
+
+; ----------------------------------------------------------------------
+; DATOS letrero_ADCB: letrero (del final): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:51D6 (55 bytes)
+;   0xadcb..0xae02  (55 bytes)
+DATA_letrero_ADCB:
+	defb 040h,030h,0e3h,0eeh,0ddh,0ech,0e4h,0e5h,0dfh,0feh,070h,050h,0e4h,0f7h,0e9h,0ddh	; adcb  @0........pP....
+	defb 0e7h,0e5h,0f0h,0ddh,0eah,0e5h,0feh,070h,060h,0e9h,0f7h,0f0h,0ddh,0deh,0ddh,0f0h	; addb  .......p`.......
+	defb 0ddh,0feh,070h,070h,0efh,0f7h,0f1h,0e1h,0eah,0ebh,0feh,070h,080h,0efh,0f7h,0e5h	; adeb  ..pp.......p....
+	defb 0f3h,0ddh,0e9h,0ebh,0f0h,0ebh,0ffh	; adfb
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AE02: letrero (del final): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:51D6 (68 bytes)
+;   0xae02..0xae46  (68 bytes)
+DATA_letrero_AE02:
+	defb 040h,030h,0efh,0ebh,0f1h,0eah,0e0h,0feh,070h,050h,0e7h,0f7h,0f1h,0e1h,0e4h,0ddh	; ae02  @0......pP......
+	defb 0eeh,0ddh,0feh,070h,060h,0e9h,0f7h,0e5h,0e7h,0ddh,0eeh,0e5h,0e7h,0ebh,0feh,070h	; ae12  ...p`..........p
+	defb 070h,0f5h,0f7h,0e9h,0ddh,0eah,0eah,0ebh,0feh,070h,080h,0f0h,0f7h,0e2h,0f1h,0eeh	; ae22  p........p......
+	defb 0f1h,0e7h,0ddh,0f3h,0ddh,0feh,070h,090h,0e7h,0f7h,0f5h,0ddh,0e9h,0ddh,0efh,0e4h	; ae32  ......p.........
+	defb 0e5h,0f0h,0ddh,0ffh	; ae42
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AE46: letrero (del final): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:51D6 (24 bytes)
+;   0xae46..0xae5e  (24 bytes)
+DATA_letrero_AE46:
+	defb 040h,030h,0f0h,0e5h,0f0h,0e8h,0e1h,000h,0e0h,0e1h,0efh,0e5h,0e3h,0eah,0feh,070h	; ae46  @0.............p
+	defb 050h,0eah,0f7h,0efh,0ddh,0f0h,0ebh,0ffh	; ae56  P.......
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AE5E: letrero (del final): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:51D6 (26 bytes)
+;   0xae5e..0xae78  (26 bytes)
+DATA_letrero_AE5E:
+	defb 040h,030h,0e3h,0ddh,0e9h,0e1h,000h,0e0h,0e1h,0efh,0e5h,0e3h,0eah,0feh,070h,050h	; ae5e  @0............pP
+	defb 0efh,0f7h,0e5h,0f3h,0ddh,0e9h,0ebh,0f0h,0ebh,0ffh	; ae6e  ..........
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AE78: letrero (del final): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:51D6 (77 bytes)
+;   0xae78..0xaec5  (77 bytes)
+DATA_letrero_AE78:
+	defb 040h,030h,0efh,0ech,0e1h,0dfh,0e5h,0ddh,0e8h,000h,0f0h,0e4h,0ddh,0eah,0e7h,0efh	; ae78  @0..............
+	defb 0feh,070h,050h,0e4h,0ddh,0e8h,0feh,070h,060h,0e5h,0e7h,0f1h,0feh,070h,070h,0efh	; ae88  .pP....p`....pp.
+	defb 0ddh,0e8h,0f0h,0feh,070h,080h,0f0h,0e1h,0eeh,0ddh,0feh,070h,090h,0eeh,0ebh,0ebh	; ae98  ....p......p....
+	defb 0e9h,000h,000h,0d1h,0d0h,0d0h,0d8h,0feh,070h,0a0h,0eeh,0ebh,0ebh,0e9h,000h,000h	; aea8  ........p.......
+	defb 0d1h,0d0h,0d1h,0d3h,0feh,070h,0b0h,0eeh,0dfh,0d7h,0d2h,0d7h,0ffh	; aeb8  .....p.......
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AEC5: letrero (del final): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:51D6 (24 bytes)
+;   0xaec5..0xaedd  (24 bytes)
+DATA_letrero_AEC5:
+	defb 050h,040h,0ech,0eeh,0e1h,0efh,0e1h,0eah,0f0h,0e1h,0e0h,000h,0deh,0f5h,0feh,068h	; aec5  P@.............h
+	defb 050h,0e7h,0ebh,0eah,0ddh,0e9h,0e5h,0ffh	; aed5  P.......
+
+; ----------------------------------------------------------------------
+; DATOS sin identificar  0xaedd..0xaf37  (90 bytes)
+DATA_AEDD:
+	defb 030h,030h,0f0h,0e4h,0ddh,0eah,0e7h,0efh,000h,0f0h,0ebh,000h,0f5h,0ebh,0f1h,0eeh	; aedd  00..............
+	defb 000h,0dfh,0ebh,0f1h,0eeh,0ddh,0e3h,0e1h,0feh,010h,050h,0f0h,0e4h,0e1h,000h,0f3h	; aeed  ..........P.....
+	defb 0ebh,0eeh,0e8h,0e0h,000h,0e4h,0ddh,0efh,000h,0deh,0e1h,0e1h,0eah,000h,0efh,0ddh	; aefd  ................
+	defb 0f2h,0e1h,0e0h,000h,0dbh,0dbh,0feh,058h,070h,0f3h,0e1h,0e8h,0e8h,000h,0e0h,0ebh	; af0d  .......Xp.......
+	defb 0eah,0e1h,0f7h,0ffh,038h,010h,0dfh,0ebh,0eah,0e3h,0eeh,0ddh,0f0h,0f1h,0e8h,0ddh	; af1d  ....8...........
+	defb 0f0h,0e5h,0ebh,0eah,0efh,000h,0dbh,0dbh,0dbh,0ffh	; af2d  ..........
+
+; ----------------------------------------------------------------------
+; DATOS estrellas_final: 9 caracteres del final de 3 bytes [x][y][caracter],
+;   uno cada 8 cuadros; lo leen p01:74FD (27 bytes)
+;   0xaf37..0xaf52  (27 bytes)
+DATA_estrellas_final:
+	defb 058h,0a0h,0e1h	; af37
+	defb 060h,0a0h,0e8h	; af3a
+	defb 068h,0a0h,0e3h	; af3d
+	defb 070h,0a0h,0e5h	; af40
+	defb 078h,0a0h,0f6h	; af43
+	defb 080h,0a0h,0ddh	; af46
+	defb 088h,0a0h,0f8h	; af49
+	defb 090h,0a0h,0f8h	; af4c
+	defb 098h,0a0h,0f8h	; af4f
+
+; ----------------------------------------------------------------------
+; DATOS letreros_AF52: 5 punteros a los letreros de los errores de disco
+;   (error); lo leen p02:976E (10 bytes)
+;   0xaf52..0xaf5c  (10 bytes)
+DATA_letreros_AF52:
+	defw 0af6dh,0af7dh,0af8eh,0af9ah,0afabh	; af52
+
+; ----------------------------------------------------------------------
+; DATOS sin identificar  0xaf5c..0xaf60  (4 bytes)
+DATA_AF5C:
+	defb 0bbh,0afh,0cdh,0afh	; af5c
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AF60: letrero (de error de disco): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p02:977E (13 bytes)
+;   0xaf60..0xaf6d  (13 bytes)
+DATA_letrero_AF60:
+	defb 050h,08ch,0e4h,0e9h,0f3h,0ebh,000h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh	; af60  P............
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AF6D: letrero (de los errores de disco): [x][y] y caracteres,
+;   0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (16 bytes)
+;   0xaf6d..0xaf7d  (16 bytes)
+DATA_letrero_AF6D:
+	defb 048h,09ch,0e4h,0e9h,0f3h,0ebh,000h,0e9h,0efh,000h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh	; af6d  H...............
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AF7D: letrero (sin ficheros): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p02:8D23, p00:51D6 (17 bytes)
+;   0xaf7d..0xaf8e  (17 bytes)
+DATA_letrero_AF7D:
+	defb 048h,09ch,0e6h,0e9h,0ech,0e5h,000h,0eeh,0efh,0f4h,000h,0e6h,0efh,0f5h,0eeh,0e4h	; af7d  H...............
+	defb 0ffh	; af8d
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AF8E: letrero (de los errores de disco): [x][y] y caracteres,
+;   0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (12 bytes)
+;   0xaf8e..0xaf9a  (12 bytes)
+DATA_letrero_AF8E:
+	defb 058h,09ch,0e4h,0e9h,0f3h,0ebh,000h,0e6h,0f5h,0ech,0ech,0ffh	; af8e  X...........
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AF9A: letrero (de los errores de disco): [x][y] y caracteres,
+;   0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (17 bytes)
+;   0xaf9a..0xafab  (17 bytes)
+DATA_letrero_AF9A:
+	defb 040h,09ch,0e4h,0e9h,0f3h,0ebh,000h,0eeh,0efh,0f4h,000h,0f2h,0e5h,0e1h,0e4h,0f9h	; af9a  @...............
+	defb 0ffh	; afaa
+
+; ----------------------------------------------------------------------
+; DATOS letrero_AFAB: letrero (de los errores de disco): [x][y] y caracteres,
+;   0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:51D6 (16 bytes)
+;   0xafab..0xafbb  (16 bytes)
+DATA_letrero_AFAB:
+	defb 048h,09ch,0f7h,0f2h,0e9h,0f4h,0e5h,000h,0f0h,0f2h,0efh,0f4h,0e5h,0e3h,0f4h,0ffh	; afab  H...............
+
+; ----------------------------------------------------------------------
+; DATOS sin identificar  0xafbb..0xafdd  (34 bytes)
+DATA_AFBB:
+	defb 048h,09ch,0f4h,0efh,0efh,000h,0edh,0e1h,0eeh,0eeh,0f9h,000h,0e6h,0e9h,0ech,0e5h	; afbb  H...............
+	defb 0f3h,0ffh,048h,09ch,0e4h,0e1h,0f4h,0e1h,0f4h,0f9h,0f0h,0e5h,0e5h,0f2h,0f2h,0efh	; afcb  ..H.............
+	defb 0f2h,0ffh	; afdb
+
+; ----------------------------------------------------------------------
+; DATOS fuente_AFDD: 53 caracteres de 1 bit por punto: la fuente; lo leen
+;   p00:5155 (424 bytes)
+;   0xafdd..0xb185  (424 bytes)
+DATA_fuente_AFDD:
+	defb 000h,07fh,07fh,07eh,07ch,078h,07eh,07eh	; afdd  ...~|x~~
+	defb 000h,0feh,03eh,03eh,03eh,03eh,03eh,03eh	; afe5  ..>>>>>>
+	defb 07eh,07eh,07eh,07eh,07eh,07eh,07fh,000h	; afed  ~~~~~~..
+	defb 03eh,03eh,03eh,03eh,03eh,03eh,0feh,000h	; aff5  >>>>>>..
+	defb 000h,07fh,078h,070h,071h,071h,07fh,07eh	; affd  ..xpqq.~
+	defb 000h,0feh,01eh,00eh,08eh,08eh,01eh,03eh	; b005  .......>
+	defb 07ch,078h,071h,071h,070h,070h,07fh,000h	; b00d  |xqqpp..
+	defb 07eh,0feh,0feh,0feh,00eh,00eh,0feh,000h	; b015  ~.......
+	defb 000h,07fh,078h,070h,071h,07fh,07eh,07eh	; b01d  ..xpq.~~
+	defb 000h,0feh,01eh,00eh,08eh,08eh,01eh,00eh	; b025  ........
+	defb 07fh,071h,071h,071h,070h,078h,07fh,000h	; b02d  .qqqpx..
+	defb 08eh,08eh,08eh,08eh,00eh,01eh,0feh,000h	; b035  ........
+	defb 000h,07fh,07fh,07fh,07eh,07eh,07ch,07dh	; b03d  ....~~|}
+	defb 000h,0feh,01eh,01eh,01eh,01eh,01eh,01eh	; b045  ........
+	defb 079h,07bh,070h,070h,07fh,07fh,07fh,000h	; b04d  y{pp....
+	defb 01eh,01eh,00eh,00eh,01eh,01eh,0feh,000h	; b055  ........
+	defb 000h,07fh,070h,070h,071h,071h,070h,070h	; b05d  ..ppqqpp
+	defb 000h,0feh,00eh,00eh,0feh,0feh,01eh,00eh	; b065  ........
+	defb 071h,07fh,07fh,071h,070h,078h,07fh,000h	; b06d  q..qpx..
+	defb 000h,07fh,078h,070h,071h,071h,070h,070h	; b075  ..xpqqpp
+	defb 000h,0feh,01eh,00eh,08eh,0feh,01eh,00eh	; b07d  ........
+	defb 071h,071h,071h,071h,070h,078h,07fh,000h	; b085  qqqqpx..
+	defb 000h,07fh,070h,070h,07fh,07fh,07fh,07eh	; b08d  ..pp...~
+	defb 000h,0feh,00eh,00eh,08eh,01eh,01eh,03eh	; b095  .......>
+	defb 07eh,07eh,07ch,07ch,07ch,07ch,07fh,000h	; b09d  ~~||||..
+	defb 03eh,03eh,07eh,07eh,07eh,07eh,0feh,000h	; b0a5  >>~~~~..
+	defb 000h,07fh,078h,070h,071h,071h,078h,070h	; b0ad  ..xpqqxp
+	defb 000h,07fh,078h,070h,071h,071h,071h,071h	; b0b5  ..xpqqqq
+	defb 000h,0feh,01eh,00eh,08eh,08eh,08eh,08eh	; b0bd  ........
+	defb 070h,078h,07fh,071h,070h,078h,07fh,000h	; b0c5  px.qpx..
+	defb 00eh,00eh,08eh,08eh,00eh,01eh,0feh,000h	; b0cd  ........
+	defb 000h,07fh,073h,063h,043h,043h,063h,063h	; b0d5  ..scCCcc
+	defb 063h,063h,063h,063h,063h,063h,07fh,000h	; b0dd  cccccc..
+	defb 000h,07fh,061h,040h,048h,048h,048h,078h	; b0e5  ..a@HHHx
+	defb 071h,063h,047h,047h,040h,040h,07fh,000h	; b0ed  qcGG@@..
+	defb 000h,0feh,086h,002h,022h,022h,022h,022h	; b0f5  ....""""
+	defb 022h,022h,022h,022h,002h,086h,0feh,000h	; b0fd  """"....
+	defb 000h,0feh,0e6h,0c6h,086h,086h,0c6h,0c6h	; b105  ........
+	defb 0c6h,0c6h,0c6h,0c6h,0c6h,0c6h,0feh,000h	; b10d  ........
+	defb 000h,0feh,086h,002h,022h,022h,022h,0e2h	; b115  ....""".
+	defb 0c6h,08eh,01eh,01eh,002h,002h,0feh,000h	; b11d  ........
+	defb 000h,0feh,086h,002h,022h,022h,0e2h,0c6h	; b125  ....""..
+	defb 0c2h,0e2h,022h,022h,002h,086h,0feh,000h	; b12d  ..""....
+	defb 000h,0feh,0e6h,0e6h,0c6h,0c6h,086h,0a6h	; b135  ........
+	defb 026h,066h,002h,002h,0e6h,0e6h,0feh,000h	; b13d  &f......
+	defb 000h,0feh,002h,002h,03eh,03eh,006h,002h	; b145  ....>>..
+	defb 0e2h,0e2h,022h,022h,002h,086h,0feh,000h	; b14d  ..""....
+	defb 000h,0feh,086h,002h,022h,03eh,006h,002h	; b155  ....">..
+	defb 000h,0feh,002h,002h,0f2h,0e2h,0e6h,0c6h	; b15d  ........
+	defb 0c6h,08eh,08eh,08eh,08eh,08eh,0feh,000h	; b165  ........
+	defb 000h,0feh,086h,002h,022h,022h,086h,002h	; b16d  ....""..
+	defb 002h,082h,0e2h,022h,002h,086h,0feh,000h	; b175  ..."....
+	defb 000h,000h,000h,000h,000h,000h,000h,000h	; b17d  ........
+
+; ----------------------------------------------------------------------
+; DATOS letrero_B185: letrero (del menu de grabar): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p01:6787 (49 bytes)
+;   0xb185..0xb1b6  (49 bytes)
+DATA_letrero_B185:
+	defb 040h,040h,0f3h,0f4h,0e1h,0f2h,0f4h,000h,000h,0f3h,0e5h,0ech,0e5h,0e3h,0f4h,0feh	; b185  @@..............
+	defb 080h,050h,0eeh,0efh,0f2h,0edh,0e1h,0ech,0feh,080h,060h,0f0h,0e1h,0f3h,0f3h,0f7h	; b195  .P........`.....
+	defb 0efh,0f2h,0e4h,0feh,080h,070h,0f3h,0f4h,0e1h,0e7h,0e5h,000h,0ech,0efh,0e1h,0e4h	; b1a5  .....p..........
+	defb 0ffh	; b1b5
+
+; ----------------------------------------------------------------------
+; DATOS sprite_flecha: el dibujo de la flecha de los menus (32 bytes); lo leen
+;   p01:67FE (32 bytes)
+;   0xb1b6..0xb1d6  (32 bytes)
+DATA_sprite_flecha:
+	defb 000h,000h,000h,03fh,03fh,03fh,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; b1b6  ...???..........
+	defb 000h,080h,0c0h,0e0h,0f0h,0e0h,0c0h,080h,000h,000h,000h,000h,000h,000h,000h,000h	; b1c6  ................
+
+; ----------------------------------------------------------------------
+; DATOS dibujo_16x16: un dibujo de 16 x 16 pixeles de 4 bits (128 bytes, orden
+;   HMMC); lo leen p00:56D6 (128 bytes)
+;   0xb1d6..0xb256  (128 bytes)
+DATA_dibujo_16x16:
+	defb 0aah,0ach,0aah,0cah,0ach,0aah,0cah,0aah	; b1d6  ........
+	defb 0a9h,09fh,099h,0f9h,09fh,099h,0f9h,09ah	; b1de  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b1e6  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b1ee  ........
+	defb 0cfh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0fch	; b1f6  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b1fe  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b206  ........
+	defb 0cfh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0fch	; b20e  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b216  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b21e  ........
+	defb 0cfh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0fch	; b226  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b22e  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b236  ........
+	defb 0cfh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0fch	; b23e  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b246  ........
+	defb 0a9h,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,09ah	; b24e  ........
+
+; ----------------------------------------------------------------------
+; DATOS letrero_B256: letrero (de la fase): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p01:72F2 (46 bytes)
+;   0xb256..0xb284  (46 bytes)
+DATA_letrero_B256:
+	defb 068h,020h,0eeh,0e9h,0e3h,0e5h,000h,0dbh,0feh,038h,030h,0ech,0e5h,0f4h,0f3h,000h	; b256  h .......80.....
+	defb 0e7h,0efh,000h,0eeh,0e5h,0f8h,0f4h,000h,0f3h,0f4h,0e1h,0e7h,0e5h,0feh,048h,050h	; b266  ..............HP
+	defb 0f3h,0f0h,0e5h,0e3h,0e9h,0e1h,0ech,000h,0e2h,0efh,0eeh,0f5h,0f3h,0ffh	; b276  ..............
+
+; ----------------------------------------------------------------------
+; DATOS letrero_B284: letrero (del menu): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p00:482C (39 bytes)
+;   0xb284..0xb2ab  (39 bytes)
+DATA_letrero_B284:
+	defb 048h,040h,0f3h,0e5h,0e3h,0f2h,0e5h,0f4h,000h,0e3h,0efh,0edh,0edh,0e1h,0eeh,0e4h	; b284  H@..............
+	defb 0feh,060h,058h,0e6h,0fdh,0fdh,0f4h,0fdh,0fdh,0fdh,0ech,0feh,060h,068h,0fdh,0fdh	; b294  .`X.........`h..
+	defb 0f9h,0fdh,0fdh,0fdh,0fdh,0fdh,0ffh	; b2a4
+
+; ----------------------------------------------------------------------
+; DATOS sin identificar  0xb2ab..0xb400  (341 bytes)
+DATA_B2AB:
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2ab  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2bb  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2cb  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2db  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2eb  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b2fb  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b30b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b31b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b32b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b33b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b34b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b35b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b36b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b37b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b38b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b39b  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3ab  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3bb  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3cb  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3db  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; b3eb  ................
+	defb 0ffh,0ffh,0ffh,0ffh,0ffh	; b3fb
 
 ; ======================================================================
 ; CODIGO 0xb400..0xb42f  (47 bytes)
@@ -510,11 +1487,10 @@ L_B4E3:
 	jp 0573bh		;b4f5
 
 ; ----------------------------------------------------------------------
-; DATOS resto_B4F8: lo apuntan con el banco puesto p12:B4EF (0xB4F8); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p12:B4EF (4 bytes)
+; DATOS sitio_dibujo: 2 x 2 caracteres del sitio escondido; lo leen p12:B4F5
+;   (4 bytes)
 ;   0xb4f8..0xb4fc  (4 bytes)
-DATA_resto_B4F8:
+DATA_sitio_dibujo:
 	defb 0cah,0cbh,0cch,0cdh	; b4f8
 
 ; ======================================================================
@@ -568,36 +1544,130 @@ L_B53A:
 	jp L_B6B0		;b545
 
 ; ----------------------------------------------------------------------
-; DATOS resto_B548: lo apuntan con el banco puesto p12:B400 (0xB548), p12:B932
-;   (0xB585), p12:B743 (0xB5B8), p12:B897 (0xB5C7), p12:B701 (0xB5E0),
-;   p12:B7EE (0xB64C); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p12:B400, p12:B932, p12:B743, p12:B897, p12:B701,
-;   p12:B7EE (360 bytes)
-;   0xb548..0xb6b0  (360 bytes)
-DATA_resto_B548:
-	defb 007h,001h,002h,008h,008h,014h,002h,002h,088h,030h,018h,001h,004h,028h,0e0h,01dh	; b548  .........0...(..
-	defb 002h,001h,0a8h,0e0h,020h,001h,003h,080h,030h,023h,002h,003h,018h,0d8h,028h,001h	; b558  .... ...0#....(.
-	defb 001h,080h,070h,02bh,002h,001h,0a0h,098h,032h,001h,002h,0a8h,018h,034h,002h,001h	; b568  ..p+....2....4..
-	defb 0a8h,0e0h,035h,001h,003h,038h,0b0h,037h,002h,002h,078h,0c0h,000h,050h,018h,0f3h	; b578  ..5..8.7..x..P..
-	defb 0efh,0f5h,0eeh,0e4h,000h,0f3h,0e5h,0ech,0e5h,0e3h,0f4h,0feh,040h,0a8h,0f3h,0e5h	; b588  ............@...
-	defb 0ech,0e5h,0e3h,0f4h,000h,0fch,0fch,0fch,000h,0f3h,0f0h,0e1h,0e3h,0e5h,0feh,058h	; b598  ...............X
-	defb 0b8h,0e5h,0eeh,0e4h,000h,0fch,0fch,0fch,000h,0f2h,0e5h,0f4h,0f5h,0f2h,0eeh,0ffh	; b5a8  ................
-	defb 050h,018h,0f0h,0f5h,0fah,0fah,0ech,0e5h,000h,000h,0e7h,0e1h,0edh,0e5h,0ffh,060h	; b5b8  P..............`
-	defb 090h,0e1h,0ech,0ech,000h,0f2h,0e9h,0e7h,0e8h,0f4h,0feh,060h,0a0h,0f2h,0e5h,0f3h	; b5c8  ...........`....
-	defb 0f4h,000h,000h,0d3h,000h,0f5h,0f0h,0ffh,0e8h,0b5h,001h,0b6h,01ah,0b6h,033h,0b6h	; b5d8  ..............3.
-	defb 00bh,011h,017h,004h,012h,00ah,001h,00ch,00dh,013h,007h,016h,009h,018h,00eh,015h	; b5e8  ................
-	defb 008h,014h,003h,000h,006h,002h,010h,005h,00fh,004h,012h,00fh,00bh,003h,008h,018h	; b5f8  ................
-	defb 017h,007h,013h,010h,005h,00ch,000h,00eh,015h,016h,011h,006h,00ah,001h,009h,00dh	; b608  ................
-	defb 014h,002h,007h,014h,00bh,010h,018h,012h,001h,006h,00ch,005h,008h,015h,00ah,011h	; b618  ................
-	defb 00dh,00eh,016h,002h,009h,000h,013h,00fh,017h,003h,004h,00fh,004h,008h,002h,00bh	; b628  ................
-	defb 000h,00dh,016h,00eh,013h,006h,00ch,007h,012h,015h,014h,017h,011h,018h,00ah,005h	; b638  ................
-	defb 010h,003h,009h,001h,035h,035h,035h,035h,001h,002h,003h,004h,005h,006h,007h,008h	; b648  ....5555........
-	defb 009h,00ah,00bh,00ch,00dh,00eh,00fh,010h,011h,012h,013h,00ch,014h,015h,016h,00ch	; b658  ................
-	defb 017h,018h,019h,01ah,01bh,00ah,016h,00ch,01ch,01dh,01eh,01fh,020h,024h,021h,025h	; b668  ............ $!%
-	defb 020h,026h,021h,027h,020h,028h,021h,029h,020h,02ah,021h,02bh,020h,02ch,021h,02dh	; b678   &!' (!) *!+ ,!-
-	defb 020h,02eh,021h,02fh,020h,030h,021h,025h,020h,031h,021h,032h,020h,033h,021h,025h	; b688   .!/ 0!% 1!2 3!%
-	defb 020h,024h,021h,034h,022h,024h,023h,025h,022h,026h,023h,027h,022h,028h,023h,029h	; b698   $!4"$#%"&#'"(#)
-	defb 022h,02ah,023h,02bh,022h,02ch,023h,02dh	; b6a8  "*#+",#-
+; DATOS sitios_escondidos: 12 sitios escondidos de 5 bytes [fase][tipo (1
+;   musicas, 2 puzle)][pantalla][y][x], un 0 acaba; lo leen p12:B403 (61
+;   bytes)
+;   0xb548..0xb585  (61 bytes)
+DATA_sitios_escondidos:
+	defb 007h,001h,002h,008h,008h	; b548
+	defb 014h,002h,002h,088h,030h	; b54d
+	defb 018h,001h,004h,028h,0e0h	; b552
+	defb 01dh,002h,001h,0a8h,0e0h	; b557
+	defb 020h,001h,003h,080h,030h	; b55c
+	defb 023h,002h,003h,018h,0d8h	; b561
+	defb 028h,001h,001h,080h,070h	; b566
+	defb 02bh,002h,001h,0a0h,098h	; b56b
+	defb 032h,001h,002h,0a8h,018h	; b570
+	defb 034h,002h,001h,0a8h,0e0h	; b575
+	defb 035h,001h,003h,038h,0b0h	; b57a
+	defb 037h,002h,002h,078h,0c0h	; b57f
+	defb 000h	; b584
+
+; ----------------------------------------------------------------------
+; DATOS letrero_B585: letrero (de las musicas): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p12:B935 (51 bytes)
+;   0xb585..0xb5b8  (51 bytes)
+DATA_letrero_B585:
+	defb 050h,018h,0f3h,0efh,0f5h,0eeh,0e4h,000h,0f3h,0e5h,0ech,0e5h,0e3h,0f4h,0feh,040h	; b585  P..............@
+	defb 0a8h,0f3h,0e5h,0ech,0e5h,0e3h,0f4h,000h,0fch,0fch,0fch,000h,0f3h,0f0h,0e1h,0e3h	; b595  ................
+	defb 0e5h,0feh,058h,0b8h,0e5h,0eeh,0e4h,000h,0fch,0fch,0fch,000h,0f2h,0e5h,0f4h,0f5h	; b5a5  ..X.............
+	defb 0f2h,0eeh,0ffh	; b5b5
+
+; ----------------------------------------------------------------------
+; DATOS letrero_B5B8: letrero (del puzle): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p12:B746 (15 bytes)
+;   0xb5b8..0xb5c7  (15 bytes)
+DATA_letrero_B5B8:
+	defb 050h,018h,0f0h,0f5h,0fah,0fah,0ech,0e5h,000h,000h,0e7h,0e1h,0edh,0e5h,0ffh	; b5b8  P..............
+
+; ----------------------------------------------------------------------
+; DATOS letrero_B5C7: letrero (del puzle resuelto): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p12:B89A (25 bytes)
+;   0xb5c7..0xb5e0  (25 bytes)
+DATA_letrero_B5C7:
+	defb 060h,090h,0e1h,0ech,0ech,000h,0f2h,0e9h,0e7h,0e8h,0f4h,0feh,060h,0a0h,0f2h,0e5h	; b5c7  `...........`...
+	defb 0f3h,0f4h,000h,000h,0d3h,000h,0f5h,0f0h,0ffh	; b5d7  .........
+
+; ----------------------------------------------------------------------
+; DATOS puzles: 4 punteros a los puzles revueltos; lo leen p12:B709 (8 bytes)
+;   0xb5e0..0xb5e8  (8 bytes)
+DATA_puzles:
+	defw 0b5e8h,0b601h,0b61ah,0b633h	; b5e0  -> DATA_puzle_0 DATA_puzle_1 DATA_puzle_2 DATA_puzle_3
+
+; ----------------------------------------------------------------------
+; DATOS puzle_0: un puzle revuelto: las 25 casillas (0 el hueco); lo leen
+;   p12:B70F (25 bytes)
+;   0xb5e8..0xb601  (25 bytes)
+DATA_puzle_0:
+	defb 00bh,011h,017h,004h,012h	; b5e8
+	defb 00ah,001h,00ch,00dh,013h	; b5ed
+	defb 007h,016h,009h,018h,00eh	; b5f2
+	defb 015h,008h,014h,003h,000h	; b5f7
+	defb 006h,002h,010h,005h,00fh	; b5fc
+
+; ----------------------------------------------------------------------
+; DATOS puzle_1: un puzle revuelto: las 25 casillas (0 el hueco); lo leen
+;   p12:B70F (25 bytes)
+;   0xb601..0xb61a  (25 bytes)
+DATA_puzle_1:
+	defb 004h,012h,00fh,00bh,003h	; b601
+	defb 008h,018h,017h,007h,013h	; b606
+	defb 010h,005h,00ch,000h,00eh	; b60b
+	defb 015h,016h,011h,006h,00ah	; b610
+	defb 001h,009h,00dh,014h,002h	; b615
+
+; ----------------------------------------------------------------------
+; DATOS puzle_2: un puzle revuelto: las 25 casillas (0 el hueco); lo leen
+;   p12:B70F (25 bytes)
+;   0xb61a..0xb633  (25 bytes)
+DATA_puzle_2:
+	defb 007h,014h,00bh,010h,018h	; b61a
+	defb 012h,001h,006h,00ch,005h	; b61f
+	defb 008h,015h,00ah,011h,00dh	; b624
+	defb 00eh,016h,002h,009h,000h	; b629
+	defb 013h,00fh,017h,003h,004h	; b62e
+
+; ----------------------------------------------------------------------
+; DATOS puzle_3: un puzle revuelto: las 25 casillas (0 el hueco); lo leen
+;   p12:B70F (25 bytes)
+;   0xb633..0xb64c  (25 bytes)
+DATA_puzle_3:
+	defb 00fh,004h,008h,002h,00bh	; b633
+	defb 000h,00dh,016h,00eh,013h	; b638
+	defb 006h,00ch,007h,012h,015h	; b63d
+	defb 014h,017h,011h,018h,00ah	; b642
+	defb 005h,010h,003h,009h,001h	; b647
+
+; ----------------------------------------------------------------------
+; DATOS piezas: los 2 x 2 caracteres de cada pieza del puzle (0 el hueco); lo
+;   leen p12:B7F4 (100 bytes)
+;   0xb64c..0xb6b0  (100 bytes)
+DATA_piezas:
+	defb 035h,035h,035h,035h	; b64c
+	defb 001h,002h,003h,004h	; b650
+	defb 005h,006h,007h,008h	; b654
+	defb 009h,00ah,00bh,00ch	; b658
+	defb 00dh,00eh,00fh,010h	; b65c
+	defb 011h,012h,013h,00ch	; b660
+	defb 014h,015h,016h,00ch	; b664
+	defb 017h,018h,019h,01ah	; b668
+	defb 01bh,00ah,016h,00ch	; b66c
+	defb 01ch,01dh,01eh,01fh	; b670
+	defb 020h,024h,021h,025h	; b674
+	defb 020h,026h,021h,027h	; b678
+	defb 020h,028h,021h,029h	; b67c
+	defb 020h,02ah,021h,02bh	; b680
+	defb 020h,02ch,021h,02dh	; b684
+	defb 020h,02eh,021h,02fh	; b688
+	defb 020h,030h,021h,025h	; b68c
+	defb 020h,031h,021h,032h	; b690
+	defb 020h,033h,021h,025h	; b694
+	defb 020h,024h,021h,034h	; b698
+	defb 022h,024h,023h,025h	; b69c
+	defb 022h,026h,023h,027h	; b6a0
+	defb 022h,028h,023h,029h	; b6a4
+	defb 022h,02ah,023h,02bh	; b6a8
+	defb 022h,02ch,023h,02dh	; b6ac
 
 ; ======================================================================
 ; CODIGO 0xb6b0..0xb6be  (14 bytes)
@@ -940,11 +2010,11 @@ L_B8A3:
 	jp 041e0h		;b8ac
 
 ; ----------------------------------------------------------------------
-; DATOS resto_B8AF: lo apuntan con el banco puesto p12:B6E6 (0xB8AF), p12:B891
-;   (0xB8AF), p12:B6FB (0xB8BE); el tamano es lo que hay hasta lo siguiente,
-;   no sale de recorrerlo; lo leen p12:B6E6, p12:B891, p12:B6FB (32 bytes)
+; DATOS letrero_B8AF: letrero (del puzle): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; se solapan 2 bloques: (letrero_B8BE B8BE-B8CF); lo
+;   leen p12:B6E9, p12:B6FE (32 bytes)
 ;   0xb8af..0xb8cf  (32 bytes)
-DATA_resto_B8AF:
+DATA_letrero_B8AF:
 	defb 050h,0a0h,0e5h,0eeh,0e4h,000h,000h,0e5h,0f3h,0e3h,000h,0ebh,0e5h,0f9h,0feh,048h	; b8af  P..............H
 	defb 090h,0f0h,0f5h,0f3h,0e8h,000h,0f3h,0f0h,0e1h,0e3h,0e5h,000h,0ebh,0e5h,0f9h,0ffh	; b8bf  ................
 
@@ -1006,11 +2076,10 @@ L_B90B:
 	ret			;b912
 
 ; ----------------------------------------------------------------------
-; DATOS resto_B913: lo apuntan con el banco puesto p12:B8D2 (0xB913); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p12:B8D2 (4 bytes)
+; DATOS colores_mano: los colores de los 4 sprites de la mano del puzle; lo
+;   leen p12:B906 (4 bytes)
 ;   0xb913..0xb917  (4 bytes)
-DATA_resto_B913:
+DATA_colores_mano:
 	defb 00dh,04eh,00dh,04eh	; b913
 
 ; ======================================================================
@@ -1147,13 +2216,18 @@ L_B9F2:
 	ret			;b9f9
 
 ; ----------------------------------------------------------------------
-; DATOS resto_B9FA: lo apuntan con el banco puesto p12:B9C3 (0xB9FA), p12:B9B3
-;   (0xBA0D); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p12:B9C3, p12:B9B3 (23 bytes)
-;   0xb9fa..0xba11  (23 bytes)
-DATA_resto_B9FA:
-	defb 02ch,033h,03ch,045h,04ch,055h,05ch,06ch,073h,07ch,085h,08ch,09ch,0a3h,0ach,0b5h	; b9fa  ,3<ELU\ls|......
-	defb 0bch,0c5h,0cch,00dh,04eh,00dh,04eh	; ba0a
+; DATOS musicas_flecha: 19 bytes: donde va la flecha de cada musica; lo leen
+;   p12:B9CB (19 bytes)
+;   0xb9fa..0xba0d  (19 bytes)
+DATA_musicas_flecha:
+	defb 02ch,033h,03ch,045h,04ch,055h,05ch,06ch,073h,07ch,085h,08ch,09ch,0a3h,0ach,0b5h,0bch,0c5h,0cch	; b9fa  ,3<ELU\ls|.........
+
+; ----------------------------------------------------------------------
+; DATOS colores_flecha: los colores de los 4 sprites de la flecha; lo leen
+;   p12:B9ED (4 bytes)
+;   0xba0d..0xba11  (4 bytes)
+DATA_colores_flecha:
+	defb 00dh,04eh,00dh,04eh	; ba0d
 
 ; ======================================================================
 ; CODIGO 0xba11..0xba3b  (42 bytes)
@@ -1243,38 +2317,44 @@ L_BA92:
 	ret			;ba93
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xba94..0xbc6e  (474 bytes)
-DATA_BA94:
-	defb 0a0h,0bah,0d6h,0bah,014h,0bbh,05ah,0bbh,0bah,0bbh,016h,0bch,02eh,000h,00fh,008h	; ba94  ......Z.........
-	defb 010h,000h,00dh,004h,011h,000h,037h,008h,01bh,000h,019h,008h,011h,000h,010h,008h	; baa4  ......7.........
-	defb 00dh,000h,043h,008h,00ch,000h,058h,004h,013h,000h,003h,008h,008h,000h,009h,010h	; bab4  ..C...X.........
-	defb 012h,000h,039h,008h,015h,000h,01fh,004h,047h,000h,010h,004h,00eh,000h,009h,008h	; bac4  ..9.....G.......
-	defb 000h,0ffh,029h,000h,090h,004h,01bh,000h,0adh,008h,01ah,000h,003h,008h,00bh,000h	; bad4  ..).............
-	defb 018h,001h,00ah,000h,019h,008h,008h,000h,023h,001h,006h,000h,004h,004h,00dh,000h	; bae4  ........#.......
-	defb 00dh,010h,033h,000h,00eh,008h,00ah,000h,01eh,004h,008h,000h,017h,001h,004h,000h	; baf4  ..3.............
-	defb 00dh,004h,00dh,000h,01eh,010h,02fh,000h,06ch,004h,042h,000h,030h,004h,000h,0ffh	; bb04  ....../.l.B.0...
-	defb 036h,000h,02dh,004h,008h,014h,01ah,004h,010h,000h,02dh,008h,002h,009h,033h,001h	; bb14  6.-.......-...3.
-	defb 001h,009h,072h,008h,014h,000h,032h,002h,011h,000h,01ah,008h,00ah,018h,01eh,008h	; bb24  ..r...2.........
-	defb 006h,000h,032h,004h,007h,000h,008h,008h,00dh,000h,008h,010h,037h,000h,051h,008h	; bb34  ..2.........7.Q.
-	defb 002h,009h,024h,001h,008h,000h,012h,008h,002h,018h,016h,008h,001h,009h,028h,001h	; bb44  ..$...........(.
-	defb 001h,005h,0a0h,004h,000h,0ffh,041h,000h,040h,004h,001h,000h,0a4h,008h,002h,00ah	; bb54  ......A.@.......
-	defb 015h,002h,006h,000h,01eh,004h,001h,006h,00bh,002h,001h,006h,00fh,004h,001h,006h	; bb64  ................
-	defb 00ch,002h,001h,006h,00fh,004h,001h,006h,00ch,002h,002h,006h,00eh,004h,001h,006h	; bb74  ................
-	defb 00bh,002h,002h,006h,015h,004h,001h,006h,00eh,002h,001h,006h,016h,004h,00fh,000h	; bb84  ................
-	defb 013h,004h,007h,000h,001h,004h,003h,000h,002h,004h,01fh,000h,01eh,004h,01dh,000h	; bb94  ................
-	defb 005h,004h,009h,014h,001h,004h,00eh,000h,006h,014h,05eh,004h,013h,000h,037h,008h	; bba4  ..........^...7.
-	defb 002h,018h,012h,010h,000h,0ffh,036h,000h,051h,004h,033h,000h,006h,010h,02eh,000h	; bbb4  ......6.Q.3.....
-	defb 084h,004h,00dh,000h,007h,010h,012h,000h,00eh,008h,009h,000h,019h,001h,00ch,008h	; bbc4  ................
-	defb 018h,001h,005h,000h,008h,004h,001h,005h,014h,001h,002h,000h,008h,008h,001h,000h	; bbd4  ................
-	defb 015h,001h,032h,004h,00ah,000h,019h,004h,007h,000h,00dh,010h,022h,000h,012h,004h	; bbe4  ..2........."...
-	defb 00eh,000h,012h,004h,004h,014h,00dh,004h,004h,014h,007h,004h,00fh,000h,00fh,008h	; bbf4  ................
-	defb 007h,018h,00dh,008h,01dh,000h,015h,008h,043h,000h,00fh,004h,001h,000h,025h,008h	; bc04  ........C.....%.
-	defb 000h,0ffh,040h,000h,032h,008h,004h,000h,013h,004h,00ah,000h,04dh,002h,003h,000h	; bc14  ..@.2.......M...
-	defb 009h,004h,00bh,000h,026h,004h,00bh,014h,01bh,004h,006h,014h,010h,004h,005h,014h	; bc24  ....&...........
-	defb 00dh,004h,01dh,000h,008h,004h,004h,014h,028h,004h,007h,014h,013h,004h,028h,000h	; bc34  ........(.....(.
-	defb 045h,004h,00eh,000h,004h,004h,00eh,000h,01dh,004h,00bh,000h,014h,010h,01ch,000h	; bc44  E...............
-	defb 029h,004h,005h,014h,00bh,004h,005h,014h,019h,004h,003h,014h,022h,004h,006h,014h	; bc54  )..........."...
-	defb 005h,004h,033h,000h,00bh,018h,008h,008h,000h,0ffh	; bc64  ..3.......
+; DATOS mandos_demo: 6 punteros, uno por piramide (0xE241, desde 0xBA92): el
+;   mando grabado de su demostracion; lo leen p12:BA88 (12 bytes)
+;   0xba94..0xbaa0  (12 bytes)
+DATA_mandos_demo:
+	defw 0baa0h,0bad6h,0bb14h,0bb5ah,0bbbah,0bc16h	; ba94
+
+; ----------------------------------------------------------------------
+; DATOS sin identificar  0xbaa0..0xbc6e  (462 bytes)
+DATA_BAA0:
+	defb 02eh,000h,00fh,008h,010h,000h,00dh,004h,011h,000h,037h,008h,01bh,000h,019h,008h	; baa0  ..........7.....
+	defb 011h,000h,010h,008h,00dh,000h,043h,008h,00ch,000h,058h,004h,013h,000h,003h,008h	; bab0  ......C...X.....
+	defb 008h,000h,009h,010h,012h,000h,039h,008h,015h,000h,01fh,004h,047h,000h,010h,004h	; bac0  ......9.....G...
+	defb 00eh,000h,009h,008h,000h,0ffh,029h,000h,090h,004h,01bh,000h,0adh,008h,01ah,000h	; bad0  ......).........
+	defb 003h,008h,00bh,000h,018h,001h,00ah,000h,019h,008h,008h,000h,023h,001h,006h,000h	; bae0  ............#...
+	defb 004h,004h,00dh,000h,00dh,010h,033h,000h,00eh,008h,00ah,000h,01eh,004h,008h,000h	; baf0  ......3.........
+	defb 017h,001h,004h,000h,00dh,004h,00dh,000h,01eh,010h,02fh,000h,06ch,004h,042h,000h	; bb00  ........../.l.B.
+	defb 030h,004h,000h,0ffh,036h,000h,02dh,004h,008h,014h,01ah,004h,010h,000h,02dh,008h	; bb10  0...6.-.......-.
+	defb 002h,009h,033h,001h,001h,009h,072h,008h,014h,000h,032h,002h,011h,000h,01ah,008h	; bb20  ..3...r...2.....
+	defb 00ah,018h,01eh,008h,006h,000h,032h,004h,007h,000h,008h,008h,00dh,000h,008h,010h	; bb30  ......2.........
+	defb 037h,000h,051h,008h,002h,009h,024h,001h,008h,000h,012h,008h,002h,018h,016h,008h	; bb40  7.Q...$.........
+	defb 001h,009h,028h,001h,001h,005h,0a0h,004h,000h,0ffh,041h,000h,040h,004h,001h,000h	; bb50  ..(.......A.@...
+	defb 0a4h,008h,002h,00ah,015h,002h,006h,000h,01eh,004h,001h,006h,00bh,002h,001h,006h	; bb60  ................
+	defb 00fh,004h,001h,006h,00ch,002h,001h,006h,00fh,004h,001h,006h,00ch,002h,002h,006h	; bb70  ................
+	defb 00eh,004h,001h,006h,00bh,002h,002h,006h,015h,004h,001h,006h,00eh,002h,001h,006h	; bb80  ................
+	defb 016h,004h,00fh,000h,013h,004h,007h,000h,001h,004h,003h,000h,002h,004h,01fh,000h	; bb90  ................
+	defb 01eh,004h,01dh,000h,005h,004h,009h,014h,001h,004h,00eh,000h,006h,014h,05eh,004h	; bba0  ..............^.
+	defb 013h,000h,037h,008h,002h,018h,012h,010h,000h,0ffh,036h,000h,051h,004h,033h,000h	; bbb0  ..7.......6.Q.3.
+	defb 006h,010h,02eh,000h,084h,004h,00dh,000h,007h,010h,012h,000h,00eh,008h,009h,000h	; bbc0  ................
+	defb 019h,001h,00ch,008h,018h,001h,005h,000h,008h,004h,001h,005h,014h,001h,002h,000h	; bbd0  ................
+	defb 008h,008h,001h,000h,015h,001h,032h,004h,00ah,000h,019h,004h,007h,000h,00dh,010h	; bbe0  ......2.........
+	defb 022h,000h,012h,004h,00eh,000h,012h,004h,004h,014h,00dh,004h,004h,014h,007h,004h	; bbf0  "...............
+	defb 00fh,000h,00fh,008h,007h,018h,00dh,008h,01dh,000h,015h,008h,043h,000h,00fh,004h	; bc00  ............C...
+	defb 001h,000h,025h,008h,000h,0ffh,040h,000h,032h,008h,004h,000h,013h,004h,00ah,000h	; bc10  ..%...@.2.......
+	defb 04dh,002h,003h,000h,009h,004h,00bh,000h,026h,004h,00bh,014h,01bh,004h,006h,014h	; bc20  M.......&.......
+	defb 010h,004h,005h,014h,00dh,004h,01dh,000h,008h,004h,004h,014h,028h,004h,007h,014h	; bc30  ............(...
+	defb 013h,004h,028h,000h,045h,004h,00eh,000h,004h,004h,00eh,000h,01dh,004h,00bh,000h	; bc40  ..(.E...........
+	defb 014h,010h,01ch,000h,029h,004h,005h,014h,00bh,004h,005h,014h,019h,004h,003h,014h	; bc50  ....)...........
+	defb 022h,004h,006h,014h,005h,004h,033h,000h,00bh,018h,008h,008h,000h,0ffh	; bc60  ".....3.......
 
 ; ======================================================================
 ; CODIGO 0xbc6e..0xbd97  (297 bytes)
@@ -1436,15 +2516,20 @@ L_BD92:
 	ret			;bd96
 
 ; ----------------------------------------------------------------------
-; DATOS resto_BD97: lo apuntan con el banco puesto p12:BD87 (0xBD97), p12:BD75
-;   (0xBDB7); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p12:BD87, p12:BD75 (64 bytes)
-;   0xbd97..0xbdd7  (64 bytes)
-DATA_resto_BD97:
-	defb 000h,000h,023h,0ffh,080h,000h,04bh,0ffh,080h,0ffh,000h,001h,080h,000h,023h,0ffh	; bd97  ..#...K.......#.
-	defb 0ddh,000h,04bh,0ffh,080h,0ffh,000h,000h,0b5h,000h,000h,0ffh,0b5h,000h,0ddh,000h	; bda7  ..K.............
-	defb 000h,001h,080h,0ffh,023h,0ffh,0b5h,000h,023h,0ffh,000h,000h,0ddh,000h,080h,000h	; bdb7  ....#...#.......
-	defb 080h,0ffh,04bh,0ffh,0ddh,000h,000h,0ffh,0b5h,000h,000h,000h,04bh,0ffh,080h,000h	; bdc7  ..K.........K...
+; DATOS estrellas_x: 16 velocidades en x de las estrellas; lo leen p12:BD8A
+;   (32 bytes)
+;   0xbd97..0xbdb7  (32 bytes)
+DATA_estrellas_x:
+	defw 00000h,0ff23h,00080h,0ff4bh,0ff80h,00100h,00080h,0ff23h	; bd97
+	defw 000ddh,0ff4bh,0ff80h,00000h,000b5h,0ff00h,000b5h,000ddh	; bda7
+
+; ----------------------------------------------------------------------
+; DATOS estrellas_y: 16 velocidades en y de las estrellas; lo leen p12:BD78
+;   (32 bytes)
+;   0xbdb7..0xbdd7  (32 bytes)
+DATA_estrellas_y:
+	defw 00100h,0ff80h,0ff23h,000b5h,0ff23h,00000h,000ddh,00080h	; bdb7
+	defw 0ff80h,0ff4bh,000ddh,0ff00h,000b5h,00000h,0ff4bh,00080h	; bdc7
 
 ; ======================================================================
 ; CODIGO 0xbdd7..0xbe67  (144 bytes)
@@ -1536,12 +2621,18 @@ L_BE5D:
 	ret			;be66
 
 ; ----------------------------------------------------------------------
-; DATOS resto_BE67: lo apuntan con el banco puesto p12:BE75 (0xBE67), p12:BEB3
-;   (0xBE6E); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p12:BE75, p12:BEB3 (14 bytes)
-;   0xbe67..0xbe75  (14 bytes)
-DATA_resto_BE67:
-	defb 048h,070h,0f3h,0ebh,0e9h,0f0h,0ffh,048h,070h,0e6h,0e9h,0eeh,0e4h,0ffh	; be67  Hp.....Hp.....
+; DATOS letrero_BE67: letrero (de la cinta): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p12:BE78 (7 bytes)
+;   0xbe67..0xbe6e  (7 bytes)
+DATA_letrero_BE67:
+	defb 048h,070h,0f3h,0ebh,0e9h,0f0h,0ffh	; be67
+
+; ----------------------------------------------------------------------
+; DATOS letrero_BE6E: letrero (de la cinta): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p12:BEB6 (7 bytes)
+;   0xbe6e..0xbe75  (7 bytes)
+DATA_letrero_BE6E:
+	defb 048h,070h,0e6h,0e9h,0eeh,0e4h,0ffh	; be6e
 
 ; ======================================================================
 ; CODIGO 0xbe75..0xbf0e  (153 bytes)
@@ -1624,11 +2715,10 @@ L_BEFC:
 	ret			;bf0d
 
 ; ----------------------------------------------------------------------
-; DATOS resto_BF0E: lo apuntan con el banco puesto p12:BF02 (0xBF0E); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p12:BF02 (13 bytes)
+; DATOS letrero_BF0E: letrero (de error de cinta): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p12:BF05 (13 bytes)
 ;   0xbf0e..0xbf1b  (13 bytes)
-DATA_resto_BF0E:
+DATA_letrero_BF0E:
 	defb 050h,060h,0ech,0efh,0e1h,0e4h,000h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh	; bf0e  P`...........
 
 ; ======================================================================
@@ -1701,11 +2791,10 @@ L_BF82:
 	ret			;bf93
 
 ; ----------------------------------------------------------------------
-; DATOS resto_BF94: lo apuntan con el banco puesto p12:BF88 (0xBF94); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p12:BF88 (13 bytes)
+; DATOS letrero_BF94: letrero (de error de cinta): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p12:BF8B (13 bytes)
 ;   0xbf94..0xbfa1  (13 bytes)
-DATA_resto_BF94:
+DATA_letrero_BF94:
 	defb 050h,060h,0f3h,0e1h,0f6h,0e5h,000h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh	; bf94  P`...........
 
 ; ======================================================================
