@@ -170,3 +170,16 @@ F 0x785D 16
 D 0x6C84 0x6C90 resto_6C84  lo apuntan con el banco puesto p04:6C54 (0x6C84), p04:6C5F (0x6C88), p04:6C6A (0x6C8C); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p04:6C54, p04:6C5F, p04:6C6A (12 bytes)
 F 0x6C84 16
 # --- fin de los bloques de bloques.py ---
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x6026 el mapper: pone en 0x8000 el banco de A
+C 0x602F el mapper: pone en 0x8000 el banco de A
+C 0x622F el mapper: pone en 0x8000 el banco de A
+C 0x623A el mapper: pone en 0x8000 el banco de A
+C 0x62B6 el mapper: pone en 0x8000 el banco de A
+C 0x62D0 el mapper: pone en 0x8000 el banco de A
+C 0x6EB0 el mapper: pone en 0x8000 el banco de A
+C 0x6EB7 el mapper: pone en 0x8000 el banco de A
+C 0x6F11 el mapper: pone en 0x8000 el banco de A
+C 0x6F2A el mapper: pone en 0x8000 el banco de A
+# --- fin de las anotaciones de anota.py ---

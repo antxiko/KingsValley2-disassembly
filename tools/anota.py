@@ -116,6 +116,31 @@ def a_mano(b):
     return cs, ls
 
 
+_CAB = None
+
+
+def cabeceras():
+    """{(banco, direccion): texto} de las C escritas a mano (fuera de la
+    seccion automatica) en las notas de los 16 bancos."""
+    global _CAB
+    if _CAB is None:
+        _CAB = {}
+        for b in range(16):
+            ruta = fuentes.fichero(b, "notes")
+            if not os.path.exists(ruta):
+                continue
+            dentro = False
+            for ln in open(ruta, encoding="utf-8"):
+                if ln.startswith(INI):
+                    dentro = True
+                elif ln.startswith(FIN):
+                    dentro = False
+                elif not dentro and ln.startswith("C "):
+                    _, a, txt = ln.rstrip("\n").split(" ", 2)
+                    _CAB[(b, int(a, 0))] = txt
+    return _CAB
+
+
 def num(txt):
     txt = txt.strip()
     return int(txt[:-1], 16) if txt.endswith("h") else int(txt, 0)
@@ -197,6 +222,10 @@ def comentario(b, filas, k, fichas, ventanas=None, medido=None):
         hecho = RUTINAS.get((banco, dest)) if banco is not None else None
         if hecho:
             return "%s: %s" % hecho
+        # sin nombre: lo que dice la cabecera escrita a mano de la rutina
+        # llamada (solo en los call: un jp puede ir a mitad de una rutina)
+        if m.group(1) == "call" and banco is not None and (banco, dest) in cabeceras():
+            return cabeceras()[(banco, dest)]
     # los campos de la ficha del actor
     if fichas.get(k):
         mm = re.search(r"\(ix\+0?([0-9a-f]+)h?\)", t)

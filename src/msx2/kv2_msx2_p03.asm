@@ -24,20 +24,20 @@ lad08h:	equ 0x0ad08
 
 L_A000:
 	ld a,003h		;a000
-	ld (0e280h),a		;a002
+	ld (0e280h),a		;a002   ; guarda el estado del personaje
 	jp 042f3h		;a005
 L_A008:
 	ld a,(0e2a6h)		;a008
 	or a			;a00b
 	ret nz			;a00c
-	ld a,(0e287h)		;a00d
+	ld a,(0e287h)		;a00d   ; lee la postura del personaje
 	or a			;a010
 	ret nz			;a011
-	ld a,(0e282h)		;a012
+	ld a,(0e282h)		;a012   ; lee la y del personaje
 	cp 0f8h		;a015
 	ret nc			;a017
 	ld l,a			;a018
-	ld a,(0e284h)		;a019
+	ld a,(0e284h)		;a019   ; lee la x del personaje
 	ld h,a			;a01c
 	ld c,000h		;a01d
 	call 09910h		;a01f
@@ -48,23 +48,23 @@ L_A008:
 	ld b,a			;a02c
 	ld a,008h		;a02d
 	add a,b			;a02f
-	ld (0e285h),a		;a030
+	ld (0e285h),a		;a030   ; guarda hacia donde mira el personaje
 	xor a			;a033
 	ld (0e2a5h),a		;a034
 	ld hl,0fc00h		;a037
 	ld (0e292h),hl		;a03a
-	call 0423ah		;a03d
-	ld hl,0e280h		;a040
+	call 0423ah		;a03d   ; pide el sonido 0x13
+	ld hl,0e280h		;a040   ; apunta a el estado del personaje
 	inc (hl)			;a043
 	ret			;a044
 L_A045:
 	ld a,(0e2a6h)		;a045
 	or a			;a048
 	ret nz			;a049
-	ld a,(0e287h)		;a04a
+	ld a,(0e287h)		;a04a   ; lee la postura del personaje
 	and a			;a04d
 	ret z			;a04e
-	ld a,(0e207h)		;a04f
+	ld a,(0e207h)		;a04f   ; lee el mando: lo que se acaba de pulsar
 	bit 4,a		;a052
 	ret z			;a054
 	ld hl,0e300h		;a055
@@ -84,9 +84,9 @@ L_A05A:
 	ret			;a06a
 L_A06B:
 	ld (0e2a0h),hl		;a06b
-	ld a,(0e287h)		;a06e
+	ld a,(0e287h)		;a06e   ; lee la postura del personaje
 	dec a			;a071
-	call 04099h		;a072
+	call 04099h		;a072   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_A075: 6 destinos del despachador p00:4099 (call en p03:A072, el
@@ -113,14 +113,14 @@ L_A081:
 	jr z,L_A093		;a08f
 	ld a,00ch		;a091
 L_A093:
-	ld (0e285h),a		;a093
+	ld (0e285h),a		;a093   ; guarda hacia donde mira el personaje
 	ld a,008h		;a096
 	ld (0e286h),a		;a098
 L_A09B:
-	ld a,(0e287h)		;a09b
+	ld a,(0e287h)		;a09b   ; lee la postura del personaje
 	and 00fh		;a09e
 	add a,007h		;a0a0
-	ld (0e280h),a		;a0a2
+	ld (0e280h),a		;a0a2   ; guarda el estado del personaje
 	ret			;a0a5
 L_A0A6:
 	ld a,(0e294h)		;a0a6
@@ -133,12 +133,12 @@ L_A0B2:
 	exx			;a0b3
 	ld c,a			;a0b4
 	exx			;a0b5
-	ld a,(0e284h)		;a0b6
+	ld a,(0e284h)		;a0b6   ; lee la x del personaje
 	add a,004h		;a0b9
 	and 0f8h		;a0bb
 	add a,b			;a0bd
 	ld h,a			;a0be
-	ld a,(0e282h)		;a0bf
+	ld a,(0e282h)		;a0bf   ; lee la y del personaje
 	add a,010h		;a0c2
 	and 0f8h		;a0c4
 	ld l,a			;a0c6
@@ -156,7 +156,7 @@ L_A0B2:
 	ret nz			;a0db
 	exx			;a0dc
 	ld a,c			;a0dd
-	ld (0e285h),a		;a0de
+	ld (0e285h),a		;a0de   ; guarda hacia donde mira el personaje
 	exx			;a0e1
 	ld hl,(0e2a0h)		;a0e2
 	ld a,010h		;a0e5
@@ -177,11 +177,11 @@ L_A0FE:
 	exx			;a0fe
 	ld c,a			;a0ff
 	exx			;a100
-	ld a,(0e284h)		;a101
+	ld a,(0e284h)		;a101   ; lee la x del personaje
 	add a,b			;a104
 	and 0f8h		;a105
 	ld h,a			;a107
-	ld a,(0e282h)		;a108
+	ld a,(0e282h)		;a108   ; lee la y del personaje
 	and 0f8h		;a10b
 	ld l,a			;a10d
 	ld (0e2a2h),hl		;a10e
@@ -196,7 +196,7 @@ L_A0FE:
 	ret nz			;a120
 	exx			;a121
 	ld a,c			;a122
-	ld (0e285h),a		;a123
+	ld (0e285h),a		;a123   ; guarda hacia donde mira el personaje
 	exx			;a126
 	ld hl,(0e2a0h)		;a127
 	ld a,010h		;a12a
@@ -225,7 +225,7 @@ L_A14B:
 	push hl			;a156
 	ld a,(0e2a5h)		;a157
 	or a			;a15a
-	ld a,(0e282h)		;a15b
+	ld a,(0e282h)		;a15b   ; lee la y del personaje
 	jr z,L_A162		;a15e
 	add a,006h		;a160
 L_A162:
@@ -243,7 +243,7 @@ L_A16D:
 	jr z,L_A179		;a175
 	ld h,010h		;a177
 L_A179:
-	ld a,(0e284h)		;a179
+	ld a,(0e284h)		;a179   ; lee la x del personaje
 	add a,h			;a17c
 	ld h,a			;a17d
 	call 098dch		;a17e
@@ -264,12 +264,12 @@ L_A190:
 	and 00ch		;a19a
 	call nz,L_A136		;a19c
 	call L_A535		;a19f
-	ld a,(0efc0h)		;a1a2
+	ld a,(0efc0h)		;a1a2   ; lee un dato de paso de la rutina en curso
 	or a			;a1a5
 	ret z			;a1a6
 	call L_A446		;a1a7
 	xor a			;a1aa
-	ld (0e280h),a		;a1ab
+	ld (0e280h),a		;a1ab   ; guarda el estado del personaje
 	ld (0e2a6h),a		;a1ae
 	ld (0e2a5h),a		;a1b1
 	ld (0e295h),a		;a1b4
@@ -313,7 +313,7 @@ L_A1E6:
 	inc l			;a1f7
 	inc l			;a1f8
 L_A1F9:
-	ld a,(0e284h)		;a1f9
+	ld a,(0e284h)		;a1f9   ; lee la x del personaje
 	add a,002h		;a1fc
 	ld h,a			;a1fe
 	call 098dch		;a1ff
@@ -327,7 +327,7 @@ L_A1F9:
 	ret			;a20e
 L_A20F:
 	call L_A653		;a20f
-	ld a,(0e208h)		;a212
+	ld a,(0e208h)		;a212   ; lee el mando: lo pulsado
 	and 00ch		;a215
 	jr z,L_A290		;a217
 	rra			;a219
@@ -337,9 +337,9 @@ L_A20F:
 	jr c,L_A221		;a21e
 	inc c			;a220
 L_A221:
-	ld a,(0e282h)		;a221
+	ld a,(0e282h)		;a221   ; lee la y del personaje
 	ld l,a			;a224
-	ld a,(0e284h)		;a225
+	ld a,(0e284h)		;a225   ; lee la x del personaje
 	ld h,a			;a228
 	push hl			;a229
 	push bc			;a22a
@@ -379,17 +379,17 @@ L_A25E:
 	and 0f8h		;a25e
 	ld h,a			;a260
 	xor a			;a261
-	ld (0e280h),a		;a262
+	ld (0e280h),a		;a262   ; guarda el estado del personaje
 	ld (0e2a4h),a		;a265
 	ld (0e2a6h),a		;a268
 	ld l,a			;a26b
 	ld (0e281h),hl		;a26c
 	ret			;a26f
 L_A270:
-	ld a,(0e282h)		;a270
+	ld a,(0e282h)		;a270   ; lee la y del personaje
 	add a,004h		;a273
 	ld l,a			;a275
-	ld a,(0e284h)		;a276
+	ld a,(0e284h)		;a276   ; lee la x del personaje
 	ld h,a			;a279
 	ld c,001h		;a27a
 	push hl			;a27c
@@ -398,18 +398,18 @@ L_A270:
 	ld a,l			;a281
 	jr nc,L_A25E		;a282
 	xor a			;a284
-	ld (0e280h),a		;a285
+	ld (0e280h),a		;a285   ; guarda el estado del personaje
 	ld (0e2a4h),a		;a288
 	inc a			;a28b
 	ld (0e2a6h),a		;a28c
 	ret			;a28f
 L_A290:
 	call L_A48F		;a290
-	ld a,(0e280h)		;a293
+	ld a,(0e280h)		;a293   ; lee el estado del personaje
 	cp 002h		;a296
 	ret nz			;a298
 	call L_A476		;a299
-	ld a,(0e280h)		;a29c
+	ld a,(0e280h)		;a29c   ; lee el estado del personaje
 	cp 002h		;a29f
 	ret nz			;a2a1
 	call L_A2BB		;a2a2
@@ -420,9 +420,9 @@ L_A290:
 	dec (hl)			;a2ae
 	ret nz			;a2af
 	ld (hl),004h		;a2b0
-	ld a,(0e285h)		;a2b2
+	ld a,(0e285h)		;a2b2   ; lee hacia donde mira el personaje
 	xor 001h		;a2b5
-	ld (0e285h),a		;a2b7
+	ld (0e285h),a		;a2b7   ; guarda hacia donde mira el personaje
 	ret			;a2ba
 L_A2BB:
 	ld de,(0e28ah)		;a2bb
@@ -446,7 +446,7 @@ L_A2D6:
 	push bc			;a2df
 	push hl			;a2e0
 	ld l,h			;a2e1
-	ld a,(0e284h)		;a2e2
+	ld a,(0e284h)		;a2e2   ; lee la x del personaje
 	ld h,a			;a2e5
 	call 09910h		;a2e6
 	pop hl			;a2e9
@@ -456,19 +456,19 @@ L_A2EC:
 	ld (0e281h),hl		;a2ec
 	ret			;a2ef
 L_A2F0:
-	ld a,(0e284h)		;a2f0
+	ld a,(0e284h)		;a2f0   ; lee la x del personaje
 	ld h,a			;a2f3
-	ld a,(0e282h)		;a2f4
+	ld a,(0e282h)		;a2f4   ; lee la y del personaje
 	add a,004h		;a2f7
 	ld l,a			;a2f9
-	ld (0e282h),a		;a2fa
+	ld (0e282h),a		;a2fa   ; guarda la y del personaje
 	cp 0adh		;a2fd
 	ret nc			;a2ff
 	call L_A512		;a300
 	ret z			;a303
 	call L_A446		;a304
 	xor a			;a307
-	ld (0e280h),a		;a308
+	ld (0e280h),a		;a308   ; guarda el estado del personaje
 	ld (0e2a6h),a		;a30b
 	inc a			;a30e
 	ld (0e296h),a		;a30f
@@ -488,7 +488,7 @@ L_A321:
 	cp d			;a329
 	jr z,L_A34B		;a32a
 	ld (hl),003h		;a32c
-	ld hl,0e285h		;a32e
+	ld hl,0e285h		;a32e   ; apunta a hacia donde mira el personaje
 	inc (hl)			;a331
 	ld a,(hl)			;a332
 	cp e			;a333
@@ -507,7 +507,7 @@ L_A341:
 	jp 042a7h		;a348
 L_A34B:
 	xor a			;a34b
-	ld (0e246h),a		;a34c
+	ld (0e246h),a		;a34c   ; guarda la marca de fase empezada
 	ret			;a34f
 L_A350:
 	ld hl,0e299h		;a350
@@ -517,13 +517,13 @@ L_A350:
 	jr z,L_A368		;a357
 	xor a			;a359
 	ld (0e283h),a		;a35a
-	ld a,(0e284h)		;a35d
+	ld a,(0e284h)		;a35d   ; lee la x del personaje
 	dec a			;a360
 	dec a			;a361
-	ld (0e284h),a		;a362
+	ld (0e284h),a		;a362   ; guarda la x del personaje
 	jp 09f19h		;a365
 L_A368:
-	ld (0e280h),a		;a368
+	ld (0e280h),a		;a368   ; guarda el estado del personaje
 	ret			;a36b
 L_A36C:
 	ld hl,0e299h		;a36c
@@ -533,10 +533,10 @@ L_A36C:
 	jr z,L_A368		;a373
 	xor a			;a375
 	ld (0e283h),a		;a376
-	ld a,(0e284h)		;a379
+	ld a,(0e284h)		;a379   ; lee la x del personaje
 	inc a			;a37c
 	inc a			;a37d
-	ld (0e284h),a		;a37e
+	ld (0e284h),a		;a37e   ; guarda la x del personaje
 	jp 09f19h		;a381
 L_A384:
 	ld hl,0e286h		;a384
@@ -545,20 +545,20 @@ L_A384:
 	ld a,(hl)			;a38a
 	cp 004h		;a38b
 	ret nz			;a38d
-	ld hl,0e285h		;a38e
+	ld hl,0e285h		;a38e   ; apunta a hacia donde mira el personaje
 	inc (hl)			;a391
 	ret			;a392
 L_A393:
 	xor a			;a393
-	ld (0e287h),a		;a394
-	ld (0e280h),a		;a397
+	ld (0e287h),a		;a394   ; guarda la postura del personaje
+	ld (0e280h),a		;a397   ; guarda el estado del personaje
 	ld a,(0e294h)		;a39a
 	or a			;a39d
 	ld a,003h		;a39e
 	jr nz,L_A3A3		;a3a0
 	xor a			;a3a2
 L_A3A3:
-	ld (0e285h),a		;a3a3
+	ld (0e285h),a		;a3a3   ; guarda hacia donde mira el personaje
 	ld hl,0e2a0h		;a3a6
 	ld a,(hl)			;a3a9
 	inc l			;a3aa
@@ -569,11 +569,11 @@ L_A3A3:
 	ld (hl),a			;a3b0
 	inc l			;a3b1
 	push hl			;a3b2
-	ld a,(0e282h)		;a3b3
+	ld a,(0e282h)		;a3b3   ; lee la y del personaje
 	and 0f8h		;a3b6
 	ld (hl),a			;a3b8
 	ld l,a			;a3b9
-	ld a,(0e284h)		;a3ba
+	ld a,(0e284h)		;a3ba   ; lee la x del personaje
 	ld h,a			;a3bd
 	ld b,000h		;a3be
 	ld a,(0e294h)		;a3c0
@@ -599,7 +599,7 @@ L_A3DD:
 	ld c,004h		;a3df
 	ld a,(0e294h)		;a3e1
 	or a			;a3e4
-	ld a,(0e284h)		;a3e5
+	ld a,(0e284h)		;a3e5   ; lee la x del personaje
 	jr nz,L_A3EF		;a3e8
 	ld c,003h		;a3ea
 	sub b			;a3ec
@@ -611,9 +611,9 @@ L_A3F0:
 	ret nc			;a3f1
 	inc l			;a3f2
 	push hl			;a3f3
-	ld a,(0e243h)		;a3f4
+	ld a,(0e243h)		;a3f4   ; lee la pantalla de la fase (desde 1)
 	push bc			;a3f7
-	call 05df0h		;a3f8
+	call 05df0h		;a3f8   ; C = la casilla de la rejilla en la que esta la pantalla A
 	pop bc			;a3fb
 	ld b,a			;a3fc
 	ld a,c			;a3fd
@@ -625,22 +625,22 @@ L_A3F0:
 L_A405:
 	ld a,(0e286h)		;a405
 	and 003h		;a408
-	call z,04244h		;a40a
+	call z,04244h		;a40a   ; pide el sonido 0x15
 	jr L_A42B		;a40d
 L_A40F:
 	ld a,(0e286h)		;a40f
 	and 003h		;a412
-	call z,0424eh		;a414
+	call z,0424eh		;a414   ; pide el sonido 0x17
 	jr L_A42B		;a417
 L_A419:
 	ld a,(0e286h)		;a419
 	and 003h		;a41c
-	call z,04253h		;a41e
+	call z,04253h		;a41e   ; pide el sonido 0x18
 	jr L_A42B		;a421
 L_A423:
 	ld a,(0e286h)		;a423
 	and 003h		;a426
-	call z,04249h		;a428
+	call z,04249h		;a428   ; pide el sonido 0x16
 L_A42B:
 	ld hl,0e286h		;a42b
 	dec (hl)			;a42e
@@ -648,19 +648,19 @@ L_A42B:
 	rra			;a430
 	rra			;a431
 	ret c			;a432
-	ld a,(0e285h)		;a433
+	ld a,(0e285h)		;a433   ; lee hacia donde mira el personaje
 	xor 001h		;a436
-	ld (0e285h),a		;a438
+	ld (0e285h),a		;a438   ; guarda hacia donde mira el personaje
 	ret			;a43b
 L_A43C:
 	ld hl,0e2a8h		;a43c
 	dec (hl)			;a43f
 	ret nz			;a440
 	xor a			;a441
-	ld (0e280h),a		;a442
+	ld (0e280h),a		;a442   ; guarda el estado del personaje
 	ret			;a445
 L_A446:
-	ld a,(0e282h)		;a446
+	ld a,(0e282h)		;a446   ; lee la y del personaje
 	and 0f8h		;a449
 	ld h,a			;a44b
 	ld l,000h		;a44c
@@ -675,10 +675,10 @@ L_A452:
 	scf			;a45c
 	ret			;a45d
 L_A45E:
-	ld a,(0e284h)		;a45e
+	ld a,(0e284h)		;a45e   ; lee la x del personaje
 	add a,002h		;a461
 	ld h,a			;a463
-	ld a,(0e282h)		;a464
+	ld a,(0e282h)		;a464   ; lee la y del personaje
 	ld l,a			;a467
 	call 098dch		;a468
 	dec a			;a46b
@@ -690,9 +690,9 @@ L_A45E:
 	dec a			;a474
 	ret			;a475
 L_A476:
-	ld a,(0e284h)		;a476
+	ld a,(0e284h)		;a476   ; lee la x del personaje
 	ld h,a			;a479
-	ld a,(0e282h)		;a47a
+	ld a,(0e282h)		;a47a   ; lee la y del personaje
 	ld l,a			;a47d
 	call 098dch		;a47e
 	dec a			;a481
@@ -705,9 +705,9 @@ L_A476:
 	ret z			;a48b
 	jp 09fd4h		;a48c
 L_A48F:
-	ld a,(0e284h)		;a48f
+	ld a,(0e284h)		;a48f   ; lee la x del personaje
 	ld h,a			;a492
-	ld a,(0e282h)		;a493
+	ld a,(0e282h)		;a493   ; lee la y del personaje
 	add a,012h		;a496
 	ld l,a			;a498
 	ld a,(0e288h)		;a499
@@ -735,14 +735,14 @@ L_A4B8:
 	xor a			;a4bb
 	ld l,a			;a4bc
 	ld (0e281h),hl		;a4bd
-	ld (0e280h),a		;a4c0
+	ld (0e280h),a		;a4c0   ; guarda el estado del personaje
 	ld (0e2a6h),a		;a4c3
 	inc a			;a4c6
 	ld (0e2a7h),a		;a4c7
 	ld (0e296h),a		;a4ca
 	jp 09f19h		;a4cd
 L_A4D0:
-	ld a,(0e282h)		;a4d0
+	ld a,(0e282h)		;a4d0   ; lee la y del personaje
 	sub 008h		;a4d3
 	cp 008h		;a4d5
 	ret c			;a4d7
@@ -786,10 +786,10 @@ L_A4FF:
 	ld (0e296h),a		;a50e
 	ret			;a511
 L_A512:
-	ld a,(0e282h)		;a512
+	ld a,(0e282h)		;a512   ; lee la y del personaje
 	add a,010h		;a515
 	ld l,a			;a517
-	ld a,(0e284h)		;a518
+	ld a,(0e284h)		;a518   ; lee la x del personaje
 	add a,003h		;a51b
 	ld h,a			;a51d
 	call 098dch		;a51e
@@ -809,7 +809,7 @@ L_A512:
 	ret			;a534
 L_A535:
 	xor a			;a535
-	ld (0efc0h),a		;a536
+	ld (0efc0h),a		;a536   ; guarda un dato de paso de la rutina en curso
 	call L_A512		;a539
 	ret z			;a53c
 	dec a			;a53d
@@ -835,17 +835,17 @@ L_A535:
 	ret z			;a55e
 L_A55F:
 	ld a,001h		;a55f
-	ld (0efc0h),a		;a561
+	ld (0efc0h),a		;a561   ; guarda un dato de paso de la rutina en curso
 	ret			;a564
 L_A565:
-	ld a,(0e282h)		;a565
+	ld a,(0e282h)		;a565   ; lee la y del personaje
 	add a,010h		;a568
 	ld l,a			;a56a
 	call L_A571		;a56b
 	ret c			;a56e
 	jr L_A55F		;a56f
 L_A571:
-	ld a,(0e284h)		;a571
+	ld a,(0e284h)		;a571   ; lee la x del personaje
 	add a,003h		;a574
 	ld h,a			;a576
 	call 098dch		;a577
@@ -865,23 +865,23 @@ L_A571:
 	ret			;a590
 L_A591:
 	call L_A5FB		;a591
-	ld a,(0e280h)		;a594
+	ld a,(0e280h)		;a594   ; lee el estado del personaje
 	cp 002h		;a597
 	ret z			;a599
-	ld a,(0e282h)		;a59a
+	ld a,(0e282h)		;a59a   ; lee la y del personaje
 	add a,010h		;a59d
 	ld l,a			;a59f
 	jr L_A5B1		;a5a0
 L_A5A2:
 	call L_A5FB		;a5a2
-	ld a,(0e280h)		;a5a5
+	ld a,(0e280h)		;a5a5   ; lee el estado del personaje
 	cp 002h		;a5a8
 	ret z			;a5aa
-	ld a,(0e282h)		;a5ab
+	ld a,(0e282h)		;a5ab   ; lee la y del personaje
 	add a,00ah		;a5ae
 	ld l,a			;a5b0
 L_A5B1:
-	ld a,(0e284h)		;a5b1
+	ld a,(0e284h)		;a5b1   ; lee la x del personaje
 	ld h,a			;a5b4
 	call 098dch		;a5b5
 	dec a			;a5b8
@@ -921,19 +921,19 @@ L_A5CC:
 	inc a			;a5ed
 	ld (0e296h),a		;a5ee
 	inc a			;a5f1
-	ld (0e280h),a		;a5f2
+	ld (0e280h),a		;a5f2   ; guarda el estado del personaje
 	ld a,006h		;a5f5
-	ld (0e285h),a		;a5f7
+	ld (0e285h),a		;a5f7   ; guarda hacia donde mira el personaje
 	ret			;a5fa
 L_A5FB:
-	ld a,(0e282h)		;a5fb
+	ld a,(0e282h)		;a5fb   ; lee la y del personaje
 	add a,002h		;a5fe
 	ld l,a			;a600
 	jr L_A5B1		;a601
 L_A603:
-	ld a,(0e208h)		;a603
+	ld a,(0e208h)		;a603   ; lee el mando: lo pulsado
 	rra			;a606
-	ld a,(0e282h)		;a607
+	ld a,(0e282h)		;a607   ; lee la y del personaje
 	jr c,L_A60E		;a60a
 	add a,010h		;a60c
 L_A60E:
@@ -957,12 +957,12 @@ L_A621:
 	rra			;a622
 	ret			;a623
 L_A624:
-	ld a,(0e208h)		;a624
+	ld a,(0e208h)		;a624   ; lee el mando: lo pulsado
 	and 00ch		;a627
 	ld b,a			;a629
 	ld c,000h		;a62a
 	jr z,L_A64E		;a62c
-	ld a,(0e207h)		;a62e
+	ld a,(0e207h)		;a62e   ; lee el mando: lo que se acaba de pulsar
 	and 00ch		;a631
 	cp 00ch		;a633
 	ret z			;a635
@@ -984,12 +984,12 @@ L_A64E:
 	ld (0e288h),a		;a64f
 	ret			;a652
 L_A653:
-	ld a,(0e208h)		;a653
+	ld a,(0e208h)		;a653   ; lee el mando: lo pulsado
 	and 003h		;a656
 	ld b,a			;a658
 	ld c,000h		;a659
 	jr z,L_A64E		;a65b
-	ld a,(0e207h)		;a65d
+	ld a,(0e207h)		;a65d   ; lee el mando: lo que se acaba de pulsar
 	and 003h		;a660
 	cp 003h		;a662
 	ret z			;a664
@@ -1008,7 +1008,7 @@ L_A653:
 	ld c,002h		;a678
 	jr L_A64E		;a67a
 L_A67C:
-	ld a,(0e282h)		;a67c
+	ld a,(0e282h)		;a67c   ; lee la y del personaje
 	add a,008h		;a67f
 	cp 002h		;a681
 	jr c,L_A6A8		;a683
@@ -1017,35 +1017,35 @@ L_A67C:
 	jr nc,L_A6B4		;a689
 	ld a,(0e294h)		;a68b
 	or a			;a68e
-	ld a,(0e284h)		;a68f
+	ld a,(0e284h)		;a68f   ; lee la x del personaje
 	jr z,L_A69D		;a692
 	cp 0f1h		;a694
 	ret c			;a696
 	ld a,004h		;a697
-	ld (0e248h),a		;a699
+	ld (0e248h),a		;a699   ; guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	ret			;a69c
 L_A69D:
 	add a,008h		;a69d
 	cp 00ah		;a69f
 	ret nc			;a6a1
 	ld a,003h		;a6a2
-	ld (0e248h),a		;a6a4
+	ld (0e248h),a		;a6a4   ; guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	ret			;a6a7
 L_A6A8:
-	ld a,(0e280h)		;a6a8
+	ld a,(0e280h)		;a6a8   ; lee el estado del personaje
 	sub 002h		;a6ab
 	ret nz			;a6ad
 	ld a,001h		;a6ae
-	ld (0e248h),a		;a6b0
+	ld (0e248h),a		;a6b0   ; guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	ret			;a6b3
 L_A6B4:
 	cp 0f0h		;a6b4
 	ret nc			;a6b6
 	ld a,002h		;a6b7
-	ld (0e248h),a		;a6b9
+	ld (0e248h),a		;a6b9   ; guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	ret			;a6bc
 L_A6BD:
-	ld a,(0e248h)		;a6bd
+	ld a,(0e248h)		;a6bd   ; lee el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	or a			;a6c0
 	ret nz			;a6c1
 	ld ix,0e300h		;a6c2
@@ -1064,7 +1064,7 @@ L_A6D5:
 	ret z			;a6d9
 	dec a			;a6da
 	and 00fh		;a6db
-	call 04099h		;a6dd
+	call 04099h		;a6dd   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_A6E0: 6 destinos del despachador p00:4099 (call en p03:A6DD, el
@@ -1083,7 +1083,7 @@ L_A6EC:
 	call L_AC63		;a6ec
 	sub 001h		;a6ef
 	ret c			;a6f1
-	call 04099h		;a6f2
+	call 04099h		;a6f2   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_A6F5: 5 destinos del despachador p00:4099 (call en p03:A6F2, el
@@ -1098,7 +1098,7 @@ DATA_tabla_A6F5:
 
 
 L_A6FF:
-	ld a,(0e243h)		;a6ff
+	ld a,(0e243h)		;a6ff   ; lee la pantalla de la fase (desde 1)
 	ld (ix+003h),a		;a702
 	ret			;a705
 L_A706:
@@ -1147,7 +1147,7 @@ L_A743:
 	ld a,(ix+000h)		;a75e
 	and 0f0h		;a761
 	ret nz			;a763
-	ld a,(0e243h)		;a764
+	ld a,(0e243h)		;a764   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;a767
 	ret nz			;a76a
 	jp 042dbh		;a76b
@@ -1158,7 +1158,7 @@ L_A76E:
 	ld a,(ix+000h)		;a777
 	and 0f0h		;a77a
 	ret nz			;a77c
-	ld a,(0e243h)		;a77d
+	ld a,(0e243h)		;a77d   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;a780
 	ret nz			;a783
 	jp 042dbh		;a784
@@ -1180,7 +1180,7 @@ L_A79D:
 	and a			;a79d
 	ret			;a79e
 L_A79F:
-	ld a,(0e243h)		;a79f
+	ld a,(0e243h)		;a79f   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;a7a2
 	ret nz			;a7a5
 	ld a,008h		;a7a6
@@ -1275,7 +1275,7 @@ L_A836:
 L_A83A:
 	ld (ix+002h),a		;a83a
 	jr c,L_A853		;a83d
-	ld a,(0e243h)		;a83f
+	ld a,(0e243h)		;a83f   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;a842
 	jr nz,L_A866		;a845
 	ld h,(ix+002h)		;a847
@@ -1287,7 +1287,7 @@ L_A83A:
 L_A853:
 	ld a,(ix+003h)		;a853
 	push bc			;a856
-	call 05df0h		;a857
+	call 05df0h		;a857   ; C = la casilla de la rejilla en la que esta la pantalla A
 	pop bc			;a85a
 	ld b,a			;a85b
 	push bc			;a85c
@@ -1311,16 +1311,16 @@ L_A86F:
 	pop bc			;a87d
 	ret			;a87e
 L_A87F:
-	ld a,(0e203h)		;a87f
+	ld a,(0e203h)		;a87f   ; lee la cuenta de cuadros
 	and 001h		;a882
 	ret nz			;a884
 	ld a,(ix+004h)		;a885
 	inc a			;a888
 	cp 003h		;a889
 	jr c,L_A897		;a88b
-	ld a,(0e243h)		;a88d
+	ld a,(0e243h)		;a88d   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;a890
-	call z,04267h		;a893
+	call z,04267h		;a893   ; pide el sonido 0x1C
 	xor a			;a896
 L_A897:
 	ld (ix+004h),a		;a897
@@ -1329,7 +1329,7 @@ L_A89B:
 	call L_AC63		;a89b
 	sub 001h		;a89e
 	ret c			;a8a0
-	call 04099h		;a8a1
+	call 04099h		;a8a1   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_A8A4: 5 destinos del despachador p00:4099 (call en p03:A8A1, el
@@ -1409,20 +1409,20 @@ L_A921:
 	ld (ix+000h),a		;a926
 	ret			;a929
 L_A92A:
-	ld a,(0e287h)		;a92a
+	ld a,(0e287h)		;a92a   ; lee la postura del personaje
 	or a			;a92d
 	ret nz			;a92e
-	ld a,(0e243h)		;a92f
+	ld a,(0e243h)		;a92f   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;a932
 	ret nz			;a935
-	ld a,(0e282h)		;a936
+	ld a,(0e282h)		;a936   ; lee la y del personaje
 	sub (ix+001h)		;a939
 	jr nc,L_A940		;a93c
 	neg		;a93e
 L_A940:
 	cp 00dh		;a940
 	ret nc			;a942
-	ld a,(0e284h)		;a943
+	ld a,(0e284h)		;a943   ; lee la x del personaje
 	sub (ix+002h)		;a946
 	jr nc,L_A94D		;a949
 	neg		;a94b
@@ -1431,10 +1431,10 @@ L_A94D:
 	ret nc			;a94f
 	ld hl,0e2a9h		;a950
 	dec (hl)			;a953
-	call 042d7h		;a954
+	call 042d7h		;a954   ; pide el sonido 0x35
 	ld (ix+000h),012h		;a957
 	ld a,002h		;a95b
-	ld (0e287h),a		;a95d
+	ld (0e287h),a		;a95d   ; guarda la postura del personaje
 	ret			;a960
 
 ; ----------------------------------------------------------------------
@@ -1468,16 +1468,16 @@ L_A994:
 	call L_A99D		;a997
 	jp L_A9BA		;a99a
 L_A99D:
-	ld a,(0e203h)		;a99d
+	ld a,(0e203h)		;a99d   ; lee la cuenta de cuadros
 	and 001h		;a9a0
 	ret nz			;a9a2
 	ld a,(ix+004h)		;a9a3
 	inc a			;a9a6
 	cp 006h		;a9a7
 	jr c,L_A9B6		;a9a9
-	ld a,(0e243h)		;a9ab
+	ld a,(0e243h)		;a9ab   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;a9ae
-	call z,04262h		;a9b1
+	call z,04262h		;a9b1   ; pide el sonido 0x1B
 	ld a,003h		;a9b4
 L_A9B6:
 	ld (ix+004h),a		;a9b6
@@ -1504,7 +1504,7 @@ L_A9D6:
 	ld (ix+001h),a		;a9da
 	cp 0b8h		;a9dd
 	jr nc,L_AA03		;a9df
-	ld a,(0e243h)		;a9e1
+	ld a,(0e243h)		;a9e1   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;a9e4
 	jr nz,L_AA17		;a9e7
 	ld a,(ix+001h)		;a9e9
@@ -1525,7 +1525,7 @@ L_AA03:
 	ld a,008h		;aa03
 	ld (ix+001h),a		;aa05
 	ld a,(ix+003h)		;aa08
-	call 05df0h		;aa0b
+	call 05df0h		;aa0b   ; C = la casilla de la rejilla en la que esta la pantalla A
 	ld b,a			;aa0e
 	ld a,002h		;aa0f
 	call 05e38h		;aa11
@@ -1552,7 +1552,7 @@ L_AA30:
 	ld a,(ix+000h)		;aa3c
 	and 00fh		;aa3f
 	ld (ix+000h),a		;aa41
-	ld a,(0e243h)		;aa44
+	ld a,(0e243h)		;aa44   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;aa47
 	ret nz			;aa4a
 	call 09237h		;aa4b
@@ -1582,7 +1582,7 @@ L_AA66:
 	call L_AC63		;aa66
 	sub 001h		;aa69
 	ret c			;aa6b
-	call 04099h		;aa6c
+	call 04099h		;aa6c   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_AA6F: 3 destinos del despachador p00:4099 (call en p03:AA6C, el
@@ -1613,15 +1613,15 @@ L_AA8C:
 	jr nz,L_AA95		;aa92
 	xor a			;aa94
 L_AA95:
-	ld (0e285h),a		;aa95
+	ld (0e285h),a		;aa95   ; guarda hacia donde mira el personaje
 	xor a			;aa98
 	ld (ix+000h),a		;aa99
-	ld (0e287h),a		;aa9c
-	ld a,(0e298h)		;aa9f
+	ld (0e287h),a		;aa9c   ; guarda la postura del personaje
+	ld a,(0e298h)		;aa9f   ; lee lo que lleva el personaje en la mano
 	or a			;aaa2
 	ret nz			;aaa3
 	xor a			;aaa4
-	ld (0e280h),a		;aaa5
+	ld (0e280h),a		;aaa5   ; guarda el estado del personaje
 	ret			;aaa8
 L_AAA9:
 	dec (ix+006h)		;aaa9
@@ -1651,7 +1651,7 @@ L_AAA9:
 	inc hl			;aad7
 	push hl			;aad8
 	push de			;aad9
-	call 05767h		;aada
+	call 05767h		;aada   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop de			;aadd
 	pop hl			;aade
 	ld a,d			;aadf
@@ -1667,7 +1667,7 @@ L_AAE7:
 	call 056deh		;aaef
 	inc (ix+007h)		;aaf2
 	ld hl,(0e2a2h)		;aaf5
-	ld a,(0e243h)		;aaf8
+	ld a,(0e243h)		;aaf8   ; lee la pantalla de la fase (desde 1)
 	ld d,a			;aafb
 	ld bc,00102h		;aafc
 	xor a			;aaff
@@ -1690,7 +1690,7 @@ L_AB09:
 	call L_AC63		;ab09
 	sub 001h		;ab0c
 	ret c			;ab0e
-	call 04099h		;ab0f
+	call 04099h		;ab0f   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_AB12: 4 destinos del despachador p00:4099 (call en p03:AB0F, el
@@ -1739,7 +1739,7 @@ L_AB5D:
 	call L_AC63		;ab5d
 	sub 001h		;ab60
 	ret c			;ab62
-	call 04099h		;ab63
+	call 04099h		;ab63   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_AB66: 3 destinos del despachador p00:4099 (call en p03:AB63, el
@@ -1797,7 +1797,7 @@ L_ABB6:
 	inc hl			;abbd
 	push hl			;abbe
 	push de			;abbf
-	call 05767h		;abc0
+	call 05767h		;abc0   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop de			;abc3
 	pop hl			;abc4
 	ld a,e			;abc5
@@ -1813,7 +1813,7 @@ L_ABCD:
 	call 056deh		;abd5
 	inc (ix+007h)		;abd8
 	ld hl,(0e2a2h)		;abdb
-	ld a,(0e243h)		;abde
+	ld a,(0e243h)		;abde   ; lee la pantalla de la fase (desde 1)
 	ld d,a			;abe1
 	ld bc,00201h		;abe2
 	xor a			;abe5
@@ -1836,7 +1836,7 @@ L_ABF5:
 	call L_AC63		;abf5
 	sub 001h		;abf8
 	ret c			;abfa
-	call 04099h		;abfb
+	call 04099h		;abfb   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_ABFE: 4 destinos del despachador p00:4099 (call en p03:ABFB, el
@@ -1886,9 +1886,9 @@ L_AC2A:
 	jr nz,L_AC4E		;ac4a
 	ld b,0f8h		;ac4c
 L_AC4E:
-	ld a,(0e284h)		;ac4e
+	ld a,(0e284h)		;ac4e   ; lee la x del personaje
 	add a,b			;ac51
-	ld (0e284h),a		;ac52
+	ld (0e284h),a		;ac52   ; guarda la x del personaje
 	jp L_AC06		;ac55
 L_AC58:
 	call L_AB86		;ac58
@@ -1979,7 +1979,7 @@ L_AC91:
 	add hl,de			;acd6
 	ld a,(hl)			;acd7
 	dec a			;acd8
-	call 04099h		;acd9
+	call 04099h		;acd9   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_ACDC: 4 destinos del despachador p00:4099 (call en p03:ACD9, el
@@ -1994,13 +1994,13 @@ DATA_tabla_ACDC:
 
 
 L_ACE4:
-	ld a,(0f0f4h)		;ace4
+	ld a,(0f0f4h)		;ace4   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;ace7
 	ld a,(ix+000h)		;ace8
 	jr z,L_ACFE		;aceb
 	add a,a			;aced
 	ld de,0ad0bh		;acee
-	call 04094h		;acf1
+	call 04094h		;acf1   ; suma A a DE (DE = DE + A)
 	ld a,(de)			;acf4
 	ld (ix+01eh),a		;acf5
 	inc de			;acf8
@@ -2009,7 +2009,7 @@ L_ACE4:
 	ret			;acfd
 L_ACFE:
 	ld de,lad08h		;acfe
-	call 04094h		;ad01
+	call 04094h		;ad01   ; suma A a DE (DE = DE + A)
 	ld a,(de)			;ad04
 	ld (ix+01eh),a		;ad05
 L_AD08:
@@ -2040,7 +2040,7 @@ L_AD15:
 	rr e		;ad21
 	and a			;ad23
 	sbc hl,de		;ad24
-	ld de,0e900h		;ad26
+	ld de,0e900h		;ad26   ; apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
 	add hl,de			;ad29
 	ex de,hl			;ad2a
 	ret			;ad2b
@@ -2060,7 +2060,7 @@ L_AD2C:
 	ld hl,04271h		;ad4d
 	jp L_B294		;ad50
 L_AD53:
-	ld a,(0e243h)		;ad53
+	ld a,(0e243h)		;ad53   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;ad56
 	ret nz			;ad59
 	push ix		;ad5a
@@ -2074,7 +2074,7 @@ L_AD53:
 	ld e,a			;ad6b
 	ld d,(ix+005h)		;ad6c
 	ld bc,00302h		;ad6f
-	call 0573bh		;ad72
+	call 0573bh		;ad72   ; un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
 	push ix		;ad75
 	call 090f7h		;ad77
 	call 096cfh		;ad7a
@@ -2082,7 +2082,7 @@ L_AD53:
 	ret			;ad7f
 L_AD80:
 	ld a,(ix+001h)		;ad80
-	call 04099h		;ad83
+	call 04099h		;ad83   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_AD86: 5 destinos del despachador p00:4099 (call en p03:AD83, el
@@ -2159,7 +2159,7 @@ L_AE1A:
 	ret			;ae22
 L_AE23:
 	ld a,(ix+001h)		;ae23
-	call 04099h		;ae26
+	call 04099h		;ae26   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_AE29: 6 destinos del despachador p00:4099 (call en p03:AE26, el
@@ -2193,12 +2193,12 @@ L_AE55:
 	call L_AE6F		;ae59
 	ld (ix+013h),003h		;ae5c
 	ld (ix+014h),020h		;ae60
-	ld a,(0e243h)		;ae64
+	ld a,(0e243h)		;ae64   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;ae67
-	call z,04294h		;ae6a
+	call z,04294h		;ae6a   ; pide el sonido 0x25
 	jr L_AE51		;ae6d
 L_AE6F:
-	ld a,(0e243h)		;ae6f
+	ld a,(0e243h)		;ae6f   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;ae72
 	ret nz			;ae75
 	ld d,(ix+005h)		;ae76
@@ -2274,7 +2274,7 @@ L_AF14:
 	jr z,L_AF1E		;af1a
 	ld c,003h		;af1c
 L_AF1E:
-	ld a,(0e203h)		;af1e
+	ld a,(0e203h)		;af1e   ; lee la cuenta de cuadros
 	and 004h		;af21
 	jr z,L_AF26		;af23
 	inc c			;af25
@@ -2352,7 +2352,7 @@ L_AFBD:
 	jr z,L_AFEC		;afc1
 	bit 0,(ix+013h)		;afc3
 	jr z,L_AFEC		;afc7
-	ld a,(0e243h)		;afc9
+	ld a,(0e243h)		;afc9   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;afcc
 	jr nz,L_AFEC		;afcf
 	ld a,(ix+003h)		;afd1
@@ -2390,7 +2390,7 @@ L_B009:
 	call L_B9F0		;b009
 	jp 06706h		;b00c
 L_B00F:
-	ld a,(0e243h)		;b00f
+	ld a,(0e243h)		;b00f   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;b012
 	jp z,L_B0A4		;b015
 	call 09a0bh		;b018
@@ -2471,7 +2471,7 @@ L_B096:
 	push af			;b096
 	ld b,(ix+016h)		;b097
 	call 05e38h		;b09a
-	ld a,(0e244h)		;b09d
+	ld a,(0e244h)		;b09d   ; lee la casilla de la rejilla de la pantalla
 	cp h			;b0a0
 	pop bc			;b0a1
 	ld a,b			;b0a2
@@ -2483,7 +2483,7 @@ L_B0A6:
 	ld a,(ix+00bh)		;b0a6
 	add a,a			;b0a9
 	ld hl,0b0f1h		;b0aa
-	call 0408fh		;b0ad
+	call 0408fh		;b0ad   ; suma A a HL (HL = HL + A)
 	ld c,(hl)			;b0b0
 	inc hl			;b0b1
 	ld b,(hl)			;b0b2
@@ -2757,7 +2757,7 @@ L_B223:
 	ld a,(ix+016h)		;b223
 	and 007h		;b226
 	ld c,a			;b228
-	ld a,(0e244h)		;b229
+	ld a,(0e244h)		;b229   ; lee la casilla de la rejilla de la pantalla
 	and 007h		;b22c
 	cp c			;b22e
 	ld c,000h		;b22f
@@ -2766,7 +2766,7 @@ L_B223:
 	inc c			;b234
 	ret			;b235
 L_B236:
-	ld a,(0e284h)		;b236
+	ld a,(0e284h)		;b236   ; lee la x del personaje
 	cp (ix+005h)		;b239
 	ret c			;b23c
 	inc c			;b23d
@@ -2775,7 +2775,7 @@ L_B23F:
 	ld a,(ix+016h)		;b23f
 	and 038h		;b242
 	ld c,a			;b244
-	ld a,(0e244h)		;b245
+	ld a,(0e244h)		;b245   ; lee la casilla de la rejilla de la pantalla
 	and 038h		;b248
 	cp c			;b24a
 	ld c,000h		;b24b
@@ -2785,7 +2785,7 @@ L_B23F:
 	inc c			;b251
 	ret			;b252
 L_B253:
-	ld a,(0e282h)		;b253
+	ld a,(0e282h)		;b253   ; lee la y del personaje
 	sub (ix+003h)		;b256
 	jr c,L_B261		;b259
 	cp 010h		;b25b
@@ -2817,7 +2817,7 @@ L_B274:
 	ld (ix+01ch),000h		;b28d
 	ld hl,0426ch		;b291
 L_B294:
-	ld a,(0e243h)		;b294
+	ld a,(0e243h)		;b294   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;b297
 	ret nz			;b29a
 	jp (hl)			;b29b
@@ -2831,7 +2831,7 @@ L_B2A3:
 	ret			;b2a9
 L_B2AA:
 	ld a,(ix+001h)		;b2aa
-	call 04099h		;b2ad
+	call 04099h		;b2ad   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_B2B0: 5 destinos del despachador p00:4099 (call en p03:B2AD, el
@@ -2846,7 +2846,7 @@ DATA_tabla_B2B0:
 
 
 L_B2BA:
-	ld a,(0f0f4h)		;b2ba
+	ld a,(0f0f4h)		;b2ba   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	ld hl,0b2f4h		;b2bd
 	ld de,0b2feh		;b2c0
 	call L_B6E0		;b2c3
@@ -2858,7 +2858,7 @@ L_B2BA:
 	inc a			;b2d2
 L_B2D3:
 	ld (ix+011h),a		;b2d3
-	ld a,(0f0f4h)		;b2d6
+	ld a,(0f0f4h)		;b2d6   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;b2d9
 	ret z			;b2da
 	ld (ix+01eh),00ah		;b2db
@@ -3148,7 +3148,7 @@ L_B4F1:
 	jr z,L_B500		;b4fb
 	ld hl,0b5a6h		;b4fd
 L_B500:
-	call 0408fh		;b500
+	call 0408fh		;b500   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;b503
 	add a,(ix+003h)		;b504
 	ld (ix+003h),a		;b507
@@ -3175,7 +3175,7 @@ L_B52F:
 	ld (ix+003h),a		;b541
 	ld (ix+001h),001h		;b544
 L_B548:
-	ld a,(0e243h)		;b548
+	ld a,(0e243h)		;b548   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;b54b
 	jp z,0423fh		;b54e
 	ret			;b551
@@ -3293,12 +3293,12 @@ L_B60E:
 	ld (ix+00bh),a		;b624
 	jp L_B211		;b627
 L_B62A:
-	ld a,(0e284h)		;b62a
+	ld a,(0e284h)		;b62a   ; lee la x del personaje
 	sub (ix+005h)		;b62d
 	add a,002h		;b630
 	cp 004h		;b632
 	jr nc,L_B644		;b634
-	ld a,(0e203h)		;b636
+	ld a,(0e203h)		;b636   ; lee la cuenta de cuadros
 	ld c,002h		;b639
 	and 080h		;b63b
 	jr z,L_B640		;b63d
@@ -3335,7 +3335,7 @@ L_B66D:
 L_B673:
 	ld a,(ix+014h)		;b673
 	ld de,0b595h		;b676
-	call 04094h		;b679
+	call 04094h		;b679   ; suma A a DE (DE = DE + A)
 	ld a,(de)			;b67c
 	ret			;b67d
 L_B67E:
@@ -3347,7 +3347,7 @@ L_B67E:
 	jp L_B294		;b68b
 L_B68E:
 	ld a,(ix+001h)		;b68e
-	call 04099h		;b691
+	call 04099h		;b691   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_B694: 6 destinos del despachador p00:4099 (call en p03:B691, el
@@ -3386,7 +3386,7 @@ DATA_resto_B6AF:
 L_B6BD:
 	ld (ix+013h),003h		;b6bd
 	ld (ix+014h),03ch		;b6c1
-	ld a,(0f0f4h)		;b6c5
+	ld a,(0f0f4h)		;b6c5   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;b6c8
 	jr z,L_B6DC		;b6c9
 	ld (ix+01eh),007h		;b6cb
@@ -3398,7 +3398,7 @@ L_B6DC:
 	inc (ix+001h)		;b6dc
 	ret			;b6df
 L_B6E0:
-	ld a,(0f0f4h)		;b6e0
+	ld a,(0f0f4h)		;b6e0   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;b6e3
 	jr z,L_B6E7		;b6e4
 	ex de,hl			;b6e6
@@ -3409,7 +3409,7 @@ L_B6E7:
 	rra			;b6ee
 	rra			;b6ef
 	and 01fh		;b6f0
-	call 0408fh		;b6f2
+	call 0408fh		;b6f2   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;b6f5
 	cp 0ffh		;b6f6
 	ret			;b6f8
@@ -3503,7 +3503,7 @@ L_B7B1:
 	jp c,L_B856		;b7b9
 	call L_B938		;b7bc
 L_B7BF:
-	ld a,(0e243h)		;b7bf
+	ld a,(0e243h)		;b7bf   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;b7c2
 	ret nz			;b7c5
 	jp 0428fh		;b7c6
@@ -3625,7 +3625,7 @@ L_B8A8:
 	ld (ix+011h),011h		;b8af
 	ld (ix+014h),000h		;b8b3
 	ld (ix+001h),005h		;b8b7
-	ld a,(0e243h)		;b8bb
+	ld a,(0e243h)		;b8bb   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;b8be
 	ret nz			;b8c1
 	jp 04294h		;b8c2
@@ -3654,7 +3654,7 @@ L_B8EC:
 	ld c,001h		;b8ef
 	call L_B168		;b8f1
 	jr c,L_B908		;b8f4
-	ld a,(0e203h)		;b8f6
+	ld a,(0e203h)		;b8f6   ; lee la cuenta de cuadros
 	and 003h		;b8f9
 	dec (ix+014h)		;b8fb
 	ret nz			;b8fe
@@ -3670,7 +3670,7 @@ L_B90E:
 	jr z,$+37		;b913
 	inc (ix+014h)		;b915
 	ld hl,0b926h		;b918
-	call 0408fh		;b91b
+	call 0408fh		;b91b   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;b91e
 	add a,(ix+003h)		;b91f
 	ld (ix+003h),a		;b922
@@ -3745,7 +3745,7 @@ L_B992:
 	dec a			;b999
 	ret nz			;b99a
 L_B99B:
-	ld a,(0e243h)		;b99b
+	ld a,(0e243h)		;b99b   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;b99e
 	ret nz			;b9a1
 L_B9A2:
@@ -3778,7 +3778,7 @@ L_B9C8:
 	and b			;b9d1
 	ld e,a			;b9d2
 	ld a,008h		;b9d3
-	call 0408fh		;b9d5
+	call 0408fh		;b9d5   ; suma A a HL (HL = HL + A)
 	ld a,b			;b9d8
 	ld d,(hl)			;b9d9
 	or (hl)			;b9da
@@ -3794,7 +3794,7 @@ L_B9E0:
 	dec a			;b9e7
 	ret nz			;b9e8
 L_B9E9:
-	ld a,(0e243h)		;b9e9
+	ld a,(0e243h)		;b9e9   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;b9ec
 	ret nz			;b9ef
 L_B9F0:
@@ -3822,7 +3822,7 @@ L_BA12:
 	or e			;ba18
 	ld (hl),a			;ba19
 	ld a,008h		;ba1a
-	call 0408fh		;ba1c
+	call 0408fh		;ba1c   ; suma A a HL (HL = HL + A)
 	ld a,b			;ba1f
 	and (hl)			;ba20
 	or d			;ba21
@@ -3894,10 +3894,10 @@ L_BA85:
 	cp 001h		;ba88
 	jp z,L_BB0E		;ba8a
 	jp nc,L_BB2B		;ba8d
-	ld a,(0e243h)		;ba90
+	ld a,(0e243h)		;ba90   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;ba93
 	ret nz			;ba96
-	ld a,(0e280h)		;ba97
+	ld a,(0e280h)		;ba97   ; lee el estado del personaje
 	and a			;ba9a
 	jr nz,L_BAE5		;ba9b
 	ld a,(ix+008h)		;ba9d
@@ -3905,7 +3905,7 @@ L_BA85:
 	add a,a			;baa1
 	add a,a			;baa2
 	ld b,a			;baa3
-	ld a,(0e282h)		;baa4
+	ld a,(0e282h)		;baa4   ; lee la y del personaje
 	add a,00fh		;baa7
 	sub (ix+002h)		;baa9
 	sub b			;baac
@@ -3913,7 +3913,7 @@ L_BA85:
 	ld a,(ix+007h)		;baaf
 	rra			;bab2
 	rra			;bab3
-	ld a,(0e284h)		;bab4
+	ld a,(0e284h)		;bab4   ; lee la x del personaje
 	ld b,(ix+003h)		;bab7
 	jr c,L_BAEA		;baba
 	cp b			;babc
@@ -3921,15 +3921,15 @@ L_BA85:
 	add a,014h		;babf
 	sub b			;bac1
 	jr c,L_BAE5		;bac2
-	ld a,(0e208h)		;bac4
+	ld a,(0e208h)		;bac4   ; lee el mando: lo pulsado
 	and 008h		;bac7
 	jr z,L_BAE5		;bac9
 	dec (ix+006h)		;bacb
 	ret nz			;bace
 	inc (ix+005h)		;bacf
 	ld a,007h		;bad2
-	ld (0e280h),a		;bad4
-	call 04280h		;bad7
+	ld (0e280h),a		;bad4   ; guarda el estado del personaje
+	call 04280h		;bad7   ; pide el sonido 0x21
 L_BADA:
 	xor a			;bada
 	ld (0e299h),a		;badb
@@ -3944,14 +3944,14 @@ L_BAEA:
 	sub 014h		;baed
 	sub b			;baef
 	jr nc,L_BAE5		;baf0
-	ld a,(0e208h)		;baf2
+	ld a,(0e208h)		;baf2   ; lee el mando: lo pulsado
 	and 004h		;baf5
 	jr z,L_BAE5		;baf7
 	dec (ix+006h)		;baf9
 	ret nz			;bafc
 	dec (ix+005h)		;bafd
 	ld a,006h		;bb00
-	ld (0e280h),a		;bb02
+	ld (0e280h),a		;bb02   ; guarda el estado del personaje
 	call L_BADA		;bb05
 	inc (ix+001h)		;bb08
 	jp 04280h		;bb0b
@@ -3991,12 +3991,12 @@ DATA_BB43:
 
 
 L_BB63:
-	ld (0efc0h),hl		;bb63
-	ld (0efc2h),de		;bb66
+	ld (0efc0h),hl		;bb63   ; guarda un dato de paso de la rutina en curso y el byte siguiente (16 bits)
+	ld (0efc2h),de		;bb66   ; guarda la pantalla que se lee del mapa y el byte siguiente (16 bits)
 	ld (0efc4h),bc		;bb6a
 	ld d,(ix+003h)		;bb6e
 	ld e,(ix+002h)		;bb71
-	ld hl,(0efc0h)		;bb74
+	ld hl,(0efc0h)		;bb74   ; lee un dato de paso de la rutina en curso y el byte siguiente (16 bits)
 	call L_BB93		;bb77
 	ld a,(ix+008h)		;bb7a
 	cp 003h		;bb7d
@@ -4005,7 +4005,7 @@ L_BB63:
 	dec b			;bb82
 	dec b			;bb83
 L_BB84:
-	ld hl,(0efc2h)		;bb84
+	ld hl,(0efc2h)		;bb84   ; lee la pantalla que se lee del mapa y el byte siguiente (16 bits)
 	push hl			;bb87
 	push bc			;bb88
 	call L_BB93		;bb89
@@ -4018,17 +4018,17 @@ L_BB93:
 	push de			;bb93
 	ld a,(ix+005h)		;bb94
 	add a,a			;bb97
-	call 0408fh		;bb98
+	call 0408fh		;bb98   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;bb9b
 	push hl			;bb9c
-	call 05767h		;bb9d
+	call 05767h		;bb9d   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop hl			;bba0
 	ld a,d			;bba1
 	add a,008h		;bba2
 	ld d,a			;bba4
 	inc hl			;bba5
 	ld a,(hl)			;bba6
-	call 05767h		;bba7
+	call 05767h		;bba7   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop de			;bbaa
 	ld a,e			;bbab
 	add a,008h		;bbac
@@ -4038,10 +4038,10 @@ L_BBB0:
 	ld a,(ix+001h)		;bbb0
 	and a			;bbb3
 	jr nz,L_BC2F		;bbb4
-	ld a,(0e243h)		;bbb6
+	ld a,(0e243h)		;bbb6   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;bbb9
 	ret nz			;bbbc
-	ld a,(0e280h)		;bbbd
+	ld a,(0e280h)		;bbbd   ; lee el estado del personaje
 	and a			;bbc0
 	jr nz,L_BC10		;bbc1
 	ld a,(ix+008h)		;bbc3
@@ -4049,7 +4049,7 @@ L_BBB0:
 	add a,a			;bbc7
 	add a,a			;bbc8
 	ld b,a			;bbc9
-	ld a,(0e282h)		;bbca
+	ld a,(0e282h)		;bbca   ; lee la y del personaje
 	add a,00fh		;bbcd
 	sub (ix+002h)		;bbcf
 	sub b			;bbd2
@@ -4057,7 +4057,7 @@ L_BBB0:
 	ld a,(ix+007h)		;bbd5
 	rra			;bbd8
 	rra			;bbd9
-	ld a,(0e284h)		;bbda
+	ld a,(0e284h)		;bbda   ; lee la x del personaje
 	ld b,(ix+003h)		;bbdd
 	jr c,L_BC15		;bbe0
 	cp b			;bbe2
@@ -4065,13 +4065,13 @@ L_BBB0:
 	add a,014h		;bbe5
 	sub b			;bbe7
 	jr c,L_BC10		;bbe8
-	ld a,(0e208h)		;bbea
+	ld a,(0e208h)		;bbea   ; lee el mando: lo pulsado
 	and 008h		;bbed
 	jr z,L_BC10		;bbef
 	dec (ix+006h)		;bbf1
 	ret nz			;bbf4
 	ld a,007h		;bbf5
-	ld (0e280h),a		;bbf7
+	ld (0e280h),a		;bbf7   ; guarda el estado del personaje
 L_BBFA:
 	xor a			;bbfa
 	ld (0e299h),a		;bbfb
@@ -4079,7 +4079,7 @@ L_BBFA:
 	inc (ix+005h)		;bc02
 	inc (ix+001h)		;bc05
 	ld (ix+006h),008h		;bc08
-	call 04285h		;bc0c
+	call 04285h		;bc0c   ; pide el sonido 0x22
 	ret			;bc0f
 L_BC10:
 	ld (ix+006h),01eh		;bc10
@@ -4090,13 +4090,13 @@ L_BC15:
 	sub 014h		;bc18
 	sub b			;bc1a
 	jr nc,L_BC10		;bc1b
-	ld a,(0e208h)		;bc1d
+	ld a,(0e208h)		;bc1d   ; lee el mando: lo pulsado
 	and 004h		;bc20
 	jr z,L_BC10		;bc22
 	dec (ix+006h)		;bc24
 	ret nz			;bc27
 	ld a,006h		;bc28
-	ld (0e280h),a		;bc2a
+	ld (0e280h),a		;bc2a   ; guarda el estado del personaje
 	jr L_BBFA		;bc2d
 L_BC2F:
 	dec (ix+006h)		;bc2f
@@ -4107,7 +4107,7 @@ L_BC2F:
 	ld (ix+006h),008h		;bc3d
 	cp 004h		;bc41
 	ret nz			;bc43
-	call 04285h		;bc44
+	call 04285h		;bc44   ; pide el sonido 0x22
 	xor a			;bc47
 	ld (ix+005h),a		;bc48
 	ld (ix+001h),a		;bc4b
@@ -4147,10 +4147,10 @@ L_BC89:
 	ld (ix+006h),01eh		;bc97
 	ret			;bc9b
 L_BC9C:
-	ld a,(0e243h)		;bc9c
+	ld a,(0e243h)		;bc9c   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;bc9f
 	jr nz,L_BCBE		;bca2
-	ld a,(0e284h)		;bca4
+	ld a,(0e284h)		;bca4   ; lee la x del personaje
 	add a,008h		;bca7
 	sub (ix+003h)		;bca9
 	cp 008h		;bcac
@@ -4160,7 +4160,7 @@ L_BC9C:
 	add a,a			;bcb3
 	add a,a			;bcb4
 	ld c,a			;bcb5
-	ld a,(0e282h)		;bcb6
+	ld a,(0e282h)		;bcb6   ; lee la y del personaje
 	sub (ix+002h)		;bcb9
 	cp c			;bcbc
 	ret			;bcbd
@@ -4198,17 +4198,17 @@ DATA_BCE2:
 
 
 L_BD21:
-	ld a,(0e243h)		;bd21
+	ld a,(0e243h)		;bd21   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;bd24
 	ret nz			;bd27
 	ld a,(ix+00ah)		;bd28
 	ld (ix+00bh),a		;bd2b
-	ld a,(0e282h)		;bd2e
+	ld a,(0e282h)		;bd2e   ; lee la y del personaje
 	add a,014h		;bd31
 	sub (ix+002h)		;bd33
 	cp 008h		;bd36
 	jr nc,L_BD46		;bd38
-	ld a,(0e284h)		;bd3a
+	ld a,(0e284h)		;bd3a   ; lee la x del personaje
 	add a,008h		;bd3d
 	sub (ix+003h)		;bd3f
 	cp 020h		;bd42
@@ -4218,7 +4218,7 @@ L_BD46:
 	ld a,(ix+00bh)		;bd4a
 	and a			;bd4d
 	ret z			;bd4e
-	ld a,(0e280h)		;bd4f
+	ld a,(0e280h)		;bd4f   ; lee el estado del personaje
 	and a			;bd52
 	ret nz			;bd53
 	inc (ix+006h)		;bd54
@@ -4238,18 +4238,18 @@ L_BD75:
 	ld (ix+00ah),001h		;bd75
 	ret			;bd79
 L_BD7A:
-	call 0429eh		;bd7a
+	call 0429eh		;bd7a   ; pide el sonido 0x27
 	ld d,(ix+003h)		;bd7d
 	ld e,(ix+002h)		;bd80
 	push ix		;bd83
 	pop hl			;bd85
-	ld a,(0f0f4h)		;bd86
+	ld a,(0f0f4h)		;bd86   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;bd89
 	jr nz,L_BD98		;bd8a
 	ld a,00ch		;bd8c
-	call 0408fh		;bd8e
+	call 0408fh		;bd8e   ; suma A a HL (HL = HL + A)
 	ld bc,00104h		;bd91
-	call 0573bh		;bd94
+	call 0573bh		;bd94   ; un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
 	ret			;bd97
 L_BD98:
 	ld a,l			;bd98
@@ -4261,7 +4261,7 @@ L_BD98:
 L_BDA1:
 	ld bc,02008h		;bda1
 	ld a,001h		;bda4
-	call 05029h		;bda6
+	call 05029h		;bda6   ; copia un rectangulo de la VRAM (orden HMMM): de (H, L) a (D, E), paginas de A
 	ret			;bda9
 
 ; ----------------------------------------------------------------------
@@ -4281,13 +4281,13 @@ L_BDC0:
 	ld b,004h		;bdc6
 L_BDC8:
 	push de			;bdc8
-	ld a,(0f0f4h)		;bdc9
+	ld a,(0f0f4h)		;bdc9   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;bdcc
 	ld a,061h		;bdcd
 	jr z,L_BDD3		;bdcf
 	ld a,0adh		;bdd1
 L_BDD3:
-	call 05767h		;bdd3
+	call 05767h		;bdd3   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop de			;bdd6
 	ld a,d			;bdd7
 	add a,008h		;bdd8
@@ -4309,17 +4309,17 @@ DATA_BDDE:
 
 
 L_BE15:
-	ld hl,0e7c0h		;be15
+	ld hl,0e7c0h		;be15   ; apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
 	ld b,010h		;be18
 L_BE1A:
-	ld a,(0e243h)		;be1a
+	ld a,(0e243h)		;be1a   ; lee la pantalla de la fase (desde 1)
 	cp (hl)			;be1d
 	push bc			;be1e
 	push hl			;be1f
 	call z,L_BE2D		;be20
 	pop hl			;be23
 	ld a,004h		;be24
-	call 0408fh		;be26
+	call 0408fh		;be26   ; suma A a HL (HL = HL + A)
 	pop bc			;be29
 	djnz L_BE1A		;be2a
 	ret			;be2c
@@ -4339,11 +4339,11 @@ L_BE2D:
 	ld a,e			;be3b
 	sub 014h		;be3c
 	ld c,a			;be3e
-	ld a,(0e282h)		;be3f
+	ld a,(0e282h)		;be3f   ; lee la y del personaje
 	sub c			;be42
 	cp b			;be43
 	ret nc			;be44
-	ld a,(0e284h)		;be45
+	ld a,(0e284h)		;be45   ; lee la x del personaje
 	sub d			;be48
 	cp 010h		;be49
 	ret nc			;be4b
@@ -4371,7 +4371,7 @@ L_BE2D:
 	ld (hl),a			;be6b
 	ret			;be6c
 L_BE6D:
-	ld a,(0e280h)		;be6d
+	ld a,(0e280h)		;be6d   ; lee el estado del personaje
 	cp 002h		;be70
 	ret nz			;be72
 	set 5,(hl)		;be73
@@ -4395,7 +4395,7 @@ L_BE76:
 	ld (0eff0h),a		;be8d
 	ld b,a			;be90
 	push bc			;be91
-	call nz,056dch		;be92
+	call nz,056dch		;be92   ; una cosa de 2 x B caracteres de la piramide en (D, E)
 	pop bc			;be95
 	pop de			;be96
 	pop hl			;be97
@@ -4404,7 +4404,7 @@ L_BE76:
 	dec hl			;be9a
 	ld (hl),000h		;be9b
 	ex de,hl			;be9d
-	ld a,(0e243h)		;be9e
+	ld a,(0e243h)		;be9e   ; lee la pantalla de la fase (desde 1)
 	ld d,a			;bea1
 	ld c,002h		;bea2
 	push hl			;bea4
@@ -4425,7 +4425,7 @@ L_BE76:
 	call nz,063edh		;bebb
 	call 096cfh		;bebe
 	call 090f7h		;bec1
-	ld hl,0e282h		;bec4
+	ld hl,0e282h		;bec4   ; apunta a la y del personaje
 	ld a,(hl)			;bec7
 	add a,003h		;bec8
 	and 0f8h		;beca
@@ -4435,12 +4435,12 @@ L_BED0:
 	push hl			;bed0
 	push de			;bed1
 	push af			;bed2
-	call 05767h		;bed3
+	call 05767h		;bed3   ; pinta el caracter A sin su color 0 (p00:5219)
 	ld a,d			;bed6
 	add a,008h		;bed7
 	ld d,a			;bed9
 	pop af			;beda
-	call 05767h		;bedb
+	call 05767h		;bedb   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop de			;bede
 	pop hl			;bedf
 	ld a,e			;bee0

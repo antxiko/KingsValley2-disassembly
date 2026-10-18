@@ -32,3 +32,85 @@ F 0xBF0E 16
 D 0xBF94 0xBFA1 resto_BF94  lo apuntan con el banco puesto p12:BF88 (0xBF94); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BF88 (13 bytes)
 F 0xBF94 16
 # --- fin de los bloques de bloques.py ---
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0xB406 lee la fase (1-60)
+C 0xB40E suma A a HL (HL = HL + A)
+C 0xB42C el despachador de Konami: la tabla va detras del call
+C 0xB438 lee la pantalla de la fase (desde 1)
+C 0xB43D lee el estado del personaje
+C 0xB46D lee la pantalla de la fase (desde 1)
+C 0xB476 pide el sonido 0x2E
+C 0xB486 un dibujo de 16 x 16 de 0xB1D6 en la posicion de 0xEF13 (HMMC)
+C 0xB490 lee la pantalla de la fase (desde 1)
+C 0xB499 lee el mando: lo pulsado
+C 0xB4A3 guarda el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final) y el byte siguiente (16 bits)
+C 0xB4B1 lee la y del personaje
+C 0xB4BE lee la x del personaje
+C 0xB4CB lee la y del personaje
+C 0xB4D8 lee la x del personaje
+C 0xB524 lee la pantalla de la fase (desde 1)
+C 0xB6B0 lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
+C 0xB6BB el despachador de Konami: la tabla va detras del call
+C 0xB6CA pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
+C 0xB6CD los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0xB6D0 la fuente: 0x35 caracteres de 0xAFDD
+C 0xB6D3 las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
+C 0xB6E9 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xB6F2 lee el mando: lo que se acaba de pulsar
+C 0xB704 lee la cuenta de cuadros
+C 0xB709 HL = la palabra A de la tabla de HL
+C 0xB74C lee el mando: lo que se acaba de pulsar
+C 0xB7A2 el despachador de Konami: la tabla va detras del call
+C 0xB7F1 suma A a HL (HL = HL + A)
+C 0xB808 suma A a HL (HL = HL + A)
+C 0xB87A los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0xB880 lee las vidas (BCD)
+C 0xB88E guarda las vidas (BCD)
+C 0xB894 lo mismo, borrando (caracter 0)
+C 0xB89D lee el mando: lo que se acaba de pulsar
+C 0xB8CF apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0xB8D9 apunta a los colores de los sprites (16 bytes por sprite)
+C 0xB920 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
+C 0xB923 los graficos de la lista 0xB7DF (bancos 7-8-9) y la paleta de 0xBA78
+C 0xB926 las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
+C 0xB929 un dibujo de caracteres de 0xBC05 en 0x1830 (13 x 26), con la pantalla apagada
+C 0xB92C los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+C 0xB93B lee el mando: lo que se acaba de pulsar
+C 0xB949 lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
+C 0xB95A pide el sonido 0x32
+C 0xB96A pide el sonido 0x32
+C 0xB987 el despachador de Konami: la tabla va detras del call
+C 0xB9B0 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0xB9BA apunta a los colores de los sprites (16 bytes por sprite)
+C 0xBA1E suma A a DE (DE = DE + A)
+C 0xBA22 guarda la fase (1-60)
+C 0xBA2E guarda la cuenta de cuadros
+C 0xBA32 guarda la marca de fase empezada
+C 0xBA35 con los bancos 1-2-3, llama a 0x5C80 y pone el 12 en 0xA000
+C 0xBA41 lee el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xBA47 con los bancos 1-2-3, llama a 0x5D63 y pone el 12 en 0xA000
+C 0xBA4A lee el estado del personaje
+C 0xBA51 guarda la marca de fase empezada
+C 0xBA58 guarda la marca de borde sin pantalla al otro lado
+C 0xBA5B pasa a la pantalla de al lado al salir por el borde 0xE248 (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xBA5E lee la marca de borde sin pantalla al otro lado
+C 0xBA82 lee la piramide (1-6)
+C 0xBA88 HL = la palabra A de la tabla de HL
+C 0xBA8D suma A a HL (HL = HL + A)
+C 0xBC82 guarda el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
+C 0xBC8B apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
+C 0xBD30 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0xBD3D apunta a los colores de los sprites (16 bytes por sprite)
+C 0xBD4F apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0xBD78 HL = la palabra A de la tabla de HL
+C 0xBD8A HL = la palabra A de la tabla de HL
+C 0xBE01 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0xBE35 apunta a los colores de los sprites (16 bytes por sprite)
+C 0xBE78 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBEB6 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBEFF pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
+C 0xBF05 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBF85 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
+C 0xBF8B pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+# --- fin de las anotaciones de anota.py ---

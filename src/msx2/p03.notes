@@ -50,3 +50,238 @@ F 0xB6AF 16
 D 0xB926 0xB938 resto_B926  lo apuntan con el banco puesto p03:B918 (0xB926); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p03:B918 (18 bytes)
 F 0xB926 16
 # --- fin de los bloques de bloques.py ---
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0xA002 guarda el estado del personaje
+C 0xA00D lee la postura del personaje
+C 0xA012 lee la y del personaje
+C 0xA019 lee la x del personaje
+C 0xA030 guarda hacia donde mira el personaje
+C 0xA03D pide el sonido 0x13
+C 0xA040 apunta a el estado del personaje
+C 0xA04A lee la postura del personaje
+C 0xA04F lee el mando: lo que se acaba de pulsar
+C 0xA06E lee la postura del personaje
+C 0xA072 el despachador de Konami: la tabla va detras del call
+C 0xA093 guarda hacia donde mira el personaje
+C 0xA09B lee la postura del personaje
+C 0xA0A2 guarda el estado del personaje
+C 0xA0B6 lee la x del personaje
+C 0xA0BF lee la y del personaje
+C 0xA0DE guarda hacia donde mira el personaje
+C 0xA101 lee la x del personaje
+C 0xA108 lee la y del personaje
+C 0xA123 guarda hacia donde mira el personaje
+C 0xA15B lee la y del personaje
+C 0xA179 lee la x del personaje
+C 0xA1A2 lee un dato de paso de la rutina en curso
+C 0xA1AB guarda el estado del personaje
+C 0xA1F9 lee la x del personaje
+C 0xA212 lee el mando: lo pulsado
+C 0xA221 lee la y del personaje
+C 0xA225 lee la x del personaje
+C 0xA262 guarda el estado del personaje
+C 0xA270 lee la y del personaje
+C 0xA276 lee la x del personaje
+C 0xA285 guarda el estado del personaje
+C 0xA293 lee el estado del personaje
+C 0xA29C lee el estado del personaje
+C 0xA2B2 lee hacia donde mira el personaje
+C 0xA2B7 guarda hacia donde mira el personaje
+C 0xA2E2 lee la x del personaje
+C 0xA2F0 lee la x del personaje
+C 0xA2F4 lee la y del personaje
+C 0xA2FA guarda la y del personaje
+C 0xA308 guarda el estado del personaje
+C 0xA32E apunta a hacia donde mira el personaje
+C 0xA34C guarda la marca de fase empezada
+C 0xA35D lee la x del personaje
+C 0xA362 guarda la x del personaje
+C 0xA368 guarda el estado del personaje
+C 0xA379 lee la x del personaje
+C 0xA37E guarda la x del personaje
+C 0xA38E apunta a hacia donde mira el personaje
+C 0xA394 guarda la postura del personaje
+C 0xA397 guarda el estado del personaje
+C 0xA3A3 guarda hacia donde mira el personaje
+C 0xA3B3 lee la y del personaje
+C 0xA3BA lee la x del personaje
+C 0xA3E5 lee la x del personaje
+C 0xA3F4 lee la pantalla de la fase (desde 1)
+C 0xA3F8 C = la casilla de la rejilla en la que esta la pantalla A
+C 0xA40A pide el sonido 0x15
+C 0xA414 pide el sonido 0x17
+C 0xA41E pide el sonido 0x18
+C 0xA428 pide el sonido 0x16
+C 0xA433 lee hacia donde mira el personaje
+C 0xA438 guarda hacia donde mira el personaje
+C 0xA442 guarda el estado del personaje
+C 0xA446 lee la y del personaje
+C 0xA45E lee la x del personaje
+C 0xA464 lee la y del personaje
+C 0xA476 lee la x del personaje
+C 0xA47A lee la y del personaje
+C 0xA48F lee la x del personaje
+C 0xA493 lee la y del personaje
+C 0xA4C0 guarda el estado del personaje
+C 0xA4D0 lee la y del personaje
+C 0xA512 lee la y del personaje
+C 0xA518 lee la x del personaje
+C 0xA536 guarda un dato de paso de la rutina en curso
+C 0xA561 guarda un dato de paso de la rutina en curso
+C 0xA565 lee la y del personaje
+C 0xA571 lee la x del personaje
+C 0xA594 lee el estado del personaje
+C 0xA59A lee la y del personaje
+C 0xA5A5 lee el estado del personaje
+C 0xA5AB lee la y del personaje
+C 0xA5B1 lee la x del personaje
+C 0xA5F2 guarda el estado del personaje
+C 0xA5F7 guarda hacia donde mira el personaje
+C 0xA5FB lee la y del personaje
+C 0xA603 lee el mando: lo pulsado
+C 0xA607 lee la y del personaje
+C 0xA624 lee el mando: lo pulsado
+C 0xA62E lee el mando: lo que se acaba de pulsar
+C 0xA653 lee el mando: lo pulsado
+C 0xA65D lee el mando: lo que se acaba de pulsar
+C 0xA67C lee la y del personaje
+C 0xA68F lee la x del personaje
+C 0xA699 guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xA6A4 guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xA6A8 lee el estado del personaje
+C 0xA6B0 guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xA6B9 guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xA6BD lee el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xA6DD el despachador de Konami: la tabla va detras del call
+C 0xA6F2 el despachador de Konami: la tabla va detras del call
+C 0xA6FF lee la pantalla de la fase (desde 1)
+C 0xA764 lee la pantalla de la fase (desde 1)
+C 0xA77D lee la pantalla de la fase (desde 1)
+C 0xA79F lee la pantalla de la fase (desde 1)
+C 0xA83F lee la pantalla de la fase (desde 1)
+C 0xA857 C = la casilla de la rejilla en la que esta la pantalla A
+C 0xA87F lee la cuenta de cuadros
+C 0xA88D lee la pantalla de la fase (desde 1)
+C 0xA893 pide el sonido 0x1C
+C 0xA8A1 el despachador de Konami: la tabla va detras del call
+C 0xA92A lee la postura del personaje
+C 0xA92F lee la pantalla de la fase (desde 1)
+C 0xA936 lee la y del personaje
+C 0xA943 lee la x del personaje
+C 0xA954 pide el sonido 0x35
+C 0xA95D guarda la postura del personaje
+C 0xA99D lee la cuenta de cuadros
+C 0xA9AB lee la pantalla de la fase (desde 1)
+C 0xA9B1 pide el sonido 0x1B
+C 0xA9E1 lee la pantalla de la fase (desde 1)
+C 0xAA0B C = la casilla de la rejilla en la que esta la pantalla A
+C 0xAA44 lee la pantalla de la fase (desde 1)
+C 0xAA6C el despachador de Konami: la tabla va detras del call
+C 0xAA95 guarda hacia donde mira el personaje
+C 0xAA9C guarda la postura del personaje
+C 0xAA9F lee lo que lleva el personaje en la mano
+C 0xAAA5 guarda el estado del personaje
+C 0xAADA pinta el caracter A sin su color 0 (p00:5219)
+C 0xAAF8 lee la pantalla de la fase (desde 1)
+C 0xAB0F el despachador de Konami: la tabla va detras del call
+C 0xAB63 el despachador de Konami: la tabla va detras del call
+C 0xABC0 pinta el caracter A sin su color 0 (p00:5219)
+C 0xABDE lee la pantalla de la fase (desde 1)
+C 0xABFB el despachador de Konami: la tabla va detras del call
+C 0xAC4E lee la x del personaje
+C 0xAC52 guarda la x del personaje
+C 0xACD9 el despachador de Konami: la tabla va detras del call
+C 0xACE4 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xACF1 suma A a DE (DE = DE + A)
+C 0xAD01 suma A a DE (DE = DE + A)
+C 0xAD26 apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
+C 0xAD53 lee la pantalla de la fase (desde 1)
+C 0xAD72 un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
+C 0xAD83 el despachador de Konami: la tabla va detras del call
+C 0xAE26 el despachador de Konami: la tabla va detras del call
+C 0xAE64 lee la pantalla de la fase (desde 1)
+C 0xAE6A pide el sonido 0x25
+C 0xAE6F lee la pantalla de la fase (desde 1)
+C 0xAF1E lee la cuenta de cuadros
+C 0xAFC9 lee la pantalla de la fase (desde 1)
+C 0xB00F lee la pantalla de la fase (desde 1)
+C 0xB09D lee la casilla de la rejilla de la pantalla
+C 0xB0AD suma A a HL (HL = HL + A)
+C 0xB229 lee la casilla de la rejilla de la pantalla
+C 0xB236 lee la x del personaje
+C 0xB245 lee la casilla de la rejilla de la pantalla
+C 0xB253 lee la y del personaje
+C 0xB294 lee la pantalla de la fase (desde 1)
+C 0xB2AD el despachador de Konami: la tabla va detras del call
+C 0xB2BA lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xB2D6 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xB500 suma A a HL (HL = HL + A)
+C 0xB548 lee la pantalla de la fase (desde 1)
+C 0xB62A lee la x del personaje
+C 0xB636 lee la cuenta de cuadros
+C 0xB679 suma A a DE (DE = DE + A)
+C 0xB691 el despachador de Konami: la tabla va detras del call
+C 0xB6C5 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xB6E0 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xB6F2 suma A a HL (HL = HL + A)
+C 0xB7BF lee la pantalla de la fase (desde 1)
+C 0xB8BB lee la pantalla de la fase (desde 1)
+C 0xB8F6 lee la cuenta de cuadros
+C 0xB91B suma A a HL (HL = HL + A)
+C 0xB99B lee la pantalla de la fase (desde 1)
+C 0xB9D5 suma A a HL (HL = HL + A)
+C 0xB9E9 lee la pantalla de la fase (desde 1)
+C 0xBA1C suma A a HL (HL = HL + A)
+C 0xBA90 lee la pantalla de la fase (desde 1)
+C 0xBA97 lee el estado del personaje
+C 0xBAA4 lee la y del personaje
+C 0xBAB4 lee la x del personaje
+C 0xBAC4 lee el mando: lo pulsado
+C 0xBAD4 guarda el estado del personaje
+C 0xBAD7 pide el sonido 0x21
+C 0xBAF2 lee el mando: lo pulsado
+C 0xBB02 guarda el estado del personaje
+C 0xBB63 guarda un dato de paso de la rutina en curso y el byte siguiente (16 bits)
+C 0xBB66 guarda la pantalla que se lee del mapa y el byte siguiente (16 bits)
+C 0xBB74 lee un dato de paso de la rutina en curso y el byte siguiente (16 bits)
+C 0xBB84 lee la pantalla que se lee del mapa y el byte siguiente (16 bits)
+C 0xBB98 suma A a HL (HL = HL + A)
+C 0xBB9D pinta el caracter A sin su color 0 (p00:5219)
+C 0xBBA7 pinta el caracter A sin su color 0 (p00:5219)
+C 0xBBB6 lee la pantalla de la fase (desde 1)
+C 0xBBBD lee el estado del personaje
+C 0xBBCA lee la y del personaje
+C 0xBBDA lee la x del personaje
+C 0xBBEA lee el mando: lo pulsado
+C 0xBBF7 guarda el estado del personaje
+C 0xBC0C pide el sonido 0x22
+C 0xBC1D lee el mando: lo pulsado
+C 0xBC2A guarda el estado del personaje
+C 0xBC44 pide el sonido 0x22
+C 0xBC9C lee la pantalla de la fase (desde 1)
+C 0xBCA4 lee la x del personaje
+C 0xBCB6 lee la y del personaje
+C 0xBD21 lee la pantalla de la fase (desde 1)
+C 0xBD2E lee la y del personaje
+C 0xBD3A lee la x del personaje
+C 0xBD4F lee el estado del personaje
+C 0xBD7A pide el sonido 0x27
+C 0xBD86 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xBD8E suma A a HL (HL = HL + A)
+C 0xBD94 un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
+C 0xBDA6 copia un rectangulo de la VRAM (orden HMMM): de (H, L) a (D, E), paginas de A
+C 0xBDC9 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xBDD3 pinta el caracter A sin su color 0 (p00:5219)
+C 0xBE15 apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
+C 0xBE1A lee la pantalla de la fase (desde 1)
+C 0xBE26 suma A a HL (HL = HL + A)
+C 0xBE3F lee la y del personaje
+C 0xBE45 lee la x del personaje
+C 0xBE6D lee el estado del personaje
+C 0xBE92 una cosa de 2 x B caracteres de la piramide en (D, E)
+C 0xBE9E lee la pantalla de la fase (desde 1)
+C 0xBEC4 apunta a la y del personaje
+C 0xBED3 pinta el caracter A sin su color 0 (p00:5219)
+C 0xBEDB pinta el caracter A sin su color 0 (p00:5219)
+# --- fin de las anotaciones de anota.py ---

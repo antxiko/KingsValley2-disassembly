@@ -42,14 +42,14 @@ L_8016:
 	ret			;8017
 L_8018:
 	call L_871B		;8018
-	ld a,(0e207h)		;801b
+	ld a,(0e207h)		;801b   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;801e
 	ret z			;8020
 	and 010h		;8021
-	ld hl,0e282h		;8023
+	ld hl,0e282h		;8023   ; apunta a la y del personaje
 	jr z,L_8039		;8026
 	call 07f39h		;8028
-	ld (0e243h),a		;802b
+	ld (0e243h),a		;802b   ; guarda la pantalla de la fase (desde 1)
 	call 07f2ah		;802e
 	ld (hl),e			;8031
 	inc hl			;8032
@@ -58,7 +58,7 @@ L_8018:
 	ld a,001h		;8035
 	jr L_8043		;8037
 L_8039:
-	ld a,(0e243h)		;8039
+	ld a,(0e243h)		;8039   ; lee la pantalla de la fase (desde 1)
 	ld b,a			;803c
 	call 07f39h		;803d
 	cp b			;8040
@@ -76,7 +76,7 @@ L_8046:
 	and a			;8054
 	ld a,0e0h		;8055
 	jr z,L_805E		;8057
-	ld a,(0e282h)		;8059
+	ld a,(0e282h)		;8059   ; lee la y del personaje
 	sub 008h		;805c
 L_805E:
 	ld (hl),a			;805e
@@ -90,7 +90,7 @@ L_805E:
 	inc hl			;8067
 	inc de			;8068
 	exx			;8069
-	ld a,(0e284h)		;806a
+	ld a,(0e284h)		;806a   ; lee la x del personaje
 	ld (hl),a			;806d
 	ld (de),a			;806e
 	inc hl			;806f
@@ -127,7 +127,7 @@ L_805E:
 	jp 07c04h		;80a4
 L_80A7:
 	call L_871B		;80a7
-	ld a,(0e207h)		;80aa
+	ld a,(0e207h)		;80aa   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;80ad
 	ret z			;80af
 	and 010h		;80b0
@@ -141,13 +141,13 @@ L_80A7:
 	pop hl			;80bf
 	ret z			;80c0
 	inc (hl)			;80c1
-	ld hl,0e2c0h		;80c2
+	ld hl,0e2c0h		;80c2   ; apunta a las fichas de 0xE2C0 (8 x 5 bytes)
 L_80C5:
 	ld a,(hl)			;80c5
 	and a			;80c6
 	jr z,L_80D0		;80c7
 	ld a,005h		;80c9
-	call 0408fh		;80cb
+	call 0408fh		;80cb   ; suma A a HL (HL = HL + A)
 	jr L_80C5		;80ce
 L_80D0:
 	ld a,(0e261h)		;80d0
@@ -166,7 +166,7 @@ L_80D0:
 	ld (hl),d			;80e5
 	jr L_811F		;80e6
 L_80E8:
-	ld hl,0e2c0h		;80e8
+	ld hl,0e2c0h		;80e8   ; apunta a las fichas de 0xE2C0 (8 x 5 bytes)
 	ld b,008h		;80eb
 L_80ED:
 	ld a,(hl)			;80ed
@@ -178,7 +178,7 @@ L_80ED:
 	ret z			;80f6
 L_80F7:
 	ld a,005h		;80f7
-	call 0408fh		;80f9
+	call 0408fh		;80f9   ; suma A a HL (HL = HL + A)
 	djnz L_80ED		;80fc
 	ld a,001h		;80fe
 	and a			;8100
@@ -187,7 +187,7 @@ L_8102:
 	ld a,(hl)			;8102
 	and a			;8103
 	ret z			;8104
-	ld hl,0e2c0h		;8105
+	ld hl,0e2c0h		;8105   ; apunta a las fichas de 0xE2C0 (8 x 5 bytes)
 	ld b,008h		;8108
 L_810A:
 	ld a,(hl)			;810a
@@ -201,10 +201,10 @@ L_810A:
 	pop hl			;8117
 L_8118:
 	ld a,005h		;8118
-	call 0408fh		;811a
+	call 0408fh		;811a   ; suma A a HL (HL = HL + A)
 	djnz L_810A		;811d
 L_811F:
-	ld hl,0e2c0h		;811f
+	ld hl,0e2c0h		;811f   ; apunta a las fichas de 0xE2C0 (8 x 5 bytes)
 	ld b,008h		;8122
 	ld de,0e840h		;8124
 L_8127:
@@ -221,7 +221,7 @@ L_8127:
 	exx			;8134
 	pop de			;8135
 	ld a,004h		;8136
-	call 04094h		;8138
+	call 04094h		;8138   ; suma A a DE (DE = DE + A)
 	exx			;813b
 	push bc			;813c
 	push hl			;813d
@@ -257,7 +257,7 @@ L_814B:
 	add a,a			;815d
 	add a,c			;815e
 	ld hl,086b9h		;815f
-	call 0408fh		;8162
+	call 0408fh		;8162   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;8165
 	ld (de),a			;8166
 	exx			;8167
@@ -269,7 +269,7 @@ L_814B:
 	inc hl			;816e
 	ld c,(hl)			;816f
 	ld a,e			;8170
-	ld de,0d200h		;8171
+	ld de,0d200h		;8171   ; apunta a los colores de los sprites (16 bytes por sprite)
 	and 07ch		;8174
 	ld h,000h		;8176
 	ld l,a			;8178
@@ -293,9 +293,9 @@ L_814B:
 	pop bc			;8190
 L_8191:
 	ld a,005h		;8191
-	call 0408fh		;8193
+	call 0408fh		;8193   ; suma A a HL (HL = HL + A)
 	ld a,008h		;8196
-	call 04094h		;8198
+	call 04094h		;8198   ; suma A a DE (DE = DE + A)
 	djnz L_8127		;819b
 	ret			;819d
 L_819E:
@@ -320,7 +320,7 @@ L_81B0:
 	ret			;81b6
 L_81B7:
 	call L_8708		;81b7
-	ld a,(0e207h)		;81ba
+	ld a,(0e207h)		;81ba   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;81bd
 	ret z			;81bf
 	and 010h		;81c0
@@ -343,7 +343,7 @@ L_81DE:
 	and a			;81df
 	jr z,L_81E9		;81e0
 	ld a,010h		;81e2
-	call 0408fh		;81e4
+	call 0408fh		;81e4   ; suma A a HL (HL = HL + A)
 	jr L_81DE		;81e7
 L_81E9:
 	push hl			;81e9
@@ -393,7 +393,7 @@ L_8234:
 	ret			;823c
 L_823D:
 	dec a			;823d
-	call 04099h		;823e
+	call 04099h		;823e   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_8241: 5 destinos del despachador p00:4099 (call en p02:823E, el
@@ -453,7 +453,7 @@ L_829C:
 	ld b,(ix+008h)		;82a2
 L_82A5:
 	ld a,0feh		;82a5
-	call 0576ah		;82a7
+	call 0576ah		;82a7   ; pinta el caracter A tal cual (p00:5207)
 	ld a,e			;82aa
 	add a,008h		;82ab
 	ld e,a			;82ad
@@ -486,7 +486,7 @@ L_82D8:
 	ld (ix+000h),000h		;82db
 	dec (hl)			;82df
 	ld hl,082f2h		;82e0
-	call 0408fh		;82e3
+	call 0408fh		;82e3   ; suma A a HL (HL = HL + A)
 	ld c,(hl)			;82e6
 	ld b,(ix+008h)		;82e7
 	call 07f2ah		;82ea
@@ -516,7 +516,7 @@ L_82F8:
 	ret			;830b
 L_830C:
 	ld a,(0e261h)		;830c
-	call 04099h		;830f
+	call 04099h		;830f   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_8312: 7 destinos del despachador p00:4099 (call en p02:830F, el
@@ -590,11 +590,11 @@ L_8371:
 	dec a			;8375
 	ld l,a			;8376
 	ld h,000h		;8377
-	call 05d32h		;8379
+	call 05d32h		;8379   ; HL = 0xE900 + HL x 0xC0: el mapa de la pantalla HL (0-5)
 	pop de			;837c
 	push hl			;837d
 	ex de,hl			;837e
-	call 04d7bh		;837f
+	call 04d7bh		;837f   ; pasa la posicion de caracter de HL a direccion de la VRAM
 	or a			;8382
 	ld de,03800h		;8383
 	sbc hl,de		;8386
@@ -605,7 +605,7 @@ L_8371:
 	rr l		;838f
 	ld a,l			;8391
 	pop hl			;8392
-	call 0408fh		;8393
+	call 0408fh		;8393   ; suma A a HL (HL = HL + A)
 	ld a,c			;8396
 	and 003h		;8397
 	inc a			;8399
@@ -628,13 +628,13 @@ L_83A5:
 	pop hl			;83b0
 	ret z			;83b1
 	inc (hl)			;83b2
-	ld hl,0e7c0h		;83b3
+	ld hl,0e7c0h		;83b3   ; apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
 L_83B6:
 	ld a,(hl)			;83b6
 	and a			;83b7
 	jr z,L_83C1		;83b8
 	ld a,004h		;83ba
-	call 0408fh		;83bc
+	call 0408fh		;83bc   ; suma A a HL (HL = HL + A)
 	jr L_83B6		;83bf
 L_83C1:
 	ld d,h			;83c1
@@ -664,7 +664,7 @@ L_83C6:
 	pop hl			;83e2
 L_83E3:
 	ld c,001h		;83e3
-	ld ix,0e7c0h		;83e5
+	ld ix,0e7c0h		;83e5   ; apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
 	ld b,010h		;83e9
 L_83EB:
 	push bc			;83eb
@@ -696,7 +696,7 @@ L_840A:
 	djnz L_840A		;8417
 	ret			;8419
 L_841A:
-	ld ix,0e7c0h		;841a
+	ld ix,0e7c0h		;841a   ; apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
 	ld b,010h		;841e
 L_8420:
 	ld a,(ix+000h)		;8420
@@ -715,7 +715,7 @@ L_8435:
 	ld a,(0e26ch)		;8435
 	and a			;8438
 	ret z			;8439
-	ld ix,0e7c0h		;843a
+	ld ix,0e7c0h		;843a   ; apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
 	ld b,010h		;843e
 L_8440:
 	push bc			;8440
@@ -749,7 +749,7 @@ L_846A:
 	jp L_83FE		;8474
 L_8477:
 	call L_871B		;8477
-	ld a,(0e207h)		;847a
+	ld a,(0e207h)		;847a   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;847d
 	ret z			;847f
 	and 010h		;8480
@@ -771,7 +771,7 @@ L_849A:
 	and a			;849b
 	jr z,L_84A5		;849c
 	ld a,008h		;849e
-	call 0408fh		;84a0
+	call 0408fh		;84a0   ; suma A a HL (HL = HL + A)
 	jr L_849A		;84a3
 L_84A5:
 	ld a,(0e261h)		;84a5
@@ -807,7 +807,7 @@ L_84C5:
 	pop hl			;84d3
 L_84D4:
 	ld a,008h		;84d4
-	call 0408fh		;84d6
+	call 0408fh		;84d6   ; suma A a HL (HL = HL + A)
 	pop bc			;84d9
 	djnz L_84C5		;84da
 	ret			;84dc
@@ -823,7 +823,7 @@ L_84EF:
 	ld bc,00202h		;84ef
 	push bc			;84f2
 	push de			;84f3
-	call 05737h		;84f4
+	call 05737h		;84f4   ; un rectangulo de caracteres, copiandolos tal cual (HMMM)
 	pop hl			;84f7
 	pop bc			;84f8
 	call 07f39h		;84f9
@@ -843,7 +843,7 @@ L_8506:
 	ret z			;850f
 L_8510:
 	ld a,008h		;8510
-	call 0408fh		;8512
+	call 0408fh		;8512   ; suma A a HL (HL = HL + A)
 	djnz L_8506		;8515
 	ld a,001h		;8517
 	and a			;8519
@@ -876,7 +876,7 @@ L_8537:
 	jp 0408fh		;853c
 L_853F:
 	call L_871B		;853f
-	ld a,(0e207h)		;8542
+	ld a,(0e207h)		;8542   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;8545
 	ret z			;8547
 	and 010h		;8548
@@ -892,13 +892,13 @@ L_8550:
 	ret nc			;855b
 	ld a,(hl)			;855c
 	inc (hl)			;855d
-	ld hl,0e700h		;855e
+	ld hl,0e700h		;855e   ; apunta a la tabla de colores de los graficos que se cargan
 L_8561:
 	ld a,(hl)			;8561
 	and a			;8562
 	jr z,L_856C		;8563
 	ld a,008h		;8565
-	call 0408fh		;8567
+	call 0408fh		;8567   ; suma A a HL (HL = HL + A)
 	jr L_8561		;856a
 L_856C:
 	ld (hl),001h		;856c
@@ -915,7 +915,7 @@ L_857C:
 	ld a,(hl)			;857c
 	and a			;857d
 	ret z			;857e
-	ld hl,0e700h		;857f
+	ld hl,0e700h		;857f   ; apunta a la tabla de colores de los graficos que se cargan
 	ld b,010h		;8582
 L_8584:
 	push bc			;8584
@@ -930,7 +930,7 @@ L_8584:
 	pop hl			;8592
 L_8593:
 	ld a,008h		;8593
-	call 0408fh		;8595
+	call 0408fh		;8595   ; suma A a HL (HL = HL + A)
 	pop bc			;8598
 	djnz L_8584		;8599
 	ret			;859b
@@ -963,7 +963,7 @@ L_85C2:
 	ld bc,00202h		;85c2
 	push bc			;85c5
 	push de			;85c6
-	call 05737h		;85c7
+	call 05737h		;85c7   ; un rectangulo de caracteres, copiandolos tal cual (HMMM)
 	pop hl			;85ca
 	pop bc			;85cb
 	call 07f39h		;85cc
@@ -972,7 +972,7 @@ L_85C2:
 	jp 063edh		;85d1
 L_85D4:
 	call L_871B		;85d4
-	ld a,(0e207h)		;85d7
+	ld a,(0e207h)		;85d7   ; lee el mando: lo que se acaba de pulsar
 	and 030h		;85da
 	ret z			;85dc
 	and 010h		;85dd
@@ -997,7 +997,7 @@ L_8604:
 	ld bc,00404h		;8604
 	push de			;8607
 	push bc			;8608
-	call 05737h		;8609
+	call 05737h		;8609   ; un rectangulo de caracteres, copiandolos tal cual (HMMM)
 	pop bc			;860c
 	pop hl			;860d
 L_860E:
@@ -1030,7 +1030,7 @@ L_8633:
 	ldir		;863e
 	ret			;8640
 L_8641:
-	ld hl,0e800h		;8641
+	ld hl,0e800h		;8641   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld a,(0e264h)		;8644
 	add a,a			;8647
 	add a,a			;8648
@@ -1045,16 +1045,16 @@ L_8641:
 	inc hl			;8653
 	ld (hl),01ch		;8654
 	inc hl			;8656
-	ld a,(0e203h)		;8657
+	ld a,(0e203h)		;8657   ; lee la cuenta de cuadros
 	and 008h		;865a
 	ld a,007h		;865c
 	jr z,L_8661		;865e
 	xor a			;8660
 L_8661:
-	ld hl,0d200h		;8661
+	ld hl,0d200h		;8661   ; apunta a los colores de los sprites (16 bytes por sprite)
 	jp 07c04h		;8664
 L_8667:
-	ld a,(0e20ch)		;8667
+	ld a,(0e20ch)		;8667   ; lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
 	rla			;866a
 	rla			;866b
 	jr c,L_8676		;866c
@@ -1069,10 +1069,10 @@ L_8676:
 L_867D:
 	ld a,001h		;867d
 	call L_886A		;867f
-	call 041bfh		;8682
+	call 041bfh		;8682   ; pone el banco 13 en 0xA000
 	ld hl,0bc54h		;8685
-	call 051d0h		;8688
-	call 0418ah		;868b
+	call 051d0h		;8688   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;868b   ; pone los bancos 1-2-3 (el juego)
 	ld de,0a090h		;868e
 	ld hl,0e788h		;8691
 	ld bc,00606h		;8694
@@ -1089,7 +1089,7 @@ L_869A:
 	ld c,a			;86a2
 L_86A3:
 	ld a,c			;86a3
-	call 05207h		;86a4
+	call 05207h		;86a4   ; pinta el caracter A en (D, E): lo copia de la pagina 1 con HMMM
 	ld a,d			;86a7
 	add a,008h		;86a8
 	ld d,a			;86aa
@@ -1123,8 +1123,8 @@ DATA_resto_86B9:
 
 L_86DD:
 	ld hl,0e21ch		;86dd
-	ld de,0e207h		;86e0
-	ld bc,0e208h		;86e3
+	ld de,0e207h		;86e0   ; apunta a el mando: lo que se acaba de pulsar
+	ld bc,0e208h		;86e3   ; apunta a el mando: lo pulsado
 	ld a,(hl)			;86e6
 	cp 02dh		;86e7
 	jr nc,L_86F6		;86e9
@@ -1182,7 +1182,7 @@ L_871F:
 	ld hl,0e264h		;872f
 	ld de,0e265h		;8732
 	ld bc,(0e27ch)		;8735
-	ld a,(0e207h)		;8739
+	ld a,(0e207h)		;8739   ; lee el mando: lo que se acaba de pulsar
 	rra			;873c
 	jr c,L_8757		;873d
 	rra			;873f
@@ -1191,7 +1191,7 @@ L_871F:
 	jr c,L_8778		;8743
 	rra			;8745
 	ret nc			;8746
-	call 042cbh		;8747
+	call 042cbh		;8747   ; pide el sonido 0x32
 	ex de,hl			;874a
 	ld a,(hl)			;874b
 	exx			;874c
@@ -1206,7 +1206,7 @@ L_871F:
 	ld (hl),a			;8755
 	ret			;8756
 L_8757:
-	call 042cbh		;8757
+	call 042cbh		;8757   ; pide el sonido 0x32
 	ld a,(hl)			;875a
 	exx			;875b
 	sub c			;875c
@@ -1223,7 +1223,7 @@ L_8766:
 	dec (hl)			;8767
 	ret			;8768
 L_8769:
-	call 042cbh		;8769
+	call 042cbh		;8769   ; pide el sonido 0x32
 	ld a,(hl)			;876c
 	exx			;876d
 	add a,c			;876e
@@ -1237,7 +1237,7 @@ L_8769:
 	ld (hl),a			;8776
 	ret			;8777
 L_8778:
-	call 042cbh		;8778
+	call 042cbh		;8778   ; pide el sonido 0x32
 	ex de,hl			;877b
 	ld a,(hl)			;877c
 	exx			;877d
@@ -1255,7 +1255,7 @@ L_8788:
 	dec (hl)			;8789
 	ret			;878a
 L_878B:
-	ld hl,0e7c0h		;878b
+	ld hl,0e7c0h		;878b   ; apunta a la lista de las columnas de la tabla 0x60F0 (4 bytes: pantalla, y, x, alto | 0x80)
 	ld b,010h		;878e
 L_8790:
 	push bc			;8790
@@ -1266,7 +1266,7 @@ L_8790:
 	pop hl			;8797
 	pop bc			;8798
 	ld a,004h		;8799
-	call 0408fh		;879b
+	call 0408fh		;879b   ; suma A a HL (HL = HL + A)
 	djnz L_8790		;879e
 	ret			;87a0
 L_87A1:
@@ -1289,7 +1289,7 @@ L_87B5:
 	ld hl,0e788h		;87b5
 	ld bc,03001h		;87b8
 	xor a			;87bb
-	ld (0efc0h),a		;87bc
+	ld (0efc0h),a		;87bc   ; guarda un dato de paso de la rutina en curso
 	ld (0efc1h),a		;87bf
 L_87C2:
 	ld a,(hl)			;87c2
@@ -1308,20 +1308,20 @@ L_87D3:
 	inc hl			;87d3
 	djnz L_87C2		;87d4
 L_87D6:
-	ld a,(0efc0h)		;87d6
-	ld hl,0ed80h		;87d9
-	ld de,0ed90h		;87dc
+	ld a,(0efc0h)		;87d6   ; lee un dato de paso de la rutina en curso
+	ld hl,0ed80h		;87d9   ; apunta a los saltos entre pantallas al salir por arriba
+	ld de,0ed90h		;87dc   ; apunta a los saltos al salir por abajo
 	call L_87EB		;87df
 	ld a,(0efc1h)		;87e2
-	ld hl,0eda0h		;87e5
-	ld de,0edb0h		;87e8
+	ld hl,0eda0h		;87e5   ; apunta a los saltos al salir por la izquierda
+	ld de,0edb0h		;87e8   ; apunta a los saltos al salir por la derecha
 L_87EB:
 	add a,a			;87eb
 	ld b,a			;87ec
-	call 0408fh		;87ed
+	call 0408fh		;87ed   ; suma A a HL (HL = HL + A)
 	ld (hl),0ffh		;87f0
 	ld a,b			;87f2
-	call 04094h		;87f3
+	call 04094h		;87f3   ; suma A a DE (DE = DE + A)
 	ld a,0ffh		;87f6
 	ld (de),a			;87f8
 	ret			;87f9
@@ -1338,10 +1338,10 @@ L_87FA:
 	jr nz,L_8819		;8806
 	push hl			;8808
 	push bc			;8809
-	ld bc,0ed80h		;880a
+	ld bc,0ed80h		;880a   ; apunta a los saltos entre pantallas al salir por arriba
 	ld de,0ed91h		;880d
 	call L_882A		;8810
-	ld hl,0efc0h		;8813
+	ld hl,0efc0h		;8813   ; apunta a un dato de paso de la rutina en curso
 	inc (hl)			;8816
 	pop bc			;8817
 	pop hl			;8818
@@ -1349,14 +1349,14 @@ L_8819:
 	ld a,b			;8819
 	and a			;881a
 	ret nz			;881b
-	ld bc,0eda0h		;881c
+	ld bc,0eda0h		;881c   ; apunta a los saltos al salir por la izquierda
 	ld de,0edb1h		;881f
 	call L_884D		;8822
 	ld hl,0efc1h		;8825
 	inc (hl)			;8828
 	ret			;8829
 L_882A:
-	ld a,(0efc0h)		;882a
+	ld a,(0efc0h)		;882a   ; lee un dato de paso de la rutina en curso
 	add a,a			;882d
 	push af			;882e
 	add a,c			;882f
@@ -1413,14 +1413,14 @@ L_885C:
 	ret			;8869
 L_886A:
 	push af			;886a
-	call 04ebeh		;886b
+	call 04ebeh		;886b   ; apaga la pantalla (bit 6 de R#1 a cero)
 	pop af			;886e
-	call 041bfh		;886f
+	call 041bfh		;886f   ; pone el banco 13 en 0xA000
 	ld hl,0bb38h		;8872
-	call 04d4ch		;8875
+	call 04d4ch		;8875   ; HL = la palabra A de la tabla de HL
 	ld de,00000h		;8878
 	ld b,060h		;887b
-	ld a,(0f0f4h)		;887d
+	ld a,(0f0f4h)		;887d   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;8880
 	ld c,062h		;8881
 	jr z,L_8887		;8883
@@ -1434,7 +1434,7 @@ L_888C:
 	rla			;888c
 	push af			;888d
 	ld a,c			;888e
-	call c,05767h		;888f
+	call c,05767h		;888f   ; pinta el caracter A sin su color 0 (p00:5219)
 	ld a,d			;8892
 	add a,008h		;8893
 	ld d,a			;8895
@@ -1449,13 +1449,13 @@ L_889C:
 	inc hl			;88a0
 	pop bc			;88a1
 	djnz L_8887		;88a2
-	call 0418ah		;88a4
-	call 04eb1h		;88a7
+	call 0418ah		;88a4   ; pone los bancos 1-2-3 (el juego)
+	call 04eb1h		;88a7   ; enciende la pantalla (bit 6 de R#1)
 	ret			;88aa
 L_88AB:
 	ld a,(0e25bh)		;88ab
 	dec a			;88ae
-	call 04099h		;88af
+	call 04099h		;88af   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_88B2: 6 destinos del despachador p00:4099 (call en p02:88AF, el
@@ -1472,12 +1472,12 @@ DATA_tabla_88B2:
 
 L_88BE:
 	call L_8908		;88be
-	call 05bebh		;88c1
+	call 05bebh		;88c1   ; el marcador: la fuente con color 0x0B y los letreros de 0xAA89
 	xor a			;88c4
 	call L_886A		;88c5
-	call 041bfh		;88c8
+	call 041bfh		;88c8   ; pone el banco 13 en 0xA000
 	ld hl,0be14h		;88cb
-	call 051d0h		;88ce
+	call 051d0h		;88ce   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld a,(0f0f9h)		;88d1
 	rra			;88d4
 	ld de,06060h		;88d5
@@ -1497,7 +1497,7 @@ L_88E9:
 	ld hl,0be3ah		;88eb
 	ld c,0ffh		;88ee
 	call c,051dah		;88f0
-	call 0418ah		;88f3
+	call 0418ah		;88f3   ; pone los bancos 1-2-3 (el juego)
 	xor a			;88f6
 	ld (0e26dh),a		;88f7
 	ld (0e26eh),a		;88fa
@@ -1522,7 +1522,7 @@ L_8913:
 L_8917:
 	call L_897A		;8917
 	ld hl,0e26dh		;891a
-	ld a,(0e207h)		;891d
+	ld a,(0e207h)		;891d   ; lee el mando: lo que se acaba de pulsar
 	rra			;8920
 	jr c,L_8973		;8921
 	rra			;8923
@@ -1531,13 +1531,13 @@ L_8917:
 	rra			;8927
 	rra			;8928
 	ret nc			;8929
-	call 05d41h		;892a
+	call 05d41h		;892a   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	call L_8903		;892d
 	call L_89CD		;8930
-	call 04e98h		;8933
+	call 04e98h		;8933   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	xor a			;8936
 	call L_886A		;8937
-	call 041bfh		;893a
+	call 041bfh		;893a   ; pone el banco 13 en 0xA000
 	ld a,(0f0f8h)		;893d
 	ld hl,0be26h		;8940
 	and a			;8943
@@ -1551,7 +1551,7 @@ L_894F:
 	ld c,0ffh		;8952
 	call 051dah		;8954
 	ld hl,0be82h		;8957
-	call 051d0h		;895a
+	call 051d0h		;895a   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	jp 0418ah		;895d
 L_8960:
 	ld a,(0f0f9h)		;8960
@@ -1574,7 +1574,7 @@ L_8973:
 	dec (hl)			;8976
 	jp 042cbh		;8977
 L_897A:
-	ld hl,0e800h		;897a
+	ld hl,0e800h		;897a   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld a,(0e26dh)		;897d
 	add a,a			;8980
 	add a,a			;8981
@@ -1589,10 +1589,10 @@ L_897A:
 	inc hl			;898d
 L_898E:
 	ld (hl),008h		;898e
-	ld a,(0f0f4h)		;8990
+	ld a,(0f0f4h)		;8990   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;8993
 	ret z			;8994
-	ld hl,0d200h		;8995
+	ld hl,0d200h		;8995   ; apunta a los colores de los sprites (16 bytes por sprite)
 	ld de,0d201h		;8998
 	ld bc,00010h		;899b
 	ld (hl),007h		;899e
@@ -1601,16 +1601,16 @@ L_898E:
 L_89A3:
 	xor a			;89a3
 	call L_886A		;89a4
-	call 041bfh		;89a7
+	call 041bfh		;89a7   ; pone el banco 13 en 0xA000
 	ld hl,0be5ch		;89aa
-	call 051d0h		;89ad
+	call 051d0h		;89ad   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld hl,0be44h		;89b0
-	call 051d0h		;89b3
+	call 051d0h		;89b3   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld hl,0be4ch		;89b6
-	call 051d0h		;89b9
+	call 051d0h		;89b9   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld hl,0be54h		;89bc
-	call 051d0h		;89bf
-	call 0418ah		;89c2
+	call 051d0h		;89bf   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;89c2   ; pone los bancos 1-2-3 (el juego)
 	ld a,003h		;89c5
 	ld (0f0e5h),a		;89c7
 	jp L_8903		;89ca
@@ -1640,17 +1640,17 @@ L_89E9:
 	jp nz,L_8B50		;89ef
 	ld a,0e0h		;89f2
 	ld a,(0edeeh)		;89f4
-	call 04e98h		;89f7
+	call 04e98h		;89f7   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	ld a,(0f0f8h)		;89fa
 	cp 002h		;89fd
 	jr z,L_89A3		;89ff
 	xor a			;8a01
 	call L_886A		;8a02
 	call L_8903		;8a05
-	call 041bfh		;8a08
+	call 041bfh		;8a08   ; pone el banco 13 en 0xA000
 	ld hl,0bde9h		;8a0b
-	call 051d0h		;8a0e
-	call 0418ah		;8a11
+	call 051d0h		;8a0e   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;8a11   ; pone los bancos 1-2-3 (el juego)
 L_8A14:
 	ld de,06058h		;8a14
 L_8A17:
@@ -1669,7 +1669,7 @@ L_8A27:
 	ld a,b			;8a27
 	push hl			;8a28
 	push de			;8a29
-	call 0576ah		;8a2a
+	call 0576ah		;8a2a   ; pinta el caracter A tal cual (p00:5207)
 	pop de			;8a2d
 	pop hl			;8a2e
 	ld a,d			;8a2f
@@ -1721,27 +1721,27 @@ L_8A73:
 	cp 007h		;8a79
 	jr nc,L_8A83		;8a7b
 	push af			;8a7d
-	call 042cbh		;8a7e
+	call 042cbh		;8a7e   ; pide el sonido 0x32
 	pop af			;8a81
 	inc (hl)			;8a82
 L_8A83:
 	ld hl,0e270h		;8a83
-	call 0408fh		;8a86
+	call 0408fh		;8a86   ; suma A a HL (HL = HL + A)
 	ld (hl),b			;8a89
 	call L_8A14		;8a8a
 L_8A8D:
-	ld a,(0e207h)		;8a8d
+	ld a,(0e207h)		;8a8d   ; lee el mando: lo que se acaba de pulsar
 	rra			;8a90
 	rra			;8a91
 	rra			;8a92
 	jr c,L_8AB1		;8a93
 	rra			;8a95
 	jr c,L_8AA6		;8a96
-	ld a,(0e20ch)		;8a98
+	ld a,(0e20ch)		;8a98   ; lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
 	rla			;8a9b
 	ret nc			;8a9c
-	call 05d41h		;8a9d
-	call 041e0h		;8aa0
+	call 05d41h		;8a9d   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call 041e0h		;8aa0   ; pide el sonido 1
 	jp L_8903		;8aa3
 L_8AA6:
 	ld hl,0e26eh		;8aa6
@@ -1758,7 +1758,7 @@ L_8AB1:
 	dec (hl)			;8ab7
 	jp 042cbh		;8ab8
 L_8ABB:
-	ld hl,0e800h		;8abb
+	ld hl,0e800h		;8abb   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld (hl),057h		;8abe
 	inc hl			;8ac0
 	ld a,(0e26eh)		;8ac1
@@ -1779,11 +1779,11 @@ L_8AD1:
 	add a,a			;8ad9
 	add a,a			;8ada
 	ld hl,08aefh		;8adb
-	call 0408fh		;8ade
+	call 0408fh		;8ade   ; suma A a HL (HL = HL + A)
 	ld de,0e270h		;8ae1
 	ld bc,00008h		;8ae4
 	ldir		;8ae7
-	call 041e0h		;8ae9
+	call 041e0h		;8ae9   ; pide el sonido 1
 	jp L_8903		;8aec
 
 ; ----------------------------------------------------------------------
@@ -1803,7 +1803,7 @@ DATA_resto_8AEF:
 L_8B07:
 	call L_8B2C		;8b07
 	ld hl,0e26eh		;8b0a
-	ld a,(0e207h)		;8b0d
+	ld a,(0e207h)		;8b0d   ; lee el mando: lo que se acaba de pulsar
 	rra			;8b10
 	jr c,L_8B1F		;8b11
 	rra			;8b13
@@ -1812,7 +1812,7 @@ L_8B07:
 	rra			;8b17
 	rra			;8b18
 	ret c			;8b19
-	ld a,(0e20ch)		;8b1a
+	ld a,(0e20ch)		;8b1a   ; lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
 	rla			;8b1d
 	ret			;8b1e
 L_8B1F:
@@ -1829,7 +1829,7 @@ L_8B24:
 	inc (hl)			;8b2a
 	ret			;8b2b
 L_8B2C:
-	ld hl,0e800h		;8b2c
+	ld hl,0e800h		;8b2c   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld a,(0e26eh)		;8b2f
 	add a,a			;8b32
 	add a,a			;8b33
@@ -1845,7 +1845,7 @@ L_8B2C:
 	jp L_898E		;8b40
 L_8B43:
 	call L_8B72		;8b43
-	call 04230h		;8b46
+	call 04230h		;8b46   ; pide el sonido 0x11
 	ld a,(0e27fh)		;8b49
 	cp 002h		;8b4c
 	jr z,L_8B57		;8b4e
@@ -1857,12 +1857,12 @@ L_8B57:
 	ld a,(0f0f8h)		;8b57
 	dec a			;8b5a
 	jr z,L_8B6F		;8b5b
-	call 05d41h		;8b5d
-	call 04e98h		;8b60
-	call 041bfh		;8b63
+	call 05d41h		;8b5d   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call 04e98h		;8b60   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
+	call 041bfh		;8b63   ; pone el banco 13 en 0xA000
 	ld hl,0be6ah		;8b66
-	call 051d0h		;8b69
-	call 0418ah		;8b6c
+	call 051d0h		;8b69   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;8b6c   ; pone los bancos 1-2-3 (el juego)
 L_8B6F:
 	jp L_8903		;8b6f
 L_8B72:
@@ -1873,11 +1873,11 @@ L_8B72:
 	jp z,L_9C20		;8b79
 	jp 06c3dh		;8b7c
 L_8B7F:
-	call 041b5h		;8b7f
+	call 041b5h		;8b7f   ; pone el banco 12 en 0xA000
 	call 0bf2bh		;8b82
 	jp 0418ah		;8b85
 L_8B88:
-	ld a,(0e207h)		;8b88
+	ld a,(0e207h)		;8b88   ; lee el mando: lo que se acaba de pulsar
 	and a			;8b8b
 	ret z			;8b8c
 	ld a,001h		;8b8d
@@ -1886,7 +1886,7 @@ L_8B88:
 L_8B95:
 	ld a,(0e25bh)		;8b95
 	dec a			;8b98
-	call 04099h		;8b99
+	call 04099h		;8b99   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_8B9C: 8 destinos del despachador p00:4099 (call en p02:8B99, el
@@ -1902,13 +1902,13 @@ DATA_tabla_8B9C:
 
 
 L_8BAC:
-	call 04e98h		;8bac
+	call 04e98h		;8bac   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	xor a			;8baf
 	call L_886A		;8bb0
-	call 041bfh		;8bb3
+	call 041bfh		;8bb3   ; pone el banco 13 en 0xA000
 	ld hl,0bd6dh		;8bb6
-	call 051d0h		;8bb9
-	call 0418ah		;8bbc
+	call 051d0h		;8bb9   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;8bbc   ; pone los bancos 1-2-3 (el juego)
 	call L_8F0C		;8bbf
 	call 07969h		;8bc2
 L_8BC5:
@@ -1918,7 +1918,7 @@ L_8BC5:
 L_8BCA:
 	call L_8C33		;8bca
 	ld hl,0e26dh		;8bcd
-	ld a,(0e207h)		;8bd0
+	ld a,(0e207h)		;8bd0   ; lee el mando: lo que se acaba de pulsar
 	ld b,a			;8bd3
 	and 003h		;8bd4
 	jr z,L_8BDF		;8bd6
@@ -1934,19 +1934,19 @@ L_8BDF:
 	and a			;8be4
 	jr nz,L_8C2E		;8be5
 L_8BE7:
-	call 04e98h		;8be7
+	call 04e98h		;8be7   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	xor a			;8bea
 	call L_886A		;8beb
-	call 041bfh		;8bee
+	call 041bfh		;8bee   ; pone el banco 13 en 0xA000
 	ld hl,0bdb9h		;8bf1
-	call 051d0h		;8bf4
-	call 0418ah		;8bf7
+	call 051d0h		;8bf4   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;8bf7   ; pone los bancos 1-2-3 (el juego)
 	ld a,(0f0f9h)		;8bfa
 	rra			;8bfd
 	ld de,06060h		;8bfe
 	push af			;8c01
 	jr nc,L_8C18		;8c02
-	call 041bfh		;8c04
+	call 041bfh		;8c04   ; pone el banco 13 en 0xA000
 	ld hl,0bdd5h		;8c07
 	ld c,0ffh		;8c0a
 	push de			;8c0c
@@ -1955,15 +1955,15 @@ L_8BE7:
 	ld a,e			;8c11
 	add a,010h		;8c12
 	ld e,a			;8c14
-	call 0418ah		;8c15
+	call 0418ah		;8c15   ; pone los bancos 1-2-3 (el juego)
 L_8C18:
 	pop af			;8c18
 	rra			;8c19
-	call 041bfh		;8c1a
+	call 041bfh		;8c1a   ; pone el banco 13 en 0xA000
 	ld hl,0bddfh		;8c1d
 	ld c,0ffh		;8c20
 	call c,051dah		;8c22
-	call 0418ah		;8c25
+	call 0418ah		;8c25   ; pone los bancos 1-2-3 (el juego)
 	xor a			;8c28
 	ld (0e26dh),a		;8c29
 	jr L_8BC5		;8c2c
@@ -1972,7 +1972,7 @@ L_8C2E:
 	ld (0e25bh),a		;8c2f
 	ret			;8c32
 L_8C33:
-	ld hl,0e800h		;8c33
+	ld hl,0e800h		;8c33   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld a,(0e26dh)		;8c36
 	and a			;8c39
 	ld a,058h		;8c3a
@@ -1992,13 +1992,13 @@ L_8C4C:
 	ld (0e25bh),a		;8c4e
 	ret			;8c51
 L_8C52:
-	ld a,(0e20ch)		;8c52
+	ld a,(0e20ch)		;8c52   ; lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
 	rla			;8c55
 	rla			;8c56
 	jr c,L_8C4C		;8c57
 	call L_897A		;8c59
 	ld hl,0e26dh		;8c5c
-	ld a,(0e207h)		;8c5f
+	ld a,(0e207h)		;8c5f   ; lee el mando: lo que se acaba de pulsar
 	rra			;8c62
 	jr c,L_8C8E		;8c63
 	rra			;8c65
@@ -2008,8 +2008,8 @@ L_8C52:
 	rra			;8c6a
 	ret nc			;8c6b
 	call L_89CD		;8c6c
-	call 05d41h		;8c6f
-	call 04e98h		;8c72
+	call 05d41h		;8c6f   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call 04e98h		;8c72   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	call L_8BC5		;8c75
 	jp 041e0h		;8c78
 L_8C7B:
@@ -2040,11 +2040,11 @@ L_8C95:
 	jr z,L_8CB5		;8c9d
 	xor a			;8c9f
 	call L_886A		;8ca0
-	call 041bfh		;8ca3
+	call 041bfh		;8ca3   ; pone el banco 13 en 0xA000
 	ld hl,0bde9h		;8ca6
-	call 051d0h		;8ca9
-	call 0418ah		;8cac
-	call 04230h		;8caf
+	call 051d0h		;8ca9   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;8cac   ; pone los bancos 1-2-3 (el juego)
+	call 04230h		;8caf   ; pide el sonido 0x11
 	jp L_8BC5		;8cb2
 L_8CB5:
 	call 06e2dh		;8cb5
@@ -2053,10 +2053,10 @@ L_8CB5:
 	jr z,L_8D1A		;8cbc
 	xor a			;8cbe
 	call L_886A		;8cbf
-	call 041bfh		;8cc2
+	call 041bfh		;8cc2   ; pone el banco 13 en 0xA000
 	ld hl,0be5ch		;8cc5
-	call 051d0h		;8cc8
-	call 0418ah		;8ccb
+	call 051d0h		;8cc8   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;8ccb   ; pone los bancos 1-2-3 (el juego)
 	ld hl,0ee54h		;8cce
 	ld de,07050h		;8cd1
 	ld b,003h		;8cd4
@@ -2067,9 +2067,9 @@ L_8CD6:
 	push hl			;8cda
 	push de			;8cdb
 	push bc			;8cdc
-	call 041bfh		;8cdd
+	call 041bfh		;8cdd   ; pone el banco 13 en 0xA000
 	call L_8CFA		;8ce0
-	call 0418ah		;8ce3
+	call 0418ah		;8ce3   ; pone los bancos 1-2-3 (el juego)
 	pop bc			;8ce6
 	pop de			;8ce7
 	pop hl			;8ce8
@@ -2078,7 +2078,7 @@ L_8CD6:
 	ld e,a			;8cec
 L_8CED:
 	ld a,008h		;8ced
-	call 0408fh		;8cef
+	call 0408fh		;8cef   ; suma A a HL (HL = HL + A)
 	djnz L_8CD6		;8cf2
 	call L_8BC5		;8cf4
 	jp 04230h		;8cf7
@@ -2100,11 +2100,11 @@ L_8D12:
 	ld c,0ffh		;8d15
 	jp 051dah		;8d17
 L_8D1A:
-	call 04e98h		;8d1a
-	call 041b5h		;8d1d
+	call 04e98h		;8d1a   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
+	call 041b5h		;8d1d   ; pone el banco 12 en 0xA000
 	ld hl,0af7dh		;8d20
-	call 051d0h		;8d23
-	call 0418ah		;8d26
+	call 051d0h		;8d23   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;8d26   ; pone los bancos 1-2-3 (el juego)
 	ld a,007h		;8d29
 	ld (0e25bh),a		;8d2b
 	jp 04230h		;8d2e
@@ -2114,15 +2114,15 @@ L_8D31:
 	and a			;8d37
 	jr z,L_8D1A		;8d38
 	call L_8BC5		;8d3a
-	call 04230h		;8d3d
+	call 04230h		;8d3d   ; pide el sonido 0x11
 L_8D40:
-	call 04e98h		;8d40
+	call 04e98h		;8d40   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	ld a,001h		;8d43
 	call L_886A		;8d45
-	call 041bfh		;8d48
+	call 041bfh		;8d48   ; pone el banco 13 en 0xA000
 	ld hl,0bd86h		;8d4b
-	call 051d0h		;8d4e
-	call 0418ah		;8d51
+	call 051d0h		;8d4e   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;8d51   ; pone los bancos 1-2-3 (el juego)
 	ld hl,0ee50h		;8d54
 	ld de,03020h		;8d57
 	ld b,008h		;8d5a
@@ -2135,7 +2135,7 @@ L_8D5C:
 	pop hl			;8d63
 	pop bc			;8d64
 	ld a,00bh		;8d65
-	call 0408fh		;8d67
+	call 0408fh		;8d67   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;8d6a
 	and a			;8d6b
 	ret z			;8d6c
@@ -2148,7 +2148,7 @@ L_8D5C:
 	pop hl			;8d76
 	pop bc			;8d77
 	ld a,00bh		;8d78
-	call 0408fh		;8d7a
+	call 0408fh		;8d7a   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;8d7d
 	and a			;8d7e
 	ret z			;8d7f
@@ -2158,7 +2158,7 @@ L_8D5C:
 	djnz L_8D5C		;8d84
 	ret			;8d86
 L_8D87:
-	ld a,(0e20ch)		;8d87
+	ld a,(0e20ch)		;8d87   ; lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
 	rla			;8d8a
 	rla			;8d8b
 	jp c,L_8C4C		;8d8c
@@ -2167,14 +2167,14 @@ L_8D87:
 	jp z,L_8A5C		;8d93
 	dec a			;8d96
 	jp nz,L_8E5A		;8d97
-	ld a,(0e207h)		;8d9a
+	ld a,(0e207h)		;8d9a   ; lee el mando: lo que se acaba de pulsar
 	and 020h		;8d9d
 	jr nz,L_8DEF		;8d9f
 	call L_8E39		;8da1
 	ld a,(0f0e5h)		;8da4
 	ld b,a			;8da7
 	ld hl,0e26eh		;8da8
-	ld a,(0e207h)		;8dab
+	ld a,(0e207h)		;8dab   ; lee el mando: lo que se acaba de pulsar
 	rra			;8dae
 	jr c,L_8E11		;8daf
 	rra			;8db1
@@ -2183,7 +2183,7 @@ L_8D87:
 	jr c,L_8E24		;8db5
 	rra			;8db7
 	jr c,L_8E2E		;8db8
-	ld a,(0e20ch)		;8dba
+	ld a,(0e20ch)		;8dba   ; lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
 	rla			;8dbd
 	ret nc			;8dbe
 	ld a,(hl)			;8dbf
@@ -2196,20 +2196,20 @@ L_8DC5:
 	djnz L_8DC5		;8dc7
 L_8DC9:
 	ld hl,0ee50h		;8dc9
-	call 0408fh		;8dcc
+	call 0408fh		;8dcc   ; suma A a HL (HL = HL + A)
 	ld de,0e270h		;8dcf
 	ld bc,0000bh		;8dd2
 	ldir		;8dd5
-	call 04e98h		;8dd7
-	call 05d41h		;8dda
-	call 041bfh		;8ddd
+	call 04e98h		;8dd7   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
+	call 05d41h		;8dda   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call 041bfh		;8ddd   ; pone el banco 13 en 0xA000
 	ld hl,0be06h		;8de0
-	call 051d0h		;8de3
-	call 0418ah		;8de6
-	call 041e0h		;8de9
+	call 051d0h		;8de3   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;8de6   ; pone los bancos 1-2-3 (el juego)
+	call 041e0h		;8de9   ; pide el sonido 1
 	jp L_8BC5		;8dec
 L_8DEF:
-	call 041e0h		;8def
+	call 041e0h		;8def   ; pide el sonido 1
 	ld a,008h		;8df2
 L_8DF4:
 	ld (0e25bh),a		;8df4
@@ -2219,8 +2219,8 @@ L_8DF8:
 	call L_8D40		;8dfb
 	xor a			;8dfe
 	ld (0e26eh),a		;8dff
-	call 04230h		;8e02
-	ld a,(0e200h)		;8e05
+	call 04230h		;8e02   ; pide el sonido 0x11
+	ld a,(0e200h)		;8e05   ; lee el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final)
 	cp 00bh		;8e08
 	ld a,005h		;8e0a
 	jr z,L_8DF4		;8e0c
@@ -2263,7 +2263,7 @@ L_8E2E:
 	jp 042cbh		;8e36
 L_8E39:
 	ld de,0e26eh		;8e39
-	ld hl,0e800h		;8e3c
+	ld hl,0e800h		;8e3c   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld a,(de)			;8e3f
 	and 0feh		;8e40
 	add a,a			;8e42
@@ -2297,22 +2297,22 @@ L_8E5A:
 	add a,a			;8e6f
 	add a,a			;8e70
 	ld hl,0ee50h		;8e71
-	call 0408fh		;8e74
+	call 0408fh		;8e74   ; suma A a HL (HL = HL + A)
 	ld de,0e270h		;8e77
 	ld bc,00005h		;8e7a
 	ldir		;8e7d
-	call 05d41h		;8e7f
-	call 041e0h		;8e82
+	call 05d41h		;8e7f   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call 041e0h		;8e82   ; pide el sonido 1
 	jp L_8BC5		;8e85
 L_8E88:
 	call L_8EA3		;8e88
 	ld a,001h		;8e8b
 	ld (0e27eh),a		;8e8d
-	call 04230h		;8e90
+	call 04230h		;8e90   ; pide el sonido 0x11
 	ld a,(0e27fh)		;8e93
 	cp 002h		;8e96
 	jp z,L_8BC5		;8e98
-	call 04e98h		;8e9b
+	call 04e98h		;8e9b   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	xor a			;8e9e
 	ld (0e25bh),a		;8e9f
 	ret			;8ea2
@@ -2324,31 +2324,31 @@ L_8EA3:
 	jp z,L_9B98		;8eaa
 	jp 06c55h		;8ead
 L_8EB0:
-	call 041b5h		;8eb0
+	call 041b5h		;8eb0   ; pone el banco 12 en 0xA000
 	call 0be7eh		;8eb3
 	jp 0418ah		;8eb6
 L_8EB9:
-	ld a,(0e207h)		;8eb9
+	ld a,(0e207h)		;8eb9   ; lee el mando: lo que se acaba de pulsar
 	and a			;8ebc
 	ret z			;8ebd
 	ld a,002h		;8ebe
 	ld (0e27eh),a		;8ec0
-	call 04e98h		;8ec3
+	call 04e98h		;8ec3   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	xor a			;8ec6
 	ld (0e25bh),a		;8ec7
 	ret			;8eca
 L_8ECB:
 	call 067ech		;8ecb
-	call 05d41h		;8ece
+	call 05d41h		;8ece   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	xor a			;8ed1
-	ld (0e24ah),a		;8ed2
+	ld (0e24ah),a		;8ed2   ; guarda lo elegido en el menu
 	inc a			;8ed5
 	ld (0e25bh),a		;8ed6
 	ret			;8ed9
 L_8EDA:
 	ld a,(0e25bh)		;8eda
 	dec a			;8edd
-	call 04099h		;8ede
+	call 04099h		;8ede   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_8EE1: 8 destinos del despachador p00:4099 (call en p02:8EDE, el
@@ -2365,23 +2365,23 @@ DATA_tabla_8EE1:
 
 L_8EF1:
 	ld a,001h		;8ef1
-	ld (0e241h),a		;8ef3
-	call 05634h		;8ef6
-	ld a,(0f0f4h)		;8ef9
+	ld (0e241h),a		;8ef3   ; guarda la piramide (1-6)
+	call 05634h		;8ef6   ; carga los graficos de la piramide (bancos 7-8-9)
+	ld a,(0f0f4h)		;8ef9   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;8efc
-	call nz,0565eh		;8efd
+	call nz,0565eh		;8efd   ; la paleta de la piramide: dos por piramide segun la fase (tablas 0xB97A y 0xB9F8)
 	call 07aa6h		;8f00
 	call L_8F0C		;8f03
 	call 07969h		;8f06
 	jp L_8BE7		;8f09
 L_8F0C:
 	xor a			;8f0c
-	ld hl,0e226h		;8f0d
+	ld hl,0e226h		;8f0d   ; apunta a los puntos (3 bytes BCD)
 	ld de,0e227h		;8f10
 	ld bc,00032h		;8f13
 	ld (hl),a			;8f16
 	ldir		;8f17
-	ld hl,0e280h		;8f19
+	ld hl,0e280h		;8f19   ; apunta a el estado del personaje
 	ld de,0e281h		;8f1c
 	ld bc,00d7fh		;8f1f
 	ld (hl),a			;8f22
@@ -2400,50 +2400,50 @@ L_8F3D:
 	ld a,(0e27fh)		;8f40
 	and a			;8f43
 	jp nz,L_8BC5		;8f44
-	call 05de6h		;8f47
+	call 05de6h		;8f47   ; 0xE244 = la casilla de la pantalla 0xE243
 	call L_92CA		;8f4a
 	call L_921A		;8f4d
 	call L_878B		;8f50
 	ld a,001h		;8f53
-	ld (0e24ah),a		;8f55
-	ld (0e254h),a		;8f58
-	ld a,(0e282h)		;8f5b
+	ld (0e24ah),a		;8f55   ; guarda lo elegido en el menu
+	ld (0e254h),a		;8f58   ; guarda la marca de partida del editor
+	ld a,(0e282h)		;8f5b   ; lee la y del personaje
 	or a			;8f5e
 	ret nz			;8f5f
 	ld (0e294h),a		;8f60
 	ret			;8f63
 L_8F64:
-	ld a,(0e207h)		;8f64
+	ld a,(0e207h)		;8f64   ; lee el mando: lo que se acaba de pulsar
 	and a			;8f67
 	ret z			;8f68
-	call 04e98h		;8f69
+	call 04e98h		;8f69   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	ld a,002h		;8f6c
-	ld (0e24ah),a		;8f6e
+	ld (0e24ah),a		;8f6e   ; guarda lo elegido en el menu
 	ret			;8f71
 L_8F72:
-	call 05696h		;8f72
-	call 0594fh		;8f75
-	call 058d2h		;8f78
+	call 05696h		;8f72   ; los sprites de las listas 0x98C9 y 0x98EA
+	call 0594fh		;8f75   ; las rachas de 0x97A1 a 0xF880
+	call 058d2h		;8f78   ; los dibujos de los sprites del personaje, con los bancos 14-15
 	xor a			;8f7b
-	ld hl,0e2c0h		;8f7c
+	ld hl,0e2c0h		;8f7c   ; apunta a las fichas de 0xE2C0 (8 x 5 bytes)
 	ld de,0e2c1h		;8f7f
 	ld bc,00d3fh		;8f82
 	ld (hl),a			;8f85
 	ldir		;8f86
-	ld (0e287h),a		;8f88
+	ld (0e287h),a		;8f88   ; guarda la postura del personaje
 	ld (0edcdh),a		;8f8b
 	inc a			;8f8e
-	ld (0e241h),a		;8f8f
-	call 05d41h		;8f92
+	ld (0e241h),a		;8f8f   ; guarda la piramide (1-6)
+	call 05d41h		;8f92   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ret			;8f95
 L_8F96:
-	call 041bfh		;8f96
-	ld a,(0e242h)		;8f99
+	call 041bfh		;8f96   ; pone el banco 13 en 0xA000
+	ld a,(0e242h)		;8f99   ; lee la fase (1-60)
 	ld b,a			;8f9c
 	add a,a			;8f9d
 	add a,b			;8f9e
 	ld hl,0b8f8h		;8f9f
-	call 0408fh		;8fa2
+	call 0408fh		;8fa2   ; suma A a HL (HL = HL + A)
 	ld de,0e2f1h		;8fa5
 	ldi		;8fa8
 	ldi		;8faa
@@ -2458,19 +2458,19 @@ L_8F96:
 	inc de			;8fb5
 	xor a			;8fb6
 	ld (de),a			;8fb7
-	call 0418ah		;8fb8
+	call 0418ah		;8fb8   ; pone los bancos 1-2-3 (el juego)
 	jp 07d86h		;8fbb
 L_8FBE:
 	ld hl,0e2f3h		;8fbe
-	ld a,(0e243h)		;8fc1
+	ld a,(0e243h)		;8fc1   ; lee la pantalla de la fase (desde 1)
 	cp (hl)			;8fc4
 	ret nz			;8fc5
 	ld a,(0e2f5h)		;8fc6
 	and a			;8fc9
 	ret nz			;8fca
-	ld a,(0e282h)		;8fcb
+	ld a,(0e282h)		;8fcb   ; lee la y del personaje
 	ld b,a			;8fce
-	ld a,(0e284h)		;8fcf
+	ld a,(0e284h)		;8fcf   ; lee la x del personaje
 	ld c,a			;8fd2
 	ld a,(0e2f1h)		;8fd3
 	add a,012h		;8fd6
@@ -2485,27 +2485,27 @@ L_8FBE:
 	call L_907F		;8fe5
 	xor a			;8fe8
 	ld (0e2f0h),a		;8fe9
-	ld hl,0e257h		;8fec
+	ld hl,0e257h		;8fec   ; apunta a la marca de fase acabada
 	ld (hl),a			;8fef
 	inc hl			;8ff0
 	ld (hl),a			;8ff1
 	inc hl			;8ff2
 	ld (hl),a			;8ff3
 	inc a			;8ff4
-	ld (0e249h),a		;8ff5
+	ld (0e249h),a		;8ff5   ; guarda la marca de salida de la fase
 	ld hl,0e2f7h		;8ff8
 	ld (hl),01eh		;8ffb
-	call 0428ah		;8ffd
-	call 05687h		;9000
+	call 0428ah		;8ffd   ; pide el sonido 0x23
+	call 05687h		;9000   ; las rachas de 0xABB9 a 0xF800 (los dibujos de los sprites)
 	xor a			;9003
-	ld (0e21bh),a		;9004
+	ld (0e21bh),a		;9004   ; guarda la cuenta del borde que parpadea
 	call 0723dh		;9007
 	ld bc,00007h		;900a
 	jp 00047h		;900d   ; BIOS WRTVDP - Writes data in the VDP-register
 L_9010:
 	ld a,(0e2f3h)		;9010
 	ld b,a			;9013
-	ld a,(0e243h)		;9014
+	ld a,(0e243h)		;9014   ; lee la pantalla de la fase (desde 1)
 	cp b			;9017
 	ret nz			;9018
 	ld hl,09340h		;9019
@@ -2514,7 +2514,7 @@ L_9010:
 	add a,a			;9020
 	add a,a			;9021
 	add a,a			;9022
-	call 0408fh		;9023
+	call 0408fh		;9023   ; suma A a HL (HL = HL + A)
 	ld bc,00404h		;9026
 	ld de,(0e2f1h)		;9029
 L_902D:
@@ -2524,7 +2524,7 @@ L_902D:
 L_9030:
 	ld a,(hl)			;9030
 	push hl			;9031
-	call 05767h		;9032
+	call 05767h		;9032   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop hl			;9035
 	inc hl			;9036
 	ld a,d			;9037
@@ -2541,10 +2541,10 @@ L_9030:
 	ld a,d			;9049
 	and a			;904a
 	ret z			;904b
-	call 041bfh		;904c
+	call 041bfh		;904c   ; pone el banco 13 en 0xA000
 	ld a,e			;904f
 	ld hl,0b9adh		;9050
-	call 04d4ch		;9053
+	call 04d4ch		;9053   ; HL = la palabra A de la tabla de HL
 	ld b,d			;9056
 L_9057:
 	ld de,(0e2f1h)		;9057
@@ -2560,18 +2560,18 @@ L_9057:
 	add a,a			;9066
 	add a,e			;9067
 	ld e,a			;9068
-	ld a,(0f0f4h)		;9069
+	ld a,(0f0f4h)		;9069   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;906c
 	ld a,060h		;906d
 	jr z,L_9073		;906f
 	ld a,0aeh		;9071
 L_9073:
 	push hl			;9073
-	call 05767h		;9074
+	call 05767h		;9074   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop hl			;9077
 	inc hl			;9078
 	djnz L_9057		;9079
-	call 0418ah		;907b
+	call 0418ah		;907b   ; pone los bancos 1-2-3 (el juego)
 	ret			;907e
 L_907F:
 	ld hl,0e500h		;907f
@@ -2584,7 +2584,7 @@ L_907F:
 	ld bc,001ffh		;9092
 	ld (hl),000h		;9095
 	ldir		;9097
-	call 05d41h		;9099
+	call 05d41h		;9099   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	jp 04ecbh		;909c
 L_909F:
 	push ix		;909f
@@ -2609,7 +2609,7 @@ L_90B0:
 	jr nz,L_90D6		;90c2
 	call L_90DA		;90c4
 L_90C7:
-	ld a,(0e243h)		;90c7
+	ld a,(0e243h)		;90c7   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;90ca
 	jr nz,L_90D6		;90cd
 	push hl			;90cf
@@ -2642,7 +2642,7 @@ L_90FC:
 	or a			;90fd
 	jr z,L_9112		;90fe
 	call L_927D		;9100
-	ld a,(0e243h)		;9103
+	ld a,(0e243h)		;9103   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;9106
 	jr nz,L_9112		;9109
 	push bc			;910b
@@ -2756,7 +2756,7 @@ L_91A4:
 L_91B2:
 	ld a,(hl)			;91b2
 	ex af,af'			;91b3
-	ld a,(0e243h)		;91b4
+	ld a,(0e243h)		;91b4   ; lee la pantalla de la fase (desde 1)
 	inc l			;91b7
 	ldi		;91b8
 	ldi		;91ba
@@ -2765,7 +2765,7 @@ L_91B2:
 	inc l			;91bf
 	ld a,(hl)			;91c0
 	ld hl,09296h		;91c1
-	call 0408fh		;91c4
+	call 0408fh		;91c4   ; suma A a HL (HL = HL + A)
 	ldi		;91c7
 	push de			;91c9
 	dec e			;91ca
@@ -2791,7 +2791,7 @@ L_91B2:
 	dec a			;91e0
 	add a,a			;91e1
 	ld hl,09292h		;91e2
-	call 0408fh		;91e5
+	call 0408fh		;91e5   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;91e8
 	inc hl			;91e9
 	ld d,(hl)			;91ea
@@ -2804,8 +2804,8 @@ L_91B2:
 	rla			;91f3
 	rla			;91f4
 	and 0f0h		;91f5
-	ld hl,0d200h		;91f7
-	call 0408fh		;91fa
+	ld hl,0d200h		;91f7   ; apunta a los colores de los sprites (16 bytes por sprite)
+	call 0408fh		;91fa   ; suma A a HL (HL = HL + A)
 	pop af			;91fd
 	ld d,h			;91fe
 	ld e,l			;91ff
@@ -2932,27 +2932,27 @@ DATA_resto_9292:
 
 
 L_929D:
-	ld hl,0e280h		;929d
+	ld hl,0e280h		;929d   ; apunta a el estado del personaje
 	ld de,0e281h		;92a0
 	ld (hl),000h		;92a3
 	ld bc,00040h		;92a5
 	ldir		;92a8
-	call 041bfh		;92aa
-	ld a,(0e242h)		;92ad
+	call 041bfh		;92aa   ; pone el banco 13 en 0xA000
+	ld a,(0e242h)		;92ad   ; lee la fase (1-60)
 	ld b,a			;92b0
 	add a,a			;92b1
 	add a,b			;92b2
 	ld hl,0b844h		;92b3
-	call 0408fh		;92b6
+	call 0408fh		;92b6   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;92b9
-	ld (0e282h),a		;92ba
+	ld (0e282h),a		;92ba   ; guarda la y del personaje
 	inc hl			;92bd
 	ld a,(hl)			;92be
-	ld (0e284h),a		;92bf
+	ld (0e284h),a		;92bf   ; guarda la x del personaje
 	inc hl			;92c2
 	ld a,(hl)			;92c3
-	ld (0e243h),a		;92c4
-	call 0418ah		;92c7
+	ld (0e243h),a		;92c4   ; guarda la pantalla de la fase (desde 1)
+	call 0418ah		;92c7   ; pone los bancos 1-2-3 (el juego)
 L_92CA:
 	ld hl,092f7h		;92ca
 	ld de,0e28ah		;92cd
@@ -2961,14 +2961,14 @@ L_92CA:
 	ld a,004h		;92d5
 	ld (0e296h),a		;92d7
 	ld a,001h		;92da
-	ld (0e285h),a		;92dc
-	ld a,(0e202h)		;92df
+	ld (0e285h),a		;92dc   ; guarda hacia donde mira el personaje
+	ld a,(0e202h)		;92df   ; lee las marcas de la partida (bit 6: se pueden sumar puntos)
 	and 040h		;92e2
 	ld a,00eh		;92e4
 	jr nz,L_92E9		;92e6
 	xor a			;92e8
 L_92E9:
-	ld (0e280h),a		;92e9
+	ld (0e280h),a		;92e9   ; guarda el estado del personaje
 	ld a,020h		;92ec
 	ld (0e2a8h),a		;92ee
 	ld a,006h		;92f1
@@ -2991,16 +2991,16 @@ DATA_resto_92F7:
 L_92FF:
 	xor a			;92ff
 	ld (0e295h),a		;9300
-	ld (0e285h),a		;9303
-	ld a,(0e280h)		;9306
+	ld (0e285h),a		;9303   ; guarda hacia donde mira el personaje
+	ld a,(0e280h)		;9306   ; lee el estado del personaje
 	cp 004h		;9309
 	jr nz,L_9312		;930b
 	ld a,004h		;930d
-	ld (0e285h),a		;930f
+	ld (0e285h),a		;930f   ; guarda hacia donde mira el personaje
 L_9312:
 	ld a,001h		;9312
-	ld (0e298h),a		;9314
-	ld hl,0e215h		;9317
+	ld (0e298h),a		;9314   ; guarda lo que lleva el personaje en la mano
+	ld hl,0e215h		;9317   ; apunta a la cuenta para volver a poner la musica
 	ld (hl),000h		;931a
 	ld a,003h		;931c
 	ld (0e296h),a		;931e
@@ -3031,7 +3031,7 @@ DATA_resto_9324:
 
 
 L_93BE:
-	ld a,(0e2f9h)		;93be
+	ld a,(0e2f9h)		;93be   ; lee el borde por el que se ha salido
 	cp 003h		;93c1
 	ret c			;93c3
 	ld ix,0e600h		;93c4
@@ -3060,7 +3060,7 @@ L_93F0:
 	jp L_95A1		;93f0
 L_93F3:
 	ld a,(ix+001h)		;93f3
-	call 04099h		;93f6
+	call 04099h		;93f6   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_93F9: 3 destinos del despachador p00:4099 (call en p02:93F6, el
@@ -3083,27 +3083,27 @@ L_93FF:
 	ld (ix+006h),a		;940a
 	ret			;940d
 L_940E:
-	ld a,(0e243h)		;940e
+	ld a,(0e243h)		;940e   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;9411
 	ret nz			;9414
-	ld a,(0e280h)		;9415
+	ld a,(0e280h)		;9415   ; lee el estado del personaje
 	and a			;9418
 	ret nz			;9419
-	ld a,(0e282h)		;941a
+	ld a,(0e282h)		;941a   ; lee la y del personaje
 	add a,00fh		;941d
 	sub (ix+002h)		;941f
 	cp 010h		;9422
 	jr nc,L_9464		;9424
 	ld a,(0e294h)		;9426
 	and a			;9429
-	ld a,(0e284h)		;942a
+	ld a,(0e284h)		;942a   ; lee la x del personaje
 	ld b,(ix+003h)		;942d
 	jr z,L_944C		;9430
 	add a,014h		;9432
 	sub b			;9434
 	cp 008h		;9435
 	jr nc,L_9464		;9437
-	ld a,(0e208h)		;9439
+	ld a,(0e208h)		;9439   ; lee el mando: lo pulsado
 	and 008h		;943c
 	jr z,L_9464		;943e
 	dec (ix+006h)		;9440
@@ -3117,7 +3117,7 @@ L_944C:
 	sub b			;944e
 	cp 008h		;944f
 	jr nc,L_9464		;9451
-	ld a,(0e208h)		;9453
+	ld a,(0e208h)		;9453   ; lee el mando: lo pulsado
 	and 004h		;9456
 	jr z,L_9464		;9458
 	dec (ix+006h)		;945a
@@ -3149,7 +3149,7 @@ L_9490:
 L_9492:
 	ld (ix+003h),a		;9492
 	set 0,(ix+007h)		;9495
-	call 0428fh		;9499
+	call 0428fh		;9499   ; pide el sonido 0x24
 	ld l,(ix+002h)		;949c
 	ld (ix+00ah),l		;949f
 	call L_9549		;94a2
@@ -3218,7 +3218,7 @@ L_94FF:
 	ret nc			;9523
 	call L_9549		;9524
 	ret c			;9527
-	call 04294h		;9528
+	call 04294h		;9528   ; pide el sonido 0x25
 	jp L_94AD		;952b
 L_952E:
 	ld h,(ix+00bh)		;952e
@@ -3268,7 +3268,7 @@ L_9571:
 	ld e,l			;957c
 	add hl,hl			;957d
 	add hl,de			;957e
-	ld de,0e900h		;957f
+	ld de,0e900h		;957f   ; apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
 	add hl,de			;9582
 	ex de,hl			;9583
 	ret			;9584
@@ -3331,7 +3331,7 @@ L_95DA:
 	rrca			;95eb
 	rrca			;95ec
 	ld hl,0ef40h		;95ed
-	call 0408fh		;95f0
+	call 0408fh		;95f0   ; suma A a HL (HL = HL + A)
 	ld (0e2feh),hl		;95f3
 	exx			;95f6
 	ret			;95f7
@@ -3397,14 +3397,14 @@ L_9666:
 	ld l,(ix+002h)		;9669
 	ld (ix+00bh),h		;966c
 	ld (ix+00ah),l		;966f
-	ld a,(0f0f4h)		;9672
+	ld a,(0f0f4h)		;9672   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;9675
 	jr nz,L_9686		;9676
-	call 04d7bh		;9678
+	call 04d7bh		;9678   ; pasa la posicion de caracter de HL a direccion de la VRAM
 	push ix		;967b
 	pop de			;967d
 	ld a,00ch		;967e
-	call 04094h		;9680
+	call 04094h		;9680   ; suma A a DE (DE = DE + A)
 	jp 05722h		;9683
 L_9686:
 	push ix		;9686
@@ -3423,16 +3423,16 @@ L_969A:
 	ld d,(ix+00bh)		;969a
 	ld e,(ix+00ah)		;969d
 L_96A0:
-	ld a,(0e243h)		;96a0
+	ld a,(0e243h)		;96a0   ; lee la pantalla de la fase (desde 1)
 	cp (ix+009h)		;96a3
 	ret nz			;96a6
 	push ix		;96a7
 	pop hl			;96a9
-	ld a,(0f0f4h)		;96aa
+	ld a,(0f0f4h)		;96aa   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;96ad
 	jr nz,L_96BB		;96ae
 	ld a,00ch		;96b0
-	call 0408fh		;96b2
+	call 0408fh		;96b2   ; suma A a HL (HL = HL + A)
 	ld bc,00202h		;96b5
 	jp 0573bh		;96b8
 L_96BB:
@@ -3462,7 +3462,7 @@ L_96D5:
 	djnz L_96D5		;96e4
 	ret			;96e6
 L_96E7:
-	ld a,(0e243h)		;96e7
+	ld a,(0e243h)		;96e7   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;96ea
 	ret nz			;96ed
 	call L_95DA		;96ee
@@ -3486,7 +3486,7 @@ L_9705:
 	djnz L_9705		;9714
 	ret			;9716
 L_9717:
-	ld a,(0e243h)		;9717
+	ld a,(0e243h)		;9717   ; lee la pantalla de la fase (desde 1)
 	cp (ix+004h)		;971a
 	ret nz			;971d
 	call L_95DA		;971e
@@ -3520,7 +3520,7 @@ L_975E:
 	ld a,c			;9765
 	add a,a			;9766
 	ld c,a			;9767
-	call 041b5h		;9768
+	call 041b5h		;9768   ; pone el banco 12 en 0xA000
 	ld hl,0af52h		;976b
 	add hl,bc			;976e
 	ld a,(hl)			;976f
@@ -3528,12 +3528,12 @@ L_975E:
 	ld h,(hl)			;9771
 	ld l,a			;9772
 	push hl			;9773
-	call 04e98h		;9774
+	call 04e98h		;9774   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	pop hl			;9777
-	call 051d0h		;9778
+	call 051d0h		;9778   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld hl,0af60h		;977b
-	call 051d0h		;977e
-	call 0418ah		;9781
+	call 051d0h		;977e   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+	call 0418ah		;9781   ; pone los bancos 1-2-3 (el juego)
 	call L_9E1D		;9784
 	ld a,(0f0e4h)		;9787
 	ld (0fd9fh),a		;978a
@@ -3557,15 +3557,15 @@ DATA_resto_9797:
 
 
 L_97B2:
-	call 041bfh		;97b2
+	call 041bfh		;97b2   ; pone el banco 13 en 0xA000
 	call L_97BB		;97b5
 	jp 0418ah		;97b8
 L_97BB:
 	ld ix,0e300h		;97bb
 	ld hl,0afb1h		;97bf
-	ld a,(0e242h)		;97c2
+	ld a,(0e242h)		;97c2   ; lee la fase (1-60)
 	dec a			;97c5
-	call 04d4ch		;97c6
+	call 04d4ch		;97c6   ; HL = la palabra A de la tabla de HL
 L_97C9:
 	call L_97D4		;97c9
 	ret z			;97cc
@@ -3601,7 +3601,7 @@ L_97D4:
 	ret			;9800
 L_9801:
 	ld a,(0e2b0h)		;9801
-	call 04099h		;9804
+	call 04099h		;9804   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_9807: 4 destinos del despachador p00:4099 (call en p02:9804, el
@@ -3654,7 +3654,7 @@ L_9831:
 	cp 010h		;9839
 	ret nz			;983b
 	ld a,003h		;983c
-	ld (0e2b3h),a		;983e
+	ld (0e2b3h),a		;983e   ; guarda el dibujo del personaje en pausa
 	ld hl,0e2b0h		;9841
 	inc (hl)			;9844
 	ret			;9845
@@ -3681,13 +3681,13 @@ L_984B:
 	ld (0e2b2h),a		;9862
 	ret			;9865
 L_9866:
-	ld a,(0e280h)		;9866
+	ld a,(0e280h)		;9866   ; lee el estado del personaje
 	cp 00eh		;9869
 	jr nz,L_9881		;986b
 	ld a,(0e2a8h)		;986d
 	rra			;9870
 	jr c,L_9881		;9871
-	ld hl,0e800h		;9873
+	ld hl,0e800h		;9873   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld de,0e801h		;9876
 	ld (hl),0e0h		;9879
 	ld bc,0000fh		;987b
@@ -3695,13 +3695,13 @@ L_9866:
 	ret			;9880
 L_9881:
 	ld b,000h		;9881
-	ld hl,0e800h		;9883
-	ld a,(0e282h)		;9886
+	ld hl,0e800h		;9883   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+	ld a,(0e282h)		;9886   ; lee la y del personaje
 	sub 009h		;9889
 	ld d,a			;988b
-	ld a,(0e284h)		;988c
+	ld a,(0e284h)		;988c   ; lee la x del personaje
 	ld e,a			;988f
-	ld a,(0e280h)		;9890
+	ld a,(0e280h)		;9890   ; lee el estado del personaje
 	cp 002h		;9893
 	jr z,L_989F		;9895
 	ld a,(0e294h)		;9897
@@ -3730,7 +3730,7 @@ L_989F:
 	ld d,a			;98b6
 	jr L_989F		;98b7
 L_98B9:
-	ld hl,0d200h		;98b9
+	ld hl,0d200h		;98b9   ; apunta a los colores de los sprites (16 bytes por sprite)
 	ld de,0d201h		;98bc
 	ld bc,0000fh		;98bf
 	ld (hl),00dh		;98c2
@@ -3754,7 +3754,7 @@ L_98DC:
 	pop hl			;98e0
 	ret			;98e1
 L_98E2:
-	ld de,(0e250h)		;98e2
+	ld de,(0e250h)		;98e2   ; lee el mapa de la pantalla en la que se esta (16 bits)
 L_98E6:
 	ld a,l			;98e6
 	and 0f8h		;98e7
@@ -3892,10 +3892,10 @@ L_9998:
 	ret			;999c
 L_999D:
 	call L_9A0B		;999d
-	ld a,(0e243h)		;99a0
+	ld a,(0e243h)		;99a0   ; lee la pantalla de la fase (desde 1)
 	ld c,a			;99a3
 	ld b,010h		;99a4
-	ld hl,0e700h		;99a6
+	ld hl,0e700h		;99a6   ; apunta a la tabla de colores de los graficos que se cargan
 L_99A9:
 	ld a,(hl)			;99a9
 	and a			;99aa
@@ -3939,32 +3939,32 @@ L_99CD:
 	ld hl,0e2f5h		;99e2
 	dec (hl)			;99e5
 	jr nz,L_99F8		;99e6
-	call 04212h		;99e8
+	call 04212h		;99e8   ; pide el sonido 0x0B
 	xor a			;99eb
 	ld (0e216h),a		;99ec
 	dec a			;99ef
-	ld (0e215h),a		;99f0
+	ld (0e215h),a		;99f0   ; guarda la cuenta para volver a poner la musica
 	ld a,010h		;99f3
-	ld (0e21bh),a		;99f5
+	ld (0e21bh),a		;99f5   ; guarda la cuenta del borde que parpadea
 L_99F8:
-	call 0425dh		;99f8
+	call 0425dh		;99f8   ; pide el sonido 0x1A
 	call L_9010		;99fb
 	call L_90F7		;99fe
 	call L_96CF		;9a01
 	ld de,00500h		;9a04
-	call 04c20h		;9a07
+	call 04c20h		;9a07   ; suma DE (BCD) a los puntos 0xE226-0xE228, si el bit 6 de 0xE202 lo deja
 	ret			;9a0a
 L_9A0B:
-	ld a,(0e282h)		;9a0b
+	ld a,(0e282h)		;9a0b   ; lee la y del personaje
 	ld e,a			;9a0e
-	ld a,(0e284h)		;9a0f
+	ld a,(0e284h)		;9a0f   ; lee la x del personaje
 	ld d,a			;9a12
 	ret			;9a13
 L_9A14:
-	ld a,(0e248h)		;9a14
+	ld a,(0e248h)		;9a14   ; lee el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	or a			;9a17
 	ret nz			;9a18
-	ld a,(0e287h)		;9a19
+	ld a,(0e287h)		;9a19   ; lee la postura del personaje
 	or a			;9a1c
 	ret nz			;9a1d
 	ld hl,0ee50h		;9a1e
@@ -3973,7 +3973,7 @@ L_9A21:
 	or a			;9a22
 	ret z			;9a23
 	call L_927D		;9a24
-	ld a,(0e243h)		;9a27
+	ld a,(0e243h)		;9a27   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;9a2a
 	jr nz,L_9A42		;9a2d
 	ld a,(ix+000h)		;9a2f
@@ -3992,7 +3992,7 @@ L_9A42:
 	djnz L_9A21		;9a43
 	ret			;9a45
 L_9A46:
-	ld a,(0e282h)		;9a46
+	ld a,(0e282h)		;9a46   ; lee la y del personaje
 	sub (ix+001h)		;9a49
 	jr nc,L_9A53		;9a4c
 	neg		;9a4e
@@ -4002,7 +4002,7 @@ L_9A53:
 	cp 00dh		;9a53
 	ret nc			;9a55
 	ld b,000h		;9a56
-	ld a,(0e284h)		;9a58
+	ld a,(0e284h)		;9a58   ; lee la x del personaje
 	rla			;9a5b
 	rl b		;9a5c
 	sla b		;9a5e
@@ -4010,7 +4010,7 @@ L_9A53:
 	rlca			;9a63
 	and 001h		;9a64
 	add a,b			;9a66
-	call 04099h		;9a67
+	call 04099h		;9a67   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_9A6A: 4 destinos del despachador p00:4099 (call en p02:9A67, el
@@ -4025,7 +4025,7 @@ DATA_tabla_9A6A:
 
 
 L_9A72:
-	ld a,(0e284h)		;9a72
+	ld a,(0e284h)		;9a72   ; lee la x del personaje
 	sub (ix+002h)		;9a75
 	jr nc,L_9A7C		;9a78
 	neg		;9a7a
@@ -4033,14 +4033,14 @@ L_9A7C:
 	cp 00eh		;9a7c
 	ret			;9a7e
 L_9A7F:
-	ld a,(0e284h)		;9a7f
+	ld a,(0e284h)		;9a7f   ; lee la x del personaje
 	ld b,a			;9a82
 	ld a,(ix+002h)		;9a83
 	sub b			;9a86
 	cp 00eh		;9a87
 	ret			;9a89
 L_9A8A:
-	ld a,(0e284h)		;9a8a
+	ld a,(0e284h)		;9a8a   ; lee la x del personaje
 	sub (ix+002h)		;9a8d
 	cp 00eh		;9a90
 	ret			;9a92
@@ -4050,10 +4050,10 @@ L_9A93:
 	pop ix		;9a98
 	ld a,(ix+000h)		;9a9a
 	and 00fh		;9a9d
-	ld (0e287h),a		;9a9f
+	ld (0e287h),a		;9a9f   ; guarda la postura del personaje
 	or 0f0h		;9aa2
 	ld (ix+000h),a		;9aa4
-	call 04258h		;9aa7
+	call 04258h		;9aa7   ; pide el sonido 0x19
 	call L_909F		;9aaa
 	call L_96CF		;9aad
 	ret			;9ab0
@@ -4061,23 +4061,23 @@ L_9AB1:
 	ld a,(0e255h)		;9ab1
 	and a			;9ab4
 	ret nz			;9ab5
-	ld a,(0e298h)		;9ab6
+	ld a,(0e298h)		;9ab6   ; lee lo que lleva el personaje en la mano
 	or a			;9ab9
 	ret nz			;9aba
 	ld ix,0e500h		;9abb
 	ld b,008h		;9abf
 L_9AC1:
-	ld a,(0e243h)		;9ac1
+	ld a,(0e243h)		;9ac1   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;9ac4
 	jr nz,L_9AEB		;9ac7
 	bit 0,(ix+013h)		;9ac9
 	jr z,L_9AEB		;9acd
-	ld a,(0e282h)		;9acf
+	ld a,(0e282h)		;9acf   ; lee la y del personaje
 	add a,008h		;9ad2
 	sub (ix+003h)		;9ad4
 	cp 010h		;9ad7
 	jr nc,L_9AEB		;9ad9
-	ld a,(0e284h)		;9adb
+	ld a,(0e284h)		;9adb   ; lee la x del personaje
 	add a,00ah		;9ade
 	jr c,L_9AEB		;9ae0
 	sub (ix+005h)		;9ae2
@@ -4091,7 +4091,7 @@ L_9AEB:
 	ret			;9af2
 L_9AF3:
 	ld a,005h		;9af3
-	ld (0e280h),a		;9af5
+	ld (0e280h),a		;9af5   ; guarda el estado del personaje
 	call L_92FF		;9af8
 	jp 042a3h		;9afb
 L_9AFE:
@@ -4160,8 +4160,8 @@ L_9B64:
 	ld (0edcdh),a		;9b70
 	call L_9B80		;9b73
 	ld de,00100h		;9b76
-	call 04c20h		;9b79
-	call 04299h		;9b7c
+	call 04c20h		;9b79   ; suma DE (BCD) a los puntos 0xE226-0xE228, si el bit 6 de 0xE202 lo deja
+	call 04299h		;9b7c   ; pide el sonido 0x26
 	ret			;9b7f
 L_9B80:
 	ld a,(ix+000h)		;9b80
@@ -4473,7 +4473,7 @@ L_9DE7:
 	ld de,0e000h		;9dea
 	ld hl,0c000h		;9ded
 	exx			;9df0
-	ld de,0e280h		;9df1
+	ld de,0e280h		;9df1   ; apunta a el estado del personaje
 	ld bc,01100h		;9df4
 L_9DF7:
 	exx			;9df7
@@ -4614,8 +4614,8 @@ L_9EC4:
 	call L_9ECA		;9ec4
 	jp 0a67ch		;9ec7
 L_9ECA:
-	ld a,(0e280h)		;9eca
-	call 04099h		;9ecd
+	ld a,(0e280h)		;9eca   ; lee el estado del personaje
+	call 04099h		;9ecd   ; el despachador de Konami: la tabla va detras del call
 
 ; ----------------------------------------------------------------------
 ; DATOS tabla_9ED0: 15 destinos del despachador p00:4099 (call en p02:9ECD, el
@@ -4641,11 +4641,11 @@ L_9EEE:
 	jp nz,L_9FD4		;9eff
 L_9F02:
 	call 0a045h		;9f02
-	ld a,(0e280h)		;9f05
+	ld a,(0e280h)		;9f05   ; lee el estado del personaje
 	or a			;9f08
 	ret nz			;9f09
 	call L_9F77		;9f0a
-	ld a,(0e280h)		;9f0d
+	ld a,(0e280h)		;9f0d   ; lee el estado del personaje
 	or a			;9f10
 	ret nz			;9f11
 	ld a,(0e288h)		;9f12
@@ -4669,9 +4669,9 @@ L_9F20:
 	ld hl,09f49h		;9f33
 L_9F36:
 	ld a,b			;9f36
-	call 0408fh		;9f37
+	call 0408fh		;9f37   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;9f3a
-	ld (0e285h),a		;9f3b
+	ld (0e285h),a		;9f3b   ; guarda hacia donde mira el personaje
 	ret			;9f3e
 L_9F3F:
 	ld a,001h		;9f3f
@@ -4695,12 +4695,12 @@ L_9F4D:
 	ld a,(0e2a6h)		;9f4d
 	or a			;9f50
 	ret z			;9f51
-	ld a,(0e282h)		;9f52
+	ld a,(0e282h)		;9f52   ; lee la y del personaje
 	add a,010h		;9f55
 	ld l,a			;9f57
 	ld a,(0e294h)		;9f58
 	or a			;9f5b
-	ld a,(0e284h)		;9f5c
+	ld a,(0e284h)		;9f5c   ; lee la x del personaje
 	jr z,L_9F63		;9f5f
 	add a,00fh		;9f61
 L_9F63:
@@ -4708,19 +4708,19 @@ L_9F63:
 	call L_98E2		;9f64
 	sub 002h		;9f67
 	ret c			;9f69
-	ld a,(0e282h)		;9f6a
+	ld a,(0e282h)		;9f6a   ; lee la y del personaje
 	and 0f8h		;9f6d
-	ld (0e282h),a		;9f6f
+	ld (0e282h),a		;9f6f   ; guarda la y del personaje
 	xor a			;9f72
 	ld (0e2a6h),a		;9f73
 	ret			;9f76
 L_9F77:
 	call 0a452h		;9f77
 	jr c,L_9F95		;9f7a
-	ld a,(0e207h)		;9f7c
+	ld a,(0e207h)		;9f7c   ; lee el mando: lo que se acaba de pulsar
 	bit 4,a		;9f7f
 	jp nz,0a008h		;9f81
-	ld a,(0e208h)		;9f84
+	ld a,(0e208h)		;9f84   ; lee el mando: lo pulsado
 	rra			;9f87
 	jr nc,L_9F8F		;9f88
 	call 0a5a2h		;9f8a
@@ -4730,7 +4730,7 @@ L_9F8F:
 	jr nc,L_9F9A		;9f90
 	call 0a591h		;9f92
 L_9F95:
-	ld a,(0e280h)		;9f95
+	ld a,(0e280h)		;9f95   ; lee el estado del personaje
 	or a			;9f98
 	ret nz			;9f99
 L_9F9A:
@@ -4748,7 +4748,7 @@ L_9FB0:
 	ld hl,(0e283h)		;9fb1
 	add hl,de			;9fb4
 	push hl			;9fb5
-	ld a,(0e282h)		;9fb6
+	ld a,(0e282h)		;9fb6   ; lee la y del personaje
 	ld l,a			;9fb9
 	call L_9910		;9fba
 	pop hl			;9fbd
@@ -4771,7 +4771,7 @@ L_9FD0:
 L_9FD4:
 	ld a,001h		;9fd4
 	ld (0e2a7h),a		;9fd6
-	ld a,(0e280h)		;9fd9
+	ld a,(0e280h)		;9fd9   ; lee el estado del personaje
 	or a			;9fdc
 	jr nz,L_9FE9		;9fdd
 	ld a,(0e2a6h)		;9fdf
@@ -4791,4 +4791,4 @@ L_9FE9:
 	ld b,004h		;9ffa
 L_9FFC:
 	ld a,b			;9ffc
-	ld (0e285h),a		;9ffd
+	ld (0e285h),a		;9ffd   ; guarda hacia donde mira el personaje

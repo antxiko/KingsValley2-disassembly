@@ -35,11 +35,11 @@ L_6009:
 	ldir		;601f
 	call L_6DF4		;6021
 	ld a,03fh		;6024
-	ld (09000h),a		;6026
+	ld (09000h),a		;6026   ; el mapper: pone en 0x8000 el banco de A
 	xor a			;6029
 	ld (0988fh),a		;602a
 	ld a,002h		;602d
-	ld (09000h),a		;602f
+	ld (09000h),a		;602f   ; el mapper: pone en 0x8000 el banco de A
 	ld a,0bfh		;6032
 	ld (0e1e3h),a		;6034
 	ld e,a			;6037
@@ -289,11 +289,11 @@ L_61F9:
 	or e			;6229
 	ld (0e073h),a		;622a
 	ld a,03fh		;622d
-	ld (09000h),a		;622f
+	ld (09000h),a		;622f   ; el mapper: pone en 0x8000 el banco de A
 	ld a,(0e1fch)		;6232
 	ld (0988fh),a		;6235
 	ld a,002h		;6238
-	ld (09000h),a		;623a
+	ld (09000h),a		;623a   ; el mapper: pone en 0x8000 el banco de A
 	ld a,0ffh		;623d
 	ld hl,0e1ebh		;623f
 	ld (hl),a			;6242
@@ -354,7 +354,7 @@ L_625D:
 	res 4,a		;62af
 	ld (0e072h),a		;62b1
 	ld a,03fh		;62b4
-	ld (09000h),a		;62b6
+	ld (09000h),a		;62b6   ; el mapper: pone en 0x8000 el banco de A
 	ld a,(0e1fch)		;62b9
 	and 0feh		;62bc
 	ld (0988fh),a		;62be
@@ -364,7 +364,7 @@ L_625D:
 	ld (0988dh),a		;62c8
 	ld (0988eh),a		;62cb
 	ld a,002h		;62ce
-	ld (09000h),a		;62d0
+	ld (09000h),a		;62d0   ; el mapper: pone en 0x8000 el banco de A
 	ld a,b			;62d3
 	or a			;62d4
 	ret nz			;62d5
@@ -2017,11 +2017,11 @@ L_6EAC:
 	ld a,(hl)			;6eac
 	ld c,a			;6ead
 	ld a,03fh		;6eae
-	ld (09000h),a		;6eb0
+	ld (09000h),a		;6eb0   ; el mapper: pone en 0x8000 el banco de A
 	ld a,c			;6eb3
 	ld (de),a			;6eb4
 	ld a,005h		;6eb5
-	ld (09000h),a		;6eb7
+	ld (09000h),a		;6eb7   ; el mapper: pone en 0x8000 el banco de A
 	ret			;6eba
 L_6EBB:
 	ld hl,0e0a8h		;6ebb
@@ -2072,7 +2072,7 @@ L_6EFD:
 	ld de,09860h		;6f0c
 L_6F0F:
 	ld a,03fh		;6f0f
-	ld (09000h),a		;6f11
+	ld (09000h),a		;6f11   ; el mapper: pone en 0x8000 el banco de A
 	xor a			;6f14
 	ld (0988fh),a		;6f15
 	ld b,020h		;6f18
@@ -2087,7 +2087,7 @@ L_6F1A:
 	ld a,(de)			;6f26
 	ld (hl),a			;6f27
 	ld a,005h		;6f28
-	ld (09000h),a		;6f2a
+	ld (09000h),a		;6f2a   ; el mapper: pone en 0x8000 el banco de A
 	ret			;6f2d
 
 ; ----------------------------------------------------------------------
