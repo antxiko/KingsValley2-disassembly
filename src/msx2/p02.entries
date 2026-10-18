@@ -11,8 +11,8 @@
 # encuentra tools/z80trace.py solo, siguiendo el flujo.
 #
 # Este fichero lo regenera `make semillas` (tools/bancos.py escribe).
-0x8000   # p01:6CBE call
 0x8001   # p01:7FFE sigue de largo (el codigo cruza la frontera de banco)
+0x8016   # p01:7FFC jr cc
 0x8018   # p01:7E6C entrada 3 de la tabla de 0x7E6F (call 0x4099 en 0x7E6C)
 0x8046   # p01:7E31 call cc
 0x80A7   # p01:7E6C entrada 4 de la tabla de 0x7E6F (call 0x4099 en 0x7E6C)

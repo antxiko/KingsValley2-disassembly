@@ -1,1 +1,8 @@
 # Notas del banco p06 (comun): C comentario, L nombre, B bloque, D datos.
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA000 0xBDB2 partitura_A000  partitura (p04:63E2: ordenes 0xD0-0xFF y notas) de los sonidos 0x0F, 0x10, 0x11, 0x12, 0x13, 0x02 y otros; lo leen p04:63E2 (7602 bytes)
+F 0xA000 16
+D 0xBDB2 0xC000 relleno_ff  590 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (590 bytes)
+F 0xBDB2 16
+# --- fin de los bloques de bloques.py ---

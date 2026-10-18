@@ -1,1 +1,34 @@
 # Notas del banco p12 (msx1): C comentario, L nombre, B bloque, D datos.
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xB42F 0xB437 tabla_B42F  4 destinos del despachador p00:409E (call en p12:B42C, el indice en A): B437, B462, B46C, B48F; lo leen p12:B42C (8 bytes)
+F 0xB42F w4
+D 0xB6BA 0xB6C6 tabla_B6BA  6 destinos del despachador p00:409E (call en p12:B6B7, el indice en A): B6C6, B6EE, B6FD, B745, B85A, B899; lo leen p12:B6B7 (12 bytes)
+F 0xB6BA w6
+D 0xB7A1 0xB7A9 tabla_B7A1  4 destinos del despachador p00:409E (call en p12:B79E, el indice en A): B7B4, B7CE, B7DD, B7A9; lo leen p12:B79E (8 bytes)
+F 0xB7A1 w4
+D 0xB97C 0xB9A2 tabla_B97C  19 destinos del despachador p00:409E (call en p12:B979, el indice en A): 41F2, 41FC, 4201, 4206, 420B, 4210, 4215, 421A, 421F, 4224, 4229, 422E, 4233, 4238, 423D, 4251, 42A6, 42AB, 4274; lo leen p12:B979 (38 bytes)
+F 0xB97C w8
+D 0xBF50 0xC000 relleno_ff  176 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (176 bytes)
+F 0xBF50 16
+D 0xA000 0xB400 resto_A000  lo apuntan con el banco puesto p00:5893 (0xAA29), p00:5A40 (0xAA29), p00:589F (0xAA89), p00:5A4C (0xAA89), p00:58AB (0xAB79), p00:5A58 (0xABA1); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5893, p00:5A40, p00:589F, p00:5A4C, p00:58AB, p00:5A58 (5120 bytes)
+F 0xA000 16
+D 0xB4F8 0xB4FC resto_B4F8  lo apuntan con el banco puesto p12:B4EF (0xB4F8); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B4EF (4 bytes)
+F 0xB4F8 16
+D 0xB544 0xB6AC resto_B544  lo apuntan con el banco puesto p12:B400 (0xB544), p12:B924 (0xB581), p12:B73F (0xB5B4), p12:B893 (0xB5C3), p12:B6FD (0xB5DC), p12:B7EA (0xB648); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B400, p12:B924, p12:B73F, p12:B893, p12:B6FD, p12:B7EA (360 bytes)
+F 0xB544 16
+D 0xB8AB 0xB8CB resto_B8AB  lo apuntan con el banco puesto p12:B6E2 (0xB8AB), p12:B88D (0xB8AB), p12:B6F7 (0xB8BA); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B6E2, p12:B88D, p12:B6F7 (32 bytes)
+F 0xB8AB 16
+D 0xB903 0xB909 resto_B903  lo apuntan con el banco puesto p12:B8CE (0xB903); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B8CE (6 bytes)
+F 0xB903 16
+D 0xB9DE 0xB9F7 resto_B9DE  lo apuntan con el banco puesto p12:B9B0 (0xB9DE), p12:B9A5 (0xB9F1); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B9B0, p12:B9A5 (25 bytes)
+F 0xB9DE 16
+D 0xBD72 0xBDB2 resto_BD72  lo apuntan con el banco puesto p12:BD62 (0xBD72), p12:BD50 (0xBD92); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BD62, p12:BD50 (64 bytes)
+F 0xBD72 16
+D 0xBDDC 0xBE12 resto_BDDC  lo apuntan con el banco puesto p12:BDBB (0xBDDC), p12:BE12 (0xBE04), p12:BE50 (0xBE0B); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BDBB, p12:BE12, p12:BE50 (54 bytes)
+F 0xBDDC 16
+D 0xBEAB 0xBEB8 resto_BEAB  lo apuntan con el banco puesto p12:BE9F (0xBEAB); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BE9F (13 bytes)
+F 0xBEAB 16
+D 0xBF31 0xBF3E resto_BF31  lo apuntan con el banco puesto p12:BF25 (0xBF31); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BF25 (13 bytes)
+F 0xBF31 16
+# --- fin de los bloques de bloques.py ---

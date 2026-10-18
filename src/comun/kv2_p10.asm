@@ -10,8 +10,14 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6000..0x8000  (8192 bytes)
-DATA_6000:
+; DATOS resto_6000: lo apuntan con el banco puesto msx1 p00:43D7 (0x6000),
+;   msx2 p00:43CF (0x6000), msx1 p00:441E (0x6078), msx2 p00:4416 (0x6078),
+;   msx1 p00:4419 (0x60F0), msx2 p00:4411 (0x60F0); el tamano es lo que hay
+;   hasta lo siguiente, no sale de recorrerlo; lo leen msx1 p00:43D7, msx2
+;   p00:43CF, msx1 p00:441E, msx2 p00:4416, msx1 p00:4419, msx2 p00:4411 (8192
+;   bytes)
+;   0x6000..0x8000  (8192 bytes)
+DATA_resto_6000:
 	defb 068h,061h,0e0h,061h,04ah,062h,0fbh,062h,0a9h,063h,076h,064h,020h,065h,008h,066h	; 6000  ha.aJb.b.cvd e.f
 	defb 04eh,067h,0ceh,067h,061h,068h,0e5h,068h,0e3h,069h,006h,06bh,0bch,06ch,0f6h,06dh	; 6010  Ng.gah.h.i.k.l.m
 	defb 011h,06fh,039h,070h,073h,071h,0e1h,071h,0d0h,072h,066h,073h,0cah,074h,08ah,077h	; 6020  .o9psq.q.rfs.t.w

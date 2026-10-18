@@ -10,8 +10,14 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xa000..0xc000  (8192 bytes)
-DATA_A000:
+; DATOS resto_A000: lo apuntan con el banco puesto msx1 p01:6303 (0xA75D),
+;   msx2 p01:64F9 (0xA75D), msx1 p01:6143 (0xAAE0), msx2 p01:6339 (0xAAE0),
+;   msx1 p00:5BB3 (0xAB5A), msx2 p00:5DBC (0xAB5A); el tamano es lo que hay
+;   hasta lo siguiente, no sale de recorrerlo; lo leen msx1 p01:6303, msx2
+;   p01:64F9, msx1 p01:6143, msx2 p01:6339, msx1 p00:5BB3, msx2 p00:5DBC (8192
+;   bytes)
+;   0xa000..0xc000  (8192 bytes)
+DATA_resto_A000:
 	defb 011h,040h,028h,011h,040h,0c8h,011h,060h,048h,011h,060h,0a8h,000h,011h,008h,068h	; a000  .@(.@..`H.`....h
 	defb 011h,030h,090h,011h,050h,050h,011h,070h,0a0h,000h,012h,048h,020h,012h,048h,068h	; a010  .0..PP.p...H .Hh
 	defb 012h,070h,018h,012h,070h,060h,000h,011h,058h,050h,011h,058h,0a0h,012h,068h,048h	; a020  .p..p`..XP.X..hH

@@ -1,1 +1,6 @@
 # Notas del banco p07 (msx1): C comentario, L nombre, B bloque, D datos.
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x6000 0x8000 resto_6000  lo apuntan con el banco puesto p00:5318 (0x6000), p00:530C (0x6005), p00:419B (0x7000); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5318, p00:530C, p00:419B (8192 bytes)
+F 0x6000 16
+# --- fin de los bloques de bloques.py ---

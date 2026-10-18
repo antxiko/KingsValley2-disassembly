@@ -1,1 +1,6 @@
 # Notas del banco p09 (msx1): C comentario, L nombre, B bloque, D datos.
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA000 0xC000 relleno_ff  8192 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (8192 bytes)
+F 0xA000 16
+# --- fin de los bloques de bloques.py ---

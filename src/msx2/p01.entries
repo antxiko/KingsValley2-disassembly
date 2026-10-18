@@ -133,7 +133,7 @@
 0x7E49   # p01:7B0B entrada 5 de la tabla de 0x7B0E (call 0x4099 en 0x7B0B)
 0x7E5B   # p01:7B0B entrada 4 de la tabla de 0x7B0E (call 0x4099 en 0x7B0B)
 0x7E81   # p01:7E6C entrada 0 de la tabla de 0x7E6F (call 0x4099 en 0x7E6C)
-0x7F2A   # p02:8008 call
+0x7F2A   # p02:85EE call
 0x7F39   # p02:85F5 call
 0x7F44   # p01:7E6C entrada 1 de la tabla de 0x7E6F (call 0x4099 en 0x7E6C)
 0x7F4A   # p01:7E6C entrada 2 de la tabla de 0x7E6F (call 0x4099 en 0x7E6C)

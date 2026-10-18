@@ -35,6 +35,7 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
 sys.path.insert(0, AQUI)
 import fuentes                                  # noqa: E402
+from variante import VARIANTES, actual   # noqa: E402
 from paginas import ORG, TAM_PAGINA, N_PAGINAS, nombre   # noqa: E402
 import bancos                                           # noqa: E402
 from cartucho import DESPACHADOR                        # noqa: E402
@@ -289,6 +290,53 @@ def junta(bloques):
 
 SIN_LECTOR = []
 
+# Lo que la otra variante dejo dicho de los bancos comunes (work/<v>/comunes.json):
+# sus bloques y sus punteros. En un banco comun las notas llevan los de las dos.
+OTRAS = {}
+
+
+def etiqueta(p, b, pc, var):
+    """'p00:4F7F', y si la instruccion esta en un banco propio de un cartucho
+    y el dato en un banco comun, con el cartucho delante: 'msx1 p00:4F7F'."""
+    e = "%s:%04X" % (nombre(b), pc)
+    return ("%s %s" % (var, e)) if fuentes.es_comun(p) and not fuentes.es_comun(b) else e
+
+
+def con_variante(b, var):
+    """El bloque b con sus lectores de bancos propios marcados con el cartucho."""
+    ls = []
+    for l in b["lectores"]:
+        m = re.match(r"p(\d\d):", l)
+        ls.append("%s %s" % (var, l) if m and not fuentes.es_comun(int(m.group(1))) else l)
+    return dict(b, lectores=ls)
+
+
+def guarda_comunes():
+    ruta = os.path.join(fuentes.work(), "comunes.json")
+    ap = trazador_ap()
+    json.dump(dict(bloques=[b for b in BLOQUES if fuentes.es_comun(b["p"])],
+                   ap=[(d, w, xs) for (d, w), xs in ap.items() if fuentes.es_comun(d)]),
+              open(ruta, "w"))
+
+
+def trazador_ap():
+    import quien_lee
+    if not hasattr(restos, "ap"):
+        restos.ap = quien_lee.apuntadores(trazador())
+    return restos.ap
+
+
+def carga_otras():
+    for v in VARIANTES:
+        if v == actual():
+            continue
+        ruta = os.path.join(fuentes.RAIZ, "work", v, "comunes.json")
+        if os.path.exists(ruta):
+            OTRAS[v] = json.load(open(ruta))
+        else:
+            AVISOS.append("falta %s: las notas de los bancos comunes no se escriben (pasa "
+                          "bloques.py con VARIANTE=%s primero)" % (ruta, v))
+
 
 def restos(p, cod, mano, buenos, lineas):
     """Lo que queda sin declarar entre el codigo y los bloques: si alguna
@@ -299,6 +347,10 @@ def restos(p, cod, mano, buenos, lineas):
     import quien_lee
     if not hasattr(restos, "ap"):
         restos.ap = quien_lee.apuntadores(trazador())
+    # en un banco comun, lo que apuntan los dos cartuchos
+    restos.aps = [(actual(), restos.ap)]
+    if fuentes.es_comun(p):
+        restos.aps += [(v, {(d, w): xs for d, w, xs in o["ap"]}) for v, o in OTRAS.items()]
     m = bytearray(cod)
     for i, f in mano:
         for x in range(i, f):
@@ -315,14 +367,14 @@ def restos(p, cod, mano, buenos, lineas):
         while j < TAM_PAGINA and not m[j]:
             j += 1
         ini, fin = ORG[p] + i, ORG[p] + j
-        ls = sorted({(w, b, pc) for (d, w), xs in restos.ap.items() if d == p and ini <= w < fin
-                     for b, pc, _ in xs})
+        ls = sorted({(w, etiqueta(p, b, pc, var)) for var, ap in restos.aps for (d, w), xs in ap.items()
+                     if d == p and ini <= w < fin for b, pc, _ in xs})
         if ls:
-            lect = ["%s:%04X" % (nombre(b), pc) for w, b, pc in ls[:6]]
+            lect = [e for w, e in ls[:6]]
             lineas.append("D 0x%04X 0x%04X resto_%04X  lo apuntan con el banco puesto %s; el "
                           "tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo "
                           "leen %s (%d bytes)" % (ini, fin, ini, ", ".join(
-                              "%s:%04X (0x%04X)" % (nombre(b), pc, w) for w, b, pc in ls[:6]),
+                              "%s (0x%04X)" % (e, w) for w, e in ls[:6]),
                               ", ".join(lect), fin - ini))
             lineas.append("F 0x%04X 16" % ini)
         else:
@@ -340,9 +392,14 @@ def main(argv):
     despachadores()
     partidas()
     relleno()
+    guarda_comunes()
+    carga_otras()
     por = defaultdict(list)
     for b in BLOQUES:
-        por[b["p"]].append(b)
+        por[b["p"]].append(con_variante(b, actual()) if fuentes.es_comun(b["p"]) else b)
+    for v, o in OTRAS.items():
+        for b in o["bloques"]:
+            por[b["p"]].append(con_variante(b, v))
     total = 0
     for p in range(N_PAGINAS):
         cod = codigo_trazado(p)
@@ -376,6 +433,8 @@ def main(argv):
             print("%s: %d bloques, %d bytes" % (nombre(p), n,
                                                 sum(int(l.split()[2], 0) - int(l.split()[1], 0)
                                                     for l in lineas if l.startswith("D "))))
+        if escribe and fuentes.es_comun(p) and len(OTRAS) + 1 < len(VARIANTES):
+            continue
         if escribe:
             ruta = fuentes.fichero(p, "notes")
             filas = open(ruta, encoding="utf-8").read().split("\n") if os.path.exists(ruta) else ["# notas del banco %02d" % p, ""]

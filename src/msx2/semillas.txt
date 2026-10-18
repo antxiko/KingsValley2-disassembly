@@ -1,0 +1,34 @@
+# Semillas a mano: 'pNN 0xADDR b6000 b8000 bA000  # por que' (tools/bancos.py carga_extra).
+#
+# Las ordenes 0xE0-0xFE de la partitura: p04:688E hace HL = 0x68A3 + 2 x (orden & 0x1F)
+# y salta con jp (hl) (p04:68A2); el trazador no sigue ese salto. El banco 4 es comun:
+# estas lineas son las mismas en src/msx1 y src/msx2.
+p04 0x68E1 4 5 6   # ordenes 0xE0/0xE2 de la tabla p04:68A3
+p04 0x68F7 4 5 6   # ordenes 0xE1/0xE3 de la tabla p04:68A3
+p04 0x6914 4 5 6   # orden 0xE4 de la tabla p04:68A3
+p04 0x693E 4 5 6   # orden 0xE5 de la tabla p04:68A3
+p04 0x6952 4 5 6   # orden 0xE6 de la tabla p04:68A3
+p04 0x6962 4 5 6   # orden 0xE7 de la tabla p04:68A3
+p04 0x6974 4 5 6   # orden 0xE8 de la tabla p04:68A3
+p04 0x6985 4 5 6   # orden 0xE9 de la tabla p04:68A3
+p04 0x698C 4 5 6   # orden 0xEA de la tabla p04:68A3
+p04 0x6993 4 5 6   # orden 0xEB de la tabla p04:68A3
+p04 0x69E6 4 5 6   # orden 0xEC de la tabla p04:68A3
+p04 0x69F0 4 5 6   # orden 0xED de la tabla p04:68A3
+p04 0x69F7 4 5 6   # orden 0xEE de la tabla p04:68A3
+p04 0x6A02 4 5 6   # orden 0xEF de la tabla p04:68A3
+p04 0x6A08 4 5 6   # orden 0xF0 de la tabla p04:68A3
+p04 0x6A12 4 5 6   # orden 0xF1 de la tabla p04:68A3
+p04 0x6A2D 4 5 6   # orden 0xF2 de la tabla p04:68A3
+p04 0x6A3C 4 5 6   # orden 0xF3 de la tabla p04:68A3
+p04 0x6A42 4 5 6   # orden 0xF4 de la tabla p04:68A3
+p04 0x6A48 4 5 6   # orden 0xF5 de la tabla p04:68A3
+p04 0x6A4E 4 5 6   # orden 0xF6 de la tabla p04:68A3
+p04 0x6A58 4 5 6   # orden 0xF7 de la tabla p04:68A3
+p04 0x6A63 4 5 6   # orden 0xF8 de la tabla p04:68A3
+p04 0x6A7D 4 5 6   # orden 0xF9 de la tabla p04:68A3
+p04 0x6A88 4 5 6   # orden 0xFA de la tabla p04:68A3
+p04 0x6A90 4 5 6   # orden 0xFB de la tabla p04:68A3
+p04 0x6AAA 4 5 6   # orden 0xFC de la tabla p04:68A3
+p04 0x6ABF 4 5 6   # orden 0xFD de la tabla p04:68A3
+p04 0x6AC2 4 5 6   # orden 0xFE de la tabla p04:68A3

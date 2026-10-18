@@ -116,6 +116,10 @@ ED_TOCA_HL |= set(range(0xA0, 0xC0))         # ldir, cpir, ...
 from cartucho import (DESPACHADOR, DESPACHADORES, RANURA_REG, SOMBRA,
                       SOMBRA_RANURA, PONE_ZONA, DEVUELVE_ZONA, PONE_BANCOS,
                       semillas_iniciales)
+try:
+    from cartucho import LLAMADAS_FUERA
+except ImportError:
+    LLAMADAS_FUERA = set()
 
 
 def pone_bancos(t, s, sombra):
@@ -487,6 +491,10 @@ class TrazadorDeBancos:
                     t = self.word(pc + 1, s)
                     self.llamadas.append((t, b, pc, s, hl, de))
                     self._ir(t, s, sombra, pila, b, pc, "jp cc")
+                elif op == 0xCD and (b, pc) in LLAMADAS_FUERA:
+                    # call al cartucho de otra ranura (cartucho.LLAMADAS_FUERA):
+                    # no se sigue, y se vuelve con el mismo reparto
+                    pass
                 elif op == 0xCD:                                 # call nn
                     t = self.word(pc + 1, s)
                     self.llamadas.append((t, b, pc, s, hl, de))

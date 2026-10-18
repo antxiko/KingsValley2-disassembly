@@ -29,6 +29,11 @@ OTRO_SLOT = elige({
                               0x6DBC, 0x6DE4, 0x6E0C, 0x6E68, 0x6E96)},
 })
 
+# Y las once `call 0x8000` que van detras (9 bytes despues de cada escritura,
+# tras `ld c,N / ld de,(0xF0E0)`): llaman al 0x8000 de ESE cartucho, no al
+# banco 2 de este. El trazador no las sigue (bancos.py).
+LLAMADAS_FUERA = {(b, a + 9) for b, a in OTRO_SLOT}
+
 # Registro del mapper -> casilla del reparto (0x6000, 0x8000, 0xA000). El de
 # 0x5000 no esta: solo lo escribe el arranque de la MSX1 (p00:40F5), con un 0.
 RANURA_REG = {0x7000: 0, 0x9000: 1, 0xB000: 2}

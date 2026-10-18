@@ -119,8 +119,8 @@
 0x7A74   # p01:7746 entrada 5 de la tabla de 0x7749 (call 0x409E en 0x7746)
 0x7A86   # p01:7746 entrada 4 de la tabla de 0x7749 (call 0x409E en 0x7746)
 0x7AAC   # p01:7A97 entrada 0 de la tabla de 0x7A9A (call 0x409E en 0x7A97)
-0x7B55   # p02:803F call
-0x7B64   # p02:8038 call
+0x7B55   # p02:81D0 call
+0x7B64   # p02:81D7 call
 0x7B6F   # p01:7A97 entrada 1 de la tabla de 0x7A9A (call 0x409E en 0x7A97)
 0x7B75   # p01:7A97 entrada 2 de la tabla de 0x7A9A (call 0x409E en 0x7A97)
 0x7C43   # p01:7A97 entrada 3 de la tabla de 0x7A9A (call 0x409E en 0x7A97)

@@ -1,1 +1,6 @@
 # Notas del banco p11 (comun): C comentario, L nombre, B bloque, D datos.
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x8000 0xA000 resto_8000  lo apuntan con el banco puesto msx2 p00:5B19 (0x8030), msx2 p00:5BEE (0x8030), msx1 p00:41A1 (0x9000), msx2 p00:4199 (0x9000), msx2 p00:41D3 (0x9000), msx2 p00:5C09 (0x9870); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen msx2 p00:5B19, msx2 p00:5BEE, msx1 p00:41A1, msx2 p00:4199, msx2 p00:41D3, msx2 p00:5C09 (8192 bytes)
+F 0x8000 16
+# --- fin de los bloques de bloques.py ---

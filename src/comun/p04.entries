@@ -16,3 +16,32 @@
 0x6000   # msx1 p00:4F74 call | msx2 p00:53C3 call
 0x6003   # msx1 p00:4344 call | msx2 p00:433C call
 0x6006   # msx1 p00:4062 call | msx2 p00:4060 call
+0x68E1   # msx1 ordenes 0xE0/0xE2 de la tabla p04:68A3 | msx2 ordenes 0xE0/0xE2 de la tabla p04:68A3
+0x68F7   # msx1 ordenes 0xE1/0xE3 de la tabla p04:68A3 | msx2 ordenes 0xE1/0xE3 de la tabla p04:68A3
+0x6914   # msx1 orden 0xE4 de la tabla p04:68A3 | msx2 orden 0xE4 de la tabla p04:68A3
+0x693E   # msx1 orden 0xE5 de la tabla p04:68A3 | msx2 orden 0xE5 de la tabla p04:68A3
+0x6952   # msx1 orden 0xE6 de la tabla p04:68A3 | msx2 orden 0xE6 de la tabla p04:68A3
+0x6962   # msx1 orden 0xE7 de la tabla p04:68A3 | msx2 orden 0xE7 de la tabla p04:68A3
+0x6974   # msx1 orden 0xE8 de la tabla p04:68A3 | msx2 orden 0xE8 de la tabla p04:68A3
+0x6985   # msx1 orden 0xE9 de la tabla p04:68A3 | msx2 orden 0xE9 de la tabla p04:68A3
+0x698C   # msx1 orden 0xEA de la tabla p04:68A3 | msx2 orden 0xEA de la tabla p04:68A3
+0x6993   # msx1 orden 0xEB de la tabla p04:68A3 | msx2 orden 0xEB de la tabla p04:68A3
+0x69E6   # msx1 orden 0xEC de la tabla p04:68A3 | msx2 orden 0xEC de la tabla p04:68A3
+0x69F0   # msx1 orden 0xED de la tabla p04:68A3 | msx2 orden 0xED de la tabla p04:68A3
+0x69F7   # msx1 orden 0xEE de la tabla p04:68A3 | msx2 orden 0xEE de la tabla p04:68A3
+0x6A02   # msx1 orden 0xEF de la tabla p04:68A3 | msx2 orden 0xEF de la tabla p04:68A3
+0x6A08   # msx1 orden 0xF0 de la tabla p04:68A3 | msx2 orden 0xF0 de la tabla p04:68A3
+0x6A12   # msx1 orden 0xF1 de la tabla p04:68A3 | msx2 orden 0xF1 de la tabla p04:68A3
+0x6A2D   # msx1 orden 0xF2 de la tabla p04:68A3 | msx2 orden 0xF2 de la tabla p04:68A3
+0x6A3C   # msx1 orden 0xF3 de la tabla p04:68A3 | msx2 orden 0xF3 de la tabla p04:68A3
+0x6A42   # msx1 orden 0xF4 de la tabla p04:68A3 | msx2 orden 0xF4 de la tabla p04:68A3
+0x6A48   # msx1 orden 0xF5 de la tabla p04:68A3 | msx2 orden 0xF5 de la tabla p04:68A3
+0x6A4E   # msx1 orden 0xF6 de la tabla p04:68A3 | msx2 orden 0xF6 de la tabla p04:68A3
+0x6A58   # msx1 orden 0xF7 de la tabla p04:68A3 | msx2 orden 0xF7 de la tabla p04:68A3
+0x6A63   # msx1 orden 0xF8 de la tabla p04:68A3 | msx2 orden 0xF8 de la tabla p04:68A3
+0x6A7D   # msx1 orden 0xF9 de la tabla p04:68A3 | msx2 orden 0xF9 de la tabla p04:68A3
+0x6A88   # msx1 orden 0xFA de la tabla p04:68A3 | msx2 orden 0xFA de la tabla p04:68A3
+0x6A90   # msx1 orden 0xFB de la tabla p04:68A3 | msx2 orden 0xFB de la tabla p04:68A3
+0x6AAA   # msx1 orden 0xFC de la tabla p04:68A3 | msx2 orden 0xFC de la tabla p04:68A3
+0x6ABF   # msx1 orden 0xFD de la tabla p04:68A3 | msx2 orden 0xFD de la tabla p04:68A3
+0x6AC2   # msx1 orden 0xFE de la tabla p04:68A3 | msx2 orden 0xFE de la tabla p04:68A3

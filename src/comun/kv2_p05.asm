@@ -10,8 +10,11 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x8000..0xa000  (8192 bytes)
-DATA_8000:
+; DATOS partitura_8000: partitura (p04:63E2: ordenes 0xD0-0xFF y notas) de los
+;   sonidos 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F y otros; lo leen p04:63E2 (8192
+;   bytes)
+;   0x8000..0xa000  (8192 bytes)
+DATA_partitura_8000:
 	defb 070h,070h,0b1h,0d1h,001h,023h,001h,0d2h,0b1h,085h,0d8h,04ch,081h,0d8h,05ch,076h	; 8000  pp...#.....L..\v
 	defb 0e9h,005h,0c0h,0d7h,0e9h,005h,0ebh,0c7h,060h,0d2h,0c2h,0e9h,00ah,070h,070h,070h	; 8010  ........`....ppp
 	defb 0b1h,0d1h,001h,023h,001h,0d2h,0b1h,085h,081h,077h,0c0h,070h,070h,070h,0b1h,0d1h	; 8020  ...#.....w.ppp..

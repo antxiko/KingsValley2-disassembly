@@ -1,1 +1,8 @@
 # Notas del banco p09 (msx2): C comentario, L nombre, B bloque, D datos.
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xBD7C 0xC000 relleno_ff  644 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (644 bytes)
+F 0xBD7C 16
+D 0xA000 0xBD7C resto_A000  lo apuntan con el banco puesto p00:5B80 (0xA848), p00:419F (0xB000), p00:57AF (0xB7C7), p00:57B2 (0xB7DF), p00:5B70 (0xBB8B), p00:5BB0 (0xBB9B); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p00:5B80, p00:419F, p00:57AF, p00:57B2, p00:5B70, p00:5BB0 (7548 bytes)
+F 0xA000 16
+# --- fin de los bloques de bloques.py ---

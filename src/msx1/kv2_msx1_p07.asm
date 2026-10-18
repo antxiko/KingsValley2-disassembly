@@ -10,8 +10,11 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6000..0x8000  (8192 bytes)
-DATA_6000:
+; DATOS resto_6000: lo apuntan con el banco puesto p00:5318 (0x6000), p00:530C
+;   (0x6005), p00:419B (0x7000); el tamano es lo que hay hasta lo siguiente,
+;   no sale de recorrerlo; lo leen p00:5318, p00:530C, p00:419B (8192 bytes)
+;   0x6000..0x8000  (8192 bytes)
+DATA_resto_6000:
 	defb 007h,073h,060h,05dh,0e7h,063h,000h,013h,060h,026h,060h,039h,060h,046h,060h,053h	; 6000  .s`].c..`&`9`F`S
 	defb 060h,066h,060h,007h,047h,066h,001h,06dh,069h,007h,0d8h,068h,005h,019h,06bh,007h	; 6010  `f`.Gf.mi..h..k.
 	defb 0dah,063h,001h,044h,066h,000h,007h,0b3h,06bh,001h,099h,06eh,007h,004h,06eh,005h	; 6020  .c.Df...k..n..n.

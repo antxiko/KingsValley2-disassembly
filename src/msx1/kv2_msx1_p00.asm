@@ -10,8 +10,12 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4000..0x402e  (46 bytes)
-DATA_4000:
+; DATOS resto_4000: lo apuntan con el banco puesto p00:4F8F (0x4000), p02:8F3B
+;   (0x4001), p01:6D3D (0x4010), p01:6D47 (0x4011); el tamano es lo que hay
+;   hasta lo siguiente, no sale de recorrerlo; lo leen p00:4F8F, p02:8F3B,
+;   p01:6D3D, p01:6D47 (46 bytes)
+;   0x4000..0x402e  (46 bytes)
+DATA_resto_4000:
 	defb 041h,042h,0a8h,040h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 4000  AB.@............
 	defb 043h,044h,007h,060h,0e0h,000h,0e2h,004h,042h,0e2h,03ch,040h,0e2h,023h,0e2h,026h	; 4010  CD.`....B.<@.#.&
 	defb 0e2h,000h,000h,000h,000h,000h,000h,000h,080h,000h,001h,000h,0ffh,0ffh	; 4020  ..............
@@ -399,8 +403,11 @@ L_4274:
 	jp L_432E		;4276
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4279..0x4283  (10 bytes)
-DATA_4279:
+; DATOS resto_4279: lo apuntan con el banco puesto p03:AAC8 (0x4279), p03:B0F7
+;   (0x427E); el tamano es lo que hay hasta lo siguiente, no sale de
+;   recorrerlo; lo leen p03:AAC8, p03:B0F7 (10 bytes)
+;   0x4279..0x4283  (10 bytes)
+DATA_resto_4279:
 	defb 03eh,01eh,0c3h,02eh,043h,03eh,01fh,0c3h,02eh,043h	; 4279  >...C>...C
 
 ; ======================================================================
@@ -443,8 +450,11 @@ L_42B3:
 	jr $+121		;42b5
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x42b7..0x42bf  (8 bytes)
-DATA_42B7:
+; DATOS resto_42B7: lo apuntan con el banco puesto p03:ACC3 (0x42BB); el
+;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
+;   p03:ACC3 (8 bytes)
+;   0x42b7..0x42bf  (8 bytes)
+DATA_resto_42B7:
 	defb 03eh,02bh,018h,073h,03eh,02ch,018h,06fh	; 42b7  >+.s>,.o
 
 ; ======================================================================
@@ -543,8 +553,11 @@ L_430B:
 	jr $+33		;430d
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x430f..0x4313  (4 bytes)
-DATA_430F:
+; DATOS resto_430F: lo apuntan con el banco puesto p03:ABBA (0x430F); el
+;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
+;   p03:ABBA (4 bytes)
+;   0x430f..0x4313  (4 bytes)
+DATA_resto_430F:
 	defb 03eh,041h,018h,01bh	; 430f
 
 ; ======================================================================
@@ -655,9 +668,11 @@ L_43A7:
 	call L_409E		;43a9
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x43ac..0x43b6  (10 bytes)
-DATA_43AC:
-	defb 0fch,041h,001h,042h,006h,042h,00bh,042h,010h,042h	; 43ac  .A.B.B.B.B
+; DATOS tabla_43AC: 5 destinos del despachador p00:409E (call en p00:43A9, el
+;   indice en A): 41FC, 4201, 4206, 420B, 4210; lo leen p00:43A9 (10 bytes)
+;   0x43ac..0x43b6  (10 bytes)
+DATA_tabla_43AC:
+	defw 041fch,04201h,04206h,0420bh,04210h	; 43ac
 
 ; ======================================================================
 ; CODIGO 0x43b6..0x45ca  (532 bytes)
@@ -994,8 +1009,11 @@ L_45BD:
 	ret			;45c9
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x45ca..0x45cc  (2 bytes)
-DATA_45CA:
+; DATOS resto_45CA: lo apuntan con el banco puesto p00:45BD (0x45CA); el
+;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
+;   p00:45BD (2 bytes)
+;   0x45ca..0x45cc  (2 bytes)
+DATA_resto_45CA:
 	defb 001h,002h	; 45ca
 
 ; ======================================================================
@@ -1199,10 +1217,13 @@ L_46DB:
 	call L_409E		;46eb
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x46ee..0x470a  (28 bytes)
-DATA_46EE:
-	defb 00ah,047h,069h,047h,088h,047h,0c2h,047h,0afh,048h,043h,049h,01eh,04ah,03eh,04ah	; 46ee  .GiG.G.G.HCI.J>J
-	defb 0efh,04ah,007h,04bh,04dh,04bh,05eh,04bh,06fh,04bh,0b0h,04bh	; 46fe  .J.KMK^KoK.K
+; DATOS tabla_46EE: 14 destinos del despachador p00:409E (call en p00:46EB, el
+;   indice en A): 470A, 4769, 4788, 47C2, 48AF, 4943, 4A1E, 4A3E, 4AEF, 4B07,
+;   4B4D, 4B5E, 4B6F, 4BB0; lo leen p00:46EB (28 bytes)
+;   0x46ee..0x470a  (28 bytes)
+DATA_tabla_46EE:
+	defw 0470ah,04769h,04788h,047c2h,048afh,04943h,04a1eh,04a3eh	; 46ee
+	defw 04aefh,04b07h,04b4dh,04b5eh,04b6fh,04bb0h	; 46fe
 
 ; ======================================================================
 ; CODIGO 0x470a..0x470e  (4 bytes)
@@ -1214,9 +1235,11 @@ L_470A:
 	call L_409E		;470b
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x470e..0x4718  (10 bytes)
-DATA_470E:
-	defb 018h,047h,024h,047h,026h,047h,043h,047h,05dh,047h	; 470e  .G$G&GCG]G
+; DATOS tabla_470E: 5 destinos del despachador p00:409E (call en p00:470B, el
+;   indice en A): 4718, 4724, 4726, 4743, 475D; lo leen p00:470B (10 bytes)
+;   0x470e..0x4718  (10 bytes)
+DATA_tabla_470E:
+	defw 04718h,04724h,04726h,04743h,0475dh	; 470e
 
 ; ======================================================================
 ; CODIGO 0x4718..0x47c6  (174 bytes)
@@ -1323,10 +1346,13 @@ L_47C2:
 	call L_409E		;47c3
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x47c6..0x47de  (24 bytes)
-DATA_47C6:
-	defb 0deh,047h,0e5h,047h,03ch,048h,045h,048h,055h,048h,069h,048h,06fh,048h,07ch,048h	; 47c6  .G.G<HEHUHiHoH|H
-	defb 082h,048h,091h,048h,097h,048h,0a9h,048h	; 47d6  .H.H.H.H
+; DATOS tabla_47C6: 12 destinos del despachador p00:409E (call en p00:47C3, el
+;   indice en A): 47DE, 47E5, 483C, 4845, 4855, 4869, 486F, 487C, 4882, 4891,
+;   4897, 48A9; lo leen p00:47C3 (24 bytes)
+;   0x47c6..0x47de  (24 bytes)
+DATA_tabla_47C6:
+	defw 047deh,047e5h,0483ch,04845h,04855h,04869h,0486fh,0487ch	; 47c6
+	defw 04882h,04891h,04897h,048a9h	; 47d6  -> L_4882 L_4891 L_4897 L_48A9
 
 ; ======================================================================
 ; CODIGO 0x47de..0x4c1b  (1085 bytes)
@@ -1878,8 +1904,11 @@ L_4C02:
 	ret			;4c1a
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4c1b..0x4c21  (6 bytes)
-DATA_4C1B:
+; DATOS resto_4C1B: lo apuntan con el banco puesto p00:4C0F (0x4C1B); el
+;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
+;   p00:4C0F (6 bytes)
+;   0x4c1b..0x4c21  (6 bytes)
+DATA_resto_4C1B:
 	defb 001h,001h,001h,000h,000h,003h	; 4c1b
 
 ; ======================================================================
@@ -2485,8 +2514,11 @@ L_4F9D:
 	ret			;4fa6
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4fa7..0x4faf  (8 bytes)
-DATA_4FA7:
+; DATOS resto_4FA7: lo apuntan con el banco puesto p00:4F96 (0x4FA7); el
+;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
+;   p00:4F96 (8 bytes)
+;   0x4fa7..0x4faf  (8 bytes)
+DATA_resto_4FA7:
 	defb 002h,0e2h,00eh,07fh,007h,076h,003h,0efh	; 4fa7  .....v..
 
 ; ======================================================================
@@ -2883,8 +2915,11 @@ L_5368:
 	jp L_53D6		;5374
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5377..0x537b  (4 bytes)
-DATA_5377:
+; DATOS resto_5377: lo apuntan con el banco puesto p00:536E (0x5377); el
+;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
+;   p00:536E (4 bytes)
+;   0x5377..0x537b  (4 bytes)
+DATA_resto_5377:
 	defb 05dh,05eh,05fh,08ch	; 5377
 
 ; ======================================================================
@@ -3658,8 +3693,11 @@ L_5915:
 	jp L_590C		;592d
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5930..0x597c  (76 bytes)
-DATA_5930:
+; DATOS resto_5930: lo apuntan con el banco puesto p00:5923 (0x5930), p00:58D0
+;   (0x5936); el tamano es lo que hay hasta lo siguiente, no sale de
+;   recorrerlo; lo leen p00:5923, p00:58D0 (76 bytes)
+;   0x5930..0x597c  (76 bytes)
+DATA_resto_5930:
 	defb 07ah,065h,094h,065h,0ach,065h,0c3h,065h,0deh,065h,0f8h,065h,010h,066h,027h,066h	; 5930  ze.e.e.e.e.e.f'f
 	defb 04fh,00ch,0d9h,06ah,0f9h,06ah,0d9h,06ah,0f9h,06ah,04ch,012h,00ah,070h,026h,070h	; 5940  O..j.j.j.jL..p&p
 	defb 00ah,070h,026h,070h,049h,010h,014h,074h,038h,074h,014h,074h,038h,074h,036h,005h	; 5950  .p&pI..t8t.t8t6.
@@ -4032,9 +4070,11 @@ L_5C36:
 	call L_409E		;5c37
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5c3a..0x5c42  (8 bytes)
-DATA_5C3A:
-	defb 042h,05ch,04eh,05ch,05ch,05ch,06ah,05ch	; 5c3a  B\N\\\j\
+; DATOS tabla_5C3A: 4 destinos del despachador p00:409E (call en p00:5C37, el
+;   indice en A): 5C42, 5C4E, 5C5C, 5C6A; lo leen p00:5C37 (8 bytes)
+;   0x5c3a..0x5c42  (8 bytes)
+DATA_tabla_5C3A:
+	defw 05c42h,05c4eh,05c5ch,05c6ah	; 5c3a  -> L_5C42 L_5C4E L_5C5C L_5C6A
 
 ; ======================================================================
 ; CODIGO 0x5c42..0x5ce9  (167 bytes)
@@ -4139,8 +4179,13 @@ L_5CE6:
 	ret			;5ce8
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5ce9..0x5d84  (155 bytes)
-DATA_5CE9:
+; DATOS resto_5CE9: lo apuntan con el banco puesto p00:4C9B (0x5CE9), p02:8DCE
+;   (0x5D05), p00:48C4 (0x5D0A), p00:4908 (0x5D1F), p00:5E0B (0x5D26),
+;   p00:47EF (0x5D35); el tamano es lo que hay hasta lo siguiente, no sale de
+;   recorrerlo; lo leen p00:4C9B, p02:8DCE, p00:48C4, p00:4908, p00:5E0B,
+;   p00:47EF (155 bytes)
+;   0x5ce9..0x5d84  (155 bytes)
+DATA_resto_5CE9:
 	defb 010h,0c2h,0e8h,0e9h,0f3h,0e3h,0efh,0f2h,0e5h,0feh,060h,0c2h,0f3h,0e3h,0efh,0f2h	; 5ce9  ..........`.....
 	defb 0e5h,0feh,098h,0c2h,0f3h,0f4h,0e1h,0e7h,0e5h,0feh,0d0h,0c2h,0f2h,0e5h,0f3h,0f4h	; 5cf9  ................
 	defb 0ffh,060h,048h,0f3h,0f4h,0e1h,0e7h,0e5h,0feh,048h,068h,0f3h,0efh,0f5h,0ech,000h	; 5d09  .`H......Hh.....
@@ -4193,9 +4238,11 @@ L_5DCB:
 	call L_409E		;5dce
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5dd1..0x5dd5  (4 bytes)
-DATA_5DD1:
-	defb 0d5h,05dh,0e7h,05dh	; 5dd1
+; DATOS tabla_5DD1: 2 destinos del despachador p00:409E (call en p00:5DCE, el
+;   indice en A): 5DD5, 5DE7; lo leen p00:5DCE (4 bytes)
+;   0x5dd1..0x5dd5  (4 bytes)
+DATA_tabla_5DD1:
+	defw 05dd5h,05de7h	; 5dd1  -> L_5DD5 L_5DE7
 
 ; ======================================================================
 ; CODIGO 0x5dd5..0x5e1c  (71 bytes)
@@ -4244,8 +4291,11 @@ L_5E02:
 	ret			;5e1b
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5e1c..0x5e70  (84 bytes)
-DATA_5E1C:
+; DATOS resto_5E1C: lo apuntan con el banco puesto p00:5DF6 (0x5E1C), p00:5DBF
+;   (0x5E24), p00:5E05 (0x5E34); el tamano es lo que hay hasta lo siguiente,
+;   no sale de recorrerlo; lo leen p00:5DF6, p00:5DBF, p00:5E05 (84 bytes)
+;   0x5e1c..0x5e70  (84 bytes)
+DATA_resto_5E1C:
 	defb 0aah,098h,055h,098h,000h,098h,0abh,097h,014h,048h,000h,00ah,014h,058h,004h,00ah	; 5e1c  ..U......H...X..
 	defb 014h,068h,008h,00ah,014h,078h,00ch,00ah,030h,080h,0b0h,0b1h,0b1h,0b1h,0b1h,0b1h	; 5e2c  .h...x..0.......
 	defb 0b1h,0b1h,0b2h,0feh,030h,088h,0b7h,000h,000h,000h,000h,000h,000h,000h,0b3h,0feh	; 5e3c  ....0...........
@@ -4263,9 +4313,11 @@ L_5E70:
 	call L_409E		;5e73
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5e76..0x5e7e  (8 bytes)
-DATA_5E76:
-	defb 07eh,05eh,0c0h,05eh,0deh,05eh,0fbh,05eh	; 5e76  ~^.^.^.^
+; DATOS tabla_5E76: 4 destinos del despachador p00:409E (call en p00:5E73, el
+;   indice en A): 5E7E, 5EC0, 5EDE, 5EFB; lo leen p00:5E73 (8 bytes)
+;   0x5e76..0x5e7e  (8 bytes)
+DATA_tabla_5E76:
+	defw 05e7eh,05ec0h,05edeh,05efbh	; 5e76  -> L_5E7E L_5EC0 L_5EDE L_5EFB
 
 ; ======================================================================
 ; CODIGO 0x5e7e..0x5ff5  (375 bytes)
@@ -4516,8 +4568,18 @@ L_5FE6:
 	ret			;5ff4
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x5ff5..0x6000  (11 bytes)
-DATA_5FF5:
+; DATOS resto_5FF5: lo apuntan con el banco puesto p00:5F39 (0x5FF5), p00:5F74
+;   (0x5FF8), p00:5FAF (0x5FFB), p00:5FEA (0x5FFD); el tamano es lo que hay
+;   hasta lo siguiente, no sale de recorrerlo; lo leen p00:5F39, p00:5F74,
+;   p00:5FAF, p00:5FEA (10 bytes)
+;   0x5ff5..0x5fff  (10 bytes)
+DATA_resto_5FF5:
 	defb 0f3h,0f4h,0ffh,0f5h,0f6h,0ffh,0f7h,0ffh,0f8h,0ffh	; 5ff5  ..........
+
+; ----------------------------------------------------------------------
+; DATOS partida_5FFF: los 1 primeros bytes de una instruccion de 3 (3A 43 E2)
+;   que sigue en el banco 1: el trazador de un solo banco no puede verla
+;   entera (tools/bancos.py); lo leen p00:5FFF (1 bytes)
+;   0x5fff..0x6000  (1 bytes)
 L_5FFF:
 	defb 03ah	; 5fff
