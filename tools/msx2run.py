@@ -281,6 +281,10 @@ class Msx(Z80):
         self.mem[0x002B] = 0x11                        # BIOS no japonesa
         self.mem[0xFFA7] = 0xC9                        # H.PHYD: sin disco
         self.psg_escrito = []
+        self.teclas = {}          # fila: valor (los bits a 0, pulsados)
+        self.tolera_bios = False
+        self.bios_rara = []
+        self.mando = 0xFF
 
     def pon_banco(self, ventana, banco):
         self.bancos[ventana] = banco
@@ -342,18 +346,22 @@ class Msx(Z80):
                     self.pon_registro(r, x)
         elif pc == 0x0138:                                # RSLREG
             self.a = 0
-        elif pc == 0x0141:                                # SNSMAT: nada pulsado
-            self.a = 0xFF
+        elif pc == 0x0141:                                # SNSMAT: la fila A
+            self.a = self.teclas.get(self.a & 15, 0xFF)
         elif pc == 0x0093:                                # WRTPSG
             self.psg_escrito.append((self.a & 15, self.e))
-        elif pc == 0x0096:                                # RDPSG
-            self.a = 0xFF
+        elif pc == 0x0096:                                # RDPSG: el 14, el mando
+            self.a = self.mando if (self.a & 15) == 14 else 0xFF
         elif pc == 0x000C:                                # RDSLT
             self.a = 0xFF
         elif pc == 0x013E:                                # RDVDP
             self.a = 0
         elif pc in (0x0024, 0x0062, 0x0090, 0x0041, 0x0044):   # ENASLT, CHGCLR, GICINI, DISSCR, ENASCR
             pass
+        elif self.tolera_bios:
+            # el juego salta a la BIOS por un sitio que no es una de sus entradas (el
+            # final: p01:7835 con 0xE881 pisado); aqui se vuelve sin hacer nada y se apunta
+            self.bios_rara.append(pc)
         else:
             raise ParadaZ80("llamada a la BIOS 0x%04X sin hacer" % pc)
 
@@ -385,8 +393,8 @@ class Msx(Z80):
         else:
             self.corre(0x40C4, hasta=0x4127)
 
-    def llama(self, d, **regs):
+    def llama(self, donde, **regs):
         for k, x in regs.items():
             setattr(self, k, x)
         self.sp = 0xDFF0
-        self.corre(d)
+        self.corre(donde)

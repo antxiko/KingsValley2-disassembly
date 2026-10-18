@@ -247,6 +247,43 @@ def hoja_enemigos(m, v, salida):
     hoja.save(os.path.join(salida, "sprites_%s_enemigos.png" % v), optimize=True)
 
 
+OBJ = {
+    "msx2": dict(borra=0x4E98, rect=0x573B, cosas=0x9324, salida=0x9340, sitio=0x93AC,
+                 puerta1=0xBB43, puerta2=0xBC50, suelo=0xBDAA, bloque=0x9661),
+    "msx1": dict(borra=0x4EC7, rect=0x53D6, cosas=0x903D, salida=0x9059, sitio=0x90C5,
+                 puerta1=0xB8BE, puerta2=0xB9CB, suelo=0xBB25, bloque=0x937A),
+}
+
+
+def hoja_objetos(m, v, salida):
+    """Lo que hay en las pantallas, pintado por las rutinas del juego sobre la
+    pantalla borrada: la joya y las 6 herramientas en el suelo (2 x 2 caracteres
+    de la tabla de las cosas, p00:573B / p00:53D6), la salida en sus 3 pasos al
+    abrirse (4 x 4, 16 bytes por paso), el sitio de donde salen los enemigos (3 x 2)
+    y las cosas de 0xE600 con una ficha puesta a mano (la puerta giratoria, la de
+    tipo 2 por sus dos lados, el suelo que se rompe y el bloque)."""
+    d = OBJ[v]
+    m.llama(d["borra"])
+    for k in range(7):
+        m.llama(d["rect"], h=(d["cosas"] + 4 * k) >> 8, l=(d["cosas"] + 4 * k) & 0xFF,
+                d=8 + 24 * k, e=16, b=2, c=2)
+    for k in range(3):
+        a = d["salida"] + 16 * k
+        m.llama(d["rect"], h=a >> 8, l=a & 0xFF, d=8 + 40 * k, e=48, b=4, c=4)
+    m.llama(d["rect"], h=d["sitio"] >> 8, l=d["sitio"] & 0xFF, d=176, e=56, b=2, c=3)
+    m.mem[0xE243] = 1
+    for x, rut, lado in ((8, "puerta1", 0), (40, "puerta2", 0), (72, "puerta2", 2),
+                         (112, "suelo", 0), (160, "bloque", 0)):
+        f = 0xE600
+        m.mem[f:f + 16] = bytes(16)
+        for o, val in ((0, 1), (2, 96), (3, x), (4, 1), (7, lado), (8, 4), (9, 1)):
+            m.mem[f + o] = val
+        m.llama(d[rut], ix=f)
+    im = pantalla(m).crop((0, 8, 208, 136))
+    im = im.resize((im.width * 2, im.height * 2))
+    im.save(os.path.join(salida, "objetos_%s.png" % v), optimize=True)
+
+
 def sprites(salida):
     for v in ("msx2", "msx1"):
         m = maquina(v)
@@ -254,13 +291,78 @@ def sprites(salida):
         m.llama(DIR[v]["prepara_fase"])
         hoja_prota(m, v, salida)
         hoja_enemigos(m, v, salida)
-        print(v, "sprites")
+        hoja_objetos(m, v, salida)
+        print(v, "sprites y objetos")
+
+
+# Las secuencias: (nombre, estado puesto a mano tras 400 cuadros de arranque, None
+# para empezar desde el encendido o "titulo" para empezar en el menu del titulo, cuantos cuadros, cada cuantos uno al GIF, teclas
+# {cuadro: (fila, valor)} que se sueltan 6 cuadros despues, cuadros que van a PNG)
+SECUENCIAS = [
+    ("presentacion", None, 900, 3, {}, [460, 800]),
+    ("presentacion_japonesa", None, 900, 3, {}, [460, 800]),     # solo MSX1: 0x002B = 0
+    ("editor", "titulo", 600, 0, {30: (8, 0xBF), 60: (8, 0xFE), 230: (8, 0xBF), 260: (8, 0xFE)},
+     [220, 599]),
+    ("menu", {0xE200: 3, 0xE201: 0, 0xE204: 1}, 200, 0, {}, [199]),
+    ("contrasena", {0xE200: 3, 0xE201: 0, 0xE204: 1}, 300, 0, {120: (8, 0xBF), 150: (8, 0xFE)},
+     [299]),
+    ("piramide_acabada", {0xE200: 10, 0xE201: 0, 0xE204: 1, 0xE241: 2, 0xE242: 11, 0xE257: 1,
+                          0xE258: 0, 0xE880: 0}, 1500, 4, {}, [500, 900, 1499]),
+    ("fin_de_partida", {0xE200: 7, 0xE201: 0, 0xE204: 1}, 150, 0, {}, [149]),
+    ("final", {0xE200: 13, 0xE201: 0, 0xE204: 1, 0xE241: 6, 0xE242: 60, 0xE257: 1, 0xE258: 0,
+               0xE880: 0}, 4200, 6, {3000: (8, 0xFE)}, [900, 1500, 2400, 2990, 4100]),
+    ("musicas", {0xE200: 12, 0xE201: 0, 0xE204: 1, 0xEF10: 1, 0xEF11: 0}, 200, 0, {}, [199]),
+    ("puzle", {0xE200: 12, 0xE201: 0, 0xE204: 1, 0xEF10: 2, 0xEF11: 0}, 200, 0, {}, [199]),
+]
+
+
+def secuencias(salida, solo=None):
+    for v in ("msx2", "msx1"):
+        for nom, pokes, n, cada, teclas, pngs in SECUENCIAS:
+            if solo and nom not in solo:
+                continue
+            if nom.endswith("_japonesa") and v != "msx1":
+                continue
+            m = maquina(v)
+            m.tolera_bios = True
+            if nom.endswith("_japonesa"):
+                m.mem[0x002B] = 0x00         # la BIOS japonesa: el otro titulo (p00:529E)
+            if pokes == "titulo":            # hasta el menu del titulo (estado 1, paso 1)
+                while (m.mem[0xE200], m.mem[0xE201]) != (1, 1):
+                    m.llama(0x402E)
+            elif pokes is not None:
+                for _ in range(400):
+                    m.llama(0x402E)
+                for a, x in pokes.items():
+                    m.mem[a] = x
+            cuadros = []
+            suelta = {}
+            for f in range(n):
+                if f in teclas:
+                    fila, val = teclas[f]
+                    m.teclas[fila] = val
+                    suelta[f + 6] = fila
+                if f in suelta:
+                    m.teclas.pop(suelta[f], None)
+                m.llama(0x402E)
+                if cada and f % cada == 0:
+                    cuadros.append(cuadro(m))
+                if f in pngs:
+                    cuadro(m).save(os.path.join(salida, "%s_%s_%d.png" % (nom, v, f)), optimize=True)
+            if cuadros:
+                cuadros[0].save(os.path.join(salida, "%s_%s.gif" % (nom, v)), save_all=True,
+                                append_images=cuadros[1:], duration=1000 * cada // 60, loop=0,
+                                optimize=True)
+            print(v, nom, "estado %X/%X" % (m.mem[0xE200], m.mem[0xE201]),
+                  "BIOS rara: %s" % sorted(set("%04X" % x for x in m.bios_rara)) if m.bios_rara else "")
 
 
 def main(argv):
     salida = argv[1]
     os.makedirs(salida, exist_ok=True)
     que = argv[2] if len(argv) > 2 else "todas"
+    if que in ("todas", "secuencias"):
+        secuencias(salida, argv[3].split(",") if len(argv) > 3 else None)
     if que in ("todas", "sprites"):
         sprites(salida)
     if que in ("todas", "demos"):
