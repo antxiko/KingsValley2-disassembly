@@ -189,6 +189,22 @@ densidad:
 
 endif
 
+# La web: en el repositorio solo van las paginas en markdown; GitHub Pages las
+# convierte con Jekyll (tools/jekyll.py escribe su configuracion y plantillas).
+# Las paginas las escribe tools/paginas_web.py y la portada make_web.py, con lo
+# de tools/contenido_web.py. Para comprobar los enlaces se construye en local
+# con el mismo Jekyll (3.10).
+JEKYLL ?= C:/msys64/mingw64/bin/ruby C:/msys64/mingw64/bin/jekyll
+PYIMG ?= python
+web:
+	$(PYIMG) tools/paginas_web.py docs
+	python3 tools/jekyll.py docs
+	python3 tools/make_web.py docs/imagenes docs/index.html en
+	python3 tools/make_web.py docs/imagenes docs/es/index.html es
+	rm -rf $(WORK)/_site
+	$(JEKYLL) build -s docs -d $(WORK)/_site
+	python3 tools/check_enlaces.py $(WORK)/_site
+
 test:
 	@echo "=================================================================="
 	@echo " Tests"
@@ -199,4 +215,4 @@ clean:
 	rm -rf $(WORK)/msx1 $(WORK)/msx2 $(WORK)/comun
 
 .PHONY: all comprueba reconoce paginas semillas semillas-traza trace listado \
-        verify sanity densidad test clean
+        verify sanity densidad test web clean
