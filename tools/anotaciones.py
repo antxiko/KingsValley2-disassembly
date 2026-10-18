@@ -76,6 +76,8 @@ RAM = {
     0xE26C: ("cuantas columnas hay en el editor", "p02:83A5"),
     0xE270: ("el nombre de la fase del editor (11 letras)", "p01:7969"),
     0xE27F: ("el resultado de grabar o cargar (0 bien, 2 error)", "p01:6D52"),
+    0xEDCB: ("la y del personaje de las secuencias", "p01:7140"),
+    0xEDCC: ("la x del personaje de las secuencias", "p01:7140"),
     0xE2F1: ("la salida de la fase: y, x y pantalla (0xE2F3)", "p02:8F96"),
     0xE2F4: ("cuantas cosas de 2 x 2 hay que coger", "p01:7D99"),
     0xE2F5: ("cuantas cosas de 2 x 2 quedan por coger (con 0 se abre la salida)", "p02:8FC6"),

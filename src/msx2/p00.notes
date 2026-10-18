@@ -64,6 +64,8 @@ C 0x4141 en la pagina 2 (0x8000)
 C 0x4146 A = el slot de este cartucho, tambien en 0xF0E9
 C 0x4149 la pagina 1 del slot primario
 C 0x4150 EXPTBL: expandido o no
+C 0x4154 con su bit 7 (expandido)
+C 0x4156 SLTTBL del slot
 C 0x415A el secundario de la pagina 1
 C 0x415E se guarda en 0xF0E9
 C 0x4162 hay disco: antes de pisar la RAM se copian zonas de arriba a 0xC000-0xD9FF
@@ -168,6 +170,7 @@ C 0x43DA B' = casillas que quedan en el byte de 0xE900
 C 0x43DD racha: [veces][valor]; un 0 acaba
 C 0x43E0 los 6 bits bajos: cuantas casillas
 C 0x43E3 los 2 bits altos: el valor de la casilla
+C 0x43E8 el valor, a C
 C 0x43EA mete B casillas con el valor C
 C 0x43F1 mete una casilla de 2 bits en el byte de HL
 C 0x43F2 corre el byte dos bits...
@@ -186,6 +189,7 @@ C 0x4422 0xEFC0: el mapa de esa pantalla (0xE900, 0xC0 bytes cada una)
 C 0x4429 IX: la lista que se apunta en 0xE7C0, 4 bytes por cosa
 C 0x442D la palabra (fase - 1) de la tabla
 C 0x4434 cada cosa: [posicion de la casilla, 2 bytes]; 0xFF pasa a la pantalla siguiente y 0x00 acaba
+C 0x4436 0xFF: la pantalla siguiente
 C 0x4437 0xFF: la pantalla siguiente
 C 0x443B el segundo byte
 C 0x443E un 0 acaba
@@ -199,6 +203,8 @@ C 0x446F con 0xEFC3, se apunta en la lista de 0xE7C0
 C 0x4473 los 5 bits bajos: cuantas casillas
 C 0x4477 la casilla dentro del byte (cada byte lleva 4)
 C 0x447F la casilla de arriba...
+C 0x4482 la casilla siguiente del byte
+C 0x4489 el byte siguiente
 C 0x448A ...y la de su derecha
 C 0x448D una fila mas abajo: 8 bytes (32 casillas)
 C 0x449A pone a 01 la casilla E (0-3) del byte de HL
@@ -226,6 +232,7 @@ C 0x450A 6 filas de bloques de 4 x 4 caracteres
 C 0x4512 cada bloque, 4 filas de 8 caracteres de la tabla
 C 0x4516 pinta el caracter A en (D, E)
 C 0x4519 8 pixeles a la derecha
+C 0x451D el caracter siguiente
 C 0x4524 la fila siguiente de la tabla
 C 0x4529 8 pixeles mas abajo
 C 0x4535 pinta los ladrillos del mapa de la pantalla 0xE243
@@ -240,6 +247,7 @@ C 0x456A 2: ladrillo, el caracter 5; 3: el 0x5E
 C 0x4570 el dibujo a pintar
 C 0x4573 pinta la casilla
 C 0x4576 la casilla siguiente a la derecha
+C 0x457C el byte siguiente del mapa
 C 0x4581 en el estado 0x0B (el editor) no se pintan las columnas de 0xE7C0
 C 0x4587 las 16 columnas de la lista de 0xE7C0 que son de esta pantalla
 C 0x45A7 pinta una columna: B pares de caracteres de 0x45C9 desde (D, E) hacia abajo
@@ -258,18 +266,31 @@ C 0x45ED si no, tambien el 3
 C 0x4606 las puertas y los adornos de la pantalla (tabla del banco 14 en 0x806A), salvo en el editor
 C 0x460B por la fase 0xE242
 C 0x4614 cada uno: [x | tipo (3 bits)][y | pantalla (3 bits)][otro byte]; 0xFF acaba
+C 0x4619 la x
+C 0x461E la pantalla
 C 0x4621 solo los de la pantalla 0xE243
+C 0x4628 la y
+C 0x462D C = el tercer byte
 C 0x4638 pinta el adorno de tipo B de la piramide 0xE241: su dibujo en la tabla de 0x800C
 C 0x4644 la palabra (piramide - 1) x 8 + tipo
 C 0x464A el tamano sale del tipo: 4 x 4, 4 x 2, 2 x 4 o el tipo 6-7, de largo C
 C 0x4663 una fila de caracteres
+C 0x466A 8 pixeles a la derecha
+C 0x4671 la fila siguiente, 8 mas abajo
 C 0x4679 el de largo C: el primero, C - 2 del medio y el ultimo
+C 0x4688 8 pixeles mas abajo
 C 0x4690 pinta dos caracteres en vertical (HL y HL + 1) en (D, E)
+C 0x4697 8 pixeles a la derecha
+C 0x469B el segundo
 C 0x46A4 pinta lo de 0xE2C0 (8 fichas de 5 bytes) que este en esta pantalla
 C 0x46A9 una ficha de 0xE2C0
+C 0x46AB el tipo, sin el bit 7
 C 0x46AE solo los tipos 1 y 2 tienen dibujo
 C 0x46B5 la siguiente (5 bytes)
 C 0x46BD una de 0xE2C0 en su sitio: el dibujo de 0x93AC, 3 x 2
+C 0x46C5 la y - 8
+C 0x46CA la x
+C 0x46CB 3 x 2 caracteres
 C 0x46D4 un cuadro del juego: el estado y la pausa
 C 0x46DA un cuadro: 0xE21A a 1 calla la musica
 C 0x46E1 0xE203: cuenta de cuadros
@@ -278,6 +299,7 @@ C 0x46EA cada estado, su rutina (tabla detras)
 C 0x4709 estado 0: la presentacion, por pasos (0xE201)
 C 0x4717 paso 0: el sonido 1 (callar), la pantalla y la presentacion
 C 0x4725 espera a que acabe; 0xF0F4 = 1 (lo pone el arranque de este cartucho de MSX2, p00:40D0; el de MSX1 la deja a 0)
+C 0x472E cada dos cuadros
 C 0x4742 cuenta 0xE204 y luego pasa a la demostracion
 C 0x4768 estado 1: el titulo y el menu, con una cuenta 0xE204
 C 0x4787 estado 2: la cortina; paso 0 pinta y espera 0x20 cuadros
@@ -293,11 +315,13 @@ C 0x4804 0xE222: con el segundo jugador...
 C 0x480F ...al estado 0x0B
 C 0x4813 sin cartucho en la otra ranura (0xF0F7 = 0xFF) no hay menu de grabar
 C 0x481B la fila 1 del teclado
+C 0x481E si se pulsa la tecla de la fila 1, bit 5
 C 0x4823 hay cartucho y se pulsa: el letrero del menu de 0xB284
 C 0x4835 se salta dos pasos
 C 0x483B espera la tecla de disparo (bit 4 de 0xE207)
 C 0x4844 paso 3: el menu de empezar (opciones 0 empezar, 1 contrasena, 2 la de 0x8ECB)
 C 0x4854 un cuadro del menu; al elegir (0xE24A) se pasa al paso 0xE24B x 2 + 5
+C 0x485D y se borra
 C 0x48AE estado 4: empieza la fase; paso 0 pinta el letrero de la fase
 C 0x48B5 0xE254: la partida es del editor
 C 0x48BB 0xE240: las vidas, en BCD
@@ -314,6 +338,7 @@ C 0x493D con el paso 0
 C 0x493E 0xE201 = A
 C 0x4942 estado 5: el juego
 C 0x4949 0xE215: la cuenta de la musica de la piramide
+C 0x4950 baja la cuenta
 C 0x4955 al llegar a 1 vuelve la musica
 C 0x4966 un cuadro de la partida
 C 0x4969 0xE248: se ha muerto
@@ -325,32 +350,53 @@ C 0x498B 0xE24E = 1, se guarda el byte de 0x3B00 y se pinta el recuadro
 C 0x49A4 bit 4 de 0xE20C: rendirse; si no esta muerto, muere (0xE280 = 4) con el sonido 0x28
 C 0x49B4 sale de la fase: 0xE257 = 1 y al estado 9
 C 0x49C1 la pausa (bit 0), salvo con 0xE280 a 4 o 5
+C 0x49D5 0xE2B0 a cero: la pausa desde el paso 0
 C 0x49E1 en pausa: un cuadro de la pausa
+C 0x49F8 la tecla de la pausa (bit 0) la quita
 C 0x4A07 con el recuadro puesto: se quita con la misma tecla
+C 0x4A14 el byte de 0x3B00 vuelve
 C 0x4A1D estado 6: se acaba la vida
 C 0x4A3D estado 7: fin de la partida (GAME OVER); paso 0 pinta el letrero
+C 0x4A52 0xE218: se puede seguir con F5
+C 0x4A55 el letrero de seguir
+C 0x4A66 la espera: 0x78 cuadros (0xB4 con el editor)
 C 0x4A6F paso 1: espera; F5 (fila 7, bit 1) pone 0xE247 y se sigue
+C 0x4A79 cada dos cuadros
+C 0x4A84 sin F5: se acaba
+C 0x4AA5 la extension del nombre: ELG
+C 0x4AB5 estado 3 (el menu), paso 0x0A
 C 0x4AEE estado 8
 C 0x4B06 estado 9: la fase acabada
 C 0x4B22 la fase 60 (0x3C) o mas: el final
+C 0x4B2F la cifra baja de la fase: 1 (fases 1, 11, 21...)
+C 0x4B3A estado 0x0A: la piramide acabada
 C 0x4B4C estado 10: la piramide acabada
 C 0x4B5D estado 11: el editor
 C 0x4B6E estado 12
+C 0x4BA0 la entrada (tipo - 1) de la tabla 0x9D37: su letrero
 C 0x4BAF estado 13: el final
 C 0x4BBA en los estados 0-2: las teclas de empezar (0xE221)
+C 0x4BC9 nada pulsado: nada
 C 0x4BEA al menu: estado 1 paso 0
 C 0x4C01 partida nueva: la RAM 0xE226-0xF000 a cero y los 6 bytes de 0x4C1A a 0xE240
+C 0x4C04 0xDDA bytes
 C 0x4C20 suma DE (BCD) a los puntos 0xE226-0xE228, si el bit 6 de 0xE202 lo deja
+C 0x4C2B las dos cifras bajas...
+C 0x4C30 ...con el acarreo
 C 0x4C38 se pasa de 999999: se queda en 999999
 C 0x4C47 0xE245: los puntos de la proxima vida
 C 0x4C4E la siguiente, 30000 mas
 C 0x4C58 una vida mas (hasta 99)
+C 0x4C60 una mas, en BCD
 C 0x4C64 el sonido de la vida
 C 0x4C6F record: si los puntos pasan al de 0xE223, se copian
 C 0x4C75 compara byte a byte los puntos con el record
 C 0x4C77 menos: se queda el record
 C 0x4C79 mas: se copian
 C 0x4C8A el marcador, solo con 0xF0F4 (en MSX2)
+C 0x4C8F un recuadro en (0, 0xC0) de 0xFF x 0x13, color 12
+C 0x4C9A el letrero del marcador
+C 0x4CAC en el editor: el nombre de la fase en 0x90CA
 C 0x4CC0 pinta el record y los puntos
 C 0x4CC6 el record (0xE223-0xE225) en DE
 C 0x4CCF y los puntos (0xE226-0xE228) en HL
@@ -359,6 +405,9 @@ C 0x4CFD pasa A a BCD
 C 0x4D07 las decenas arriba
 C 0x4D12 las vidas en 0xA868
 C 0x4D26 pinta B bytes BCD de HL hacia atras en DE (con 0xF0F4 a 0, DE se pasa antes a direccion de la VRAM)
+C 0x4D35 la cifra alta...
+C 0x4D3D ...y la baja
+C 0x4D41 el byte anterior
 C 0x4D45 pinta la cifra baja de A (caracteres 0xD0-0xD9)
 C 0x4D4C HL = la palabra A de la tabla de HL
 C 0x4D57 el letrero del jugador (1 o 2) que parpadea
@@ -366,7 +415,13 @@ C 0x4D7B pasa la posicion de caracter de HL a direccion de la VRAM
 C 0x4D7C la columna (x / 8) y la fila (y / 8)...
 C 0x4D8B ...a 0x3800 + fila x 32 + columna (la tabla de nombres)
 C 0x4D8F el recuadro de estado: guarda la VRAM de 0x3908 (7 filas de 16) en 0xE880 y lo pinta
+C 0x4D9E DE: 16 bytes mas
+C 0x4DA3 HL: la fila siguiente de la VRAM (32 bytes)
+C 0x4DB1 una fila a cero
+C 0x4DB7 la siguiente: 32 mas alla
 C 0x4DCE devuelve lo guardado en 0xE880 a 0x3908
+C 0x4DDD HL: 16 bytes mas
+C 0x4DE2 DE: la fila siguiente de la VRAM (32 bytes)
 C 0x4DFB lee B C bytes de la VRAM (LDIRMV) sin tocar registros
 C 0x4E05 escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
 C 0x4E0F llena BC bytes de la VRAM con A (BIGFIL)
@@ -381,6 +436,7 @@ C 0x4E3E copia n bytes
 C 0x4E49 repite el byte n veces
 C 0x4E54 lo mismo con el destino en HL
 C 0x4E60 copia C bloques de 16 bytes de HL a DE en la VRAM dandoles la vuelta (espejo)
+C 0x4E7A el byte siguiente
 C 0x4E88 lee un byte de DE; con el bit 0 de C le da la vuelta
 C 0x4E8D le da la vuelta a los 8 bits de A
 C 0x4E98 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
@@ -394,7 +450,10 @@ C 0x4EE7 R#8 sin el bit 1: con sprites
 C 0x4EF2 pone el color A de la paleta a D, E (y lo guarda en la VRAM 0xF680 + 2 x A)
 C 0x4EFB R#16 = el color
 C 0x4F01 el puerto de la paleta (0x9A)
+C 0x4F09 y la copia en la VRAM: 0xF680 + 2 x el color
+C 0x4F14 los dos bytes del color
 C 0x4F1C la paleta de la lista de HL: [color][D][E], 0xFF acaba
+C 0x4F21 D y E
 C 0x4F2A espera a que el VDP acabe su orden (bit 0 de S#2)
 C 0x4F34 lee el registro de estado A del VDP (S#A)
 C 0x4F36 los puertos del VDP de la BIOS (0x0006): C = el de los registros
@@ -409,6 +468,7 @@ C 0x4F66 los registros 36-45 por el puerto 0x9B
 C 0x4F68 DX = H
 C 0x4F6D DY = L
 C 0x4F72 NX = el largo (0 vale 256)
+C 0x4F75 NX = 0 vale 256: el bit alto
 C 0x4F7C NY = 0
 C 0x4F80 el color
 C 0x4F82 ARG = 0: de lado
@@ -417,6 +477,8 @@ C 0x4F8A una raya vertical (LINE con MAJ = 1)
 C 0x4F9E DX = H
 C 0x4FA3 DY = L
 C 0x4FA8 NX = el largo
+C 0x4FAB NX = 0 vale 256: el bit alto
+C 0x4FB1 NY = 0
 C 0x4FB6 el color
 C 0x4FB8 ARG = 1: de arriba abajo
 C 0x4FBB LINE
@@ -431,8 +493,10 @@ C 0x4FF7 R#17 = 36 (DX)
 C 0x5002 DX = H
 C 0x5007 DY = L, en la pagina D
 C 0x500C NX = B (0 vale 256)
+C 0x500E NX = 0 vale 256: el bit alto
 C 0x5015 NY = C (0 vale 256)
 C 0x501E el color
+C 0x5020 ARG = 0
 C 0x5023 HMMV
 C 0x5029 copia un rectangulo de la VRAM (orden HMMM): de (H, L) a (D, E), paginas de A
 C 0x502E C = el puerto de los registros
@@ -455,6 +519,9 @@ C 0x5096 el primer byte (CLR)
 C 0x509D HMMC
 C 0x50A3 R#17 = 44 (CLR) sin autoincremento: los demas bytes van alli
 C 0x50AD manda un byte cada vez que el VDP lo pide (bit 7 de S#2) hasta acabar
+C 0x50B2 acabado (bit 0)?
+C 0x50B4 el VDP pide otro (bit 7)?
+C 0x50B8 el byte siguiente, a CLR
 C 0x50BE copia en vertical (orden YMMM)
 C 0x50C2 C = el puerto de los registros
 C 0x50C7 R#17 = 34 (SY)
@@ -462,6 +529,7 @@ C 0x50D2 SY = L, en la pagina de A
 C 0x50DA DX = H
 C 0x50DF DY = E
 C 0x50ED NY = D
+C 0x50EF NY = 0 vale 256: el bit alto
 C 0x50FA YMMM
 C 0x5100 copia con operacion logica (orden LMMM)
 C 0x5105 C = el puerto de los registros
@@ -483,21 +551,36 @@ C 0x516A al byte de 0xEF80
 C 0x5175 el segundo punto del byte
 C 0x517C la fila siguiente
 C 0x5181 pinta en la VRAM un caracter de la fuente
+C 0x518C la direccion: y x 128 + x / 2...
+C 0x5191 ...en la pagina 1 (+0x8000)
 C 0x51A2 8 filas de 4 bytes (8 pixeles de 4 bits) a la VRAM, de 128 en 128 bytes
 C 0x51A6 una fila: 4 bytes
+C 0x51AC 4 bytes mas en el bufer
 C 0x51B1 la siguiente linea de la VRAM (128 bytes)
 C 0x51BB B caracteres seguidos, saltando de fila al llegar al borde
+C 0x51BF 4 bytes (8 pixeles) a la derecha
+C 0x51C2 al llegar a 128...
+C 0x51C6 ...8 lineas mas abajo
 C 0x51D0 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0x51D4 lo mismo, borrando (caracter 0)
+C 0x51DC 0xFF acaba
+C 0x51DF 0xFE trae otra posicion
+C 0x51E2 el caracter, con la mascara de C
 C 0x51E8 pinta el caracter A en (D, E) y avanza 8 pixeles
 C 0x51F0 al acabar la fila: 0x20 a la izquierda y 8 pixeles abajo
 C 0x51FA pinta caracteres hasta 0xFF; 0xFE pasa a la fila de abajo
+C 0x51FD 0xFF acaba
+C 0x51FF 0xFE: la fila de abajo
 C 0x5207 pinta el caracter A en (D, E): lo copia de la pagina 1 con HMMM
 C 0x520A H, L = donde esta el caracter en la pagina 1
 C 0x520D 8 x 8 pixeles
 C 0x5210 de la pagina 1 a la 0
 C 0x5219 lo mismo con LMMM y la operacion 8 (TIMP: el color 0 no se pinta)
+C 0x521F 8 x 8 pixeles
+C 0x5222 TIMP, de la pagina 1 a la 0
 C 0x522B lo mismo con LMMM y la operacion 8, de otra pagina
+C 0x5231 8 x 8 pixeles
+C 0x5234 TIMP, de la pagina 1 a la 1
 C 0x523D H, L = la esquina del caracter A en su pagina: 32 por fila de 8 pixeles
 C 0x5240 x = (A & 0x1F) x 8
 C 0x5245 y = (A & 0xE0) / 4
@@ -530,9 +613,11 @@ C 0x5359 su color de 0xE700 a la mitad alta
 C 0x5362 el segundo punto
 C 0x5370 a la mitad baja
 C 0x5372 el byte a 0xE800
+C 0x5375 el par siguiente
 C 0x5378 un caracter de 0xE800 a la VRAM de DE dandole la vuelta (de derecha a izquierda)
 C 0x5381 NSETWR: la fila en la VRAM
 C 0x5387 los cuatro bytes de la fila al reves, con sus dos pixeles cambiados
+C 0x538D a la VRAM
 C 0x5393 la fila siguiente: 8 bytes en el bufer...
 C 0x5395 ...y 128 en la VRAM (una linea de SCREEN 5)
 C 0x539E B caracteres con espejo, uno detras de otro
@@ -547,6 +632,7 @@ C 0x53E8 la pagina 0 a color 0 (HMMV)
 C 0x53F1 y la pagina 1
 C 0x53FB espera al VDP
 C 0x53FE cuatro registros del VDP de la tabla de 0x5413 (C = registro, B = valor)
+C 0x5404 C = el registro, B = el valor
 C 0x5410 sin sprites
 C 0x541B no hace nada
 C 0x541C lee los mandos: 0xE207/0xE208 (cursores y disparo) y 0xE20C/0xE20D (las teclas)
@@ -566,16 +652,22 @@ C 0x546D los cursores y el espacio, a los mismos bits que el mando
 C 0x5476 junto con el mando
 C 0x5479 las teclas de funcion: filas 6 y 7
 C 0x5482 la fila 7
+C 0x548E bits 0-2: F1-F3; bits 3-4: F4-F5
+C 0x5493 bit 7: RETURN
+C 0x549C bit 6: ESC
 C 0x54A0 carga graficos de una lista: [modo][sitio][n][puntero], 0xFF acaba; DE = la tabla de los colores
+C 0x54A1 0xFF acaba
 C 0x54A4 el modo: sus bits altos eligen la tabla de colores
 C 0x54AC DE = la palabra (modo / 8) de la tabla de colores
 C 0x54B1 los bits 1-2 del modo: 2, 4 u 8 colores a 0xE700
+C 0x54BF los colores del modo, a 0xE700
 C 0x54C5 el sitio: bits 5-7 la fila (de 8 lineas), bits 0-4 la columna
 C 0x54C7 la fila x 0x400...
 C 0x54D1 ...en la pagina 1 de la VRAM (0x8000)
 C 0x54D5 la columna x 4 bytes (8 pixeles)
 C 0x54E0 B = cuantos caracteres
 C 0x54E2 HL = donde estan
+C 0x54ED el siguiente de la lista
 C 0x54EF segun los bits 0-2 del modo: 1, 2 o 3 bits por punto, con o sin espejo
 C 0x54F0 0: 1 bit
 C 0x54F5 1: 1 bit en espejo
@@ -591,6 +683,7 @@ C 0x5536 4 bytes por entrada
 C 0x553D copia sprites dados la vuelta: [tipo][n][de][a]; un 0 acaba
 C 0x5552 tipo 1: dados la vuelta de arriba abajo
 C 0x5557 tipo 2 o mas: de izquierda a derecha
+C 0x555A el siguiente (4 bytes)
 C 0x5561 n sprites del dibujo de a, dados la vuelta de arriba abajo, al dibujo de
 C 0x5564 cuantos
 C 0x5566 a 0xEFD0
@@ -599,12 +692,15 @@ C 0x5575 a donde
 C 0x5581 un sprite: sus 32 bytes a 0xEF80
 C 0x558D al reves
 C 0x559A y a la VRAM
+C 0x559D los 32 bytes siguientes
+C 0x55AE hasta n
 C 0x55B5 da la vuelta a las 16 filas de cada mitad del sprite (0xEF80 -> 0xEFA0)
 C 0x55C6 un byte al reves
 C 0x55CD n sprites de izquierda a derecha (p00:4E60)
 C 0x55F0 carga la presentacion: los graficos de la lista 0xB120 (banco 15)
 C 0x55FF los sprites, 0x100 bytes de 0xBB05 a 0xF800
 C 0x560B la paleta de 0xA7CE
+C 0x5614 desde la columna 0
 C 0x5618 un rectangulo de color 0xFF en la pagina 1
 C 0x5628 y el dibujo de 0xB8DB
 C 0x5634 carga los graficos de la piramide (bancos 7-8-9)
@@ -619,6 +715,10 @@ C 0x5696 los sprites de las listas 0x98C9 y 0x98EA
 C 0x56AA la fuente: 0x35 caracteres de 0xAFDD
 C 0x56AD R#3 = 7
 C 0x56C5 un dibujo de 16 x 16 de 0xB1D6 en la posicion de 0xEF13 (HMMC)
+C 0x56CB E = 0xEF13...
+C 0x56CD ...D = 0xEF14
+C 0x56D1 16 x 16
+C 0x56D4 en la pagina 0
 C 0x56DC una cosa de 2 x B caracteres de la piramide en (D, E)
 C 0x56E1 C columnas...
 C 0x56E4 ...de B caracteres
@@ -630,11 +730,14 @@ C 0x570D la fila del caracter dentro del bloque de 4 x 4 (y & 0x18)
 C 0x5711 y la columna (x / 8 & 7)
 C 0x571E el caracter, pintado
 C 0x5722 lee 2 x 2 bytes de la VRAM de HL a DE (NRDVRM)
+C 0x5727 a DE
+C 0x572E la fila siguiente de la VRAM (32 - 1)
 C 0x5737 un rectangulo de caracteres, copiandolos tal cual (HMMM)
 C 0x573B un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
 C 0x573C 0xEFC0: como se pinta (0: sin el color 0, 1: tal cual)
 C 0x5742 una fila
 C 0x5748 8 pixeles a la derecha
+C 0x574C el caracter siguiente
 C 0x5750 la fila siguiente, 8 pixeles mas abajo
 C 0x5758 pinta el caracter como diga 0xEFC0
 C 0x5767 pinta el caracter A sin su color 0 (p00:5219)
@@ -676,16 +779,22 @@ C 0x5886 0xE285: hacia donde mira
 C 0x588D la tabla de 0x869C
 C 0x5898 una columna de 0x80 x 1 de la pagina 1 a 0xF0
 C 0x58A0 y la de 0x86B8, a 0x80F0
+C 0x58B7 y la otra columna
 C 0x58BA muerto: la columna 0xC0 + 0xE285
 C 0x58BD la columna 0xC0 + A de la pagina 1 (y = 0)...
 C 0x58C5 ...0xFF x 1 pixeles a la columna 0xF0
 C 0x58D2 los dibujos de los sprites del personaje, con los bancos 14-15
 C 0x58DB en pausa o muerto, otros dibujos
 C 0x58E7 la postura 0xE287: su lista en la tabla de 0x858B
+C 0x58F2 su puntero
 C 0x58F6 cada cosa de la lista: 0xFF acaba
 C 0x58FA cifra baja 0: [destino][rachas]
+C 0x58FE el destino
+C 0x5902 las rachas
 C 0x590A rachas a la VRAM
 C 0x5910 si no: n bloques de 16 bytes dados la vuelta, [destino][de]
+C 0x5911 el destino, sin la cifra baja
+C 0x5918 de donde
 C 0x591F copia en espejo
 C 0x5925 apunta la postura y carga sus dibujos
 C 0x5928 muerto: las rachas de 0x953D
@@ -726,6 +835,8 @@ C 0x5BAD el dibujo de 0xBB9B en 0x4040
 C 0x5BB6 se enciende la pantalla
 C 0x5BB9 0xE2C0 = 0x3C (cuadros), 0xE2C1 = 0x31 (lineas), 0xE2C2 = 0
 C 0x5BC8 un cuadro de la presentacion: cada dos cuadros crece lo que se copia
+C 0x5BCD cada dos cuadros
+C 0x5BD0 0xE2C1: lo que queda
 C 0x5BD1 acabadas: 0xE2C2 = 1
 C 0x5BDA copia 0xA8 x (0x31 - n) pixeles de (0x28, 0x40) de la pagina 1 a la 0
 C 0x5BEB el marcador: la fuente con color 0x0B y los letreros de 0xAA89
@@ -738,6 +849,7 @@ C 0x5C30 su cuenta en 0xEF00
 C 0x5C36 la piramide 4 lleva otro: el color 5, 6 pasos, de 0xBDAF
 C 0x5C51 un color que cambia: (HL) cuenta los cuadros, (HL+1) sube o baja, (HL+2) el paso
 C 0x5C56 aun no toca
+C 0x5C57 la cuenta a cero
 C 0x5C5A subiendo o bajando
 C 0x5C60 sube hasta C - 1...
 C 0x5C68 ...o baja hasta 0
@@ -759,14 +871,18 @@ C 0x5CD0 los saltos entre pantallas
 C 0x5CD3 la casilla de la pantalla 0xE243
 C 0x5CD6 el mapa de la fase
 C 0x5CEC el personaje en su primera postura
+C 0x5CEF y 0xEDCD a cero
 C 0x5CF5 pinta la pantalla en la que se esta: apaga, pinta y enciende
 C 0x5D01 los ladrillos, las puertas y lo de 0xE2C0
 C 0x5D1F el marcador
 C 0x5D22 se enciende
 C 0x5D25 0xE250 = el mapa de la pantalla 0xE243
 C 0x5D32 HL = 0xE900 + HL x 0xC0: el mapa de la pantalla HL (0-5)
+C 0x5D3A x 3: HL x 0xC0
 C 0x5D41 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0x5D4F 0xE21B: cuenta de cuadros con el borde parpadeando (color 11 / 0)
+C 0x5D55 un cuadro menos
+C 0x5D57 color 0 o 11, uno si y otro no
 C 0x5D63 un cuadro de la partida: sprites, todo lo que se mueve y los sprites a la VRAM
 C 0x5D6D lo que pasa en un cuadro, en este orden
 C 0x5D73 los dibujos del personaje
@@ -774,6 +890,7 @@ C 0x5DA6 la tecla de la musica
 C 0x5DA9 y los colores que cambian solos
 C 0x5DAC la rejilla de pantallas de la fase: 8 bytes de la tabla 0xAB5A (banco 13), un bit por casilla
 C 0x5DAF 0xE780-0xE7BF a cero
+C 0x5DB5 64 bytes
 C 0x5DBF (fase - 1) x 8
 C 0x5DCB las casillas, desde 0xE788
 C 0x5DCE 8 bytes, y C numera las pantallas desde 1
@@ -808,6 +925,13 @@ C 0x5F9F 0xE214 = 0x39: el telon
 C 0x5FA6 un rectangulo de color 0 en la pagina 1
 C 0x5FB2 copia el letrero de la pagina 1 y pinta el recuadro
 C 0x5FC6 cada dos cuadros el telon baja una linea
+C 0x5FCF a cero: acabado
+C 0x5FD3 DY = la cuenta + 0x1F
+C 0x5FD6 DX = 0x18
+C 0x5FD8 desde (0x10, 0x50)
+C 0x5FDB NY = 0x39 - la cuenta
+C 0x5FDF NX = 0xA8
+C 0x5FE1 de la pagina 1 a la 0
 C 0x5FE7 el recuadro del menu: un rectangulo negro con borde de color 13
 # --- fin de lo escrito a mano ---
 
@@ -1042,7 +1166,7 @@ C 0x4B37 guarda el paso de la secuencia en curso (entrada, fase o piramide acaba
 C 0x4B41 guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
 C 0x4B44 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0x4B4F lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
-C 0x4B54 apunta a el paso dentro del estado
+C 0x4B54 R#1 = 0xE2
 C 0x4B60 el editor (estado 11), por pasos (0xE25A)
 C 0x4B63 copia a la VRAM los 16 sprites en otro orden cada cuadro (asi parpadean en vez de desaparecer)
 C 0x4B66 lee el paso del editor
@@ -1078,7 +1202,6 @@ C 0x4C97 un recuadro en (H, L) de D x E pixeles, color C
 C 0x4C9D pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0x4CA0 pinta el record y los puntos
 C 0x4CA6 lee la marca de partida del editor
-C 0x4CAC apunta a el nombre de la fase del editor (11 letras)
 C 0x4CD6 lee la marca de partida del editor
 C 0x4CDC apunta a el nombre de la fase del editor (11 letras)
 C 0x4CF2 pasa A a BCD
@@ -1235,8 +1358,9 @@ C 0x59A6 carga graficos de una lista: [modo][sitio][n][puntero], 0xFF acaba; DE 
 C 0x59B8 un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
 C 0x59C7 un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
 C 0x59D6 un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
+C 0x59DD R#1 = 0xA2
 C 0x59E4 32 columnas de 27 x 1 caracteres, cada una de la tabla 0x9D58 desde la entrada A
-C 0x59E7 apunta a el paso dentro del estado
+C 0x59E7 R#1 = 0xE2
 C 0x5A07 un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
 C 0x5A23 un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
 C 0x5A35 un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
@@ -1353,6 +1477,7 @@ C 0x5ED6 apunta a los saltos al salir por la derecha
 C 0x5ED9 la lista de la fase: parejas hasta un 0xFF
 C 0x5EE2 HL = la palabra A de la tabla de HL
 C 0x5F90 un rectangulo de color 0 en la pagina 1
+C 0x5F93 R#7 = 0x00
 C 0x5F99 carga la presentacion: los graficos de la lista 0xB120 (banco 15)
 C 0x5F9C R#8 sin el bit 1: con sprites
 C 0x5FA2 guarda la cuenta del telon del menu y el byte siguiente (16 bits)

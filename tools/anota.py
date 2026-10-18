@@ -261,6 +261,10 @@ def comentario(b, filas, k, fichas, ventanas=None, medido=None):
     m = re.match(r"ld \(0(98[89][0-9a-f])h\),a$", t)
     if m and b in SCC_BANCOS and int(m.group(1), 16) in SCC:
         return "al SCC: " + SCC[int(m.group(1), 16)]
+    # B y C para WRTVDP (BIOS 0x0047): un registro del VDP, no una direccion
+    m = re.match(r"ld bc,0?([0-9a-f]{2})([0-9a-f]{2})h$", t)
+    if m and k + 1 < len(filas) and re.match(r"(?:call|jp)\s+00047h$", filas[k + 1][1]):
+        return "R#%d = 0x%s" % (int(m.group(2), 16), m.group(1).upper())
     # RAM (salvo en los tramos donde el juego la usa para otra cosa)
     if any(bb == b and i <= a < f for bb, i, f in RAM_PRESTADA):
         return None

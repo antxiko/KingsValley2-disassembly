@@ -195,9 +195,9 @@ L_4146:
 	ld b,000h		;414e
 	ld hl,0fcc1h		;4150   ; EXPTBL: expandido o no
 	add hl,bc			;4153
-	or (hl)			;4154
+	or (hl)			;4154   ; con su bit 7 (expandido)
 	ld c,a			;4155
-	inc hl			;4156
+	inc hl			;4156   ; SLTTBL del slot
 	inc hl			;4157
 	inc hl			;4158
 	inc hl			;4159
@@ -659,7 +659,7 @@ L_43DD:
 	rlca			;43e4
 	rlca			;43e5
 	and 003h		;43e6
-	inc de			;43e8
+	inc de			;43e8   ; el valor, a C
 	ld c,a			;43e9
 L_43EA:
 	call L_43F1		;43ea   ; mete B casillas con el valor C
@@ -706,7 +706,7 @@ L_441D:
 L_4434:
 	ld e,(hl)			;4434   ; cada cosa: [posicion de la casilla, 2 bytes]; 0xFF pasa a la pantalla siguiente y 0x00 acaba
 	inc hl			;4435
-	ld a,e			;4436
+	ld a,e			;4436   ; 0xFF: la pantalla siguiente
 	cp 0ffh		;4437   ; 0xFF: la pantalla siguiente
 	jr z,L_444A		;4439
 	ld d,(hl)			;443b   ; el segundo byte
@@ -758,12 +758,12 @@ L_446C:
 L_447E:
 	push bc			;447e
 	call L_449A		;447f   ; la casilla de arriba...
-	inc e			;4482
+	inc e			;4482   ; la casilla siguiente del byte
 	ld a,e			;4483
 	and 003h		;4484
 	ld e,a			;4486
 	jr nz,L_448A		;4487
-	inc hl			;4489
+	inc hl			;4489   ; el byte siguiente
 L_448A:
 	call L_449A		;448a   ; ...y la de su derecha
 	ld bc,00008h		;448d   ; una fila mas abajo: 8 bytes (32 casillas)
@@ -854,7 +854,7 @@ L_4515:
 	ld a,d			;4519   ; 8 pixeles a la derecha
 	add a,008h		;451a
 	ld d,a			;451c
-	inc hl			;451d
+	inc hl			;451d   ; el caracter siguiente
 	djnz L_4515		;451e
 	pop hl			;4520
 	dec c			;4521
@@ -914,7 +914,7 @@ L_4576:
 	call L_524B		;4576   ; la casilla siguiente a la derecha
 	pop af			;4579
 	djnz L_455E		;457a
-	inc ix		;457c
+	inc ix		;457c   ; el byte siguiente del mapa
 	pop bc			;457e
 	djnz L_4558		;457f
 	ld a,(0e200h)		;4581   ; en el estado 0x0B (el editor) no se pintan las columnas de 0xE7C0
@@ -1021,21 +1021,21 @@ L_4614:
 	cp 0ffh		;4615
 	ret z			;4617
 	ld b,a			;4618
-	and 0f8h		;4619
+	and 0f8h		;4619   ; la x
 	ld e,a			;461b
 	inc hl			;461c
 	ld a,(hl)			;461d
-	and 007h		;461e
+	and 007h		;461e   ; la pantalla
 	ld d,a			;4620
 	ld a,(0e243h)		;4621   ; solo los de la pantalla 0xE243
 	dec a			;4624
 	cp d			;4625
 	jr nz,L_4634		;4626
-	ld a,(hl)			;4628
+	ld a,(hl)			;4628   ; la y
 	and 0f8h		;4629
 	ld d,a			;462b
 	inc hl			;462c
-	ld c,(hl)			;462d
+	ld c,(hl)			;462d   ; C = el tercer byte
 	dec hl			;462e
 	push hl			;462f
 	call L_4638		;4630   ; pinta el adorno de tipo B de la piramide 0xE241: su dibujo en la tabla de 0x800C
@@ -1077,12 +1077,12 @@ L_4663:
 	push hl			;4665
 	call L_5767		;4666   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop hl			;4669
-	ld a,d			;466a
+	ld a,d			;466a   ; 8 pixeles a la derecha
 	add a,008h		;466b
 	ld d,a			;466d
 	djnz L_4663		;466e
 	pop de			;4670
-	ld a,e			;4671
+	ld a,e			;4671   ; la fila siguiente, 8 mas abajo
 	add a,008h		;4672
 	ld e,a			;4674
 	pop bc			;4675
@@ -1100,7 +1100,7 @@ L_4679:
 L_4684:
 	call L_4690		;4684   ; pinta dos caracteres en vertical (HL y HL + 1) en (D, E)
 	dec hl			;4687
-	ld a,e			;4688
+	ld a,e			;4688   ; 8 pixeles mas abajo
 	add a,008h		;4689
 	ld e,a			;468b
 	djnz L_4684		;468c
@@ -1112,10 +1112,10 @@ L_4690:
 	push hl			;4692
 	call L_5767		;4693   ; pinta el caracter A sin su color 0 (p00:5219)
 	pop hl			;4696
-	ld a,d			;4697
+	ld a,d			;4697   ; 8 pixeles a la derecha
 	add a,008h		;4698
 	ld d,a			;469a
-	inc hl			;469b
+	inc hl			;469b   ; el segundo
 	ld a,(hl)			;469c
 	push hl			;469d
 	call L_5767		;469e   ; pinta el caracter A sin su color 0 (p00:5219)
@@ -1128,7 +1128,7 @@ L_46A4:
 L_46A9:
 	push bc			;46a9   ; una ficha de 0xE2C0
 	push hl			;46aa
-	ld a,(hl)			;46ab
+	ld a,(hl)			;46ab   ; el tipo, sin el bit 7
 	and 07fh		;46ac
 	dec a			;46ae   ; solo los tipos 1 y 2 tienen dibujo
 	sub 002h		;46af
@@ -1146,12 +1146,12 @@ L_46BD:
 	cp (hl)			;46c2
 	ret nz			;46c3
 	inc l			;46c4
-	ld a,(hl)			;46c5
+	ld a,(hl)			;46c5   ; la y - 8
 	sub 008h		;46c6
 	ld e,a			;46c8
 	inc l			;46c9
-	ld d,(hl)			;46ca
-	ld bc,00302h		;46cb
+	ld d,(hl)			;46ca   ; la x
+	ld bc,00302h		;46cb   ; 3 x 2 caracteres
 	ld hl,093ach		;46ce
 	jp L_573B		;46d1
 L_46D4:
@@ -1209,7 +1209,7 @@ L_4725:
 	and a			;4728
 	jr nz,L_4737		;4729
 	ld a,(0e203h)		;472b   ; lee la cuenta de cuadros
-	rra			;472e
+	rra			;472e   ; cada dos cuadros
 	ret nc			;472f
 	call L_5BC8		;4730   ; un cuadro de la presentacion: cada dos cuadros crece lo que se copia
 	ret nz			;4733
@@ -1343,7 +1343,7 @@ L_4813:
 	jr z,L_4835		;4817
 	ld a,001h		;4819
 	call 00141h		;481b   ; BIOS SNSMAT - Returns the value of the specified line from the keyboard matrix | la fila 1 del teclado
-	cpl			;481e
+	cpl			;481e   ; si se pulsa la tecla de la fila 1, bit 5
 	and 020h		;481f
 	jr z,L_4835		;4821
 	call L_4E98		;4823   ; hay cartucho y se pulsa: el letrero del menu de 0xB284
@@ -1375,7 +1375,7 @@ L_4854:
 	ld a,(hl)			;485a
 	and a			;485b
 	ret z			;485c
-	ld (hl),000h		;485d
+	ld (hl),000h		;485d   ; y se borra
 	ld a,(0e24bh)		;485f
 	add a,a			;4862
 	add a,005h		;4863
@@ -1497,7 +1497,7 @@ L_4942:
 	ld a,(hl)			;494c
 	and a			;494d
 	jr z,L_4958		;494e
-	dec a			;4950
+	dec a			;4950   ; baja la cuenta
 	jr nz,L_4958		;4951
 	ld (hl),000h		;4953
 	call L_4388		;4955   ; al llegar a 1 vuelve la musica
@@ -1561,7 +1561,7 @@ L_49C1:
 	ld (0e216h),a		;49ce
 	call L_58D2		;49d1   ; los dibujos de los sprites del personaje, con los bancos 14-15
 	xor a			;49d4
-	ld (0e2b0h),a		;49d5
+	ld (0e2b0h),a		;49d5   ; 0xE2B0 a cero: la pausa desde el paso 0
 	ld (0e2b3h),a		;49d8   ; guarda el dibujo del personaje en pausa
 	call L_5864		;49db   ; copia el dibujo de la postura del personaje en la pagina 1 (columnas 0xF0)
 	jp L_430F		;49de
@@ -1575,7 +1575,7 @@ L_49E1:
 	call 09881h		;49ef
 	call L_583B		;49f2   ; lo mismo sin cambiar el orden: colores de 0xD200 a 0xF400 y atributos de 0xE800 a 0xF600
 	ld a,(0e20ch)		;49f5   ; lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
-	rra			;49f8
+	rra			;49f8   ; la tecla de la pausa (bit 0) la quita
 	ret nc			;49f9
 	xor a			;49fa
 	ld (0e24ch),a		;49fb   ; guarda la marca de pausa
@@ -1590,7 +1590,7 @@ L_4A07:
 	xor a			;4a0d
 	ld (0e24eh),a		;4a0e   ; guarda la marca del recuadro de estado
 	ld hl,03b00h		;4a11
-	ld a,(0e24fh)		;4a14
+	ld a,(0e24fh)		;4a14   ; el byte de 0x3B00 vuelve
 	call 00177h		;4a17   ; BIOS NWRVRM - Writes to VRAM like in WRTVRM (with 16-bit VRAM-address)
 	jp L_4DCE		;4a1a
 L_4A1D:
@@ -1622,15 +1622,15 @@ L_4A3D:
 	ld b,a			;4a4d
 	ld a,(0e217h)		;4a4e   ; lee la marca de TRYAGAIN (se puede seguir tras el fin de la partida)
 	or b			;4a51
-	ld (0e218h),a		;4a52
-	ld hl,05f59h		;4a55
+	ld (0e218h),a		;4a52   ; 0xE218: se puede seguir con F5
+	ld hl,05f59h		;4a55   ; el letrero de seguir
 	call nz,L_51D0		;4a58   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	call L_4C8A		;4a5b   ; el marcador, solo con 0xF0F4 (en MSX2)
 	xor a			;4a5e
 	ld (0e247h),a		;4a5f   ; guarda la marca de seguir tras el fin de la partida (F5)
 	ld a,(0e254h)		;4a62   ; lee la marca de partida del editor
 	and a			;4a65
-	ld a,078h		;4a66
+	ld a,078h		;4a66   ; la espera: 0x78 cuadros (0xB4 con el editor)
 	jr z,L_4A6C		;4a68
 	ld a,0b4h		;4a6a
 L_4A6C:
@@ -1640,14 +1640,14 @@ L_4A6F:
 	and a			;4a72
 	call nz,L_4ADB		;4a73
 	ld a,(0e203h)		;4a76   ; lee la cuenta de cuadros
-	rra			;4a79
+	rra			;4a79   ; cada dos cuadros
 	ret c			;4a7a
 	ld hl,0e204h		;4a7b   ; apunta a la espera del paso (en cuadros)
 	dec (hl)			;4a7e
 	ret nz			;4a7f
 	ld a,(0e247h)		;4a80   ; lee la marca de seguir tras el fin de la partida (F5)
 	and a			;4a83
-	jr z,L_4AC3		;4a84
+	jr z,L_4AC3		;4a84   ; sin F5: se acaba
 	ld hl,0e226h		;4a86   ; apunta a los puntos (3 bytes BCD)
 	xor a			;4a89
 	ld (hl),a			;4a8a
@@ -1665,7 +1665,7 @@ L_4A6F:
 	jr z,L_4ABC		;4a9d
 	call 08f0ch		;4a9f
 	call L_41E0		;4aa2   ; pide el sonido 1
-	ld hl,0e278h		;4aa5
+	ld hl,0e278h		;4aa5   ; la extension del nombre: ELG
 	ld (hl),045h		;4aa8
 	inc hl			;4aaa
 	ld (hl),04ch		;4aab
@@ -1673,7 +1673,7 @@ L_4A6F:
 	ld (hl),047h		;4aae
 	ld a,005h		;4ab0
 	ld (0e25bh),a		;4ab2   ; guarda el paso dentro del menu del editor
-	ld hl,00a03h		;4ab5
+	ld hl,00a03h		;4ab5   ; estado 3 (el menu), paso 0x0A
 	ld (0e200h),hl		;4ab8   ; guarda el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final) y el byte siguiente (16 bits)
 	ret			;4abb
 L_4ABC:
@@ -1735,12 +1735,12 @@ L_4B26:
 	ret nz			;4b28
 	ld a,(0e242h)		;4b29   ; lee la fase (1-60)
 	call L_4CFD		;4b2c   ; pasa A a BCD
-	and 00fh		;4b2f
+	and 00fh		;4b2f   ; la cifra baja de la fase: 1 (fases 1, 11, 21...)
 	dec a			;4b31
 	jp nz,L_4A30		;4b32
 	ld a,001h		;4b35
 	ld (0e257h),a		;4b37   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
-	ld a,00ah		;4b3a
+	ld a,00ah		;4b3a   ; estado 0x0A: la piramide acabada
 	jp L_47B3		;4b3c
 L_4B3F:
 	ld a,001h		;4b3f
@@ -1753,7 +1753,7 @@ L_4B4C:
 	ld a,(0e257h)		;4b4f   ; lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	and a			;4b52
 	ret nz			;4b53
-	ld bc,0e201h		;4b54   ; apunta a el paso dentro del estado
+	ld bc,0e201h		;4b54   ; R#1 = 0xE2
 	call 00047h		;4b57   ; BIOS WRTVDP - Writes data in the VDP-register
 	jp L_4A30		;4b5a
 L_4B5D:
@@ -1788,7 +1788,7 @@ L_4B8F:
 	call L_41CC		;4b97   ; pone los bancos 14-15 en 0x8000-0xBFFF
 	ld hl,09d37h		;4b9a
 	ld a,(0ef10h)		;4b9d   ; lee el sitio escondido de la fase: tipo, paso, pantalla, y, x (0xEF10-0xEF15)
-	dec a			;4ba0
+	dec a			;4ba0   ; la entrada (tipo - 1) de la tabla 0x9D37: su letrero
 	add a,a			;4ba1
 	call L_408F		;4ba2   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;4ba5
@@ -1810,7 +1810,7 @@ L_4BBA:
 	call L_543E		;4bc0   ; el mando: el puerto 1 del PSG (registro 14) y el teclado
 	ld hl,0e221h		;4bc3
 	call L_5437		;4bc6   ; (HL) = A; (HL - 1) = lo que no estaba pulsado antes
-	or a			;4bc9
+	or a			;4bc9   ; nada pulsado: nada
 	ret z			;4bca
 	ld hl,0e204h		;4bcb   ; apunta a la espera del paso (en cuadros)
 	ld (hl),000h		;4bce
@@ -1842,7 +1842,7 @@ L_4BFC:
 	ret			;4c00
 L_4C01:
 	ld hl,0e226h		;4c01   ; partida nueva: la RAM 0xE226-0xF000 a cero y los 6 bytes de 0x4C1A a 0xE240
-	ld bc,00ddah		;4c04
+	ld bc,00ddah		;4c04   ; 0xDDA bytes
 	ld d,h			;4c07
 	ld e,l			;4c08
 	inc e			;4c09
@@ -1874,12 +1874,12 @@ L_4C20:
 	ret p			;4c26
 	ld hl,0e226h		;4c27   ; apunta a los puntos (3 bytes BCD)
 	ld a,(hl)			;4c2a
-	add a,e			;4c2b
+	add a,e			;4c2b   ; las dos cifras bajas...
 	daa			;4c2c
 	ld (hl),a			;4c2d
 	inc l			;4c2e
 	ld a,(hl)			;4c2f
-	adc a,d			;4c30
+	adc a,d			;4c30   ; ...con el acarreo
 	daa			;4c31
 	ld (hl),a			;4c32
 	inc hl			;4c33
@@ -1909,7 +1909,7 @@ L_4C56:
 	ld a,(hl)			;4c5b
 	cp 099h		;4c5c
 	jr nc,L_4C64		;4c5e
-	add a,001h		;4c60
+	add a,001h		;4c60   ; una mas, en BCD
 	daa			;4c62
 	ld (hl),a			;4c63
 L_4C64:
@@ -1940,18 +1940,18 @@ L_4C8A:
 	ld a,(0f0f4h)		;4c8a   ; el marcador, solo con 0xF0F4 (en MSX2)
 	and a			;4c8d
 	ret z			;4c8e
-	ld hl,000c0h		;4c8f
+	ld hl,000c0h		;4c8f   ; un recuadro en (0, 0xC0) de 0xFF x 0x13, color 12
 	ld c,00ch		;4c92
 	ld de,0ff13h		;4c94
 	call L_4FC1		;4c97   ; un recuadro en (H, L) de D x E pixeles, color C
-	ld hl,05ef2h		;4c9a
+	ld hl,05ef2h		;4c9a   ; el letrero del marcador
 	call L_51D0		;4c9d   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	call L_4CC0		;4ca0   ; pinta el record y los puntos
 	call L_4D17		;4ca3
 	ld a,(0e254h)		;4ca6   ; lee la marca de partida del editor
 	and a			;4ca9
 	jr z,L_4CB5		;4caa
-	ld hl,0e270h		;4cac   ; apunta a el nombre de la fase del editor (11 letras)
+	ld hl,0e270h		;4cac   ; en el editor: el nombre de la fase en 0x90CA
 	ld de,090cah		;4caf
 	jp 08a1ah		;4cb2
 L_4CB5:
@@ -2033,15 +2033,15 @@ L_4D2F:
 	ld c,0ffh		;4d32
 L_4D34:
 	inc b			;4d34
-	ld a,(hl)			;4d35
+	ld a,(hl)			;4d35   ; la cifra alta...
 	rra			;4d36
 	rra			;4d37
 	rra			;4d38
 	rra			;4d39
 	call L_4D45		;4d3a   ; pinta la cifra baja de A (caracteres 0xD0-0xD9)
-	ld a,(hl)			;4d3d
+	ld a,(hl)			;4d3d   ; ...y la baja
 	call L_4D45		;4d3e   ; pinta la cifra baja de A (caracteres 0xD0-0xD9)
-	dec hl			;4d41
+	dec hl			;4d41   ; el byte anterior
 	djnz L_4D2F		;4d42
 	ret			;4d44
 L_4D45:
@@ -2105,20 +2105,20 @@ L_4D98:
 	push bc			;4d98
 	ld b,000h		;4d99
 	call L_4DFB		;4d9b   ; lee B C bytes de la VRAM (LDIRMV) sin tocar registros
-	ld a,010h		;4d9e
+	ld a,010h		;4d9e   ; DE: 16 bytes mas
 	call L_4094		;4da0   ; suma A a DE (DE = DE + A)
-	ld a,020h		;4da3
+	ld a,020h		;4da3   ; HL: la fila siguiente de la VRAM (32 bytes)
 	call L_408F		;4da5   ; suma A a HL (HL = HL + A)
 	pop bc			;4da8
 	djnz L_4D98		;4da9
 	ld hl,03908h		;4dab
 	ld bc,00710h		;4dae
 L_4DB1:
-	push bc			;4db1
+	push bc			;4db1   ; una fila a cero
 	xor a			;4db2
 	ld b,a			;4db3
 	call L_4E0F		;4db4   ; llena BC bytes de la VRAM con A (BIGFIL)
-	ld a,020h		;4db7
+	ld a,020h		;4db7   ; la siguiente: 32 mas alla
 	call L_408F		;4db9   ; suma A a HL (HL = HL + A)
 	pop bc			;4dbc
 	djnz L_4DB1		;4dbd
@@ -2135,9 +2135,9 @@ L_4DD7:
 	push bc			;4dd7
 	ld b,000h		;4dd8
 	call L_4E05		;4dda   ; escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
-	ld a,010h		;4ddd
+	ld a,010h		;4ddd   ; HL: 16 bytes mas
 	call L_408F		;4ddf   ; suma A a HL (HL = HL + A)
-	ld a,020h		;4de2
+	ld a,020h		;4de2   ; DE: la fila siguiente de la VRAM (32 bytes)
 	call L_4094		;4de4   ; suma A a DE (DE = DE + A)
 	pop bc			;4de7
 	djnz L_4DD7		;4de8
@@ -2257,7 +2257,7 @@ L_4E6F:
 	ex de,hl			;4e75
 	call 00177h		;4e76   ; BIOS NWRVRM - Writes to VRAM like in WRTVRM (with 16-bit VRAM-address)
 	ex de,hl			;4e79
-	inc e			;4e7a
+	inc e			;4e7a   ; el byte siguiente
 	inc hl			;4e7b
 	djnz L_4E6F		;4e7c
 	ld a,e			;4e7e
@@ -2344,14 +2344,14 @@ L_4EF2:
 	pop af			;4f05
 	out (c),e		;4f06
 	dec c			;4f08
-	ld hl,0f680h		;4f09
+	ld hl,0f680h		;4f09   ; y la copia en la VRAM: 0xF680 + 2 x el color
 	ld a,b			;4f0c
 	add a,a			;4f0d
 	add a,l			;4f0e
 	ld l,a			;4f0f
 	call 00171h		;4f10   ; BIOS NSTWRT - Same function as SETWRT (with 16-bit VRAM-address)
 	dec c			;4f13
-	out (c),d		;4f14
+	out (c),d		;4f14   ; los dos bytes del color
 	out (c),e		;4f16
 	pop hl			;4f18
 	pop bc			;4f19
@@ -2363,7 +2363,7 @@ L_4F1C:
 	inc a			;4f1e
 	ret z			;4f1f
 	dec a			;4f20
-	ld d,(hl)			;4f21
+	ld d,(hl)			;4f21   ; D y E
 	inc hl			;4f22
 	ld e,(hl)			;4f23
 	inc hl			;4f24
@@ -2420,7 +2420,7 @@ L_4F54:
 	pop hl			;4f71
 	out (c),h		;4f72   ; NX = el largo (0 vale 256)
 	xor a			;4f74
-	cp h			;4f75
+	cp h			;4f75   ; NX = 0 vale 256: el bit alto
 	jr nz,L_4F79		;4f76
 	inc a			;4f78
 L_4F79:
@@ -2455,12 +2455,12 @@ L_4F8A:
 	pop hl			;4fa7
 	out (c),h		;4fa8   ; NX = el largo
 	xor a			;4faa
-	cp h			;4fab
+	cp h			;4fab   ; NX = 0 vale 256: el bit alto
 	jr nz,L_4FAF		;4fac
 	inc a			;4fae
 L_4FAF:
 	out (c),a		;4faf
-	xor a			;4fb1
+	xor a			;4fb1   ; NY = 0
 	out (c),a		;4fb2
 	out (c),a		;4fb4
 	out (c),l		;4fb6   ; el color
@@ -2526,7 +2526,7 @@ L_4FED:
 	out (c),d		;5009
 	pop hl			;500b
 	out (c),h		;500c   ; NX = B (0 vale 256)
-	cp h			;500e
+	cp h			;500e   ; NX = 0 vale 256: el bit alto
 	jr nz,L_5012		;500f
 	inc a			;5011
 L_5012:
@@ -2540,7 +2540,7 @@ L_501B:
 	out (c),a		;501b
 	ex af,af'			;501d
 	out (c),a		;501e   ; el color
-	xor a			;5020
+	xor a			;5020   ; ARG = 0
 	out (c),a		;5021
 	ld a,0c0h		;5023   ; HMMV
 	out (c),a		;5025
@@ -2633,12 +2633,12 @@ L_506D:
 L_50AD:
 	ld a,002h		;50ad   ; manda un byte cada vez que el VDP lo pide (bit 7 de S#2) hasta acabar
 	call L_4F34		;50af   ; lee el registro de estado A del VDP (S#A)
-	rra			;50b2
+	rra			;50b2   ; acabado (bit 0)?
 	ret nc			;50b3
-	add a,a			;50b4
+	add a,a			;50b4   ; el VDP pide otro (bit 7)?
 	add a,a			;50b5
 	jr nc,L_50AD		;50b6
-	ld a,(hl)			;50b8
+	ld a,(hl)			;50b8   ; el byte siguiente, a CLR
 	inc hl			;50b9
 	out (c),a		;50ba
 	jr L_50AD		;50bc
@@ -2673,7 +2673,7 @@ L_50BE:
 	out (c),a		;50e9
 	out (c),a		;50eb
 	out (c),d		;50ed   ; NY = D
-	cp d			;50ef
+	cp d			;50ef   ; NY = 0 vale 256: el bit alto
 	jr nz,L_50F3		;50f0
 	inc a			;50f2
 L_50F3:
@@ -2787,10 +2787,10 @@ L_5181:
 	ld b,d			;5189
 	ld d,e			;518a
 	ld e,b			;518b
-	srl d		;518c
+	srl d		;518c   ; la direccion: y x 128 + x / 2...
 	rr e		;518e
 	ld a,d			;5190
-	add a,080h		;5191
+	add a,080h		;5191   ; ...en la pagina 1 (+0x8000)
 	ld d,a			;5193
 	ld hl,0ef80h		;5194   ; apunta a el bufer de un caracter o un sprite
 	call L_51A2		;5197   ; 8 filas de 4 bytes (8 pixeles de 4 bits) a la VRAM, de 128 en 128 bytes
@@ -2807,7 +2807,7 @@ L_51A5:
 	push bc			;51a5
 	ld bc,00004h		;51a6   ; una fila: 4 bytes
 	call L_4E05		;51a9   ; escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
-	ld bc,00004h		;51ac
+	ld bc,00004h		;51ac   ; 4 bytes mas en el bufer
 	add hl,bc			;51af
 	ex de,hl			;51b0
 	ld bc,00080h		;51b1   ; la siguiente linea de la VRAM (128 bytes)
@@ -2820,11 +2820,11 @@ L_51A5:
 L_51BB:
 	push bc			;51bb   ; B caracteres seguidos, saltando de fila al llegar al borde
 	call L_51A2		;51bc   ; 8 filas de 4 bytes (8 pixeles de 4 bits) a la VRAM, de 128 en 128 bytes
-	ld a,004h		;51bf
+	ld a,004h		;51bf   ; 4 bytes (8 pixeles) a la derecha
 	add a,e			;51c1
-	cp 080h		;51c2
+	cp 080h		;51c2   ; al llegar a 128...
 	jr nz,L_51CB		;51c4
-	ld a,004h		;51c6
+	ld a,004h		;51c6   ; ...8 lineas mas abajo
 	add a,d			;51c8
 	ld d,a			;51c9
 	xor a			;51ca
@@ -2846,12 +2846,12 @@ L_51D6:
 L_51DA:
 	ld a,(hl)			;51da
 	inc hl			;51db
-	ld b,a			;51dc
+	ld b,a			;51dc   ; 0xFF acaba
 	inc b			;51dd
 	ret z			;51de
-	inc b			;51df
+	inc b			;51df   ; 0xFE trae otra posicion
 	jr z,L_51D6		;51e0
-	and c			;51e2
+	and c			;51e2   ; el caracter, con la mascara de C
 	call L_51E8		;51e3   ; pinta el caracter A en (D, E) y avanza 8 pixeles
 	jr L_51DA		;51e6
 L_51E8:
@@ -2872,9 +2872,9 @@ L_51FA:
 	ld a,(hl)			;51fa   ; pinta caracteres hasta 0xFF; 0xFE pasa a la fila de abajo
 	inc hl			;51fb
 	ld b,a			;51fc
-	inc b			;51fd
+	inc b			;51fd   ; 0xFF acaba
 	ret z			;51fe
-	inc b			;51ff
+	inc b			;51ff   ; 0xFE: la fila de abajo
 	jr z,L_51F0		;5200
 	call L_51E8		;5202   ; pinta el caracter A en (D, E) y avanza 8 pixeles
 	jr L_51FA		;5205
@@ -2895,8 +2895,8 @@ L_5219:
 	push hl			;521a
 	push de			;521b
 	call L_523D		;521c   ; H, L = la esquina del caracter A en su pagina: 32 por fila de 8 pixeles
-	ld bc,00808h		;521f
-	ld a,048h		;5222
+	ld bc,00808h		;521f   ; 8 x 8 pixeles
+	ld a,048h		;5222   ; TIMP, de la pagina 1 a la 0
 	call L_5100		;5224   ; copia con operacion logica (orden LMMM)
 	pop de			;5227
 	pop hl			;5228
@@ -2907,8 +2907,8 @@ L_522B:
 	push hl			;522c
 	push de			;522d
 	call L_523D		;522e   ; H, L = la esquina del caracter A en su pagina: 32 por fila de 8 pixeles
-	ld bc,00808h		;5231
-	ld a,058h		;5234
+	ld bc,00808h		;5231   ; 8 x 8 pixeles
+	ld a,058h		;5234   ; TIMP, de la pagina 1 a la 1
 	call L_5100		;5236   ; copia con operacion logica (orden LMMM)
 	pop de			;5239
 	pop hl			;523a
@@ -3159,7 +3159,7 @@ L_534D:
 	ld (hl),a			;5372   ; el byte a 0xE800
 	inc hl			;5373
 	exx			;5374
-	djnz L_534D		;5375
+	djnz L_534D		;5375   ; el par siguiente
 	ret			;5377
 L_5378:
 	push de			;5378   ; un caracter de 0xE800 a la VRAM de DE dandole la vuelta (de derecha a izquierda)
@@ -3179,7 +3179,7 @@ L_5387:
 	rrca			;538a
 	rrca			;538b
 	rrca			;538c
-	out (c),a		;538d
+	out (c),a		;538d   ; a la VRAM
 	djnz L_5387		;538f
 	ld c,008h		;5391
 	add hl,bc			;5393   ; la fila siguiente: 8 bytes en el bufer...
@@ -3250,7 +3250,7 @@ L_53B6:
 	ld hl,05413h		;5400
 L_5403:
 	push bc			;5403
-	ld c,(hl)			;5404
+	ld c,(hl)			;5404   ; C = el registro, B = el valor
 	inc hl			;5405
 	ld b,(hl)			;5406
 	inc hl			;5407
@@ -3352,11 +3352,11 @@ L_5479:
 	or e			;548b
 	rlca			;548c
 	rlca			;548d
-	rlca			;548e
+	rlca			;548e   ; bits 0-2: F1-F3; bits 3-4: F4-F5
 	and 01fh		;548f
 	ld e,a			;5491
 	ld a,b			;5492
-	and 080h		;5493
+	and 080h		;5493   ; bit 7: RETURN
 	or e			;5495
 	ld e,a			;5496
 	ld a,b			;5497
@@ -3364,12 +3364,12 @@ L_5479:
 	rlca			;5499
 	rlca			;549a
 	rlca			;549b
-	and 040h		;549c
+	and 040h		;549c   ; bit 6: ESC
 	or e			;549e
 	ret			;549f
 L_54A0:
 	ld a,(hl)			;54a0   ; carga graficos de una lista: [modo][sitio][n][puntero], 0xFF acaba; DE = la tabla de los colores
-	inc a			;54a1
+	inc a			;54a1   ; 0xFF acaba
 	ret z			;54a2
 	push de			;54a3
 	ld a,(hl)			;54a4   ; el modo: sus bits altos eligen la tabla de colores
@@ -3391,7 +3391,7 @@ L_54B9:
 	ld c,a			;54b9
 	ld b,000h		;54ba
 	ld de,0e700h		;54bc   ; apunta a la tabla de colores al cargar graficos; en la partida, las cosas de 2 x 2 de la fase (16 x 8 bytes)
-	ldir		;54bf
+	ldir		;54bf   ; los colores del modo, a 0xE700
 	pop bc			;54c1
 	pop hl			;54c2
 	inc hl			;54c3
@@ -3427,7 +3427,7 @@ L_54B9:
 	pop hl			;54ea
 	pop de			;54eb
 	inc hl			;54ec
-	jr L_54A0		;54ed
+	jr L_54A0		;54ed   ; el siguiente de la lista
 L_54EF:
 	ld a,c			;54ef   ; segun los bits 0-2 del modo: 1, 2 o 3 bits por punto, con o sin espejo
 	and 007h		;54f0   ; 0: 1 bit
@@ -3491,7 +3491,7 @@ L_554F:
 	pop bc			;5555
 	pop af			;5556
 	call nz,L_55CD		;5557   ; tipo 2 o mas: de izquierda a derecha
-	ld bc,00004h		;555a
+	ld bc,00004h		;555a   ; el siguiente (4 bytes)
 	add ix,bc		;555d
 	jr L_553D		;555f
 L_5561:
@@ -3523,14 +3523,14 @@ L_5581:
 	ld hl,0efa0h		;5594
 	ld bc,00020h		;5597
 	call L_4E05		;559a   ; y a la VRAM
-	ld bc,00020h		;559d
+	ld bc,00020h		;559d   ; los 32 bytes siguientes
 	ld hl,(0efd2h)		;55a0
 	add hl,bc			;55a3
 	ld (0efd2h),hl		;55a4
 	ld hl,(0efd4h)		;55a7
 	add hl,bc			;55aa
 	ld (0efd4h),hl		;55ab
-	ld hl,0efd0h		;55ae
+	ld hl,0efd0h		;55ae   ; hasta n
 	dec (hl)			;55b1
 	jr nz,L_5581		;55b2
 	ret			;55b4
@@ -3583,7 +3583,7 @@ L_55F0:
 	ld hl,0a7ceh		;560b   ; la paleta de 0xA7CE
 	call L_4F1C		;560e   ; la paleta de la lista de HL: [color][D][E], 0xFF acaba
 	call L_418A		;5611   ; pone los bancos 1-2-3 (el juego)
-	xor a			;5614
+	xor a			;5614   ; desde la columna 0
 	call L_59DC		;5615   ; 32 columnas de la tabla de 0x9D58, con R#1 = 0xA2 mientras (sin interrupciones del VDP)
 	ld hl,01050h		;5618   ; un rectangulo de color 0xFF en la pagina 1
 	ld bc,0a838h		;561b
@@ -3657,12 +3657,12 @@ L_56AA:
 L_56C5:
 	call L_41B5		;56c5   ; un dibujo de 16 x 16 de 0xB1D6 en la posicion de 0xEF13 (HMMC)
 	ld hl,0ef13h		;56c8
-	ld e,(hl)			;56cb
+	ld e,(hl)			;56cb   ; E = 0xEF13...
 	inc l			;56cc
-	ld d,(hl)			;56cd
+	ld d,(hl)			;56cd   ; ...D = 0xEF14
 	ld hl,0b1d6h		;56ce
-	ld bc,01010h		;56d1
-	ld a,000h		;56d4
+	ld bc,01010h		;56d1   ; 16 x 16
+	ld a,000h		;56d4   ; en la pagina 0
 	call L_506D		;56d6   ; envia bytes de HL a un rectangulo (orden HMMC)
 	jp L_57C4		;56d9
 L_56DC:
@@ -3713,12 +3713,12 @@ L_5722:
 	ld b,002h		;5722   ; lee 2 x 2 bytes de la VRAM de HL a DE (NRDVRM)
 L_5724:
 	call 00174h		;5724   ; BIOS NRDVRM - Reads VRAM like in RDVRM (with 16-bit VRAM-address)
-	ld (de),a			;5727
+	ld (de),a			;5727   ; a DE
 	inc hl			;5728
 	inc de			;5729
 	call 00174h		;572a   ; BIOS NRDVRM - Reads VRAM like in RDVRM (with 16-bit VRAM-address)
 	ld (de),a			;572d
-	ld a,01fh		;572e
+	ld a,01fh		;572e   ; la fila siguiente de la VRAM (32 - 1)
 	call L_408F		;5730   ; suma A a HL (HL = HL + A)
 	inc de			;5733
 	djnz L_5724		;5734
@@ -3742,7 +3742,7 @@ L_5742:
 	ld a,d			;5748   ; 8 pixeles a la derecha
 	add a,008h		;5749
 	ld d,a			;574b
-	inc hl			;574c
+	inc hl			;574c   ; el caracter siguiente
 	djnz L_5742		;574d
 	pop de			;574f
 	ld a,e			;5750   ; la fila siguiente, 8 pixeles mas abajo
@@ -3934,7 +3934,7 @@ L_586A:
 	ex de,hl			;58b1
 	ld bc,08001h		;58b2
 	ld a,005h		;58b5
-	jp L_5029		;58b7
+	jp L_5029		;58b7   ; y la otra columna
 L_58BA:
 	ld a,(0e285h)		;58ba   ; muerto: la columna 0xC0 + 0xE285
 L_58BD:
@@ -3965,7 +3965,7 @@ L_58DB:
 	ld d,000h		;58ec
 	ld hl,0858bh		;58ee
 	add hl,de			;58f1
-	ld a,(hl)			;58f2
+	ld a,(hl)			;58f2   ; su puntero
 	inc hl			;58f3
 	ld h,(hl)			;58f4
 	ld l,a			;58f5
@@ -3975,11 +3975,11 @@ L_58F6:
 	ret z			;58f9
 	and 00fh		;58fa   ; cifra baja 0: [destino][rachas]
 	jr nz,L_5910		;58fc
-	ld e,(hl)			;58fe
+	ld e,(hl)			;58fe   ; el destino
 	inc hl			;58ff
 	ld d,(hl)			;5900
 	inc hl			;5901
-	ld c,(hl)			;5902
+	ld c,(hl)			;5902   ; las rachas
 	inc hl			;5903
 	ld b,(hl)			;5904
 	inc hl			;5905
@@ -3992,13 +3992,13 @@ L_58F6:
 	jr L_58F6		;590e
 L_5910:
 	ld c,a			;5910   ; si no: n bloques de 16 bytes dados la vuelta, [destino][de]
-	ld a,(hl)			;5911
+	ld a,(hl)			;5911   ; el destino, sin la cifra baja
 	and 0f0h		;5912
 	ld e,a			;5914
 	inc hl			;5915
 	ld d,(hl)			;5916
 	inc hl			;5917
-	ld a,(hl)			;5918
+	ld a,(hl)			;5918   ; de donde
 	inc hl			;5919
 	ld b,(hl)			;591a
 	inc hl			;591b
@@ -4086,11 +4086,11 @@ L_59CD:
 	jp L_418A		;59d9
 L_59DC:
 	push af			;59dc   ; 32 columnas de la tabla de 0x9D58, con R#1 = 0xA2 mientras (sin interrupciones del VDP)
-	ld bc,0a201h		;59dd
+	ld bc,0a201h		;59dd   ; R#1 = 0xA2
 	call 00047h		;59e0   ; BIOS WRTVDP - Writes data in the VDP-register
 	pop af			;59e3
 	call L_59ED		;59e4   ; 32 columnas de 27 x 1 caracteres, cada una de la tabla 0x9D58 desde la entrada A
-	ld bc,0e201h		;59e7   ; apunta a el paso dentro del estado
+	ld bc,0e201h		;59e7   ; R#1 = 0xE2
 	jp 00047h		;59ea   ; BIOS WRTVDP - Writes data in the VDP-register
 L_59ED:
 	call L_41CC		;59ed   ; 32 columnas de 27 x 1 caracteres, cada una de la tabla 0x9D58 desde la entrada A
@@ -4299,9 +4299,9 @@ L_5BC8:
 	ld hl,0e2c0h		;5bc8   ; un cuadro de la presentacion: cada dos cuadros crece lo que se copia
 	dec (hl)			;5bcb
 	ld a,(hl)			;5bcc
-	and 001h		;5bcd
+	and 001h		;5bcd   ; cada dos cuadros
 	ret nz			;5bcf
-	inc hl			;5bd0
+	inc hl			;5bd0   ; 0xE2C1: lo que queda
 	dec (hl)			;5bd1   ; acabadas: 0xE2C2 = 1
 	jr nz,L_5BDA		;5bd2
 	ld a,001h		;5bd4
@@ -4372,7 +4372,7 @@ L_5C51:
 	cp b			;5c54
 	exx			;5c55
 	ret c			;5c56   ; aun no toca
-	ld (hl),000h		;5c57
+	ld (hl),000h		;5c57   ; la cuenta a cero
 	inc hl			;5c59
 	ld a,(hl)			;5c5a   ; subiendo o bajando
 	inc hl			;5c5b
@@ -4452,7 +4452,7 @@ L_5C94:
 	call L_418A		;5ce8   ; pone los bancos 1-2-3 (el juego)
 	xor a			;5ceb
 	ld (0e287h),a		;5cec   ; el personaje en su primera postura
-	ld (0edcdh),a		;5cef
+	ld (0edcdh),a		;5cef   ; y 0xEDCD a cero
 	call L_58D2		;5cf2   ; los dibujos de los sprites del personaje, con los bancos 14-15
 L_5CF5:
 	call L_4E98		;5cf5   ; pinta la pantalla en la que se esta: apaga, pinta y enciende
@@ -4486,7 +4486,7 @@ L_5D32:
 	add hl,hl			;5d37
 	ld d,h			;5d38
 	ld e,l			;5d39
-	add hl,hl			;5d3a
+	add hl,hl			;5d3a   ; x 3: HL x 0xC0
 	add hl,de			;5d3b
 	ld de,0e900h		;5d3c   ; apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
 	add hl,de			;5d3f
@@ -4503,9 +4503,9 @@ L_5D4F:
 	ld a,(hl)			;5d52
 	and a			;5d53
 	ret z			;5d54
-	dec (hl)			;5d55
+	dec (hl)			;5d55   ; un cuadro menos
 	ld a,(hl)			;5d56
-	rra			;5d57
+	rra			;5d57   ; color 0 o 11, uno si y otro no
 	ld b,000h		;5d58
 	jr nc,L_5D5E		;5d5a
 	ld b,00bh		;5d5c
@@ -4543,7 +4543,7 @@ L_5DAC:
 	call L_41BF		;5dac   ; la rejilla de pantallas de la fase: 8 bytes de la tabla 0xAB5A (banco 13), un bit por casilla
 	ld hl,0e780h		;5daf   ; 0xE780-0xE7BF a cero
 	ld de,0e781h		;5db2
-	ld bc,0003fh		;5db5
+	ld bc,0003fh		;5db5   ; 64 bytes
 	ld (hl),000h		;5db8
 	ldir		;5dba
 	ld de,0ab5ah		;5dbc
@@ -4772,7 +4772,7 @@ DATA_resto_5EF2:
 L_5F8D:
 	call L_4E98		;5f8d   ; el menu: borra, R#7 = 0 y la presentacion
 	call L_5FA6		;5f90   ; un rectangulo de color 0 en la pagina 1
-	ld bc,00007h		;5f93
+	ld bc,00007h		;5f93   ; R#7 = 0x00
 	call 00047h		;5f96   ; BIOS WRTVDP - Writes data in the VDP-register
 	call L_55F0		;5f99   ; carga la presentacion: los graficos de la lista 0xB120 (banco 15)
 	call L_4EE7		;5f9c   ; R#8 sin el bit 1: con sprites
@@ -4801,18 +4801,18 @@ L_5FC6:
 	ret c			;5fca
 	ld hl,0e214h		;5fcb   ; apunta a la cuenta del telon del menu
 	dec (hl)			;5fce
-	jr z,L_5FE7		;5fcf
+	jr z,L_5FE7		;5fcf   ; a cero: acabado
 	ld a,(hl)			;5fd1
 	ld c,a			;5fd2
-	add a,01fh		;5fd3
+	add a,01fh		;5fd3   ; DY = la cuenta + 0x1F
 	ld e,a			;5fd5
-	ld d,018h		;5fd6
-	ld hl,01050h		;5fd8
-	ld a,039h		;5fdb
+	ld d,018h		;5fd6   ; DX = 0x18
+	ld hl,01050h		;5fd8   ; desde (0x10, 0x50)
+	ld a,039h		;5fdb   ; NY = 0x39 - la cuenta
 	sub c			;5fdd
 	ld c,a			;5fde
-	ld b,0a8h		;5fdf
-	ld a,001h		;5fe1
+	ld b,0a8h		;5fdf   ; NX = 0xA8
+	ld a,001h		;5fe1   ; de la pagina 1 a la 0
 	call L_5029		;5fe3   ; copia un rectangulo de la VRAM (orden HMMM): de (H, L) a (D, E), paginas de A
 	ret			;5fe6
 L_5FE7:
