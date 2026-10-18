@@ -2,19 +2,48 @@
 
 # --- A MANO: comentarios escritos leyendo el codigo ---
 C 0xB400 el sitio escondido de la fase, si lo tiene: tabla 0xB548, 5 bytes [fase][tipo][pantalla][y][x], un 0 acaba
+C 0xB404 0 acaba
+C 0xB409 la fase?
+C 0xB40C la siguiente (5 bytes)
 C 0xB413 lo copia a 0xEF10: tipo, paso (0) y pantalla, y, x
+C 0xB417 el tipo
+C 0xB419 el paso: 0
+C 0xB41C pantalla, y, x
 C 0xB422 un cuadro del sitio escondido, por pasos (0xEF11)
+C 0xB426 0: nada
+C 0xB429 el paso: su rutina
 C 0xB437 paso 0: aparece si el personaje salta (estado 1) justo en el sitio
+C 0xB43B en esta pantalla?
+C 0xB440 saltando (estado 1)?
 C 0xB446 el paso siguiente, una espera de 0x40 y se pinta, con el sonido 0x3B
+C 0xB44A 0xEF15 = 0x40
+C 0xB45F con el sonido 0x3B
 C 0xB462 paso 1: espera
 C 0xB46C paso 2: al tocarlo, el sonido 0x2E y su dibujo de 0xB1D6
 C 0xB48F paso 3: en el sitio pulsando abajo, se entra (estado 12) con el sonido 0x30
+C 0xB49C abajo (bit 1)?
+C 0xB49F 0xEF11 = 0: el sitio, desde el paso 0
+C 0xB4A0 estado 0x0C, paso 0
+C 0xB4A9 con el sonido 0x30
 C 0xB4AC C si el personaje esta a menos de 4 pixeles del sitio
+C 0xB4B9 a menos de 4 en y...
+C 0xB4BE ...la x - la del sitio...
+C 0xB4C4 ...sin signo
 C 0xB4C9 C si esta a menos de 4 en y y de 8 en x
+C 0xB4D3 a menos de 4 en y...
+C 0xB4D8 ...la x - la del sitio...
+C 0xB4DE ...sin signo
 C 0xB4E3 guarda el fondo del sitio y pinta 2 x 2 caracteres de 0xB4F8
+C 0xB4EC E = la y
+C 0xB4EE D = la x
+C 0xB4F2 2 x 2
 C 0xB4FC guarda en la pagina 1 (0xB0) los 16 x 16 pixeles del sitio
 C 0xB50B devuelve el fondo
 C 0xB51C al pintar la pantalla, el sitio si ya ha aparecido
+C 0xB520 sin sitio: nada
+C 0xB524 en esta pantalla?
+C 0xB52B 0: aun no ha aparecido
+C 0xB52D el tipo 3: el dibujo de 16 x 16
 C 0xB534 un cuadro del minijuego del sitio escondido (estado 12)
 C 0xB53A tipo 1: las musicas; tipo 2: el puzle
 C 0xB6B0 el puzle: ESC sale; por pasos (IX+01)
@@ -23,12 +52,25 @@ C 0xB6F2 paso 1: espera el disparo
 C 0xB701 paso 2: un puzle revuelto de los 4 de la tabla 0xB5E0 (al azar con 0xE203)
 C 0xB71E pinta las 25 casillas (5 x 5) y el letrero
 C 0xB72D la pieza de la casilla
+C 0xB732 la casilla siguiente
 C 0xB734 16 pixeles a la derecha
 C 0xB73C la fila siguiente, 16 mas abajo
+C 0xB743 y el letrero de 0xB5B8
 C 0xB749 paso 3: los cursores mueven la mano; el disparo mueve la pieza al hueco de al lado
+C 0xB74F arriba
+C 0xB752 abajo
+C 0xB755 izquierda
+C 0xB758 derecha
+C 0xB75B el disparo (bit 4)
 C 0xB78A la pieza: si tiene el hueco al lado, se corre
+C 0xB797 0: no esta al lado
+C 0xB799 un movimiento mas
+C 0xB7A1 la direccion - 1: su rutina
 C 0xB7AD al hueco de abajo
 C 0xB7B8 al de la izquierda
+C 0xB7B9 el hueco donde estaba
+C 0xB7C0 la pieza, 5 casillas antes
+C 0xB7C1 la mano, una columna a la izquierda
 C 0xB7D2 al de la derecha
 C 0xB7D3 el hueco donde estaba la pieza...
 C 0xB7DA ...la pieza en el de la derecha...
@@ -36,13 +78,25 @@ C 0xB7DB ...y la mano con ella
 C 0xB7E1 al de arriba
 C 0xB7EC pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
 C 0xB7FA B = la pieza de la casilla de la mano (Z si es el hueco)
+C 0xB800 la fila x 5 + la columna
+C 0xB80D 0: el hueco (Z)
 C 0xB80F D, E = la casilla de la mano en pixeles
 C 0xB812 x 16 + 0x30
 C 0xB81C y x 16 + 0x58
 C 0xB824 C = hacia donde esta el hueco (1 arriba, 2 abajo, 3 izquierda, 4 derecha; 0 no esta al lado)
+C 0xB827 E = la columna
+C 0xB82A C = 1: arriba
 C 0xB82C arriba (si no esta en la fila 0)
+C 0xB830 la fila de arriba
+C 0xB836 el hueco: Z
 C 0xB837 abajo (si no esta en la 4)
+C 0xB838 la fila
+C 0xB83E la de abajo
+C 0xB843 el hueco: Z
 C 0xB844 izquierda (si no esta en la columna 0)
+C 0xB845 la columna
+C 0xB84A la de la izquierda
+C 0xB84F el hueco: Z
 C 0xB850 derecha (si no esta en la 4)
 C 0xB85B ninguno
 C 0xB85E paso 4: si las piezas estan en orden (1-24)...
@@ -54,14 +108,26 @@ C 0xB89D paso 5: el disparo sale
 C 0xB8A3 sale: el borde a 0 y el sonido 1
 C 0xB8CF la mano (cuatro sprites con los colores de 0xB913)
 C 0xB8DE la x de la mano...
+C 0xB8E5 x 16 + 0x34
 C 0xB8E9 ...los dos de abajo 16 mas
 C 0xB8F3 la y
+C 0xB8F6 x 16 + 0x5C
 C 0xB8FF el dibujo
+C 0xB900 el dibujo siguiente, 4 mas
 C 0xB906 su color, 16 veces
 C 0xB90F el sprite siguiente
 C 0xB917 las musicas: por pasos
 C 0xB91E paso 0: graficos, el dibujo de 0xBC05 y el letrero
-C 0xB938 paso 1: arriba y abajo eligen (19, IX+02), el disparo la pone; RETURN sale
+C 0xB938 paso 1: izquierda y derecha eligen (19, IX+02), el disparo la pone; RETURN sale
+C 0xB941 izquierda (bit 2): la anterior
+C 0xB944 derecha (bit 3): la siguiente
+C 0xB947 el disparo (bit 4)
+C 0xB94C RETURN (bit 7) sale
+C 0xB94E el borde a negro
+C 0xB951 y el paso a 0
+C 0xB957 con el sonido 1
+C 0xB963 por debajo de 0: la 0x12
+C 0xB973 pasada la 0x12: la 0
 C 0xB981 la pone (tabla detras, una peticion de sonido por musica)
 C 0xB9B0 los sprites de la flecha (tablas 0xB9FA y 0xBA0D)
 C 0xB9BF la musica elegida: su sitio en la tabla 0xB9FA
@@ -70,29 +136,57 @@ C 0xB9D5 los dos de abajo 16 mas
 C 0xB9DE la x
 C 0xB9E1 la y (sin el bit 0)
 C 0xB9E6 el dibujo
+C 0xB9E8 el dibujo siguiente, 4 mas
 C 0xB9ED su color
 C 0xB9F2 16 veces
 C 0xB9F7 el sprite siguiente
 C 0xBA11 la demostracion: la fase de la tabla 0xBA3A (una de 6, 0xE219 va dando la vuelta)
 C 0xBA14 0xE209/0xE20A: el mando grabado
+C 0xBA1A la demostracion 1-6...
+C 0xBA21 ...su fase
+C 0xBA25 la siguiente
+C 0xBA27 despues de la 6...
+C 0xBA2B ...la 1
 C 0xBA2D cuenta a cero, empieza la fase y la musica
 C 0xBA41 un cuadro de la demostracion: la partida con el mando grabado; si muere, se acaba
 C 0xBA57 sale de la pantalla: a la de al lado
 C 0xBA66 el mando de la demostracion: [teclas][cuadros] de la tabla de la piramide (0xBA92)
+C 0xBA69 se acaba la espera?
+C 0xBA6C el paso siguiente
 C 0xBA72 0xFF acaba la demostracion
+C 0xBA76 la espera: C cuadros
 C 0xBA7A las teclas, como si se pulsaran
 C 0xBA80 A = las teclas y C = los cuadros del paso 0xE209 de la piramide
 C 0xBC6E las estrellas del final: 0xE910 (32 de 16 bytes) a cero
+C 0xBC7B 0xE901 y 0xE902 a cero
+C 0xBC81 0xE900 = 1
 C 0xBC86 cada 2 cuadros sale una estrella nueva del centro (0x70, 0x80)
 C 0xBC98 busca una estrella libre
 C 0xBC9E la siguiente (16 bytes)
 C 0xBCA6 su velocidad, de las tablas 0xBDB7 y 0xBD97 por la direccion
+C 0xBCA7 en marcha (IX+00 = 1)
+C 0xBCAE x = 0x70
+C 0xBCB5 y = 0x80
+C 0xBCBC la direccion siguiente (0xE901)...
+C 0xBCBE ...de 16
+C 0xBCC0 velocidad x 8
+C 0xBCC5 la velocidad en x (IX+05, IX+06)...
+C 0xBCCB ...y en y (IX+07, IX+08)
 C 0xBCD2 un cuadro de las estrellas
+C 0xBCE6 0: libre
+C 0xBCEC la siguiente (16 bytes)
 C 0xBCF4 la x + su velocidad (16 bits)
+C 0xBCF7 IX+01 y IX+02
+C 0xBCFA mas IX+05 e IX+06
 C 0xBD07 la y + su velocidad
+C 0xBD0A IX+03 e IX+04
+C 0xBD0D mas IX+07 e IX+08
 C 0xBD1A fuera de la pantalla (x o y mas alla de 0xF0)...
+C 0xBD23 la y, igual
 C 0xBD2B ...se quita
 C 0xBD30 los sprites fuera, de color 5
+C 0xBD36 y = 0xE0
+C 0xBD45 0x400 bytes
 C 0xBD4B los sprites de las estrellas (dibujo 0xD0)
 C 0xBD54 cada estrella...
 C 0xBD59 ...su sprite
@@ -101,6 +195,9 @@ C 0xBD65 un sprite: y...
 C 0xBD6A ...x...
 C 0xBD6F ...y el dibujo 0xD0
 C 0xBD74 HL, DE = la velocidad en y y en x de la direccion A, por B
+C 0xBD81 por B
+C 0xBD87 la tabla 0xBD97: en x
+C 0xBD8F y en y
 C 0xBDD7 el personaje de las secuencias: seis sprites
 C 0xBDDA y el sprite 12 en (0xEDCB, 0xEDCC)
 C 0xBDDD y
@@ -110,31 +207,63 @@ C 0xBDE9 de color 7
 C 0xBDF7 dos posturas (0xEDD8)
 C 0xBE18 dos sprites de 16 x 16 uno al lado de otro
 C 0xBE1A el de la izquierda...
+C 0xBE1C x
+C 0xBE1E el dibujo
+C 0xBE1F el atributo siguiente
 C 0xBE23 ...y el de la derecha, 4 dibujos mas
 C 0xBE2A los dos de abajo, 16 pixeles mas
+C 0xBE30 4 dibujos mas
 C 0xBE35 sus colores, 13 y 0x4E
+C 0xBE3B 15 mas
 C 0xBE3E el primero de color 13
 C 0xBE42 los demas: 0x4E, 13, 0x4E...
+C 0xBE45 13, 0x4E...
 C 0xBE5D 16 bytes de color 0x4E
 C 0xBE75 carga de cinta: el letrero de buscar y el nombre
 C 0xBE7E TAPION: la cabecera de la cinta
 C 0xBE84 16 bytes 0xAA seguidos
+C 0xBE8E 0xAA: el principio
+C 0xBE92 C seguidos
 C 0xBE95 el nombre de la fase (8 letras)
+C 0xBE98 8 letras
 C 0xBEA3 si no es el que se busca, otra vez
+C 0xBEA9 8 letras
+C 0xBEAD distinta: otra vez
 C 0xBEB3 encontrado: el letrero y los seis trozos
+C 0xBEC1 la tabla de los trozos (p01:6C6D)
+C 0xBEC5 D = la suma
+C 0xBEC7 seis trozos
 C 0xBEC9 los seis trozos de la tabla p01:6C6D, sumando los bytes
+C 0xBECA desde
+C 0xBED0 cuantos
+C 0xBEDA error: aparte
+C 0xBEDC el trozo siguiente (4 bytes)
 C 0xBEE6 la suma tiene que dar el ultimo byte
+C 0xBEED distinta: error
 C 0xBEF3 pinta el nombre de 0xEE50
 C 0xBEFC error: el letrero de 0xBF0E y 0xE27F = 2
 C 0xBF1B lee BC bytes de la cinta a HL, sumandolos en D
+C 0xBF21 a HL
+C 0xBF22 la suma
+C 0xBF25 hasta BC
 C 0xBF2B graba en cinta: TAPOON con la cabecera larga
 C 0xBF35 16 bytes 0xAA
+C 0xBF3C error: aparte
+C 0xBF3E 16 veces
 C 0xBF40 el nombre (8 letras)
+C 0xBF49 error: aparte
 C 0xBF4E otra cabecera, corta
+C 0xBF52 error: aparte
 C 0xBF54 los seis trozos, sumando
+C 0xBF5D desde
+C 0xBF63 cuantos
+C 0xBF6F el trozo siguiente (4 bytes)
 C 0xBF79 y la suma
 C 0xBF82 error: el letrero de 0xBF94 y 0xE27F = 2
 C 0xBFA1 escribe BC bytes de HL en la cinta, sumandolos en D
+C 0xBFA2 a E
+C 0xBFAA la suma
+C 0xBFAD hasta BC
 # --- fin de lo escrito a mano ---
 
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
@@ -488,11 +617,8 @@ C 0xB495 C si esta a menos de 4 en y y de 8 en x
 C 0xB499 lee el mando: lo pulsado
 C 0xB4A3 guarda el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final) y el byte siguiente (16 bits)
 C 0xB4B1 lee la y del personaje
-C 0xB4BE lee la x del personaje
 C 0xB4CB lee la y del personaje
-C 0xB4D8 lee la x del personaje
 C 0xB4E6 guarda en la pagina 1 (0xB0) los 16 x 16 pixeles del sitio
-C 0xB524 lee la pantalla de la fase (desde 1)
 C 0xB6BB el despachador de Konami: la tabla va detras del call
 C 0xB6CD los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0xB6D0 la fuente: 0x35 caracteres de 0xAFDD
@@ -511,6 +637,10 @@ C 0xB7CC pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
 C 0xB7F1 suma A a HL (HL = HL + A)
 C 0xB805 apunta a el puzle: las 25 casillas
 C 0xB808 suma A a HL (HL = HL + A)
+C 0xB832 la fila x 5 + la columna
+C 0xB83F la fila x 5 + la columna
+C 0xB84B la fila x 5 + la columna
+C 0xB857 la fila x 5 + la columna
 C 0xB880 lee las vidas (BCD)
 C 0xB88E guarda las vidas (BCD)
 C 0xB894 lo mismo, borrando (caracter 0)

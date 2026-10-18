@@ -1816,7 +1816,7 @@ L_8BC2:
 	xor a			;8c07
 	ld (0e21bh),a		;8c08   ; guarda la cuenta del borde que parpadea
 	call L_8D02		;8c0b   ; sus cuatro sprites con el dibujo que toca
-	ld bc,00007h		;8c0e
+	ld bc,00007h		;8c0e   ; R#7 = 0x00
 	jp 00047h		;8c11   ; BIOS WRTVDP - Writes data in the VDP-register
 L_8C14:
 	ld a,(0e2f3h)		;8c14   ; pinta la salida si es de esta pantalla: 4 x 4 caracteres de 0x9340 + 16 x 0xE2F6
@@ -2627,7 +2627,7 @@ L_918E:
 	jr nc,L_91C6		;9197
 	bit 1,(ix+007h)		;9199   ; mira el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	ld a,(ix+003h)		;919d   ; lee la x de la cosa
-	ld (ix+00bh),a		;91a0
+	ld (ix+00bh),a		;91a0   ; guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
 	jr nz,L_91A9		;91a3
 	add a,008h		;91a5
 	jr L_91AB		;91a7
@@ -2638,7 +2638,7 @@ L_91AB:
 	set 0,(ix+007h)		;91ae   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	call 04297h		;91b2   ; pide el sonido 0x24
 	ld l,(ix+002h)		;91b5   ; lee la y de la cosa
-	ld (ix+00ah),l		;91b8   ; guarda la marca de personaje encima
+	ld (ix+00ah),l		;91b8   ; guarda la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
 	call L_9262		;91bb   ; sin suelo debajo: cae
 	jr nc,L_91C6		;91be
 	ld (ix+006h),001h		;91c0   ; la cuenta de la cosa = 0x01
@@ -2693,12 +2693,12 @@ L_9218:
 	ld (ix+006h),002h		;921c   ; la cuenta de la cosa = 0x02
 	set 0,(ix+007h)		;9220   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	ld a,(ix+002h)		;9224   ; lee la y de la cosa
-	ld (ix+00ah),a		;9227   ; guarda la marca de personaje encima
+	ld (ix+00ah),a		;9227   ; guarda la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
 	add a,008h		;922a
 	ld (ix+002h),a		;922c   ; guarda la y de la cosa
 	ld e,a			;922f
 	ld h,(ix+003h)		;9230   ; lee la x de la cosa
-	ld (ix+00bh),h		;9233
+	ld (ix+00bh),h		;9233   ; guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
 	cp 0b8h		;9236
 	jr nc,L_9247		;9238
 	cp 0b0h		;923a
@@ -2709,7 +2709,7 @@ L_9218:
 	jp L_91C6		;9244
 L_9247:
 	ld h,(ix+00bh)		;9247   ; se sale por abajo: a la pantalla de abajo
-	ld l,(ix+00ah)		;924a   ; lee la marca de personaje encima
+	ld l,(ix+00ah)		;924a   ; lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
 	ld (ix+002h),000h		;924d   ; la y de la cosa = 0x00
 	call L_92F3		;9251   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 	call L_931A		;9254

@@ -37,6 +37,7 @@ C 0x40A4 A = el slot de este cartucho
 C 0x40A8 H.STKE (0xFEDA) = rst 0x30 (0xF7) a este slot...
 C 0x40AE ...con la direccion 0x40B5: la BIOS lo llama tras arrancar (y el disco, si hay)
 C 0x40B5 el arranque de verdad
+C 0x40B6 modo de interrupciones 1
 C 0x40B8 la pila debajo de la RAM del juego
 C 0x40BB 0xFFA7 (H.PHYD) con algo: hay disco
 C 0x40C0 con disco, se copian antes unas zonas de RAM
@@ -46,11 +47,14 @@ C 0x40CB y se apunta el slot en 0xF0E9
 C 0x40CE 0xF0F4 y 0xF0F5 a 1
 C 0x40D7 la RAM del juego, 0xE000-0xEFFF, a cero
 C 0x40E3 y 0xD200-0xD3FF
+C 0x40E9 0x200 bytes
 C 0x40EF 0xE219 = 1
 C 0x40F5 0xF3EA y 0xF3EB a cero (los colores del borde y del fondo)
 C 0x40FB los bancos 1-2-3 en 0x6000-0xBFFF, con sus copias en 0xF0F1-3
+C 0x4103 y su copia
 C 0x4110 arranca el sonido y la pantalla
 C 0x4114 la interrupcion: H.TIMI (0xFD9F) = jp 0x402E
+C 0x411C a 0x402E
 C 0x4120 0xF3DB = 0: sin el clic de las teclas
 C 0x4124 todo lo demas pasa en la interrupcion
 C 0x4126 pone en 0x8000 el slot de este cartucho (ENASLT)
@@ -139,9 +143,11 @@ C 0x430F orden 0x81 al motor (p04:6248)
 C 0x4313 orden 0x82 (p04:61BB), con 0xE21A a cero
 C 0x431B orden 0x83 (p04:61C2), con 0xE21A a 0xFF
 C 0x4326 pide al motor de sonido lo que diga A (p04:603D), con los bancos 4-5-6 y sin tocar registros
+C 0x432C A, guardado
 C 0x432D los bancos 4-5-6
 C 0x433C p04:603D: el sonido o la orden A
 C 0x433F y vuelven los bancos que habia
+C 0x4350 y los registros vuelven
 C 0x4358 con los bancos 1-2-3, llama a 0x5D63 y pone el 12 en 0xA000
 C 0x4360 con los bancos 1-2-3, llama a 0x5C80 y pone el 12 en 0xA000
 C 0x4366 el banco 12 en 0xA000
@@ -214,8 +220,11 @@ C 0x44A6 se borra la casilla y se pone el 01
 C 0x44AC apunta la cosa en la lista de IX: [pantalla][y][x][casillas | 0x80]
 C 0x44AF la pantalla
 C 0x44B2 la y: (posicion alta x 2) & 0xF8
+C 0x44B6 la y
 C 0x44B9 la x: (posicion / 4) & 0xF8
+C 0x44C3 la x
 C 0x44C6 el alto (5 bits bajos) con el bit 7
+C 0x44CB el alto
 C 0x44CE la siguiente de la lista
 C 0x44D4 pinta la pantalla en la que se esta
 C 0x44D7 los bancos 14-15
@@ -233,6 +242,7 @@ C 0x4512 cada bloque, 4 filas de 8 caracteres de la tabla
 C 0x4516 pinta el caracter A en (D, E)
 C 0x4519 8 pixeles a la derecha
 C 0x451D el caracter siguiente
+C 0x4520 la fila
 C 0x4524 la fila siguiente de la tabla
 C 0x4529 8 pixeles mas abajo
 C 0x4535 pinta los ladrillos del mapa de la pantalla 0xE243
@@ -267,13 +277,19 @@ C 0x4606 las puertas y los adornos de la pantalla (tabla del banco 14 en 0x806A)
 C 0x460B por la fase 0xE242
 C 0x4614 cada uno: [x | tipo (3 bits)][y | pantalla (3 bits)][otro byte]; 0xFF acaba
 C 0x4619 la x
+C 0x461C el segundo byte
 C 0x461E la pantalla
 C 0x4621 solo los de la pantalla 0xE243
+C 0x4624 la pantalla - 1
 C 0x4628 la y
 C 0x462D C = el tercer byte
 C 0x4638 pinta el adorno de tipo B de la piramide 0xE241: su dibujo en la tabla de 0x800C
+C 0x463F (piramide - 1) x 8
 C 0x4644 la palabra (piramide - 1) x 8 + tipo
 C 0x464A el tamano sale del tipo: 4 x 4, 4 x 2, 2 x 4 o el tipo 6-7, de largo C
+C 0x4651 tipo 0-1: 4 x 4
+C 0x4657 tipo 2-3: 4 x 2
+C 0x465D tipo 4-5: 2 x 4
 C 0x4663 una fila de caracteres
 C 0x466A 8 pixeles a la derecha
 C 0x4671 la fila siguiente, 8 mas abajo
@@ -325,11 +341,15 @@ C 0x485D y se borra
 C 0x48AE estado 4: empieza la fase; paso 0 pinta el letrero de la fase
 C 0x48B5 0xE254: la partida es del editor
 C 0x48BB 0xE240: las vidas, en BCD
+C 0x48BE las vidas
 C 0x48BF una vida menos
 C 0x48C3 el letrero de la fase
 C 0x48C9 la fase, en 0x9048
 C 0x48D2 la fase x 3 + 2: su entrada en la tabla de 0xB8F8 (banco 13)
+C 0x48D8 + 2: el tercer byte
+C 0x48E1 los 5 bits bajos
 C 0x48E9 y la cifra, en 0xA868
+C 0x48ED un byte
 C 0x48F7 con el editor: sin vidas, 0xE245 = 0xFF y la piramide 1
 C 0x4913 se espera 0x78 cuadros
 C 0x491B paso 1: al acabar la espera, la pantalla y la musica
@@ -347,6 +367,8 @@ C 0x4978 0xE246: aun no ha empezado (sin pulsar)
 C 0x497E bit 0 de 0xE20C: la tecla de la pausa
 C 0x4984 bit 1: la del recuadro de estado, solo con 0xF0F4 a 0 (en MSX2 vale 1: no sale)
 C 0x498B 0xE24E = 1, se guarda el byte de 0x3B00 y se pinta el recuadro
+C 0x4996 a 0xE24F
+C 0x4999 0xD0 en 0x3B00
 C 0x49A4 bit 4 de 0xE20C: rendirse; si no esta muerto, muere (0xE280 = 4) con el sonido 0x28
 C 0x49B4 sale de la fase: 0xE257 = 1 y al estado 9
 C 0x49C1 la pausa (bit 0), salvo con 0xE280 a 4 o 5
@@ -363,7 +385,13 @@ C 0x4A66 la espera: 0x78 cuadros (0xB4 con el editor)
 C 0x4A6F paso 1: espera; F5 (fila 7, bit 1) pone 0xE247 y se sigue
 C 0x4A79 cada dos cuadros
 C 0x4A84 sin F5: se acaba
+C 0x4A86 los puntos a cero
+C 0x4A8F una vida
+C 0x4A9D en cinta: aparte
 C 0x4AA5 la extension del nombre: ELG
+C 0x4AA8 E
+C 0x4AAB L
+C 0x4AAE G
 C 0x4AB5 estado 3 (el menu), paso 0x0A
 C 0x4AEE estado 8
 C 0x4B06 estado 9: la fase acabada
@@ -377,13 +405,18 @@ C 0x4BA0 la entrada (tipo - 1) de la tabla 0x9D37: su letrero
 C 0x4BAF estado 13: el final
 C 0x4BBA en los estados 0-2: las teclas de empezar (0xE221)
 C 0x4BC9 nada pulsado: nada
+C 0x4BCE la espera a 0
+C 0x4BD7 un boton (bits 4-5)?
+C 0x4BDB los puntos se suman
 C 0x4BEA al menu: estado 1 paso 0
 C 0x4C01 partida nueva: la RAM 0xE226-0xF000 a cero y los 6 bytes de 0x4C1A a 0xE240
 C 0x4C04 0xDDA bytes
 C 0x4C20 suma DE (BCD) a los puntos 0xE226-0xE228, si el bit 6 de 0xE202 lo deja
 C 0x4C2B las dos cifras bajas...
 C 0x4C30 ...con el acarreo
+C 0x4C35 la cifra alta con el acarreo
 C 0x4C38 se pasa de 999999: se queda en 999999
+C 0x4C3A el record: 999999
 C 0x4C47 0xE245: los puntos de la proxima vida
 C 0x4C4E la siguiente, 30000 mas
 C 0x4C58 una vida mas (hasta 99)
@@ -448,9 +481,15 @@ C 0x4ECB quita los sprites: 0xE0 en la y de las tablas de 0xF600 y 0xF200
 C 0x4EDC R#8 con el bit 1: sin sprites
 C 0x4EE7 R#8 sin el bit 1: con sprites
 C 0x4EF2 pone el color A de la paleta a D, E (y lo guarda en la VRAM 0xF680 + 2 x A)
+C 0x4EF4 B = el color
+C 0x4EF5 C = el puerto de los registros
 C 0x4EFB R#16 = el color
 C 0x4F01 el puerto de la paleta (0x9A)
+C 0x4F04 una espera
+C 0x4F06 el segundo byte
 C 0x4F09 y la copia en la VRAM: 0xF680 + 2 x el color
+C 0x4F0D 2 bytes por color
+C 0x4F13 al puerto de datos (0x98)
 C 0x4F14 los dos bytes del color
 C 0x4F1C la paleta de la lista de HL: [color][D][E], 0xFF acaba
 C 0x4F21 D y E
@@ -464,6 +503,7 @@ C 0x4F47 R#15 = 0 otra vez
 C 0x4F54 una raya horizontal desde (H, L): largo B, color C (orden LINE)
 C 0x4F58 C = el puerto de los registros
 C 0x4F5D R#17 = 36 (DX), con autoincremento
+C 0x4F60 R#17
 C 0x4F66 los registros 36-45 por el puerto 0x9B
 C 0x4F68 DX = H
 C 0x4F6D DY = L
@@ -474,6 +514,9 @@ C 0x4F80 el color
 C 0x4F82 ARG = 0: de lado
 C 0x4F84 LINE
 C 0x4F8A una raya vertical (LINE con MAJ = 1)
+C 0x4F8E C = el puerto de los registros
+C 0x4F93 R#17 = 36 (DX)
+C 0x4F9C al puerto 0x9B
 C 0x4F9E DX = H
 C 0x4FA3 DY = L
 C 0x4FA8 NX = el largo
@@ -490,8 +533,11 @@ C 0x4FD2 abajo
 C 0x4FED rellena un rectangulo (orden HMMV): desde (H, L) de la pagina D, B x C, del color de A
 C 0x4FF2 C = el puerto de los registros
 C 0x4FF7 R#17 = 36 (DX)
+C 0x4FFA R#17
+C 0x5000 al puerto 0x9B
 C 0x5002 DX = H
 C 0x5007 DY = L, en la pagina D
+C 0x5009 DY alto: la pagina D
 C 0x500C NX = B (0 vale 256)
 C 0x500E NX = 0 vale 256: el bit alto
 C 0x5015 NY = C (0 vale 256)
@@ -501,22 +547,34 @@ C 0x5023 HMMV
 C 0x5029 copia un rectangulo de la VRAM (orden HMMM): de (H, L) a (D, E), paginas de A
 C 0x502E C = el puerto de los registros
 C 0x5033 R#17 = 32 (SX)
+C 0x5036 R#17
+C 0x503C al puerto 0x9B
 C 0x503E SX = H
 C 0x5043 SY = L, en la pagina de los bits 0-1 de A
+C 0x5047 los bits 0-1: SY alto (la pagina)
 C 0x504B DX = D
 C 0x5050 DY = E, en la pagina de los bits 2-3 de A
+C 0x5053 los bits 2-3...
+C 0x5055 ...DY alto (la pagina)
 C 0x505A NX = B
 C 0x505F NY = C
+C 0x5061 el resto a 0
 C 0x5067 HMMM
 C 0x506D envia bytes de HL a un rectangulo (orden HMMC)
 C 0x5072 C = el puerto de los registros
 C 0x5077 R#17 = 36 (DX)
+C 0x507A R#17
+C 0x5080 al puerto 0x9B
 C 0x5082 DX = D
 C 0x5087 DY = E, en la pagina A
+C 0x508A DY alto: la pagina
 C 0x508D NX = B
 C 0x5092 NY = C
 C 0x5096 el primer byte (CLR)
+C 0x5098 CLR
+C 0x509B ARG = 0
 C 0x509D HMMC
+C 0x50A1 al puerto de los registros
 C 0x50A3 R#17 = 44 (CLR) sin autoincremento: los demas bytes van alli
 C 0x50AD manda un byte cada vez que el VDP lo pide (bit 7 de S#2) hasta acabar
 C 0x50B2 acabado (bit 0)?
@@ -525,22 +583,35 @@ C 0x50B8 el byte siguiente, a CLR
 C 0x50BE copia en vertical (orden YMMM)
 C 0x50C2 C = el puerto de los registros
 C 0x50C7 R#17 = 34 (SY)
+C 0x50CA R#17
+C 0x50D0 al puerto 0x9B
 C 0x50D2 SY = L, en la pagina de A
+C 0x50D6 SY alto: la pagina (bits 0-1 de A)
 C 0x50DA DX = H
 C 0x50DF DY = E
+C 0x50E2 los bits 2-3: DY alto
+C 0x50E9 el resto a 0
 C 0x50ED NY = D
 C 0x50EF NY = 0 vale 256: el bit alto
 C 0x50FA YMMM
 C 0x5100 copia con operacion logica (orden LMMM)
 C 0x5105 C = el puerto de los registros
 C 0x510A R#17 = 32 (SX)
+C 0x510D R#17
+C 0x5113 al puerto 0x9B
 C 0x5115 SX = H
 C 0x511A SY = L, en la pagina de los bits 6-7 de A
+C 0x511D los bits 6-7 de A...
+C 0x5120 ...SY alto: la pagina
 C 0x5124 DX = D
 C 0x5129 DY = E, en la pagina de los bits 4-5 de A
+C 0x512D los bits 4-5...
+C 0x512F ...DY alto: la pagina
 C 0x5134 NX = B
 C 0x5139 NY = C
+C 0x513B el resto a 0
 C 0x5141 LMMM con la operacion de los bits 0-3 de A
+C 0x5148 la orden
 C 0x514C pinta B caracteres de la fuente de DE
 C 0x5155 pasa un caracter de 1 bit por punto a 4 (color C) en 0xEF80
 C 0x515A una fila del caracter
@@ -551,8 +622,10 @@ C 0x516A al byte de 0xEF80
 C 0x5175 el segundo punto del byte
 C 0x517C la fila siguiente
 C 0x5181 pinta en la VRAM un caracter de la fuente
+C 0x5189 D y E cambiados
 C 0x518C la direccion: y x 128 + x / 2...
 C 0x5191 ...en la pagina 1 (+0x8000)
+C 0x519B 8 bytes mas en la fuente
 C 0x51A2 8 filas de 4 bytes (8 pixeles de 4 bits) a la VRAM, de 128 en 128 bytes
 C 0x51A6 una fila: 4 bytes
 C 0x51AC 4 bytes mas en el bufer
@@ -592,8 +665,10 @@ C 0x528D una fila: 8 puntos de 1 bit a 4 bytes de dos pixeles de 4 bits
 C 0x5290 un punto...
 C 0x5293 ...su color sale de la tabla de 0xE700
 C 0x5298 a la mitad alta del byte
+C 0x529F el siguiente bit
 C 0x52A3 y el siguiente punto, a la mitad baja
 C 0x52A8 el byte de dos pixeles a 0xE800
+C 0x52AB el par siguiente
 C 0x52AE B caracteres de 2 bits por punto (16 bytes cada uno), a la VRAM
 C 0x52C4 lo mismo con espejo
 C 0x52E4 una fila de 2 bits: dos bytes (los dos planos)
@@ -603,20 +678,26 @@ C 0x52EE ...y el del segundo
 C 0x52F3 su color de la tabla 0xE700...
 C 0x52F6 ...a la mitad alta
 C 0x52FC el segundo punto
+C 0x52FD el bit del primer plano...
+C 0x5300 ...y el del segundo
 C 0x5307 a la mitad baja
 C 0x5309 el byte a 0xE800
+C 0x530C el par siguiente
 C 0x530F B caracteres de 3 bits por punto (24 bytes cada uno), a la VRAM
 C 0x5325 lo mismo con espejo
 C 0x5345 una fila de 3 bits: tres bytes (tres planos)
 C 0x534D los tres planos del primer punto
 C 0x5359 su color de 0xE700 a la mitad alta
+C 0x535C a la mitad alta
 C 0x5362 el segundo punto
+C 0x536E su color
 C 0x5370 a la mitad baja
 C 0x5372 el byte a 0xE800
 C 0x5375 el par siguiente
 C 0x5378 un caracter de 0xE800 a la VRAM de DE dandole la vuelta (de derecha a izquierda)
 C 0x5381 NSETWR: la fila en la VRAM
 C 0x5387 los cuatro bytes de la fila al reves, con sus dos pixeles cambiados
+C 0x5389 los dos pixeles cambiados
 C 0x538D a la VRAM
 C 0x5393 la fila siguiente: 8 bytes en el bufer...
 C 0x5395 ...y 128 en la VRAM (una linea de SCREEN 5)
@@ -644,14 +725,22 @@ C 0x5437 (HL) = A; (HL - 1) = lo que no estaba pulsado antes
 C 0x543E el mando: el puerto 1 del PSG (registro 14) y el teclado
 C 0x5440 registro 15 del PSG = 0x8F: el puerto 1
 C 0x5448 RDPSG 14: los botones del mando
+C 0x544B y la interrupcion otra vez
 C 0x544C bits 0-5: arriba, abajo, izquierda, derecha y los dos botones
 C 0x5450 la fila 4 del teclado (SNSMAT)
+C 0x5455 pulsada: 1
 C 0x5459 su bit 2 (la tecla M) al bit 5, como el segundo boton
 C 0x545C la fila 8: los cursores y el espacio
+C 0x5461 pulsadas: 1
+C 0x5465 la izquierda (bit 4) al bit 2
 C 0x546D los cursores y el espacio, a los mismos bits que el mando
 C 0x5476 junto con el mando
 C 0x5479 las teclas de funcion: filas 6 y 7
+C 0x547E pulsadas: 1
+C 0x547F F1-F3 (bits 5-7)
 C 0x5482 la fila 7
+C 0x5487 pulsadas: 1
+C 0x5489 F4-F5 (bits 0-1)
 C 0x548E bits 0-2: F1-F3; bits 3-4: F4-F5
 C 0x5493 bit 7: RETURN
 C 0x549C bit 6: ESC
@@ -660,9 +749,11 @@ C 0x54A1 0xFF acaba
 C 0x54A4 el modo: sus bits altos eligen la tabla de colores
 C 0x54AC DE = la palabra (modo / 8) de la tabla de colores
 C 0x54B1 los bits 1-2 del modo: 2, 4 u 8 colores a 0xE700
+C 0x54BA BC = cuantos colores
 C 0x54BF los colores del modo, a 0xE700
 C 0x54C5 el sitio: bits 5-7 la fila (de 8 lineas), bits 0-4 la columna
 C 0x54C7 la fila x 0x400...
+C 0x54CC x 32: la fila x 0x400
 C 0x54D1 ...en la pagina 1 de la VRAM (0x8000)
 C 0x54D5 la columna x 4 bytes (8 pixeles)
 C 0x54E0 B = cuantos caracteres
@@ -676,8 +767,11 @@ C 0x54FD 3: 2 bits en espejo
 C 0x5501 4: 3 bits
 C 0x5505 5: 3 bits en espejo
 C 0x5508 copia sprites a la VRAM: [n x 32 bytes][dibujo][puntero], 0 acaba
+C 0x550D n x 32: los bytes
+C 0x5515 BC = cuantos bytes
 C 0x5517 el dibujo x 8
 C 0x551F la tabla de dibujos de los sprites: 0xF800 en MSX2 (0xF0F4), 0x1800 en MSX1
+C 0x5528 en MSX1: 0x1800
 C 0x5530 HL = los bytes
 C 0x5536 4 bytes por entrada
 C 0x553D copia sprites dados la vuelta: [tipo][n][de][a]; un 0 acaba
@@ -697,6 +791,10 @@ C 0x55AE hasta n
 C 0x55B5 da la vuelta a las 16 filas de cada mitad del sprite (0xEF80 -> 0xEFA0)
 C 0x55C6 un byte al reves
 C 0x55CD n sprites de izquierda a derecha (p00:4E60)
+C 0x55D2 a donde: el dibujo x 8...
+C 0x55DB ...+ 16
+C 0x55E1 de donde: el dibujo x 8
+C 0x55EA C = cuantos
 C 0x55F0 carga la presentacion: los graficos de la lista 0xB120 (banco 15)
 C 0x55FF los sprites, 0x100 bytes de 0xBB05 a 0xF800
 C 0x560B la paleta de 0xA7CE
@@ -776,9 +874,15 @@ C 0x586D en pausa: el de 0xE2B3
 C 0x5873 0xE298: muerto
 C 0x587A 0xE287: su postura; si ha cambiado (0xE297), cambian sus sprites
 C 0x5886 0xE285: hacia donde mira
+C 0x5889 x 2
 C 0x588D la tabla de 0x869C
+C 0x5891 la columna de origen (palabra)
+C 0x5894 a (0, 0xF0)
 C 0x5898 una columna de 0x80 x 1 de la pagina 1 a 0xF0
+C 0x589B paginas: de la 1 a la 1
 C 0x58A0 y la de 0x86B8, a 0x80F0
+C 0x58AB la de origen
+C 0x58AE a (0x80, 0xF0)
 C 0x58B7 y la otra columna
 C 0x58BA muerto: la columna 0xC0 + 0xE285
 C 0x58BD la columna 0xC0 + A de la pagina 1 (y = 0)...
@@ -791,6 +895,7 @@ C 0x58F6 cada cosa de la lista: 0xFF acaba
 C 0x58FA cifra baja 0: [destino][rachas]
 C 0x58FE el destino
 C 0x5902 las rachas
+C 0x5907 HL = las rachas, DE = el destino
 C 0x590A rachas a la VRAM
 C 0x5910 si no: n bloques de 16 bytes dados la vuelta, [destino][de]
 C 0x5911 el destino, sin la cifra baja
@@ -812,6 +917,8 @@ C 0x59CD 12 x 12 de 0xA702
 C 0x59DC 32 columnas de la tabla de 0x9D58, con R#1 = 0xA2 mientras (sin interrupciones del VDP)
 C 0x59ED 32 columnas de 27 x 1 caracteres, cada una de la tabla 0x9D58 desde la entrada A
 C 0x59F7 la columna A de la tabla 0x9D58
+C 0x59FA A x 2
+C 0x59FF HL = la columna
 C 0x5A04 27 filas de 1 caracter
 C 0x5A0B 8 pixeles a la derecha
 C 0x5A10 la columna siguiente
@@ -830,7 +937,11 @@ C 0x5B5E la paleta de 0xA8BB
 C 0x5B6A la presentacion: paleta, letras y el dibujo de 0xBB9B
 C 0x5B76 R#7 = 0x0F: el borde
 C 0x5B7D un rectangulo de color 0 en la pagina 1
+C 0x5B80 desde (0x28, 0x40), 0xA8 x 0x48
 C 0x5B89 tres juegos de letras de 0xBBDC, 0xBC44 y 0xBCAC
+C 0x5B8C DE = 0x0800, 13 caracteres, color 1
+C 0x5B98 DE = 0x7000, 13 caracteres, color 2
+C 0x5BA4 DE = 0xD800, 26 caracteres, color 3
 C 0x5BAD el dibujo de 0xBB9B en 0x4040
 C 0x5BB6 se enciende la pantalla
 C 0x5BB9 0xE2C0 = 0x3C (cuadros), 0xE2C1 = 0x31 (lineas), 0xE2C2 = 0
@@ -845,8 +956,14 @@ C 0x5C06 y dos de 0xABC1 en 0x9870
 C 0x5C14 los colores de la paleta que cambian solos en cada piramide: tabla 0xBD52, 5 bytes por piramide
 C 0x5C1B piramide x 5
 C 0x5C24 B = el color de la paleta, C = cuantos pasos, B' = cada cuantos cuadros, DE = los colores
+C 0x5C25 C = cuantos pasos
+C 0x5C28 cada cuantos cuadros, a B'
+C 0x5C2D DE = los colores
 C 0x5C30 su cuenta en 0xEF00
-C 0x5C36 la piramide 4 lleva otro: el color 5, 6 pasos, de 0xBDAF
+C 0x5C36 la piramide 4 lleva otro: el color 6, 2 pasos, cada 5 cuadros, de 0xBDAF
+C 0x5C3F B' = cada 5 cuadros
+C 0x5C42 el color 6, 2 pasos
+C 0x5C48 su cuenta en 0xEF04
 C 0x5C51 un color que cambia: (HL) cuenta los cuadros, (HL+1) sube o baja, (HL+2) el paso
 C 0x5C56 aun no toca
 C 0x5C57 la cuenta a cero
@@ -1136,7 +1253,6 @@ C 0x4A62 lee la marca de partida del editor
 C 0x4A76 lee la cuenta de cuadros
 C 0x4A7B apunta a la espera del paso (en cuadros)
 C 0x4A80 lee la marca de seguir tras el fin de la partida (F5)
-C 0x4A86 apunta a los puntos (3 bytes BCD)
 C 0x4A90 guarda las vidas (BCD)
 C 0x4A93 lee la marca de partida del editor
 C 0x4A99 lee donde se graba la fase del editor (0 cinta, 1 disco, 2 Game Master 2)

@@ -1026,13 +1026,13 @@ L_6611:
 	call 05758h		;661f   ; 32 columnas de la tabla de 0x9D58 desde la 4
 	xor a			;6622   ; 0xE257 = 0: el paso de la entrada
 	ld (0e257h),a		;6623   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
-	ld (0edcch),a		;6626
+	ld (0edcch),a		;6626   ; guarda la x del personaje de las secuencias
 	ld (0edc9h),a		;6629
 	ld (0edceh),a		;662c
 	inc a			;662f
 	ld (0edd8h),a		;6630
 	ld a,0e0h		;6633
-	ld (0edcbh),a		;6635
+	ld (0edcbh),a		;6635   ; guarda la y del personaje de las secuencias
 	ret			;6638
 L_6639:
 	ld a,(0e257h)		;6639   ; un cuadro de la entrada; con disparo se salta
@@ -1082,14 +1082,14 @@ L_6684:
 	dec (hl)			;6687
 	ret nz			;6688
 	ld a,09fh		;6689
-	ld (0edcbh),a		;668b
+	ld (0edcbh),a		;668b   ; guarda la y del personaje de las secuencias
 	jr L_667F		;668e
 L_6690:
 	call L_7485		;6690   ; cada dos cuadros 0xEDCC sube hasta 0x60
 	ld a,(0edc9h)		;6693
 	rra			;6696
 	ret c			;6697
-	ld hl,0edcch		;6698
+	ld hl,0edcch		;6698   ; apunta a la x del personaje de las secuencias
 	inc (hl)			;669b
 	ld a,(hl)			;669c
 	cp 060h		;669d
@@ -1110,15 +1110,15 @@ L_66AD:
 	jr nc,L_66CD		;66b9
 	ld hl,066d9h		;66bb
 	call 04094h		;66be   ; suma A a HL (HL = HL + A)
-	ld a,(0edcbh)		;66c1
+	ld a,(0edcbh)		;66c1   ; lee la y del personaje de las secuencias
 	add a,(hl)			;66c4
-	ld (0edcbh),a		;66c5
-	ld hl,0edcch		;66c8
+	ld (0edcbh),a		;66c5   ; guarda la y del personaje de las secuencias
+	ld hl,0edcch		;66c8   ; apunta a la x del personaje de las secuencias
 	inc (hl)			;66cb
 	ret			;66cc
 L_66CD:
 	ld a,097h		;66cd
-	ld (0edcbh),a		;66cf
+	ld (0edcbh),a		;66cf   ; guarda la y del personaje de las secuencias
 	ld a,002h		;66d2
 	ld (0edd8h),a		;66d4
 	jr L_667F		;66d7
@@ -1142,7 +1142,7 @@ L_66F7:
 	ld a,(0edc9h)		;66fa
 	rra			;66fd
 	ret c			;66fe
-	ld hl,0edcch		;66ff
+	ld hl,0edcch		;66ff   ; apunta a la x del personaje de las secuencias
 	inc (hl)			;6702
 	ld a,(hl)			;6703
 	cp 0d8h		;6704
@@ -2157,7 +2157,7 @@ L_6DEE:
 	add a,a			;6dfb   ; el sitio del personaje: dos bytes de la tabla 0x6FC6 por piramide
 	ld hl,06fc6h		;6dfc
 	call 04094h		;6dff   ; suma A a HL (HL = HL + A)
-	ld de,0edcbh		;6e02
+	ld de,0edcbh		;6e02   ; apunta a la y del personaje de las secuencias
 	ldi		;6e05
 	ldi		;6e07
 	xor a			;6e09
@@ -2196,7 +2196,7 @@ L_6E3F:
 	add a,a			;6e4a
 	ld hl,06fd0h		;6e4b
 	call 04094h		;6e4e   ; suma A a HL (HL = HL + A)
-	ld de,0edcbh		;6e51
+	ld de,0edcbh		;6e51   ; apunta a la y del personaje de las secuencias
 	ldi		;6e54
 	ldi		;6e56
 	call L_6E8C		;6e58
@@ -2697,7 +2697,7 @@ L_724B:
 	jp z,042f3h		;7258
 	ret			;725b
 L_725C:
-	ld bc,00007h		;725c
+	ld bc,00007h		;725c   ; R#7 = 0x00
 	call 00047h		;725f   ; BIOS WRTVDP - Writes data in the VDP-register
 	call 04ec7h		;7262   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld a,078h		;7265
@@ -2754,9 +2754,9 @@ L_72CF:
 	dec (hl)			;72d2
 	ret nz			;72d3
 	ld a,097h		;72d4
-	ld (0edcbh),a		;72d6
+	ld (0edcbh),a		;72d6   ; guarda la y del personaje de las secuencias
 	ld a,080h		;72d9
-	ld (0edcch),a		;72db
+	ld (0edcch),a		;72db   ; guarda la x del personaje de las secuencias
 	xor a			;72de
 	ld (0edd8h),a		;72df
 	ld (0edceh),a		;72e2
@@ -2801,7 +2801,7 @@ L_7332:
 	ld a,(hl)			;7338
 	and 003h		;7339
 	jp nz,L_74A1		;733b
-	ld hl,0edcch		;733e
+	ld hl,0edcch		;733e   ; apunta a la x del personaje de las secuencias
 	dec (hl)			;7341
 	ld a,(hl)			;7342
 	or a			;7343
@@ -3031,7 +3031,7 @@ L_74A1:
 L_74C9:
 	ld a,(0edcch)		;74c9   ; un sprite: y + su desplazamiento, x, dibujo y color (B')
 	ld b,a			;74cc
-	ld a,(0edcbh)		;74cd
+	ld a,(0edcbh)		;74cd   ; lee la y del personaje de las secuencias
 	ld c,a			;74d0
 	ld a,(de)			;74d1
 	add a,c			;74d2

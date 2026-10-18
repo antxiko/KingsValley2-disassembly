@@ -826,7 +826,7 @@ C 0x4B38 guarda el paso de la secuencia en curso (entrada, fase o piramide acaba
 C 0x4B42 guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
 C 0x4B45 borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 C 0x4B50 lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
-C 0x4B55 apunta a el paso dentro del estado
+C 0x4B55 R#1 = 0xE2
 C 0x4B61 el editor (estado 11), por pasos (0xE25A)
 C 0x4B67 lee el paso del editor
 C 0x4B71 apunta a la espera del paso (en cuadros)
@@ -936,6 +936,7 @@ C 0x530F HL = la palabra A de la tabla de HL
 C 0x5328 lo mismo con el destino en HL
 C 0x5335 copia sprites a la VRAM: [n x 32 bytes][dibujo][puntero], 0 acaba
 C 0x533C copia sprites dados la vuelta: [tipo][n][de][a]; un 0 acaba
+C 0x5345 R#7 = 0x0D
 C 0x5354 escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 C 0x535F llena BC bytes de la VRAM de HL con A en los tres tercios
 C 0x5362 pone los bancos 1-2-3 (el juego)
@@ -1112,6 +1113,7 @@ C 0x5CCD apunta a los saltos al salir por la derecha
 C 0x5CD0 la lista de la fase: parejas hasta un 0xFF
 C 0x5CD9 HL = la palabra A de la tabla de HL
 C 0x5D87 borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
+C 0x5D8A R#7 = 0x00
 C 0x5D90 los atributos de los sprites (0x3B00, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0x5D93 la presentacion de MSX1: dos rachas a los tres tercios y el titulo
 C 0x5D9A guarda la cuenta del telon del menu

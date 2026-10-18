@@ -255,7 +255,8 @@ CAMPOS_COSA = {
     0x02: "la y de la cosa", 0x03: "la x de la cosa", 0x04: "la pantalla de la cosa",
     0x05: "el giro o paso del dibujo de la cosa", 0x06: "la cuenta de la cosa",
     0x07: "las marcas de la cosa (bit 0 repintar, bit 1 su lado)", 0x08: "el alto de la cosa",
-    0x09: "la pantalla de la cosa al empezar", 0x0A: "la marca de personaje encima",
+    0x09: "la pantalla de la cosa al empezar", 0x0A: "la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)",
+    0x0B: "la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)",
 }
 CAMPOS_COGER = {
     0x00: "el estado (cifra alta) y el tipo (cifra baja) de la cosa", 0x01: "la y de la cosa",

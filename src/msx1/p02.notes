@@ -610,6 +610,7 @@ C 0x8BF0 apunta a el paso de la secuencia en curso (entrada, fase o piramide aca
 C 0x8BF9 guarda la marca de salida de la fase
 C 0x8C08 guarda la cuenta del borde que parpadea
 C 0x8C0B sus cuatro sprites con el dibujo que toca
+C 0x8C0E R#7 = 0x00
 C 0x8C18 lee la pantalla de la fase (desde 1)
 C 0x8C27 suma A a HL (HL = HL + A)
 C 0x8C2D lee la salida de la fase: y, x y pantalla (0xE2F3) y el byte siguiente (16 bits)
@@ -709,11 +710,12 @@ C 0x918E lee la x de la cosa
 C 0x9194 NC si la casilla de al lado del bloque esta libre
 C 0x9199 mira el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 C 0x919D lee la x de la cosa
+C 0x91A0 guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
 C 0x91AB guarda la x de la cosa
 C 0x91AE pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 C 0x91B2 pide el sonido 0x24
 C 0x91B5 lee la y de la cosa
-C 0x91B8 guarda la marca de personaje encima
+C 0x91B8 guarda la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
 C 0x91C0 la cuenta de la cosa = 0x01
 C 0x91C7 guarda el paso de la cosa
 C 0x91D0 mira el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
@@ -728,11 +730,12 @@ C 0x9200 guarda la pantalla de la cosa
 C 0x921C la cuenta de la cosa = 0x02
 C 0x9220 pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 C 0x9224 lee la y de la cosa
-C 0x9227 guarda la marca de personaje encima
+C 0x9227 guarda la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
 C 0x922C guarda la y de la cosa
 C 0x9230 lee la x de la cosa
+C 0x9233 guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
 C 0x9241 pide el sonido 0x25
-C 0x924A lee la marca de personaje encima
+C 0x924A lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
 C 0x924D la y de la cosa = 0x00
 C 0x9251 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x926B A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa

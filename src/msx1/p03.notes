@@ -1046,11 +1046,13 @@ C 0xBA4F compara con el alto de la cosa
 C 0xBA54 sube el giro o paso del dibujo de la cosa
 C 0xBA58 el tipo de la cosa (0: libre) = 0x00
 C 0xBA9F compara con la pantalla de la cosa
-C 0xBAA3 lee la marca de personaje encima
+C 0xBAA3 lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
+C 0xBAA6 guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
 C 0xBAA9 lee la y del personaje
 C 0xBAAE le resta la y de la cosa
 C 0xBAB5 lee la x del personaje
 C 0xBABA le resta la x de la cosa
+C 0xBAC5 lee la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
 C 0xBACA lee el estado del personaje
 C 0xBACF sube la cuenta de la cosa
 C 0xBAD2 lee la cuenta de la cosa

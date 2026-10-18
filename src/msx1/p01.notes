@@ -554,6 +554,8 @@ C 0x6614 los de la lista 0x8175
 C 0x6617 los mismos con 0x86BC, 0x871B y 0x8778
 C 0x661A los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0x6623 guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
+C 0x6626 guarda la x del personaje de las secuencias
+C 0x6635 guarda la y del personaje de las secuencias
 C 0x6640 lee el mando: lo que se acaba de pulsar
 C 0x664B lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 C 0x6650 el personaje de las secuencias: cuatro sprites desde 0xE810 con los dibujos de la tabla 0x74E2
@@ -561,7 +563,14 @@ C 0x665A lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 C 0x665D el despachador de Konami: la tabla va detras del call
 C 0x667B apunta a la espera del paso (en cuadros)
 C 0x6684 apunta a la espera del paso (en cuadros)
+C 0x668B guarda la y del personaje de las secuencias
+C 0x6698 apunta a la x del personaje de las secuencias
 C 0x66BE suma A a HL (HL = HL + A)
+C 0x66C1 lee la y del personaje de las secuencias
+C 0x66C5 guarda la y del personaje de las secuencias
+C 0x66C8 apunta a la x del personaje de las secuencias
+C 0x66CF guarda la y del personaje de las secuencias
+C 0x66FF apunta a la x del personaje de las secuencias
 C 0x6710 apunta a la espera del paso (en cuadros)
 C 0x671F apunta a la espera del paso (en cuadros)
 C 0x672D apunta a la espera del paso (en cuadros)
@@ -655,6 +664,7 @@ C 0x6DF1 las fuentes del marcador: 0xAA29, 0xAA89 y 0xAB79 a los tres tercios, c
 C 0x6DF4 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0x6DF7 lee la piramide (1-6)
 C 0x6DFF suma A a HL (HL = HL + A)
+C 0x6E02 apunta a la y del personaje de las secuencias
 C 0x6E0D borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 C 0x6E13 rachas de 0xB851 a 0x1820 y de 0xB41D a 0x1E80 (sprites)
 C 0x6E16 lo mismo con 0xBDDA
@@ -662,6 +672,7 @@ C 0x6E2A apunta a la espera del paso (en cuadros)
 C 0x6E37 el letrero de la piramide (tabla 0xAC13 del banco 12)
 C 0x6E46 lee la piramide (1-6)
 C 0x6E4E suma A a HL (HL = HL + A)
+C 0x6E51 apunta a la y del personaje de las secuencias
 C 0x6E5E el personaje camina por el dibujo de la piramide, un paso cada 5 cuadros
 C 0x6E66 cada B cuadros cambia el dibujo del personaje (0xEDD8 xor 3)
 C 0x6E71 16 x 12 de 0xB184 o 0xB244
@@ -765,6 +776,7 @@ C 0x723A 2 x 3 de 0xB16C o 0xB172 (segun A)
 C 0x723D 7 x 3 de 0xB0C7
 C 0x7240 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0x7245 0xE204 = A y el paso siguiente
+C 0x725C R#7 = 0x00
 C 0x7262 borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 C 0x7272 pinta el letrero de HL del banco 12
 C 0x7278 empieza un fundido de los colores del texto (MSX1 no tiene paleta): 0xEDB1 = 1, 0xEDB2 = cada cuantos cuadros
@@ -780,6 +792,8 @@ C 0x72B4 pide el sonido 0x0E
 C 0x72B9 prepara un fundido de la tabla 0x9432
 C 0x72BC un cuadro del fundido de entrada, por pasos (0xEDD2)
 C 0x72C2 un cuadro del fundido de entrada, por pasos (0xEDD2)
+C 0x72D6 guarda la y del personaje de las secuencias
+C 0x72DB guarda la x del personaje de las secuencias
 C 0x72E5 el personaje de las secuencias: cuatro sprites desde 0xE810 con los dibujos de la tabla 0x74E2
 C 0x72EB el personaje de las secuencias: cuatro sprites desde 0xE810 con los dibujos de la tabla 0x74E2
 C 0x72F6 apunta a la espera del paso (en cuadros)
@@ -790,6 +804,7 @@ C 0x7315 un cuadro del fundido: cada D cuadros el color siguiente de la tabla 0x
 C 0x7323 apunta a la espera del paso (en cuadros)
 C 0x732C el personaje de las secuencias: cuatro sprites desde 0xE810 con los dibujos de la tabla 0x74E2
 C 0x7332 cada 16 cuadros, el dibujo siguiente del personaje (tabla 0x749D)
+C 0x733E apunta a la x del personaje de las secuencias
 C 0x7347 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0x734C prepara un fundido: la lista 0x9422 + 5 x A
 C 0x7352 empieza un fundido de los colores del texto (MSX1 no tiene paleta): 0xEDB1 = 1, 0xEDB2 = cada cuantos cuadros
@@ -816,6 +831,7 @@ C 0x74AD suma A a DE (DE = DE + A)
 C 0x74B4 un sprite: y + su desplazamiento, x, dibujo y color (B')
 C 0x74BB un sprite: y + su desplazamiento, x, dibujo y color (B')
 C 0x74C2 un sprite: y + su desplazamiento, x, dibujo y color (B')
+C 0x74CD lee la y del personaje de las secuencias
 C 0x751E el despachador de Konami: la tabla va detras del call
 C 0x7532 guarda la piramide (1-6)
 C 0x7535 los graficos de la piramide: su lista y la comun

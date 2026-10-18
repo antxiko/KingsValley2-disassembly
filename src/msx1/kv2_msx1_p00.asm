@@ -1746,7 +1746,7 @@ L_4B4D:
 	ld a,(0e257h)		;4b50   ; lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	and a			;4b53
 	ret nz			;4b54
-	ld bc,0e201h		;4b55   ; apunta a el paso dentro del estado
+	ld bc,0e201h		;4b55   ; R#1 = 0xE2
 	call 00047h		;4b58   ; BIOS WRTVDP - Writes data in the VDP-register
 	jp L_4A31		;4b5b
 L_4B5E:
@@ -2837,7 +2837,7 @@ L_532E:
 	jp L_4192		;533f
 L_5342:
 	call L_41B8		;5342   ; la fuente: 424 bytes de 0xAFDD a 0x2008 de los tres tercios, de color 0xF1
-	ld bc,00d07h		;5345
+	ld bc,00d07h		;5345   ; R#7 = 0x0D
 	call 00047h		;5348   ; BIOS WRTVDP - Writes data in the VDP-register
 	ld hl,0afddh		;534b
 	ld de,02008h		;534e
@@ -4158,7 +4158,7 @@ DATA_resto_5CE9:
 L_5D84:
 	call L_4EDF		;5d84   ; el menu: borra, R#7 = 0 y la presentacion
 	call L_4EC7		;5d87   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
-	ld bc,00007h		;5d8a
+	ld bc,00007h		;5d8a   ; R#7 = 0x00
 	call 00047h		;5d8d   ; BIOS WRTVDP - Writes data in the VDP-register
 	call L_4EEA		;5d90   ; los atributos de los sprites (0x3B00, 0x80 bytes) a 0xE0: fuera de la pantalla
 	call L_5286		;5d93   ; la presentacion de MSX1: dos rachas a los tres tercios y el titulo

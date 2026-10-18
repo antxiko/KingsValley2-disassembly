@@ -2206,10 +2206,10 @@ L_BDB2:
 	ldir		;bdc7
 L_BDC9:
 	ld hl,0e820h		;bdc9
-	ld a,(0edcbh)		;bdcc
+	ld a,(0edcbh)		;bdcc   ; lee la y del personaje de las secuencias
 	ld (hl),a			;bdcf
 	inc hl			;bdd0
-	ld a,(0edcch)		;bdd1
+	ld a,(0edcch)		;bdd1   ; lee la x del personaje de las secuencias
 	ld (hl),a			;bdd4
 	inc hl			;bdd5
 	ld (hl),0d0h		;bdd6

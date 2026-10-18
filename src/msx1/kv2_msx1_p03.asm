@@ -3811,8 +3811,8 @@ L_BA9C:
 	ld a,(0e243h)		;ba9c   ; una cosa de tipo 4 (suelo que se rompe): mira si el personaje esta encima
 	cp (ix+004h)		;ba9f   ; compara con la pantalla de la cosa
 	ret nz			;baa2
-	ld a,(ix+00ah)		;baa3   ; lee la marca de personaje encima
-	ld (ix+00bh),a		;baa6
+	ld a,(ix+00ah)		;baa3   ; lee la marca de personaje encima (suelo que se rompe) o la y del fondo guardado (bloque)
+	ld (ix+00bh),a		;baa6   ; guarda la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
 	ld a,(0e282h)		;baa9   ; lee la y del personaje
 	add a,014h		;baac
 	sub (ix+002h)		;baae   ; le resta la y de la cosa
@@ -3825,7 +3825,7 @@ L_BA9C:
 	jr c,L_BAF0		;babf
 L_BAC1:
 	ld (ix+00ah),000h		;bac1   ; al bajarse de ella (en el suelo), cuenta; a la segunda, se rompe
-	ld a,(ix+00bh)		;bac5
+	ld a,(ix+00bh)		;bac5   ; lee la x del fondo guardado (bloque) o la marca anterior de personaje encima (suelo que se rompe)
 	and a			;bac8
 	ret z			;bac9
 	ld a,(0e280h)		;baca   ; lee el estado del personaje

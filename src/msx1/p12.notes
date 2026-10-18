@@ -421,6 +421,8 @@ C 0xBD53 HL = la palabra A de la tabla de HL
 C 0xBD65 HL = la palabra A de la tabla de HL
 C 0xBDBE suma A a HL (HL = HL + A)
 C 0xBDC1 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
+C 0xBDCC lee la y del personaje de las secuencias
+C 0xBDD1 lee la x del personaje de las secuencias
 C 0xBE15 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0xBE18 pinta el nombre de 0xEE50
 C 0xBE38 lee BC bytes de la cinta a HL, sumandolos en D
