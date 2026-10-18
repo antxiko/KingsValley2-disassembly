@@ -105,11 +105,11 @@ L_409F:
 	jp (hl)			;40a7   ; y se salta alla
 L_40A8:
 	di			;40a8   ; INIT de la cabecera AB: solo se engancha para cuando acabe de arrancar la BIOS
-	call 06d5eh		;40a9   ; A = el slot de este cartucho
+	call 06d5eh		;40a9   ; busca otro cartucho con 0x30 0x31 0x13 0x35 en 0x7FFB (p01:6D5E): si esta, se arranca ya sin esperar a la BIOS
 	di			;40ac
 	ld a,(0f0efh)		;40ad
 	inc a			;40b0
-	jr nz,L_40C4		;40b1
+	jr nz,L_40C4		;40b1   ; con ese cartucho (0xF0EF), directamente al arranque de verdad
 	call L_4149		;40b3   ; A = el slot de este cartucho, tambien en 0xF0E9
 	di			;40b6
 	ld h,a			;40b7   ; H.STKE (0xFEDA) = rst 0x30 (0xF7) a este slot...
@@ -1000,7 +1000,7 @@ L_45FA:
 	jr L_45FE		;45fc
 L_45FE:
 	ld (0efc0h),a		;45fe   ; guarda un dato de paso de la rutina en curso
-	call L_53EF		;4601   ; pinta el caracter como diga 0xEFC0
+	call L_53EF		;4601   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	jp L_457E		;4604
 L_4607:
 	ld a,(0e254h)		;4607   ; las puertas y los adornos de la pantalla (tabla del banco 14 en 0x806A), salvo en el editor
@@ -1068,7 +1068,7 @@ L_4664:
 	ld a,(hl)			;4664   ; una fila de caracteres
 	inc hl			;4665
 	push hl			;4666
-	call L_53EF		;4667   ; pinta el caracter como diga 0xEFC0
+	call L_53EF		;4667   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop hl			;466a
 	ld a,d			;466b
 	add a,008h		;466c
@@ -1103,7 +1103,7 @@ L_4691:
 	push de			;4691   ; pinta dos caracteres en vertical (HL y HL + 1) en (D, E)
 	ld a,(hl)			;4692
 	push hl			;4693
-	call L_53EF		;4694   ; pinta el caracter como diga 0xEFC0
+	call L_53EF		;4694   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop hl			;4697
 	ld a,d			;4698
 	add a,008h		;4699
@@ -1111,7 +1111,7 @@ L_4691:
 	inc hl			;469c
 	ld a,(hl)			;469d
 	push hl			;469e
-	call L_53EF		;469f   ; pinta el caracter como diga 0xEFC0
+	call L_53EF		;469f   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop hl			;46a2
 	pop de			;46a3
 	ret			;46a4
@@ -1193,8 +1193,8 @@ DATA_tabla_470E:
 L_4718:
 	call L_4F96		;4718   ; paso 0: el sonido 1 (callar), la pantalla y la presentacion
 	call L_41E8		;471b   ; pide el sonido 1
-	call L_4EC7		;471e
-	call L_597C		;4721
+	call L_4EC7		;471e   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
+	call L_597C		;4721   ; la presentacion (estado 0, paso 0): borra, R#7 = 0x0F y las rachas de 0x9BF2
 L_4724:
 	jr L_479D		;4724
 L_4726:
@@ -1204,12 +1204,12 @@ L_4726:
 	ld a,(0e203h)		;472c   ; lee la cuenta de cuadros
 	rra			;472f
 	ret nc			;4730
-	call L_59BA		;4731
+	call L_59BA		;4731   ; un cuadro de la presentacion: una columna de 21 bytes de patrones cada vez (NZ mientras queden)
 	ret nz			;4734
 	xor a			;4735
 	jr L_479A		;4736
 L_4738:
-	call L_59BA		;4738
+	call L_59BA		;4738   ; un cuadro de la presentacion: una columna de 21 bytes de patrones cada vez (NZ mientras queden)
 	ld a,(0e2c2h)		;473b
 	or a			;473e
 	ret z			;473f
@@ -1220,8 +1220,8 @@ L_4743:
 	dec (hl)			;4746
 	ret nz			;4747
 	call L_5B38		;4748   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
-	call L_4EEA		;474b
-	call L_5A3D		;474e
+	call L_4EEA		;474b   ; los atributos de los sprites (0x3B00, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call L_5A3D		;474e   ; las fuentes del marcador (otra forma): 0xAA29, 0xAA89, 0xABA1 y 0xABB1, con color 0xF0
 	call L_5D84		;4751   ; el menu: borra, R#7 = 0 y la presentacion
 	call L_41F2		;4754   ; pide el sonido 3
 	xor a			;4757
@@ -1257,7 +1257,7 @@ L_4788:
 	ld a,b			;4788   ; estado 2: la cortina; paso 0 pinta y espera 0x20 cuadros
 	and a			;4789
 	jr nz,L_47A2		;478a
-	call L_4EC7		;478c
+	call L_4EC7		;478c   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	call L_41BD		;478f   ; pone el banco 12 en 0xA000
 	call 0b9f7h		;4792   ; la demostracion: la fase de la tabla 0xBA3A (una de 6, 0xE219 va dando la vuelta)
 	call L_4192		;4795   ; pone los bancos 1-2-3 (el juego)
@@ -1399,7 +1399,7 @@ L_4891:
 	jp L_479D		;4894
 L_4897:
 	call 08ae4h		;4897   ; un cuadro de cargar la fase del editor, por pasos (0xE25B)
-	call L_564A		;489a
+	call L_564A		;489a   ; copia los 128 bytes de atributos de 0xE800 a 0x3B00 sin cambiar el orden
 	ld a,(0e24ah)		;489d   ; lee lo elegido en el menu
 	and a			;48a0
 	ret z			;48a1
@@ -1413,7 +1413,7 @@ L_48AF:
 	ld a,b			;48af   ; estado 4: empieza la fase; paso 0 pinta el letrero de la fase
 	and a			;48b0
 	jr nz,L_491C		;48b1
-	call L_4EC7		;48b3
+	call L_4EC7		;48b3   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld a,(0e254h)		;48b6   ; 0xE254: la partida es del editor
 	and a			;48b9
 	jr nz,L_48F8		;48ba
@@ -1464,7 +1464,7 @@ L_491C:
 	ld hl,0e204h		;491c   ; paso 1: al acabar la espera, la pantalla y la musica
 	dec (hl)			;491f
 	ret nz			;4920
-	call L_4EC7		;4921
+	call L_4EC7		;4921   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	call L_4323		;4924   ; orden 0x83 (p04:61C2), con 0xE21A a 0xFF
 	call L_5A8A		;4927   ; prepara la fase 0xE242 (con el editor, solo la pantalla)
 	call L_431B		;492a   ; orden 0x82 (p04:61BB), con 0xE21A a cero
@@ -1556,7 +1556,7 @@ L_49C2:
 	xor a			;49d5
 	ld (0e2b0h),a		;49d6
 	ld (0e2b3h),a		;49d9   ; guarda el dibujo del personaje en pausa
-	call L_565F		;49dc   ; los dibujos de los sprites del personaje, con los bancos 14-15
+	call L_565F		;49dc   ; los dibujos del personaje (bancos 14-15)
 	jp L_4317		;49df
 L_49E2:
 	call L_5E70		;49e2   ; en pausa: un cuadro de la pausa
@@ -1564,9 +1564,9 @@ L_49E2:
 	or a			;49e8
 	ret nz			;49e9
 	call 09c3eh		;49ea   ; la pausa: el personaje, por pasos (0xE2B0)
-	call L_565F		;49ed   ; los dibujos de los sprites del personaje, con los bancos 14-15
+	call L_565F		;49ed   ; los dibujos del personaje (bancos 14-15)
 	call 09d07h		;49f0
-	call L_564A		;49f3
+	call L_564A		;49f3   ; copia los 128 bytes de atributos de 0xE800 a 0x3B00 sin cambiar el orden
 	ld a,(0e20ch)		;49f6   ; lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
 	rra			;49f9
 	ret nc			;49fa
@@ -1608,7 +1608,7 @@ L_4A3E:
 	ld a,b			;4a3e   ; estado 7: fin de la partida (GAME OVER); paso 0 pinta el letrero
 	and a			;4a3f
 	jr nz,L_4A70		;4a40
-	call L_4EC7		;4a42
+	call L_4EC7		;4a42   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld hl,05d43h		;4a45
 	call L_4F0B		;4a48   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld a,(0e254h)		;4a4b   ; lee la marca de partida del editor
@@ -1711,7 +1711,7 @@ L_4B07:
 	xor a			;4b07   ; estado 9: la fase acabada
 	ld (0e215h),a		;4b08   ; guarda la cuenta para volver a poner la musica
 	call 08ca3h		;4b0b   ; un cuadro de la fase acabada (estado 9), por pasos (0xE257)
-	call L_564A		;4b0e
+	call L_564A		;4b0e   ; copia los 128 bytes de atributos de 0xE800 a 0x3B00 sin cambiar el orden
 	ld a,(0e257h)		;4b11   ; lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	ld b,a			;4b14
 	cp 004h		;4b15
@@ -1738,7 +1738,7 @@ L_4B27:
 L_4B40:
 	ld a,001h		;4b40
 	ld (0e257h),a		;4b42   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
-	call L_4EC7		;4b45
+	call L_4EC7		;4b45   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld a,00dh		;4b48
 	jp L_47B4		;4b4a
 L_4B4D:
@@ -1775,7 +1775,7 @@ L_4B79:
 	inc (hl)			;4b8c
 	jp L_4A31		;4b8d
 L_4B90:
-	call L_4EC7		;4b90
+	call L_4EC7		;4b90   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld a,078h		;4b93
 	call L_479A		;4b95   ; 0xE204 = A: la espera del paso siguiente
 	call L_41D4		;4b98   ; pone los bancos 14-15 en 0x8000-0xBFFF
@@ -1825,7 +1825,7 @@ L_4BEB:
 	ld hl,00001h		;4beb   ; al menu: estado 1 paso 0
 	ld (0e200h),hl		;4bee   ; guarda el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final) y el byte siguiente (16 bits)
 	call L_41E8		;4bf1   ; pide el sonido 1
-	call L_5A3D		;4bf4
+	call L_5A3D		;4bf4   ; las fuentes del marcador (otra forma): 0xAA29, 0xAA89, 0xABA1 y 0xABB1, con color 0xF0
 	call L_5D84		;4bf7   ; el menu: borra, R#7 = 0 y la presentacion
 	jp L_5DA1		;4bfa
 L_4BFD:
@@ -1936,7 +1936,7 @@ L_4C8B:
 	ld hl,000c0h		;4c90
 	ld c,00ch		;4c93
 	ld de,0ff13h		;4c95
-	call L_4F66		;4c98
+	call L_4F66		;4c98   ; en este cartucho no hace nada: aqui iria el pintor de caracteres de MSX2
 	ld hl,05ce9h		;4c9b
 	call L_4F0B		;4c9e   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	call L_4CC1		;4ca1   ; pinta el record y los puntos
@@ -2282,11 +2282,11 @@ L_4E92:
 	pop bc			;4e97
 	ret			;4e98
 L_4E99:
-	ld a,003h		;4e99
+	ld a,003h		;4e99   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 L_4E9B:
 	push af			;4e9b
 	call L_4E06		;4e9c   ; escribe BC bytes en la VRAM (LDIRVM) sin tocar registros
-	ld a,008h		;4e9f
+	ld a,008h		;4e9f   ; 8 x 256 bytes: el tercio siguiente
 	add a,d			;4ea1
 	ld d,a			;4ea2
 	pop af			;4ea3
@@ -2294,7 +2294,7 @@ L_4E9B:
 	jr nz,L_4E9B		;4ea5
 	ret			;4ea7
 L_4EA8:
-	ld d,003h		;4ea8
+	ld d,003h		;4ea8   ; llena BC bytes de la VRAM de HL con A en los tres tercios
 L_4EAA:
 	push af			;4eaa
 	call L_4E10		;4eab   ; llena BC bytes de la VRAM con A (BIGFIL)
@@ -2306,19 +2306,19 @@ L_4EAA:
 	jr nz,L_4EAA		;4eb4
 	ret			;4eb6
 L_4EB7:
-	ld b,003h		;4eb7
+	ld b,003h		;4eb7   ; rachas de DE a la VRAM de HL en los tres tercios (las mismas tres veces)
 L_4EB9:
 	push bc			;4eb9
 	push de			;4eba
 	call L_4E55		;4ebb   ; lo mismo con el destino en HL
-	ld bc,00800h		;4ebe
+	ld bc,00800h		;4ebe   ; el tercio siguiente
 	add hl,bc			;4ec1
 	pop de			;4ec2
 	pop bc			;4ec3
 	djnz L_4EB9		;4ec4
 	ret			;4ec6
 L_4EC7:
-	call L_4EEA		;4ec7
+	call L_4EEA		;4ec7   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld hl,03800h		;4eca
 	ld bc,00300h		;4ecd
 	xor a			;4ed0
@@ -2336,7 +2336,7 @@ L_4EDF:
 	ld c,001h		;4ee5
 	jp 00047h		;4ee7   ; BIOS WRTVDP - Writes data in the VDP-register
 L_4EEA:
-	ld hl,03b00h		;4eea
+	ld hl,03b00h		;4eea   ; los atributos de los sprites (0x3B00, 0x80 bytes) a 0xE0: fuera de la pantalla
 	ld bc,00080h		;4eed
 	ld a,0e0h		;4ef0
 	jp L_4E10		;4ef2
@@ -2377,10 +2377,10 @@ L_4F1E:
 	inc b			;4f23
 	jr z,L_4F11		;4f24
 	and c			;4f26
-	call L_4F2C		;4f27
+	call L_4F2C		;4f27   ; pinta el caracter A: en MSX1 lo escribe en la tabla de nombres (DE) y avanza
 	jr L_4F1E		;4f2a
 L_4F2C:
-	push af			;4f2c
+	push af			;4f2c   ; pinta el caracter A: en MSX1 lo escribe en la tabla de nombres (DE) y avanza
 	ld a,(0f0f4h)		;4f2d   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;4f30
 	jr nz,L_4F3B		;4f31
@@ -2391,18 +2391,18 @@ L_4F2C:
 	inc de			;4f39
 	ret			;4f3a
 L_4F3B:
-	pop af			;4f3b
+	pop af			;4f3b   ; en MSX2 (0xF0F4): esta llamada es la de MSX2 y aqui solo hay un ret (p00:4F66)
 	call L_4F66		;4f3c   ; pinta el caracter A en (D, E) y avanza 8 pixeles
 	ld a,d			;4f3f
 	add a,008h		;4f40
 	ld d,a			;4f42
 	ret			;4f43
 L_4F44:
-	ld a,01ch		;4f44
+	ld a,01ch		;4f44   ; fila siguiente: 0x1C caracteres mas alla
 	call L_4099		;4f46   ; suma A a DE (DE = DE + A)
 	jr L_4F50		;4f49
 L_4F4B:
-	ex de,hl			;4f4b
+	ex de,hl			;4f4b   ; lo mismo con la posicion de caracter en DE
 	call L_4D7C		;4f4c   ; pasa la posicion de caracter de HL a direccion de la VRAM
 	ex de,hl			;4f4f
 L_4F50:
@@ -2413,7 +2413,7 @@ L_4F50:
 	ret z			;4f54
 	inc b			;4f55
 	jr z,L_4F44		;4f56
-	call L_4F2C		;4f58
+	call L_4F2C		;4f58   ; pinta el caracter A: en MSX1 lo escribe en la tabla de nombres (DE) y avanza
 	jr L_4F50		;4f5b
 L_4F5D:
 	ld a,d			;4f5d   ; 8 pixeles a la derecha; al dar la vuelta, 8 mas abajo
@@ -2424,7 +2424,7 @@ L_4F5D:
 	add a,008h		;4f63
 	ld e,a			;4f65
 L_4F66:
-	ret			;4f66
+	ret			;4f66   ; en este cartucho no hace nada: aqui iria el pintor de caracteres de MSX2
 L_4F67:
 	ld a,004h		;4f67   ; arranca el sonido y la pantalla de MSX2
 	ld (07000h),a		;4f69   ; el mapper: pone en 0x6000 el banco de A
@@ -2440,12 +2440,12 @@ L_4F67:
 	ld a,(0f0f3h)		;4f83   ; lee el banco puesto en 0xA000
 	ld (0b000h),a		;4f86   ; el mapper: pone en 0xA000 el banco de A
 	call 06cebh		;4f89   ; 0x6EEA del banco 1
-	ld hl,00000h		;4f8c
+	ld hl,00000h		;4f8c   ; la VRAM entera a cero (16 KB)
 	ld bc,04000h		;4f8f
 	xor a			;4f92
 	call L_4E10		;4f93   ; llena BC bytes de la VRAM con A (BIGFIL)
 L_4F96:
-	ld hl,04fa7h		;4f96
+	ld hl,04fa7h		;4f96   ; los 8 registros del VDP de la tabla 0x4FA7 (SCREEN 2)
 	ld d,008h		;4f99
 	ld c,000h		;4f9b
 L_4F9D:
@@ -2562,30 +2562,30 @@ L_500C:
 	or e			;5031
 	ret			;5032
 L_5033:
-	ld a,(ix+000h)		;5033
+	ld a,(ix+000h)		;5033   ; carga graficos: fichas de 6 bytes [tercios][colores][caracter][patrones], un 0 acaba
 	and a			;5036
 	ret z			;5037
-	rra			;5038
+	rra			;5038   ; bit 0: el tercio de abajo (0x1000)
 	ld de,01000h		;5039
-	call c,L_505A		;503c
-	bit 1,(ix+000h)		;503f
+	call c,L_505A		;503c   ; un tercio: las rachas de colores a 0x2000 + 8 x caracter y las de patrones a 8 x caracter
+	bit 1,(ix+000h)		;503f   ; bit 1: el del medio (0x0800)
 	ld de,00800h		;5043
-	call nz,L_505A		;5046
-	bit 2,(ix+000h)		;5049
+	call nz,L_505A		;5046   ; un tercio: las rachas de colores a 0x2000 + 8 x caracter y las de patrones a 8 x caracter
+	bit 2,(ix+000h)		;5049   ; bit 2: el de arriba (0x0000)
 	ld de,00000h		;504d
-	call nz,L_505A		;5050
-	ld de,00006h		;5053
+	call nz,L_505A		;5050   ; un tercio: las rachas de colores a 0x2000 + 8 x caracter y las de patrones a 8 x caracter
+	ld de,00006h		;5053   ; la ficha siguiente
 	add ix,de		;5056
 	jr L_5033		;5058
 L_505A:
-	ld l,(ix+003h)		;505a
+	ld l,(ix+003h)		;505a   ; un tercio: las rachas de colores a 0x2000 + 8 x caracter y las de patrones a 8 x caracter
 	ld h,000h		;505d
 	add hl,hl			;505f
 	add hl,hl			;5060
 	add hl,hl			;5061
 	add hl,de			;5062
 	push hl			;5063
-	ld de,02000h		;5064
+	ld de,02000h		;5064   ; la tabla de colores
 	add hl,de			;5067
 	ld e,(ix+001h)		;5068
 	ld d,(ix+002h)		;506b
@@ -2593,7 +2593,7 @@ L_505A:
 	call L_4E55		;5070   ; lo mismo con el destino en HL
 	pop ix		;5073
 	pop hl			;5075
-	ld de,00000h		;5076
+	ld de,00000h		;5076   ; la de patrones
 	add hl,de			;5079
 	ld e,(ix+004h)		;507a
 	ld d,(ix+005h)		;507d
@@ -2759,31 +2759,31 @@ L_5263:
 	ld c,(ix+001h)		;5280
 	jp L_4E61		;5283
 L_5286:
-	call L_41B3		;5286   ; carga la presentacion: los graficos de la lista 0xB120 (banco 15)
+	call L_41B3		;5286   ; la presentacion de MSX1: dos rachas a los tres tercios y el titulo
 	ld de,08934h		;5289
 	ld hl,022c0h		;528c
-	call L_4EB7		;528f
+	call L_4EB7		;528f   ; rachas de DE a la VRAM de HL en los tres tercios (las mismas tres veces)
 	ld de,08baah		;5292
 	ld hl,002c0h		;5295
-	call L_4EB7		;5298
+	call L_4EB7		;5298   ; rachas de DE a la VRAM de HL en los tres tercios (las mismas tres veces)
 	ld de,09625h		;529b
-	ld a,(0002bh)		;529e
+	ld a,(0002bh)		;529e   ; el titulo segun la BIOS: con 0x002B (el juego de caracteres) japones, 0x9438; si no, 0x9625
 	and 00fh		;52a1
 	jr nz,L_52A8		;52a3
 	ld de,09438h		;52a5
 L_52A8:
 	ld hl,02008h		;52a8
-	call L_4EB7		;52ab
-	ld de,098ffh		;52ae
+	call L_4EB7		;52ab   ; rachas de DE a la VRAM de HL en los tres tercios (las mismas tres veces)
+	ld de,098ffh		;52ae   ; y sus colores: 0x9756 (japones) o 0x98FF
 	ld a,(0002bh)		;52b1
 	and 00fh		;52b4
 	jr nz,L_52BB		;52b6
 	ld de,09756h		;52b8
 L_52BB:
 	ld hl,00008h		;52bb
-	call L_4EB7		;52be
+	call L_4EB7		;52be   ; rachas de DE a la VRAM de HL en los tres tercios (las mismas tres veces)
 	call L_4192		;52c1   ; pone los bancos 1-2-3 (el juego)
-	ld a,(0002bh)		;52c4
+	ld a,(0002bh)		;52c4   ; en el japones, ademas las rachas de 0xBB21 (bancos 14-15)
 	and 00fh		;52c7
 	jr nz,L_52D7		;52c9
 	call L_41D4		;52cb   ; pone los bancos 14-15 en 0x8000-0xBFFF
@@ -2791,9 +2791,9 @@ L_52BB:
 	call L_4E20		;52d1   ; rachas a la VRAM: [destino] y rachas; [n < 0x80] repite el byte siguiente n veces; [0x80 + n] copia n; [0x80] trae otro destino; 0 acaba
 	call L_4192		;52d4   ; pone los bancos 1-2-3 (el juego)
 L_52D7:
-	xor a			;52d7
-	call L_5758		;52d8
-	call L_41B3		;52db   ; pone los bancos 7-8-9
+	xor a			;52d7   ; 32 columnas de caracteres
+	call L_5758		;52d8   ; 32 columnas de 23 caracteres de la tabla 0xABE7, desde la entrada A
+	call L_41B3		;52db   ; el letrero: 0x99E9 (japones) o 0x9A54
 	ld hl,09a54h		;52de
 	ld a,(0002bh)		;52e1
 	and 00fh		;52e4
@@ -2803,54 +2803,54 @@ L_52EB:
 	call L_4F0B		;52eb   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	jp L_4192		;52ee
 L_52F1:
-	call L_41B3		;52f1   ; pone los bancos 7-8-9
+	call L_41B3		;52f1   ; rachas de DE a 0x0008 en los tres tercios, con los bancos 7-8-9
 	ld hl,00008h		;52f4
-	call L_4EB7		;52f7
+	call L_4EB7		;52f7   ; rachas de DE a la VRAM de HL en los tres tercios (las mismas tres veces)
 	jp L_4192		;52fa
 L_52FD:
-	call L_41B3		;52fd   ; carga los graficos de la piramide (bancos 7-8-9)
-	call L_5309		;5300   ; la lista de la piramide 0xE241 (tabla 0x6177) con su tabla de colores (0x6065)
-	call L_5318		;5303
+	call L_41B3		;52fd   ; los graficos de la piramide: su lista y la comun
+	call L_5309		;5300   ; la lista de la piramide 0xE241 (tabla 0x6005, desde la entrada 1)
+	call L_5318		;5303   ; la lista comun (0x6000)
 	jp L_4192		;5306
 L_5309:
-	ld a,(0e241h)		;5309   ; la lista de la piramide 0xE241 (tabla 0x6177) con su tabla de colores (0x6065)
+	ld a,(0e241h)		;5309   ; la lista de la piramide 0xE241 (tabla 0x6005, desde la entrada 1)
 	ld hl,06005h		;530c
 	call L_4D4D		;530f   ; HL = la palabra A de la tabla de HL
 	push hl			;5312
 	pop ix		;5313
 	jp L_5033		;5315
 L_5318:
-	ld ix,06000h		;5318
+	ld ix,06000h		;5318   ; la lista comun (0x6000)
 	jp L_5033		;531c
 L_531F:
-	call L_41D4		;531f   ; pone los bancos 14-15 en 0x8000-0xBFFF
+	call L_41D4		;531f   ; los dibujos de los sprites: rachas de 0xB61D a 0x1800
 	ld hl,01800h		;5322
 	ld de,0b61dh		;5325
 	call L_4E55		;5328   ; lo mismo con el destino en HL
 	jp L_4192		;532b
 L_532E:
-	call L_41D4		;532e   ; los sprites de las listas 0x98C9 y 0x98EA
+	call L_41D4		;532e   ; los sprites de las listas 0xA799 y 0xA7BA
 	ld ix,0a799h		;5331
 	call L_519E		;5335   ; copia sprites a la VRAM: [n x 32 bytes][dibujo][puntero], 0 acaba
 	ld ix,0a7bah		;5338
 	call L_51D3		;533c   ; copia sprites dados la vuelta: [tipo][n][de][a]; un 0 acaba
 	jp L_4192		;533f
 L_5342:
-	call L_41B8		;5342   ; la fuente: 0x35 caracteres de 0xAFDD
+	call L_41B8		;5342   ; la fuente: 424 bytes de 0xAFDD a 0x2008 de los tres tercios, de color 0xF1
 	ld bc,00d07h		;5345
 	call 00047h		;5348   ; BIOS WRTVDP - Writes data in the VDP-register
 	ld hl,0afddh		;534b
 	ld de,02008h		;534e
 	ld bc,001a8h		;5351
-	call L_4E99		;5354
+	call L_4E99		;5354   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 	ld hl,00008h		;5357
 	ld a,0f1h		;535a
 	ld bc,001a8h		;535c
-	call L_4EA8		;535f
+	call L_4EA8		;535f   ; llena BC bytes de la VRAM de HL con A en los tres tercios
 	call L_4192		;5362   ; pone los bancos 1-2-3 (el juego)
 	jp L_41BD		;5365
 L_5368:
-	ld hl,0ef13h		;5368
+	ld hl,0ef13h		;5368   ; el dibujo de 2 x 2 caracteres del sitio escondido (0x5377) en la posicion de 0xEF13
 	ld e,(hl)			;536b
 	inc l			;536c
 	ld d,(hl)			;536d
@@ -2930,13 +2930,13 @@ L_53C3:
 	djnz L_53C3		;53d3
 	ret			;53d5
 L_53D6:
-	push bc			;53d6
+	push bc			;53d6   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	push de			;53d7
 	ld b,c			;53d8
 L_53D9:
 	ld a,(hl)			;53d9   ; una fila
 	push hl			;53da
-	call L_53EF		;53db   ; pinta el caracter como diga 0xEFC0
+	call L_53EF		;53db   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop hl			;53de
 	ld a,d			;53df   ; 8 pixeles a la derecha
 	add a,008h		;53e0
@@ -2952,14 +2952,14 @@ L_53D9:
 L_53EE:
 	ret			;53ee
 L_53EF:
-	push af			;53ef   ; pinta el caracter como diga 0xEFC0
+	push af			;53ef   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	ld l,e			;53f0
 	ld h,d			;53f1
 	call L_4D7C		;53f2   ; pasa la posicion de caracter de HL a direccion de la VRAM
 	pop af			;53f5
 	jp 0004dh		;53f6   ; BIOS WRTVRM - Writes data in VRAM
 L_53F9:
-	call L_41B3		;53f9   ; pone los bancos 7-8-9
+	call L_41B3		;53f9   ; prepara un fundido: la lista 0x9422 + 5 x A
 	ld hl,09422h		;53fc
 	ld b,a			;53ff
 	add a,a			;5400
@@ -2967,33 +2967,33 @@ L_53F9:
 	add a,b			;5402
 	call L_4094		;5403   ; suma A a HL (HL = HL + A)
 L_5406:
-	ld (0edd0h),hl		;5406
+	ld (0edd0h),hl		;5406   ; 0xEDD0 = la lista, 0xEDD2 = 0 (el paso)
 	xor a			;5409
 	ld (0edd2h),a		;540a
 	jp L_4192		;540d
 L_5410:
-	call L_41B3		;5410   ; pone los bancos 7-8-9
+	call L_41B3		;5410   ; prepara un fundido de la tabla 0x9432
 	ld hl,09432h		;5413
 	call L_4D4D		;5416   ; HL = la palabra A de la tabla de HL
 	jr L_5406		;5419
 L_541B:
-	call L_41B3		;541b   ; pone los bancos 7-8-9
-	call L_5424		;541e
+	call L_41B3		;541b   ; un cuadro del fundido de entrada, por pasos (0xEDD2)
+	call L_5424		;541e   ; paso 0: patrones a 0 y colores 0xF0; paso 1: los patrones aparecen poco a poco; paso 2: los colores
 	jp L_4192		;5421
 L_5424:
-	ld a,(0edd2h)		;5424
+	ld a,(0edd2h)		;5424   ; paso 0: patrones a 0 y colores 0xF0; paso 1: los patrones aparecen poco a poco; paso 2: los colores
 	dec a			;5427
 	jr z,L_544D		;5428
 	dec a			;542a
 	jr z,L_5467		;542b
-	xor a			;542d
+	xor a			;542d   ; primero los patrones a cero...
 	ld (0edd3h),a		;542e
 	ld c,000h		;5431
-	call L_547C		;5433
-	ld a,001h		;5436
+	call L_547C		;5433   ; pasa la lista 0xEDD0 por la mascara C (patrones o colores segun 0xEDD3)
+	ld a,001h		;5436   ; ...y los colores a 0xF0
 	ld (0edd3h),a		;5438
 	ld c,0f0h		;543b
-	call L_547C		;543d
+	call L_547C		;543d   ; pasa la lista 0xEDD0 por la mascara C (patrones o colores segun 0xEDD3)
 	ld a,001h		;5440
 	ld (0edd5h),a		;5442
 	ld (0edd4h),a		;5445
@@ -3002,11 +3002,11 @@ L_5448:
 	inc (hl)			;544b
 	ret			;544c
 L_544D:
-	xor a			;544d
+	xor a			;544d   ; paso 1: los patrones con una mascara que crece (0xEDD5: 1, 0x09, 0x49... hasta 0xFF)
 	ld (0edd3h),a		;544e
 	ld a,(0edd5h)		;5451
 	ld c,a			;5454
-	call L_547C		;5455
+	call L_547C		;5455   ; pasa la lista 0xEDD0 por la mascara C (patrones o colores segun 0xEDD3)
 	ld hl,0edd5h		;5458
 	ld a,(hl)			;545b
 	cp 0ffh		;545c
@@ -3018,35 +3018,35 @@ L_544D:
 	ld (hl),a			;5465
 	ret			;5466
 L_5467:
-	ld a,001h		;5467
+	ld a,001h		;5467   ; paso 2: los colores de verdad, y se acaba
 	ld (0edd3h),a		;5469
 	ld c,0ffh		;546c
-	call L_547C		;546e
+	call L_547C		;546e   ; pasa la lista 0xEDD0 por la mascara C (patrones o colores segun 0xEDD3)
 	xor a			;5471
 	ld (0edd4h),a		;5472
 	ld (0edd5h),a		;5475
 	ld (0edd2h),a		;5478
 	ret			;547b
 L_547C:
-	ld ix,(0edd0h)		;547c
+	ld ix,(0edd0h)		;547c   ; pasa la lista 0xEDD0 por la mascara C (patrones o colores segun 0xEDD3)
 L_5480:
 	ld a,(ix+000h)		;5480
 	and a			;5483
 	ret z			;5484
 	rra			;5485
 	ld de,01000h		;5486
-	call c,L_54A7		;5489
+	call c,L_54A7		;5489   ; un tercio con la mascara
 	bit 1,(ix+000h)		;548c
 	ld de,00800h		;5490
-	call nz,L_54A7		;5493
+	call nz,L_54A7		;5493   ; un tercio con la mascara
 	bit 2,(ix+000h)		;5496
 	ld de,00000h		;549a
-	call nz,L_54A7		;549d
+	call nz,L_54A7		;549d   ; un tercio con la mascara
 	ld de,00006h		;54a0
 	add ix,de		;54a3
 	jr L_5480		;54a5
 L_54A7:
-	ld l,(ix+003h)		;54a7
+	ld l,(ix+003h)		;54a7   ; un tercio con la mascara
 	ld h,000h		;54aa
 	add hl,hl			;54ac
 	add hl,hl			;54ad
@@ -3066,9 +3066,9 @@ L_54C3:
 	ld e,(ix+004h)		;54c7
 	ld d,(ix+005h)		;54ca
 L_54CD:
-	call L_5611		;54cd
+	call L_5611		;54cd   ; SETWRT con HL, C' = el puerto de datos del VDP, sin tocar A
 L_54D0:
-	ld a,(de)			;54d0
+	ld a,(de)			;54d0   ; las rachas con la mascara: cada byte AND C
 	and a			;54d1
 	ret z			;54d2
 	inc de			;54d3
@@ -3087,7 +3087,7 @@ L_54DB:
 	ld a,(0edd3h)		;54e2
 	and a			;54e5
 	jr nz,L_54EE		;54e6
-	rrc c		;54e8
+	rrc c		;54e8   ; en los patrones, la mascara gira 3 bits por byte (asi se ve como puntos sueltos)
 	rrc c		;54ea
 	rrc c		;54ec
 L_54EE:
@@ -3113,11 +3113,11 @@ L_5506:
 	djnz L_54F4		;5507
 	jr L_54D0		;5509
 L_550B:
-	call L_41B3		;550b   ; pone los bancos 7-8-9
-	call L_5514		;550e
+	call L_41B3		;550b   ; un cuadro del fundido de salida, por pasos
+	call L_5514		;550e   ; paso 0: los patrones se borran poco a poco con la mascara de 0xEDD5
 	jp L_4192		;5511
 L_5514:
-	ld a,(0edd2h)		;5514
+	ld a,(0edd2h)		;5514   ; paso 0: los patrones se borran poco a poco con la mascara de 0xEDD5
 	dec a			;5517
 	jr z,L_553F		;5518
 	dec a			;551a
@@ -3125,11 +3125,11 @@ L_5514:
 	xor a			;551d
 	ld (0edd3h),a		;551e
 	ld c,0ffh		;5521
-	call L_556D		;5523
+	call L_556D		;5523   ; borra con la mascara C los bytes de la lista de fundido (fichas de 4 bytes)
 	ld a,001h		;5526
 	ld (0edd3h),a		;5528
 	ld c,0f0h		;552b
-	call L_556D		;552d
+	call L_556D		;552d   ; borra con la mascara C los bytes de la lista de fundido (fichas de 4 bytes)
 	ld a,0ffh		;5530
 	ld (0edd5h),a		;5532
 	ld a,001h		;5535
@@ -3143,7 +3143,7 @@ L_553F:
 	ld (0edd3h),a		;5540
 	ld a,(0edd5h)		;5543
 	ld c,a			;5546
-	call L_556D		;5547
+	call L_556D		;5547   ; borra con la mascara C los bytes de la lista de fundido (fichas de 4 bytes)
 	ld hl,0edd5h		;554a
 	ld a,(hl)			;554d
 	and a			;554e
@@ -3155,35 +3155,35 @@ L_553F:
 	ld (hl),a			;5556
 	ret			;5557
 L_5558:
-	ld a,001h		;5558
+	ld a,001h		;5558   ; paso 2: todo a cero, y se acaba
 	ld (0edd3h),a		;555a
 	ld c,000h		;555d
-	call L_556D		;555f
+	call L_556D		;555f   ; borra con la mascara C los bytes de la lista de fundido (fichas de 4 bytes)
 	xor a			;5562
 	ld (0edd4h),a		;5563
 	ld (0edd5h),a		;5566
 	ld (0edd2h),a		;5569
 	ret			;556c
 L_556D:
-	ld ix,(0edd0h)		;556d
+	ld ix,(0edd0h)		;556d   ; borra con la mascara C los bytes de la lista de fundido (fichas de 4 bytes)
 L_5571:
 	ld a,(ix+000h)		;5571
 	and a			;5574
 	ret z			;5575
 	rra			;5576
 	ld de,01000h		;5577
-	call c,L_5598		;557a
+	call c,L_5598		;557a   ; un tercio: [tercios][caracter][cuantos bytes]
 	bit 1,(ix+000h)		;557d
 	ld de,00800h		;5581
-	call nz,L_5598		;5584
+	call nz,L_5598		;5584   ; un tercio: [tercios][caracter][cuantos bytes]
 	bit 2,(ix+000h)		;5587
 	ld de,00000h		;558b
-	call nz,L_5598		;558e
+	call nz,L_5598		;558e   ; un tercio: [tercios][caracter][cuantos bytes]
 	ld de,00004h		;5591
 	add ix,de		;5594
 	jr L_5571		;5596
 L_5598:
-	ld l,(ix+001h)		;5598
+	ld l,(ix+001h)		;5598   ; un tercio: [tercios][caracter][cuantos bytes]
 	ld h,000h		;559b
 	add hl,hl			;559d
 	add hl,hl			;559e
@@ -3199,7 +3199,7 @@ L_55AD:
 	ld e,(ix+002h)		;55ae
 	ld d,(ix+003h)		;55b1
 L_55B4:
-	push hl			;55b4
+	push hl			;55b4   ; cada byte de la VRAM AND C
 	push hl			;55b5
 	call 0004ah		;55b6   ; BIOS RDVRM - Reads the content of VRAM
 	and c			;55b9
@@ -3220,31 +3220,31 @@ L_55CA:
 	jr nz,L_55B4		;55cf
 	ret			;55d1
 L_55D2:
-	call L_41B3		;55d2   ; pone los bancos 7-8-9
+	call L_41B3		;55d2   ; rachas de 0x9A8F a la tabla de nombres (0x38C3)
 	ld hl,038c3h		;55d5
 	ld de,09a8fh		;55d8
 	call L_4E55		;55db   ; lo mismo con el destino en HL
 	call L_4192		;55de   ; pone los bancos 1-2-3 (el juego)
 	jp L_41BD		;55e1
 L_55E4:
-	call L_41B3		;55e4   ; los graficos de la lista 0xB7DF (bancos 7-8-9) y la paleta de 0xBA78
+	call L_41B3		;55e4   ; los graficos de las musicas: rachas de 0x926A y 0x93C3 a los tres tercios
 	ld de,0926ah		;55e7
 	ld hl,02008h		;55ea
-	call L_4EB7		;55ed
+	call L_4EB7		;55ed   ; rachas de DE a la VRAM de HL en los tres tercios (las mismas tres veces)
 	ld de,093c3h		;55f0
 	ld hl,00008h		;55f3
-	call L_4EB7		;55f6
+	call L_4EB7		;55f6   ; rachas de DE a la VRAM de HL en los tres tercios (las mismas tres veces)
 	call L_4192		;55f9   ; vuelven los bancos 1-2-3 y el 12 en 0xA000
 	jp L_41BD		;55fc
 L_55FF:
-	call L_41D4		;55ff   ; las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
+	call L_41D4		;55ff   ; los dibujos de los sprites: rachas de 0xBA96 a 0x1800
 	ld hl,01800h		;5602
 	ld de,0ba96h		;5605
 	call L_4E55		;5608   ; lo mismo con el destino en HL
 	call L_4192		;560b   ; pone los bancos 1-2-3 (el juego)
 	jp L_41BD		;560e
 L_5611:
-	ex af,af'			;5611
+	ex af,af'			;5611   ; SETWRT con HL, C' = el puerto de datos del VDP, sin tocar A
 	call 00053h		;5612   ; BIOS SETWRT - Enables VDP to write
 	exx			;5615
 	ld a,(00007h)		;5616
@@ -3253,11 +3253,11 @@ L_5611:
 	ex af,af'			;561b
 	ret			;561c
 L_561D:
-	ld hl,03b00h		;561d
+	ld hl,03b00h		;561d   ; copia a la VRAM los 32 sprites en otro orden cada cuadro (asi parpadean en vez de desaparecer)
 	call 00053h		;5620   ; BIOS SETWRT - Enables VDP to write
 	ld a,(00007h)		;5623
 	ld c,a			;5626
-	ld hl,0e20bh		;5627   ; apunta a por que sprite se empieza a copiar (+0x68 cada cuadro)
+	ld hl,0e20bh		;5627   ; 0xE20B: por donde se empieza, + 0x1C cada cuadro
 	ld a,(hl)			;562a
 	add a,01ch		;562b
 	and 07ch		;562d
@@ -3265,7 +3265,7 @@ L_561D:
 	ld e,a			;5630
 	ld d,020h		;5631
 L_5633:
-	ld a,e			;5633
+	ld a,e			;5633   ; un sprite: sus 4 bytes de atributos de 0xE800
 	ld hl,0e800h		;5634   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	add a,l			;5637
 	ld l,a			;5638
@@ -3273,7 +3273,7 @@ L_5633:
 L_563B:
 	outi		;563b
 	jp nz,L_563B		;563d
-	ld a,e			;5640
+	ld a,e			;5640   ; el siguiente, 12 bytes mas alla
 	add a,00ch		;5641
 	and 07ch		;5643
 	ld e,a			;5645
@@ -3282,7 +3282,7 @@ L_563B:
 L_5649:
 	ret			;5649
 L_564A:
-	ld hl,03b00h		;564a
+	ld hl,03b00h		;564a   ; copia los 128 bytes de atributos de 0xE800 a 0x3B00 sin cambiar el orden
 	call 00053h		;564d   ; BIOS SETWRT - Enables VDP to write
 	ld a,(00007h)		;5650
 	ld c,a			;5653
@@ -3293,11 +3293,11 @@ L_5659:
 	jp nz,L_5659		;565b
 	ret			;565e
 L_565F:
-	call L_41D4		;565f   ; los dibujos de los sprites del personaje, con los bancos 14-15
-	call L_5668		;5662   ; en pausa o muerto, otros dibujos
+	call L_41D4		;565f   ; los dibujos del personaje (bancos 14-15)
+	call L_5668		;5662   ; segun lo que lleva (tabla 0x84D7) y hacia donde mira, sus rachas a 0x1800
 	jp L_4192		;5665
 L_5668:
-	ld a,(0e24ch)		;5668   ; en pausa o muerto, otros dibujos
+	ld a,(0e24ch)		;5668   ; segun lo que lleva (tabla 0x84D7) y hacia donde mira, sus rachas a 0x1800
 	or a			;566b
 	jr nz,L_56A0		;566c
 	ld a,(0e298h)		;566e   ; lee la marca de personaje muerto
@@ -3307,7 +3307,7 @@ L_5668:
 	ld a,(0e287h)		;5677   ; lee la postura del personaje
 	call L_4D4D		;567a   ; HL = la palabra A de la tabla de HL
 	ld a,(0e285h)		;567d   ; lee hacia donde mira el personaje
-	cp 00ah		;5680
+	cp 00ah		;5680   ; las direcciones 10 y 11 usan las de la 8 y la 9
 	jr c,L_5686		;5682
 	sub 002h		;5684
 L_5686:
@@ -3316,21 +3316,21 @@ L_5686:
 	ex de,hl			;568c
 	jp L_4E55		;568d
 L_5690:
-	ld a,(0e285h)		;5690   ; lee hacia donde mira el personaje
+	ld a,(0e285h)		;5690   ; muerto: la tabla 0x8589 por la direccion
 	ld hl,08589h		;5693
 	call L_4D4D		;5696   ; HL = la palabra A de la tabla de HL
 	ld de,01800h		;5699
 	ex de,hl			;569c
 	jp L_4E55		;569d
 L_56A0:
-	ld a,(0e2b3h)		;56a0   ; lee el dibujo del personaje en pausa
+	ld a,(0e2b3h)		;56a0   ; en pausa: la tabla 0x8597 por 0xE2B3
 	ld hl,08597h		;56a3
 	call L_4D4D		;56a6   ; HL = la palabra A de la tabla de HL
 	ld de,01800h		;56a9
 	ex de,hl			;56ac
 	jp L_4E55		;56ad
 L_56B0:
-	call L_41D4		;56b0   ; las rachas de 0x97A1 a 0xF880
+	call L_41D4		;56b0   ; rachas de 0xA6D8 a 0x1880 (sprites)
 	call L_56B9		;56b3
 	jp L_4192		;56b6
 L_56B9:
@@ -3338,10 +3338,10 @@ L_56B9:
 	ld de,0a6d8h		;56bc
 	jp L_4E55		;56bf
 L_56C2:
-	call L_41B3		;56c2   ; pone los bancos 7-8-9
+	call L_41B3		;56c2   ; los graficos de la lista 0x814B (la entrada)
 	ld ix,0814bh		;56c5
 L_56C9:
-	call L_5033		;56c9
+	call L_5033		;56c9   ; carga graficos: fichas de 6 bytes [tercios][colores][caracter][patrones], un 0 acaba
 	jp L_4192		;56cc
 
 ; ----------------------------------------------------------------------
@@ -3355,42 +3355,42 @@ DATA_56CF:
 
 
 L_56D8:
-	call L_41B3		;56d8   ; pone los bancos 7-8-9
+	call L_41B3		;56d8   ; los de la lista 0x8175
 	ld ix,08175h		;56db
 	jr $-22		;56df
 L_56E1:
-	call L_41B3		;56e1   ; pone los bancos 7-8-9
+	call L_41B3		;56e1   ; los de la lista 0x815F
 	ld ix,0815fh		;56e4
 	jr $-31		;56e8
 L_56EA:
-	ld de,01818h		;56ea   ; 12 x 12 caracteres de 0xA358 en 0x1818
+	ld de,01818h		;56ea   ; 12 x 12 caracteres de 0xAB57 en (0x18, 0x18)
 L_56ED:
 	call L_41D4		;56ed   ; 12 x 12 caracteres de 0xA358 en (D, E)
 	ld hl,0ab57h		;56f0
 	ld bc,00c0ch		;56f3
-	call L_53D6		;56f6
+	call L_53D6		;56f6   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;56f9
 L_56FC:
-	call L_41D4		;56fc   ; 12 x 12 de 0xA2C8
+	call L_41D4		;56fc   ; 12 x 12 de 0xAAC7
 	ld hl,0aac7h		;56ff
 L_5702:
 	ld de,05020h		;5702
 	ld bc,00c0ch		;5705
-	call L_53D6		;5708
+	call L_53D6		;5708   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;570b
 L_570E:
-	call L_41D4		;570e   ; 12 x 12 de 0xA702
+	call L_41D4		;570e   ; 12 x 12 de 0xB0DC
 	ld hl,0b0dch		;5711
 	jr L_5702		;5714
 L_5716:
-	call L_41D4		;5716   ; pone los bancos 14-15 en 0x8000-0xBFFF
+	call L_41D4		;5716   ; 7 x 3 de 0xB0C7
 	ld hl,0b0c7h		;5719
 	ld de,08838h		;571c
 	ld bc,00703h		;571f
-	call L_53D6		;5722
+	call L_53D6		;5722   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;5725
 L_5728:
-	call L_41D4		;5728   ; pone los bancos 14-15 en 0x8000-0xBFFF
+	call L_41D4		;5728   ; 2 x 3 de 0xB16C o 0xB172 (segun A)
 	or a			;572b
 	ld hl,0b16ch		;572c
 	jr z,L_5734		;572f
@@ -3398,10 +3398,10 @@ L_5728:
 L_5734:
 	ld de,06058h		;5734
 	ld bc,00203h		;5737
-	call L_53D6		;573a
+	call L_53D6		;573a   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;573d
 L_5740:
-	call L_41D4		;5740   ; pone los bancos 14-15 en 0x8000-0xBFFF
+	call L_41D4		;5740   ; 2 x 3 de 0xB178 o 0xB17E
 	or a			;5743
 	ld hl,0b178h		;5744
 	jr z,L_574C		;5747
@@ -3409,10 +3409,10 @@ L_5740:
 L_574C:
 	ld de,06038h		;574c
 	ld bc,00203h		;574f
-	call L_53D6		;5752
+	call L_53D6		;5752   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;5755
 L_5758:
-	call L_41D4		;5758   ; pone los bancos 14-15 en 0x8000-0xBFFF
+	call L_41D4		;5758   ; 32 columnas de 23 caracteres de la tabla 0xABE7, desde la entrada A
 	ld de,00008h		;575b
 	ld b,020h		;575e
 L_5760:
@@ -3429,7 +3429,7 @@ L_5760:
 	ld l,a			;576d
 	push de			;576e
 	ld bc,01701h		;576f
-	call L_53D6		;5772
+	call L_53D6		;5772   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	pop de			;5775
 	ld a,d			;5776
 	add a,008h		;5777
@@ -3440,7 +3440,7 @@ L_5760:
 	djnz L_5760		;577d
 	jp L_4192		;577f
 L_5782:
-	call L_41D4		;5782   ; pone los bancos 14-15 en 0x8000-0xBFFF
+	call L_41D4		;5782   ; 16 x 12 de 0xB184 o 0xB244
 	ld hl,0b184h		;5785
 	or a			;5788
 	jr z,L_578E		;5789
@@ -3448,32 +3448,32 @@ L_5782:
 L_578E:
 	ld de,08828h		;578e
 	ld bc,0100ch		;5791
-	call L_53D6		;5794
+	call L_53D6		;5794   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;5797
 L_579A:
-	call L_41D4		;579a   ; 12 x 2 caracteres de 0xA5A6 en 0xB038
+	call L_41D4		;579a   ; 12 x 2 de 0xB304
 	ld hl,0b304h		;579d
 	ld de,0b038h		;57a0
 	ld bc,00c02h		;57a3
-	call L_53D6		;57a6
+	call L_53D6		;57a6   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;57a9
 L_57AC:
-	call L_41D4		;57ac   ; 12 x 4 de 0xA5BE en 0xA838
+	call L_41D4		;57ac   ; 12 x 4 de 0xB31C
 	ld hl,0b31ch		;57af
 	ld de,0a838h		;57b2
 	ld bc,00c04h		;57b5
-	call L_53D6		;57b8
+	call L_53D6		;57b8   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;57bb
 L_57BE:
-	call L_41D4		;57be   ; 14 x 6 de 0xA5EE en 0xA030
+	call L_41D4		;57be   ; 14 x 6 de 0xB34C
 	ld hl,0b34ch		;57c1
 	ld de,0a030h		;57c4
 	ld bc,00e06h		;57c7
-	call L_53D6		;57ca
+	call L_53D6		;57ca   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;57cd
 L_57D0:
-	push af			;57d0
-	call L_57EE		;57d1   ; los dibujos de 0xA642 (en 0x6040) y 0xA6B1 (en 0x9040)
+	push af			;57d0   ; 6 x 6 de 0xB3A0 en la columna que diga A
+	call L_57EE		;57d1   ; 14 x 6 de 0xB3C4
 	pop af			;57d4
 	call L_41D4		;57d5   ; pone los bancos 14-15 en 0x8000-0xBFFF
 	ld hl,0b3a0h		;57d8
@@ -3485,17 +3485,17 @@ L_57D0:
 	ld e,a			;57e2
 	ld d,0a0h		;57e3
 	ld bc,00606h		;57e5
-	call L_53D6		;57e8
+	call L_53D6		;57e8   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;57eb
 L_57EE:
-	call L_41D4		;57ee   ; los dibujos de 0xA642 (en 0x6040) y 0xA6B1 (en 0x9040)
+	call L_41D4		;57ee   ; 14 x 6 de 0xB3C4
 	ld hl,0b3c4h		;57f1
 	ld de,0a030h		;57f4
 	ld bc,00e06h		;57f7
-	call L_53D6		;57fa
+	call L_53D6		;57fa   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	jp L_4192		;57fd
 L_5800:
-	call L_41D4		;5800   ; rachas de 0xAF21 a 0xF820 y de 0xA9FB a 0xFE80 (sprites)
+	call L_41D4		;5800   ; rachas de 0xB851 a 0x1820 y de 0xB41D a 0x1E80 (sprites)
 	ld de,0b851h		;5803
 	ld hl,01820h		;5806
 	call L_4E55		;5809   ; lo mismo con el destino en HL
@@ -3504,7 +3504,7 @@ L_5800:
 	call L_4E55		;5812   ; lo mismo con el destino en HL
 	jp L_4192		;5815
 L_5818:
-	call L_41D4		;5818   ; pone los bancos 14-15 en 0x8000-0xBFFF
+	call L_41D4		;5818   ; los sprites del final: rachas de 0xB5B7, 0x85A5, 0x8604, 0x8662, 0xB963 y 0xB418
 	ld de,0b5b7h		;581b
 	ld hl,01800h		;581e
 	call L_4E55		;5821   ; lo mismo con el destino en HL
@@ -3525,7 +3525,7 @@ L_5818:
 	call L_4E55		;584e   ; lo mismo con el destino en HL
 	jp L_4192		;5851
 L_5854:
-	call L_41D4		;5854   ; los sprites de 0xAB59, 0x86D4, 0x8FD9, 0xAE08 y 0xA9F6
+	call L_41D4		;5854   ; los mismos con 0x86BC, 0x871B y 0x8778
 	ld de,0b5b7h		;5857
 	ld hl,01800h		;585a
 	call L_4E55		;585d   ; lo mismo con el destino en HL
@@ -3546,26 +3546,26 @@ L_5854:
 	call L_4E55		;588a   ; lo mismo con el destino en HL
 	jp L_4192		;588d
 L_5890:
-	call L_41B8		;5890   ; la paleta de 0xA7FF
+	call L_41B8		;5890   ; las fuentes del marcador: 0xAA29, 0xAA89 y 0xAB79 a los tres tercios, con color 0xF0
 	ld hl,0aa29h		;5893
 	ld de,02680h		;5896
 	ld bc,00060h		;5899
-	call L_4E99		;589c
+	call L_4E99		;589c   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 	ld hl,0aa89h		;589f
 	ld de,026e0h		;58a2
 	ld bc,000d8h		;58a5
-	call L_4E99		;58a8
+	call L_4E99		;58a8   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 	ld hl,0ab79h		;58ab
 	ld de,027b8h		;58ae
 	ld bc,00028h		;58b1
-	call L_4E99		;58b4
+	call L_4E99		;58b4   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 	ld a,0f0h		;58b7
 	ld hl,00680h		;58b9
 	ld bc,00180h		;58bc
-	call L_4EA8		;58bf
+	call L_4EA8		;58bf   ; llena BC bytes de la VRAM de HL con A en los tres tercios
 	jp L_4192		;58c2
 L_58C5:
-	call L_5915		;58c5   ; los colores de la paleta que cambian solos en cada piramide: tabla 0xBD52, 5 bytes por piramide
+	call L_5915		;58c5   ; los caracteres animados de la piramide (cada uno de su tabla 0x5936 + 10 x piramide)
 	ld a,(0e241h)		;58c8   ; lee la piramide (1-6)
 	add a,a			;58cb
 	ld b,a			;58cc
@@ -3574,19 +3574,19 @@ L_58C5:
 	add a,b			;58cf
 	ld hl,05936h		;58d0
 	call L_4094		;58d3   ; suma A a HL (HL = HL + A)
-	ld b,(hl)			;58d6   ; B = el color de la paleta, C = cuantos pasos, B' = cada cuantos cuadros, DE = los colores
+	ld b,(hl)			;58d6   ; B = el caracter, C = cada cuantos cuadros
 	inc hl			;58d7
 	ld c,(hl)			;58d8
 	inc hl			;58d9
 	ex de,hl			;58da
-	ld hl,0ef00h		;58db   ; apunta a la cuenta de los colores que cambian solos
+	ld hl,0ef00h		;58db   ; su cuenta en 0xEF00
 	inc (hl)			;58de
 	ld a,(hl)			;58df
 	cp c			;58e0
 	ret c			;58e1   ; aun no toca
 	ld (hl),000h		;58e2
 	inc hl			;58e4
-	ld a,(hl)			;58e5   ; subiendo o bajando
+	ld a,(hl)			;58e5   ; el paso sube hasta 3 y baja hasta 0
 	and a			;58e6
 	inc hl			;58e7
 	jr nz,L_58F2		;58e8
@@ -3604,7 +3604,7 @@ L_58F5:
 	xor 001h		;58f7
 	ld (hl),a			;58f9
 L_58FA:
-	ld h,000h		;58fa
+	ld h,000h		;58fa   ; el paso 0xEF02: sus rachas al caracter B de los tres tercios
 	ld l,b			;58fc
 	add hl,hl			;58fd
 	add hl,hl			;58fe
@@ -3617,10 +3617,10 @@ L_58FA:
 	ex de,hl			;590b
 L_590C:
 	call L_41B3		;590c   ; pone los bancos 7-8-9
-	call L_4EB7		;590f
+	call L_4EB7		;590f   ; rachas de DE a la VRAM de HL en los tres tercios (las mismas tres veces)
 	jp L_4192		;5912
 L_5915:
-	ld hl,0ef05h		;5915
+	ld hl,0ef05h		;5915   ; los caracteres animados comunes: cada 4 cuadros el paso siguiente de 8 (tabla 0x5930)
 	inc (hl)			;5918
 	ld a,(hl)			;5919
 	and 003h		;591a
@@ -3663,7 +3663,7 @@ DATA_animados_piramides:
 
 
 L_597C:
-	call L_4EC7		;597c
+	call L_4EC7		;597c   ; la presentacion (estado 0, paso 0): borra, R#7 = 0x0F y las rachas de 0x9BF2
 	ld b,00fh		;597f
 	ld c,007h		;5981
 	call 00047h		;5983   ; BIOS WRTVDP - Writes data in the VDP-register
@@ -3675,9 +3675,9 @@ L_597C:
 	call L_4192		;5995   ; pone los bancos 1-2-3 (el juego)
 	ld hl,00a00h		;5998
 	ld bc,003f0h		;599b
-	xor a			;599e
+	xor a			;599e   ; los patrones de 0x0A00 (0x3F0 bytes) a cero
 	call L_4E10		;599f   ; llena BC bytes de la VRAM con A (BIGFIL)
-	ld hl,03907h		;59a2
+	ld hl,03907h		;59a2   ; la tabla de nombres del dibujo: 6 filas de 21 caracteres seguidos desde 0x40
 	ld a,040h		;59a5
 	ld c,006h		;59a7
 	ld de,0000bh		;59a9
@@ -3693,7 +3693,7 @@ L_59AE:
 	jr nz,L_59AC		;59b7
 	ret			;59b9
 L_59BA:
-	ld a,(0e20fh)		;59ba
+	ld a,(0e20fh)		;59ba   ; un cuadro de la presentacion: una columna de 21 bytes de patrones cada vez (NZ mientras queden)
 	cp 006h		;59bd
 	ld c,a			;59bf
 	ret z			;59c0
@@ -3701,10 +3701,10 @@ L_59BA:
 	and 007h		;59c4
 	ld a,c			;59c6
 	push af			;59c7
-	call z,L_5A0B		;59c8
+	call z,L_5A0B		;59c8   ; cada 8 columnas, el trozo siguiente del dibujo se desempaqueta en 0xE900 (0x5A0B), libre fuera de la partida
 	pop af			;59cb
 	call L_41B3		;59cc   ; pone los bancos 7-8-9
-	ld hl,09be6h		;59cf
+	ld hl,09be6h		;59cf   ; el sitio del trozo en la VRAM (tabla 0x9BE6)
 	call L_4D4D		;59d2   ; HL = la palabra A de la tabla de HL
 	ex de,hl			;59d5
 	ld hl,0e20eh		;59d6
@@ -3727,7 +3727,7 @@ L_59E3:
 	ex de,hl			;59f4
 	ld b,015h		;59f5
 L_59F7:
-	ld a,(de)			;59f7
+	ld a,(de)			;59f7   ; 21 bytes, de 8 en 8, a la VRAM
 	call 0004dh		;59f8   ; BIOS WRTVRM - Writes data in VRAM
 	ld a,008h		;59fb
 	call L_4099		;59fd   ; suma A a DE (DE = DE + A)
@@ -3737,14 +3737,14 @@ L_59F7:
 	inc b			;5a07
 	jp L_4192		;5a08
 L_5A0B:
-	call L_41B3		;5a0b   ; pone los bancos 7-8-9
+	call L_41B3		;5a0b   ; desempaqueta el trozo A del dibujo de la presentacion (tabla 0x9BDA) en 0xE900
 	ld hl,09bdah		;5a0e
 	call L_4D4D		;5a11   ; HL = la palabra A de la tabla de HL
 	ld de,0e900h		;5a14   ; apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
 	call L_5A21		;5a17
 	jp L_4192		;5a1a
 L_5A1D:
-	ld e,(hl)			;5a1d
+	ld e,(hl)			;5a1d   ; rachas a la RAM: [destino], [n < 0x80] repite, [0x80 + n] copia, [0x80] otro destino, 0 acaba
 	inc hl			;5a1e
 	ld d,(hl)			;5a1f
 	inc hl			;5a20
@@ -3772,31 +3772,31 @@ L_5A37:
 	djnz L_5A37		;5a39
 	jr L_5A21		;5a3b
 L_5A3D:
-	call L_41B8		;5a3d   ; pone los bancos 10-11-12
+	call L_41B8		;5a3d   ; las fuentes del marcador (otra forma): 0xAA29, 0xAA89, 0xABA1 y 0xABB1, con color 0xF0
 	ld hl,0aa29h		;5a40
 	ld de,02680h		;5a43
 	ld bc,00060h		;5a46
-	call L_4E99		;5a49
+	call L_4E99		;5a49   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 	ld hl,0aa89h		;5a4c
 	ld de,02700h		;5a4f
 	ld bc,000f0h		;5a52
-	call L_4E99		;5a55
+	call L_4E99		;5a55   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 	ld hl,0aba1h		;5a58
 	ld de,026e0h		;5a5b
 	ld bc,00010h		;5a5e
-	call L_4E99		;5a61
+	call L_4E99		;5a61   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 	ld a,0f0h		;5a64
 	ld hl,00680h		;5a66
 	ld bc,00060h		;5a69
-	call L_4EA8		;5a6c
+	call L_4EA8		;5a6c   ; llena BC bytes de la VRAM de HL con A en los tres tercios
 	ld a,0f0h		;5a6f
 	ld hl,00700h		;5a71
 	ld bc,000f0h		;5a74
-	call L_4EA8		;5a77
+	call L_4EA8		;5a77   ; llena BC bytes de la VRAM de HL con A en los tres tercios
 	ld hl,0abb1h		;5a7a
 	ld de,006e0h		;5a7d
 	ld bc,00010h		;5a80
-	call L_4E99		;5a83
+	call L_4E99		;5a83   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 	call L_4192		;5a86   ; pone los bancos 1-2-3 (el juego)
 	ret			;5a89
 L_5A8A:
@@ -3842,7 +3842,7 @@ L_5A9E:
 	ld (0edcdh),a		;5ae9
 L_5AEC:
 	call L_4EC7		;5aec   ; pinta la pantalla en la que se esta: apaga, pinta y enciende
-	call L_4EEA		;5aef
+	call L_4EEA		;5aef   ; los atributos de los sprites (0x3B00, 0x80 bytes) a 0xE0: fuera de la pantalla
 	call L_4EDF		;5af2   ; apaga la pantalla (bit 6 de R#1 a cero)
 	call 061a6h		;5af5   ; las borra del mapa (valor 0)
 	call L_44DC		;5af8   ; los ladrillos, las puertas y lo de 0xE2C0
@@ -4157,11 +4157,11 @@ DATA_resto_5CE9:
 
 L_5D84:
 	call L_4EDF		;5d84   ; el menu: borra, R#7 = 0 y la presentacion
-	call L_4EC7		;5d87
+	call L_4EC7		;5d87   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld bc,00007h		;5d8a
 	call 00047h		;5d8d   ; BIOS WRTVDP - Writes data in the VDP-register
-	call L_4EEA		;5d90
-	call L_5286		;5d93   ; carga la presentacion: los graficos de la lista 0xB120 (banco 15)
+	call L_4EEA		;5d90   ; los atributos de los sprites (0x3B00, 0x80 bytes) a 0xE0: fuera de la pantalla
+	call L_5286		;5d93   ; la presentacion de MSX1: dos rachas a los tres tercios y el titulo
 	xor a			;5d96
 	ld (0e2c2h),a		;5d97
 	ld (0e214h),a		;5d9a   ; guarda la cuenta del telon del menu
@@ -4173,7 +4173,7 @@ L_5DA1:
 	and 00fh		;5da7
 	jr nz,$+89		;5da9
 	ld de,098aah		;5dab
-	call L_52F1		;5dae
+	call L_52F1		;5dae   ; rachas de DE a 0x0008 en los tres tercios, con los bancos 7-8-9
 	jr $+81		;5db1
 L_5DB3:
 	ld a,(0002bh)		;5db3
@@ -4184,7 +4184,7 @@ L_5DB3:
 	ld hl,05e24h		;5dbf
 	ld bc,00010h		;5dc2
 	ldir		;5dc5
-	call L_561D		;5dc7
+	call L_561D		;5dc7   ; copia a la VRAM los 32 sprites en otro orden cada cuadro (asi parpadean en vez de desaparecer)
 	ret			;5dca
 L_5DCB:
 	ld a,(0e214h)		;5dcb   ; lee la cuenta del telon del menu
@@ -4282,7 +4282,7 @@ L_5E7E:
 	rra			;5e81
 	rra			;5e82
 	ret nc			;5e83
-	call L_4EC7		;5e84
+	call L_4EC7		;5e84   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	call L_5E8F		;5e87   ; los letreros del plano y los sprites de 0xBF29
 L_5E8A:
 	ld hl,0edc0h		;5e8a   ; el paso siguiente
@@ -4293,15 +4293,15 @@ L_5E8F:
 	ld de,02708h		;5e92
 	ld hl,0bf36h		;5e95
 	ld bc,000c0h		;5e98
-	call L_4E99		;5e9b
+	call L_4E99		;5e9b   ; escribe BC bytes de HL en la VRAM de DE en los tres tercios (DE, DE + 0x800, DE + 0x1000)
 	ld hl,00708h		;5e9e
 	ld bc,00090h		;5ea1
 	ld a,0f5h		;5ea4
-	call L_4EA8		;5ea6
+	call L_4EA8		;5ea6   ; llena BC bytes de la VRAM de HL con A en los tres tercios
 	ld hl,00798h		;5ea9
 	ld bc,00030h		;5eac
 	ld a,060h		;5eaf
-	call L_4EA8		;5eb1
+	call L_4EA8		;5eb1   ; llena BC bytes de la VRAM de HL con A en los tres tercios
 	ld de,0bf29h		;5eb4
 	ld hl,01800h		;5eb7
 	call L_4E55		;5eba   ; lo mismo con el destino en HL
@@ -4322,10 +4322,10 @@ L_5EDE:
 	rra			;5ee1
 	rra			;5ee2
 	ret nc			;5ee3
-	call L_4EC7		;5ee4
-	call L_5A3D		;5ee7
+	call L_4EC7		;5ee4   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
+	call L_5A3D		;5ee7   ; las fuentes del marcador (otra forma): 0xAA29, 0xAA89, 0xABA1 y 0xABB1, con color 0xF0
 	call L_5AEC		;5eea   ; se repinta la pantalla
-	call L_565F		;5eed   ; los dibujos de los sprites del personaje, con los bancos 14-15
+	call L_565F		;5eed   ; los dibujos del personaje (bancos 14-15)
 	call 09ca3h		;5ef0
 	call 0644fh		;5ef3
 	xor a			;5ef6   ; y la pausa sigue en el paso 0

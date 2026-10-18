@@ -15,38 +15,38 @@
 
 
 L_6000:
-	jp L_6009		;6000
+	jp L_6009		;6000   ; el motor de sonido: arranque (p04:6009)
 L_6003:
-	jp L_603D		;6003
+	jp L_603D		;6003   ; pedir un sonido o una orden (A): 0x80-0x84
 L_6006:
-	jp L_62F8		;6006
+	jp L_62F8		;6006   ; un cuadro del motor (desde la interrupcion)
 L_6009:
-	ld a,001h		;6009
-	call L_603D		;600b
-	ld a,0ffh		;600e
+	ld a,001h		;6009   ; arranque: el sonido 1 (todo callado)
+	call L_603D		;600b   ; pide el sonido A, o una orden: 0x80 ponerse en marcha, 0x81 pausa, 0x82 parar, 0x83 y 0x84 bajar el volumen
+	ld a,0ffh		;600e   ; 0xE1EB-0xE1EC a 0xFF: hay que mandar todo al SCC
 	ld hl,0e1ebh		;6010
 	ld (hl),a			;6013
 	inc hl			;6014
 	ld (hl),a			;6015
 	inc hl			;6016
-	ld de,0e1eeh		;6017
+	ld de,0e1eeh		;6017   ; 0xE1EE-0xE1FB a 1
 	ld (hl),001h		;601a
 	ld bc,0000eh		;601c
 	ldir		;601f
-	call L_6DF4		;6021
-	ld a,03fh		;6024
+	call L_6DF4		;6021   ; los registros del SCC a cero
+	ld a,03fh		;6024   ; enciende el SCC (0x3F en 0x9000)...
 	ld (09000h),a		;6026   ; el mapper: pone en 0x8000 el banco de A
-	xor a			;6029
-	ld (0988fh),a		;602a
-	ld a,002h		;602d
+	xor a			;6029   ; ...con sus canales apagados...
+	ld (0988fh),a		;602a   ; al SCC: los canales del SCC encendidos
+	ld a,002h		;602d   ; ...y el banco 2 otra vez en 0x8000
 	ld (09000h),a		;602f   ; el mapper: pone en 0x8000 el banco de A
-	ld a,0bfh		;6032
-	ld (0e1e3h),a		;6034
+	ld a,0bfh		;6032   ; el registro 7 del PSG: 0xBF (tonos sin ruido)
+	ld (0e1e3h),a		;6034   ; guarda el registro 7 del PSG (los canales y el ruido)
 	ld e,a			;6037
 	ld a,007h		;6038
 	jp 00093h		;603a   ; BIOS WRTPSG - Writes data to PSG-register
 L_603D:
-	ld c,a			;603d
+	ld c,a			;603d   ; pide el sonido A, o una orden: 0x80 ponerse en marcha, 0x81 pausa, 0x82 parar, 0x83 y 0x84 bajar el volumen
 	cp 082h		;603e
 	jp z,L_61BB		;6040
 	cp 083h		;6043
@@ -56,10 +56,10 @@ L_603D:
 	cp 080h		;604d
 	jp z,L_61E4		;604f
 	cp 081h		;6052
-	call z,L_6248		;6054
-	ld hl,0e1cch		;6057
+	call z,L_6248		;6054   ; orden 0x81: pausa
+	ld hl,0e1cch		;6057   ; 0xE1CC = el sonido
 	ld (hl),c			;605a
-	ld hl,06f2ch		;605b
+	ld hl,06f2ch		;605b   ; su cabecera: la palabra A de la tabla 0x6F2C
 	ld a,c			;605e
 	add a,c			;605f
 	ld e,a			;6060
@@ -69,137 +69,137 @@ L_603D:
 	inc hl			;6065
 	ld d,(hl)			;6066
 	ex de,hl			;6067
-	ld de,0e1cdh		;6068
+	ld de,0e1cdh		;6068   ; 18 bytes a 0xE1CD: [canales][prioridad][una palabra por canal]
 	ld bc,00012h		;606b
 	ldir		;606e
-	ld ix,0e1cfh		;6070
-	ld hl,0e1cdh		;6074
+	ld ix,0e1cfh		;6070   ; IX: las palabras de la cabecera
+	ld hl,0e1cdh		;6074   ; cada canal marcado (del bit 7 al 0) se pone en marcha con su partitura
 	bit 7,(hl)		;6077
 	jr z,L_6092		;6079
 	push ix		;607b
-	ld ix,0e000h		;607d
-	call L_62DF		;6081
+	ld ix,0e000h		;607d   ; canal 0 (0xE000)
+	call L_62DF		;6081   ; los efectos del canal a cero (trino, deslizar)
 	pop ix		;6084
 	inc hl			;6086
 	ld a,(hl)			;6087
-	ld hl,0e001h		;6088
-	call L_615C		;608b
-	inc ix		;608e
+	ld hl,0e001h		;6088   ; su prioridad
+	call L_615C		;608b   ; pone en marcha el canal de HL si la prioridad A no es menor que la que suena
+	inc ix		;608e   ; la palabra siguiente
 	inc ix		;6090
 L_6092:
-	ld hl,0e1cdh		;6092
+	ld hl,0e1cdh		;6092   ; apunta a la cabecera del sonido que se pide (18 bytes)
 	bit 6,(hl)		;6095
 	jr z,L_60B0		;6097
 	push ix		;6099
-	ld ix,0e033h		;609b
-	call L_62DF		;609f
+	ld ix,0e033h		;609b   ; canal 1 (0xE033)
+	call L_62DF		;609f   ; los efectos del canal a cero (trino, deslizar)
 	pop ix		;60a2
 	inc hl			;60a4
 	ld a,(hl)			;60a5
 	ld hl,0e034h		;60a6
-	call L_615C		;60a9
+	call L_615C		;60a9   ; pone en marcha el canal de HL si la prioridad A no es menor que la que suena
 	inc ix		;60ac
 	inc ix		;60ae
 L_60B0:
-	ld hl,0e1cdh		;60b0
+	ld hl,0e1cdh		;60b0   ; apunta a la cabecera del sonido que se pide (18 bytes)
 	bit 5,(hl)		;60b3
 	jr z,L_60CE		;60b5
 	push ix		;60b7
-	ld ix,0e066h		;60b9
-	call L_62DF		;60bd
+	ld ix,0e066h		;60b9   ; canal 2 (0xE066)
+	call L_62DF		;60bd   ; los efectos del canal a cero (trino, deslizar)
 	pop ix		;60c0
 	inc hl			;60c2
 	ld a,(hl)			;60c3
 	ld hl,0e067h		;60c4
-	call L_615C		;60c7
+	call L_615C		;60c7   ; pone en marcha el canal de HL si la prioridad A no es menor que la que suena
 	inc ix		;60ca
 	inc ix		;60cc
 L_60CE:
-	ld hl,0e1cdh		;60ce
+	ld hl,0e1cdh		;60ce   ; apunta a la cabecera del sonido que se pide (18 bytes)
 	bit 4,(hl)		;60d1
 	jr z,L_60EC		;60d3
 	push ix		;60d5
-	ld ix,0e099h		;60d7
-	call L_62DF		;60db
+	ld ix,0e099h		;60d7   ; canal 3 (0xE099)
+	call L_62DF		;60db   ; los efectos del canal a cero (trino, deslizar)
 	pop ix		;60de
 	inc hl			;60e0
 	ld a,(hl)			;60e1
 	ld hl,0e09ah		;60e2
-	call L_615C		;60e5
+	call L_615C		;60e5   ; pone en marcha el canal de HL si la prioridad A no es menor que la que suena
 	inc ix		;60e8
 	inc ix		;60ea
 L_60EC:
-	ld hl,0e1cdh		;60ec
+	ld hl,0e1cdh		;60ec   ; apunta a la cabecera del sonido que se pide (18 bytes)
 	bit 3,(hl)		;60ef
 	jr z,L_610A		;60f1
 	push ix		;60f3
-	ld ix,0e0cch		;60f5
-	call L_62DF		;60f9
+	ld ix,0e0cch		;60f5   ; canal 4 (0xE0CC)
+	call L_62DF		;60f9   ; los efectos del canal a cero (trino, deslizar)
 	pop ix		;60fc
 	inc hl			;60fe
 	ld a,(hl)			;60ff
 	ld hl,0e0cdh		;6100
-	call L_615C		;6103
+	call L_615C		;6103   ; pone en marcha el canal de HL si la prioridad A no es menor que la que suena
 	inc ix		;6106
 	inc ix		;6108
 L_610A:
-	ld hl,0e1cdh		;610a
+	ld hl,0e1cdh		;610a   ; apunta a la cabecera del sonido que se pide (18 bytes)
 	bit 2,(hl)		;610d
 	jr z,L_6128		;610f
 	push ix		;6111
-	ld ix,0e0ffh		;6113
-	call L_62DF		;6117
+	ld ix,0e0ffh		;6113   ; canal 5 (0xE0FF)
+	call L_62DF		;6117   ; los efectos del canal a cero (trino, deslizar)
 	pop ix		;611a
 	inc hl			;611c
 	ld a,(hl)			;611d
 	ld hl,0e100h		;611e
-	call L_615C		;6121
+	call L_615C		;6121   ; pone en marcha el canal de HL si la prioridad A no es menor que la que suena
 	inc ix		;6124
 	inc ix		;6126
 L_6128:
-	ld hl,0e1cdh		;6128
+	ld hl,0e1cdh		;6128   ; apunta a la cabecera del sonido que se pide (18 bytes)
 	bit 1,(hl)		;612b
 	jr z,L_6146		;612d
 	push ix		;612f
-	ld ix,0e132h		;6131
-	call L_62DF		;6135
+	ld ix,0e132h		;6131   ; canal 6 (0xE132)
+	call L_62DF		;6135   ; los efectos del canal a cero (trino, deslizar)
 	pop ix		;6138
 	inc hl			;613a
 	ld a,(hl)			;613b
 	ld hl,0e133h		;613c
-	call L_615C		;613f
+	call L_615C		;613f   ; pone en marcha el canal de HL si la prioridad A no es menor que la que suena
 	inc ix		;6142
 	inc ix		;6144
 L_6146:
-	ld hl,0e1cdh		;6146
+	ld hl,0e1cdh		;6146   ; apunta a la cabecera del sonido que se pide (18 bytes)
 	bit 0,(hl)		;6149
 	ret z			;614b
 	push ix		;614c
-	ld ix,0e165h		;614e
-	call L_62DF		;6152
+	ld ix,0e165h		;614e   ; canal 7 (0xE165)
+	call L_62DF		;6152   ; los efectos del canal a cero (trino, deslizar)
 	pop ix		;6155
 	inc hl			;6157
 	ld a,(hl)			;6158
 	ld hl,0e166h		;6159
 L_615C:
-	ld b,(hl)			;615c
+	ld b,(hl)			;615c   ; pone en marcha el canal de HL si la prioridad A no es menor que la que suena
 	cp b			;615d
 	ret c			;615e
-	ex de,hl			;615f
+	ex de,hl			;615f   ; el sonido y la prioridad
 	ld (de),a			;6160
 	dec de			;6161
-	ld hl,0e1cch		;6162
+	ld hl,0e1cch		;6162   ; apunta a el sonido que se pide
 	ld a,(hl)			;6165
 	ld (de),a			;6166
 	inc de			;6167
 	inc de			;6168
-	ld a,(ix+000h)		;6169
+	ld a,(ix+000h)		;6169   ; la partitura
 	ld (de),a			;616c
 	inc de			;616d
 	ld a,(ix+001h)		;616e
 	ld (de),a			;6171
 	inc de			;6172
-	ld hl,0617ch		;6173
+	ld hl,0617ch		;6173   ; y el resto del canal, de la plantilla de 0x617C (46 bytes)
 	ld bc,0002eh		;6176
 	ldir		;6179
 	ret			;617b
@@ -225,33 +225,33 @@ DATA_61AA:
 
 
 L_61BB:
-	ld hl,0e1cbh		;61bb
+	ld hl,0e1cbh		;61bb   ; orden 0x82: para (bit 0 de 0xE1CB a cero)
 	res 0,(hl)		;61be
 	jr L_61DC		;61c0
 L_61C2:
-	ld hl,0e1dfh		;61c2
+	ld hl,0e1dfh		;61c2   ; orden 0x83: baja el volumen poco a poco (0x25 cuadros por paso, 10 pasos)
 	ld (hl),025h		;61c5
 	inc hl			;61c7
 	ld (hl),00ah		;61c8
 	jp L_61D5		;61ca
 L_61CD:
-	ld hl,0e1dfh		;61cd
+	ld hl,0e1dfh		;61cd   ; orden 0x84: lo mismo
 	ld (hl),025h		;61d0
 	inc hl			;61d2
 	ld (hl),00ah		;61d3
 L_61D5:
-	ld hl,0e1cbh		;61d5
+	ld hl,0e1cbh		;61d5   ; bit 0 de 0xE1CB: bajando el volumen
 	set 0,(hl)		;61d8
 	res 4,(hl)		;61da
 L_61DC:
-	ld hl,0e1e1h		;61dc
+	ld hl,0e1e1h		;61dc   ; la cuenta a cero
 	xor a			;61df
 	ld (hl),a			;61e0
 	inc hl			;61e1
 	ld (hl),a			;61e2
 	ret			;61e3
 L_61E4:
-	ld hl,0e1cbh		;61e4
+	ld hl,0e1cbh		;61e4   ; orden 0x80: sigue tras la pausa
 	bit 1,(hl)		;61e7
 	ld b,000h		;61e9
 	jr nz,L_61EF		;61eb
@@ -263,10 +263,10 @@ L_61EF:
 	res 3,(hl)		;61f5
 	set 0,(hl)		;61f7
 L_61F9:
-	ld hl,0e198h		;61f9
+	ld hl,0e198h		;61f9   ; devuelve el canal 3 guardado en 0xE198
 	ld de,0e099h		;61fc
-	call L_62D9		;61ff
-	ld a,(0e00dh)		;6202
+	call L_62D9		;61ff   ; copia un canal (0x33 bytes)
+	ld a,(0e00dh)		;6202   ; devuelve los volumenes del PSG guardados en 0xE1FE/0xE1FF
 	ld e,a			;6205
 	ld a,(0e1feh)		;6206
 	and 00fh		;6209
@@ -288,10 +288,10 @@ L_61F9:
 	and 00fh		;6227
 	or e			;6229
 	ld (0e073h),a		;622a
-	ld a,03fh		;622d
+	ld a,03fh		;622d   ; y los canales del SCC encendidos
 	ld (09000h),a		;622f   ; el mapper: pone en 0x8000 el banco de A
-	ld a,(0e1fch)		;6232
-	ld (0988fh),a		;6235
+	ld a,(0e1fch)		;6232   ; lee los canales del SCC que suenan
+	ld (0988fh),a		;6235   ; al SCC: los canales del SCC encendidos
 	ld a,002h		;6238
 	ld (09000h),a		;623a   ; el mapper: pone en 0x8000 el banco de A
 	ld a,0ffh		;623d
@@ -301,22 +301,22 @@ L_61F9:
 	ld (hl),a			;6244
 	jp L_6DF4		;6245
 L_6248:
-	ld hl,0e1cbh		;6248
+	ld hl,0e1cbh		;6248   ; orden 0x81: pausa
 	bit 1,(hl)		;624b
 	ld b,000h		;624d
 	jr z,L_6253		;624f
 	ld b,001h		;6251
 L_6253:
-	set 1,(hl)		;6253
+	set 1,(hl)		;6253   ; bit 1 de 0xE1CB: en pausa
 	bit 0,(hl)		;6255
 	jr z,L_625D		;6257
 	res 0,(hl)		;6259
 	set 3,(hl)		;625b
 L_625D:
-	ld hl,0e099h		;625d
+	ld hl,0e099h		;625d   ; guarda el canal 3 en 0xE198
 	ld de,0e198h		;6260
-	call L_62D9		;6263
-	ld a,(0e00dh)		;6266
+	call L_62D9		;6263   ; copia un canal (0x33 bytes)
+	ld a,(0e00dh)		;6266   ; los volumenes del PSG a cero, guardandolos
 	ld d,a			;6269
 	and 00fh		;626a
 	ld (0e1feh),a		;626c
@@ -344,7 +344,7 @@ L_625D:
 	ld a,d			;6296
 	and 0f0h		;6297
 	ld (0e073h),a		;6299
-	ld a,(0e00ch)		;629c
+	ld a,(0e00ch)		;629c   ; sin el bit 4 de las marcas de los canales 0-2
 	res 4,a		;629f
 	ld (0e00ch),a		;62a1
 	ld a,(0e03fh)		;62a4
@@ -353,16 +353,16 @@ L_625D:
 	ld a,(0e072h)		;62ac
 	res 4,a		;62af
 	ld (0e072h),a		;62b1
-	ld a,03fh		;62b4
+	ld a,03fh		;62b4   ; los canales del SCC apagados y sus volumenes a cero
 	ld (09000h),a		;62b6   ; el mapper: pone en 0x8000 el banco de A
-	ld a,(0e1fch)		;62b9
+	ld a,(0e1fch)		;62b9   ; lee los canales del SCC que suenan
 	and 0feh		;62bc
-	ld (0988fh),a		;62be
+	ld (0988fh),a		;62be   ; al SCC: los canales del SCC encendidos
 	xor a			;62c1
-	ld (0988bh),a		;62c2
-	ld (0988ch),a		;62c5
-	ld (0988dh),a		;62c8
-	ld (0988eh),a		;62cb
+	ld (0988bh),a		;62c2   ; al SCC: el volumen del canal 2 del SCC
+	ld (0988ch),a		;62c5   ; al SCC: el volumen del canal 3 del SCC
+	ld (0988dh),a		;62c8   ; al SCC: el volumen del canal 4 del SCC
+	ld (0988eh),a		;62cb   ; al SCC: el volumen del canal 5 del SCC
 	ld a,002h		;62ce
 	ld (09000h),a		;62d0   ; el mapper: pone en 0x8000 el banco de A
 	ld a,b			;62d3
@@ -371,160 +371,160 @@ L_625D:
 	ld c,002h		;62d6
 	ret			;62d8
 L_62D9:
-	ld bc,00033h		;62d9
+	ld bc,00033h		;62d9   ; copia un canal (0x33 bytes)
 	ldir		;62dc
 	ret			;62de
 L_62DF:
-	ld (ix+01ah),000h		;62df
-	ld (ix+01bh),000h		;62e3
-	ld (ix+01ch),000h		;62e7
-	ld (ix+01dh),000h		;62eb
-	ld (ix+01eh),000h		;62ef
-	ld (ix+026h),000h		;62f3
+	ld (ix+01ah),000h		;62df   ; los efectos del canal a cero (trino, deslizar)
+	ld (ix+01bh),000h		;62e3   ; cada cuanto el trino (orden 0xF1) = 0x00
+	ld (ix+01ch),000h		;62e7   ; cuanto sube y baja el trino = 0x00
+	ld (ix+01dh),000h		;62eb   ; el sentido del trino = 0x00
+	ld (ix+01eh),000h		;62ef   ; la cuenta del trino = 0x00
+	ld (ix+026h),000h		;62f3   ; el desafinado (orden 0xEE) = 0x00
 	ret			;62f7
 L_62F8:
-	ld a,(0e1e3h)		;62f8
+	ld a,(0e1e3h)		;62f8   ; un cuadro del motor: el registro 7 del PSG
 	call L_6C73		;62fb
-	ld a,(0fda2h)		;62fe
+	ld a,(0fda2h)		;62fe   ; 0xFDA2 (el cuadro de la BIOS) contra el del motor (0xE1FD)
 	ld hl,0e1fdh		;6301
 	cp (hl)			;6304
 	jr z,L_632B		;6305
-	ld ix,0e099h		;6307
-	set 7,(ix+00fh)		;630b
+	ld ix,0e099h		;6307   ; si no van a la par, las ondas del SCC se vuelven a mandar
+	set 7,(ix+00fh)		;630b   ; pone a uno el bit 7 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ld ix,0e0cch		;630f
-	set 7,(ix+00fh)		;6313
+	set 7,(ix+00fh)		;6313   ; pone a uno el bit 7 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ld ix,0e0ffh		;6317
-	set 7,(ix+00fh)		;631b
+	set 7,(ix+00fh)		;631b   ; pone a uno el bit 7 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ld ix,0e132h		;631f
-	set 7,(ix+00fh)		;6323
+	set 7,(ix+00fh)		;6323   ; pone a uno el bit 7 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ld a,(0fda2h)		;6327
 	ld (hl),a			;632a
 L_632B:
-	inc (hl)			;632b
+	inc (hl)			;632b   ; el cuadro siguiente
 	ld a,(hl)			;632c
 	ld (0fda2h),a		;632d
-	ld hl,0e1cbh		;6330
+	ld hl,0e1cbh		;6330   ; en pausa, solo el canal 3
 	bit 1,(hl)		;6333
 	jp nz,L_63B4		;6335
-	ld a,(0e1cbh)		;6338
+	ld a,(0e1cbh)		;6338   ; bajando el volumen
 	bit 0,a		;633b
-	call nz,L_67B1		;633d
-	ld a,(0e1cbh)		;6340
+	call nz,L_67B1		;633d   ; bajando el volumen (orden 0x83): cada 0xE1DF cuadros un paso, hasta 0xE1E0 pasos
+	ld a,(0e1cbh)		;6340   ; lee las marcas del motor de sonido
 	bit 4,a		;6343
-	call nz,L_6835		;6345
-	ld a,001h		;6348
-	ld (0e1e4h),a		;634a
+	call nz,L_6835		;6345   ; con el bit 4 de 0xE1CB (lo pone p04:61AB, al que no llama nadie): el volumen vuelve poco a poco
+	ld a,001h		;6348   ; cada uno de los 8 canales, con su bit en 0xE1E4
+	ld (0e1e4h),a		;634a   ; guarda el canal que se esta tocando (un bit)
 	ld ix,0e000h		;634d
-	call L_63AC		;6351
+	call L_63AC		;6351   ; un canal: si tiene sonido, un cuadro suyo
 	ld a,002h		;6354
-	ld (0e1e4h),a		;6356
+	ld (0e1e4h),a		;6356   ; guarda el canal que se esta tocando (un bit)
 	ld ix,0e033h		;6359
-	call L_63AC		;635d
+	call L_63AC		;635d   ; un canal: si tiene sonido, un cuadro suyo
 	ld a,004h		;6360
-	ld (0e1e4h),a		;6362
+	ld (0e1e4h),a		;6362   ; guarda el canal que se esta tocando (un bit)
 	ld ix,0e066h		;6365
-	call L_63AC		;6369
+	call L_63AC		;6369   ; un canal: si tiene sonido, un cuadro suyo
 	ld a,008h		;636c
-	ld (0e1e4h),a		;636e
+	ld (0e1e4h),a		;636e   ; guarda el canal que se esta tocando (un bit)
 	ld ix,0e099h		;6371
-	call L_63AC		;6375
+	call L_63AC		;6375   ; un canal: si tiene sonido, un cuadro suyo
 	ld a,010h		;6378
-	ld (0e1e4h),a		;637a
+	ld (0e1e4h),a		;637a   ; guarda el canal que se esta tocando (un bit)
 	ld ix,0e0cch		;637d
-	call L_63AC		;6381
+	call L_63AC		;6381   ; un canal: si tiene sonido, un cuadro suyo
 	ld a,020h		;6384
-	ld (0e1e4h),a		;6386
+	ld (0e1e4h),a		;6386   ; guarda el canal que se esta tocando (un bit)
 	ld ix,0e0ffh		;6389
-	call L_63AC		;638d
+	call L_63AC		;638d   ; un canal: si tiene sonido, un cuadro suyo
 	ld a,040h		;6390
-	ld (0e1e4h),a		;6392
+	ld (0e1e4h),a		;6392   ; guarda el canal que se esta tocando (un bit)
 	ld ix,0e132h		;6395
-	call L_63AC		;6399
+	call L_63AC		;6399   ; un canal: si tiene sonido, un cuadro suyo
 	ld a,080h		;639c
-	ld (0e1e4h),a		;639e
+	ld (0e1e4h),a		;639e   ; guarda el canal que se esta tocando (un bit)
 	ld ix,0e165h		;63a1
-	call L_63AC		;63a5
-	call L_6B98		;63a8
+	call L_63AC		;63a5   ; un canal: si tiene sonido, un cuadro suyo
+	call L_6B98		;63a8   ; y todo al PSG y al SCC
 	ret			;63ab
 L_63AC:
-	ld a,(ix+000h)		;63ac
+	ld a,(ix+000h)		;63ac   ; un canal: si tiene sonido, un cuadro suyo
 	or a			;63af
-	call nz,L_63CC		;63b0
+	call nz,L_63CC		;63b0   ; un cuadro del canal IX: si se acaba la nota, la siguiente de la partitura
 	ret			;63b3
 L_63B4:
-	ld a,008h		;63b4
-	ld (0e1e4h),a		;63b6
+	ld a,008h		;63b4   ; en pausa: el canal 3 y nada mas
+	ld (0e1e4h),a		;63b6   ; guarda el canal que se esta tocando (un bit)
 	ld ix,0e099h		;63b9
-	call L_63AC		;63bd
+	call L_63AC		;63bd   ; un canal: si tiene sonido, un cuadro suyo
 	ld a,0bfh		;63c0
-	ld (0e1e3h),a		;63c2
+	ld (0e1e3h),a		;63c2   ; guarda el registro 7 del PSG (los canales y el ruido)
 	call L_6975		;63c5
-	call L_6B98		;63c8
+	call L_6B98		;63c8   ; manda todo al PSG y al SCC
 	ret			;63cb
 L_63CC:
-	dec (ix+004h)		;63cc
+	dec (ix+004h)		;63cc   ; un cuadro del canal IX: si se acaba la nota, la siguiente de la partitura
 	jp nz,L_65E2		;63cf
-	bit 6,(ix+00dh)		;63d2
+	bit 6,(ix+00dh)		;63d2   ; si no, los efectos de la nota que suena
 	jr z,L_63DC		;63d6
-	set 5,(ix+00dh)		;63d8
+	set 5,(ix+00dh)		;63d8   ; pone a uno el bit 5 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 L_63DC:
-	ld l,(ix+002h)		;63dc
-	ld h,(ix+003h)		;63df
+	ld l,(ix+002h)		;63dc   ; lee la partitura
+	ld h,(ix+003h)		;63df   ; lee por donde va la partitura (alto)
 L_63E2:
-	ld a,(hl)			;63e2
+	ld a,(hl)			;63e2   ; 0xFF: se acaba el sonido del canal
 	cp 0ffh		;63e3
 	jp z,L_684D		;63e5
-	cp 0d0h		;63e8
+	cp 0d0h		;63e8   ; 0xD0 o mas: una orden, y se sigue leyendo
 	jr c,L_63F3		;63ea
-	call L_688E		;63ec
+	call L_688E		;63ec   ; una orden de la partitura: de 0xD0 a 0xDF por p04:6AF8; de 0xE0 a 0xFE por la tabla 0x68A3
 	inc hl			;63ef
 	jp L_63E2		;63f0
 L_63F3:
-	bit 0,(ix+009h)		;63f3
+	bit 0,(ix+009h)		;63f3   ; una nota, segun el modo del canal
 	jp nz,L_640A		;63f7
-	bit 1,(ix+009h)		;63fa
+	bit 1,(ix+009h)		;63fa   ; mira el bit 1 de el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
 	jp nz,L_648D		;63fe
-	ld a,(ix+009h)		;6401
+	ld a,(ix+009h)		;6401   ; lee el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
 	and 01ch		;6404
 	jp nz,L_6506		;6406
 	ret			;6409
 L_640A:
-	ld a,(hl)			;640a
+	ld a,(hl)			;640a   ; modo 0: un byte [nota][duracion]
 	and 00fh		;640b
-	ld b,a			;640d
-	ld a,(ix+014h)		;640e
+	ld b,a			;640d   ; la duracion x el multiplicador (orden 0xE9)
+	ld a,(ix+014h)		;640e   ; lee el multiplicador de la duracion (orden 0xE9)
 	jr z,L_6417		;6411
 	ld e,a			;6413
 L_6414:
 	add a,e			;6414
 	djnz L_6414		;6415
 L_6417:
-	ld (ix+004h),a		;6417
-	ld a,(hl)			;641a
+	ld (ix+004h),a		;6417   ; guarda los cuadros que le quedan a la nota
+	ld a,(hl)			;641a   ; la nota (cifra alta)
 	and 0f0h		;641b
 	rrca			;641d
 	rrca			;641e
 	rrca			;641f
 	rrca			;6420
-	call L_67A9		;6421
-	bit 7,(ix+009h)		;6424
+	call L_67A9		;6421   ; la partitura sigue en el byte siguiente
+	bit 7,(ix+009h)		;6424   ; mira el bit 7 de el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
 	ret nz			;6428
-	cp 00ch		;6429
+	cp 00ch		;6429   ; notas 12-15: silencio
 	jr nc,L_6477		;642b
-	ld hl,06480h		;642d
+	ld hl,06480h		;642d   ; el divisor de la nota (tabla 0x6480)
 	ld e,a			;6430
 	ld d,000h		;6431
 	add hl,de			;6433
 	ld l,(hl)			;6434
 	ld h,000h		;6435
-	ld a,(ix+016h)		;6437
+	ld a,(ix+016h)		;6437   ; y se dobla segun la octava
 	or a			;643a
 	jr z,L_6453		;643b
-	bit 7,(ix+00dh)		;643d
+	bit 7,(ix+00dh)		;643d   ; mira el bit 7 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	jr z,L_644F		;6441
-	ld a,(ix+02fh)		;6443
+	ld a,(ix+02fh)		;6443   ; lee el operando de la orden 0xDC
 	ld b,a			;6446
-	ld a,(ix+016h)		;6447
+	ld a,(ix+016h)		;6447   ; lee la octava (ordenes 0xD0-0xD5)
 	sub b			;644a
 	jr z,L_6453		;644b
 	jr c,L_6453		;644d
@@ -534,23 +534,23 @@ L_6450:
 	add hl,hl			;6450
 	djnz L_6450		;6451
 L_6453:
-	ld (ix+010h),l		;6453
-	ld (ix+011h),h		;6456
-	ld e,(ix+015h)		;6459
-	ld a,(0e1cbh)		;645c
+	ld (ix+010h),l		;6453   ; el periodo de la nota
+	ld (ix+011h),h		;6456   ; guarda el periodo de la nota (alto)
+	ld e,(ix+015h)		;6459   ; el volumen, menos lo que baje la orden 0x83
+	ld a,(0e1cbh)		;645c   ; lee las marcas del motor de sonido
 	and 011h		;645f
-	call nz,L_6811		;6461
-	ld (ix+012h),e		;6464
-	ld a,(ix+00dh)		;6467
+	call nz,L_6811		;6461   ; el volumen menos lo que se ha bajado (0xE1E2)
+	ld (ix+012h),e		;6464   ; guarda el volumen de la nota
+	ld a,(ix+00dh)		;6467   ; lee las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	and 0f0h		;646a
-	ld (ix+00dh),a		;646c
-	set 1,(ix+00dh)		;646f
-	call L_6591		;6473
+	ld (ix+00dh),a		;646c   ; guarda las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
+	set 1,(ix+00dh)		;646f   ; pone a uno el bit 1 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
+	call L_6591		;6473   ; y la nota empieza
 	ret			;6476
 L_6477:
-	ld a,(ix+00dh)		;6477
+	ld a,(ix+00dh)		;6477   ; silencio
 	and 0f0h		;647a
-	ld (ix+00dh),a		;647c
+	ld (ix+00dh),a		;647c   ; guarda las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ret			;647f
 
 ; ----------------------------------------------------------------------
@@ -567,15 +567,15 @@ DATA_notas_psg:
 
 
 L_648D:
-	ld a,(ix+00dh)		;648d
+	ld a,(ix+00dh)		;648d   ; modo 1: dos bytes [periodo alto | duracion][periodo bajo], o uno segun IX+0D
 	and 003h		;6490
 	jr z,L_64F7		;6492
 	cp 001h		;6494
 	jr z,L_64CE		;6496
 	ld a,(hl)			;6498
-	bit 6,(ix+00eh)		;6499
+	bit 6,(ix+00eh)		;6499   ; mira el bit 6 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	jr nz,L_64BA		;649d
-	bit 5,(ix+00eh)		;649f
+	bit 5,(ix+00eh)		;649f   ; mira el bit 5 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	jr nz,L_64BF		;64a3
 	and 0f0h		;64a5
 	ld b,a			;64a7
@@ -583,8 +583,8 @@ L_648D:
 	ld d,a			;64a9
 	inc hl			;64aa
 	ld a,(hl)			;64ab
-	ld (ix+010h),a		;64ac
-	ld (ix+011h),d		;64af
+	ld (ix+010h),a		;64ac   ; guarda el periodo de la nota (bajo)
+	ld (ix+011h),d		;64af   ; guarda el periodo de la nota (alto)
 	ld a,b			;64b2
 	rrca			;64b3
 	rrca			;64b4
@@ -593,7 +593,7 @@ L_648D:
 	ld b,a			;64b7
 	jr L_64D2		;64b8
 L_64BA:
-	ld (ix+010h),a		;64ba
+	ld (ix+010h),a		;64ba   ; guarda el periodo de la nota (bajo)
 	jr L_64E6		;64bd
 L_64BF:
 	and 0f0h		;64bf
@@ -604,42 +604,42 @@ L_64BF:
 	ld b,a			;64c5
 	ld a,(hl)			;64c6
 	and 00fh		;64c7
-	ld (ix+011h),a		;64c9
+	ld (ix+011h),a		;64c9   ; guarda el periodo de la nota (alto)
 	jr L_64D2		;64cc
 L_64CE:
-	ld a,(hl)			;64ce
+	ld a,(hl)			;64ce   ; el volumen en la cifra baja
 	and 00fh		;64cf
 	ld b,a			;64d1
 L_64D2:
-	ld a,(0e1e4h)		;64d2
+	ld a,(0e1e4h)		;64d2   ; el canal 2 en modo de ruido: volumen 0x10 (envolvente)
 	cp 008h		;64d5
 	jr nc,L_64E1		;64d7
-	bit 2,(ix+00dh)		;64d9
+	bit 2,(ix+00dh)		;64d9   ; mira el bit 2 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	jr z,L_64E1		;64dd
 	ld b,010h		;64df
 L_64E1:
 	inc b			;64e1
 	inc b			;64e2
-	ld (ix+012h),b		;64e3
+	ld (ix+012h),b		;64e3   ; guarda el volumen de la nota
 L_64E6:
-	ld e,(ix+012h)		;64e6
-	ld a,(0e1cbh)		;64e9
+	ld e,(ix+012h)		;64e6   ; lee el volumen de la nota
+	ld a,(0e1cbh)		;64e9   ; lee las marcas del motor de sonido
 	and 011h		;64ec
-	call nz,L_6811		;64ee
-	ld (ix+012h),e		;64f1
-	call L_6591		;64f4
+	call nz,L_6811		;64ee   ; el volumen menos lo que se ha bajado (0xE1E2)
+	ld (ix+012h),e		;64f1   ; guarda el volumen de la nota
+	call L_6591		;64f4   ; la nota empieza: el periodo, la envolvente desde el principio y el volumen
 L_64F7:
-	bit 7,(ix+009h)		;64f7
+	bit 7,(ix+009h)		;64f7   ; la duracion fija de IX+13
 	ret nz			;64fb
-	call L_67A9		;64fc
-	ld a,(ix+013h)		;64ff
-	ld (ix+004h),a		;6502
+	call L_67A9		;64fc   ; apunta por donde va la partitura
+	ld a,(ix+013h)		;64ff   ; lee la duracion fija (ordenes 0xE1-0xE3)
+	ld (ix+004h),a		;6502   ; guarda los cuadros que le quedan a la nota
 	ret			;6505
 L_6506:
-	set 7,(ix+009h)		;6506
-	call L_640A		;650a
+	set 7,(ix+009h)		;6506   ; modo bateria: la nota elige un guion de la tabla del modo
+	call L_640A		;650a   ; modo 0: un byte [nota][duracion]
 	ld b,a			;650d
-	call L_653D		;650e
+	call L_653D		;650e   ; la tabla de guiones segun el modo (bits 2-4) y la octava (IX+2C)
 	ld a,b			;6511
 	add a,a			;6512
 	ld e,a			;6513
@@ -651,26 +651,26 @@ L_6506:
 	ex de,hl			;651a
 	ld a,(hl)			;651b
 L_651C:
-	set 1,(ix+009h)		;651c
-	call L_63E2		;6520
-	res 1,(ix+009h)		;6523
-	res 7,(ix+009h)		;6527
-	ld a,(ix+013h)		;652b
-	ld (ix+019h),a		;652e
+	set 1,(ix+009h)		;651c   ; lee el guion de bateria hasta su primera nota
+	call L_63E2		;6520   ; 0xFF: se acaba el sonido del canal
+	res 1,(ix+009h)		;6523   ; pone a cero el bit 1 de el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
+	res 7,(ix+009h)		;6527   ; pone a cero el bit 7 de el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
+	ld a,(ix+013h)		;652b   ; y el resto, en los cuadros siguientes
+	ld (ix+019h),a		;652e   ; guarda la cuenta del guion de bateria
 	inc hl			;6531
-	ld (ix+017h),l		;6532
-	ld (ix+018h),h		;6535
-	set 0,(ix+00eh)		;6538
+	ld (ix+017h),l		;6532   ; guarda por donde va el guion de bateria (bajo)
+	ld (ix+018h),h		;6535   ; guarda por donde va el guion de bateria (alto)
+	set 0,(ix+00eh)		;6538   ; pone a uno el bit 0 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ret			;653c
 L_653D:
-	bit 2,(ix+009h)		;653d
+	bit 2,(ix+009h)		;653d   ; la tabla de guiones segun el modo (bits 2-4) y la octava (IX+2C)
 	jp nz,L_6552		;6541
-	bit 3,(ix+009h)		;6544
+	bit 3,(ix+009h)		;6544   ; mira el bit 3 de el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
 	jp nz,L_6567		;6548
-	bit 4,(ix+009h)		;654b
+	bit 4,(ix+009h)		;654b   ; mira el bit 4 de el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
 	jp nz,L_657C		;654f
 L_6552:
-	ld a,(ix+02ch)		;6552
+	ld a,(ix+02ch)		;6552   ; lee la octava de la bateria
 	cp 000h		;6555
 	jp z,L_655F		;6557
 	cp 001h		;655a
@@ -682,7 +682,7 @@ L_6563:
 	ld hl,077e1h		;6563
 	ret			;6566
 L_6567:
-	ld a,(ix+02ch)		;6567
+	ld a,(ix+02ch)		;6567   ; lee la octava de la bateria
 	cp 000h		;656a
 	jp z,L_6574		;656c
 	cp 001h		;656f
@@ -694,7 +694,7 @@ L_6578:
 	ld hl,07813h		;6578
 	ret			;657b
 L_657C:
-	ld a,(ix+02ch)		;657c
+	ld a,(ix+02ch)		;657c   ; lee la octava de la bateria
 	cp 000h		;657f
 	jp z,L_6589		;6581
 	cp 001h		;6584
@@ -706,106 +706,106 @@ L_658D:
 	ld hl,07845h		;658d
 	ret			;6590
 L_6591:
-	call L_6627		;6591
-	res 4,(ix+00eh)		;6594
-	ld a,(ix+00fh)		;6598
+	call L_6627		;6591   ; la nota empieza: el periodo, la envolvente desde el principio y el volumen
+	res 4,(ix+00eh)		;6594   ; pone a cero el bit 4 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
+	ld a,(ix+00fh)		;6598   ; lee las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	and 0d7h		;659b
-	ld (ix+00fh),a		;659d
+	ld (ix+00fh),a		;659d   ; guarda las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	xor a			;65a0
-	ld (ix+01dh),a		;65a1
-	ld (ix+01eh),a		;65a4
-	ld (ix+01fh),a		;65a7
-	ld (ix+020h),a		;65aa
-	set 2,(ix+00fh)		;65ad
-	ld a,(ix+012h)		;65b1
-	bit 7,(ix+00eh)		;65b4
+	ld (ix+01dh),a		;65a1   ; guarda el sentido del trino
+	ld (ix+01eh),a		;65a4   ; guarda la cuenta del trino
+	ld (ix+01fh),a		;65a7   ; guarda la cuenta de la envolvente
+	ld (ix+020h),a		;65aa   ; guarda los pasos de la envolvente
+	set 2,(ix+00fh)		;65ad   ; pone a uno el bit 2 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
+	ld a,(ix+012h)		;65b1   ; con la orden 0xF7, el volumen menos IX+29
+	bit 7,(ix+00eh)		;65b4   ; mira el bit 7 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	jr z,L_65C1		;65b8
-	ld e,(ix+029h)		;65ba
+	ld e,(ix+029h)		;65ba   ; lee lo que se le resta al volumen (orden 0xF7)
 	sub e			;65bd
 	call m,L_65E0		;65be
 L_65C1:
-	ld (ix+00ch),a		;65c1
-	ld a,(0e1e4h)		;65c4
+	ld (ix+00ch),a		;65c1   ; guarda el volumen que suena
+	ld a,(0e1e4h)		;65c4   ; los canales del PSG con envolvente no tocan el volumen
 	cp 008h		;65c7
 	jr nc,L_65D0		;65c9
-	bit 2,(ix+00dh)		;65cb
+	bit 2,(ix+00dh)		;65cb   ; mira el bit 2 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ret nz			;65cf
 L_65D0:
-	bit 1,(ix+00fh)		;65d0
+	bit 1,(ix+00fh)		;65d0   ; mira el bit 1 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret z			;65d4
-	ld a,(ix+025h)		;65d5
-	ld (ix+00ch),a		;65d8
-	res 2,(ix+00fh)		;65db
+	ld a,(ix+025h)		;65d5   ; lee el volumen de la orden 0xED
+	ld (ix+00ch),a		;65d8   ; guarda el volumen que suena
+	res 2,(ix+00fh)		;65db   ; pone a cero el bit 2 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;65df
 L_65E0:
 	xor a			;65e0
 	ret			;65e1
 L_65E2:
-	bit 0,(ix+00eh)		;65e2
+	bit 0,(ix+00eh)		;65e2   ; los efectos de la nota mientras suena: guion de bateria, deslizar, trino y envolvente
 	jp nz,L_65FF		;65e6
-	bit 6,(ix+00dh)		;65e9
-	call nz,L_6738		;65ed
-	bit 2,(ix+00eh)		;65f0
-	call nz,L_6642		;65f4
-	bit 0,(ix+00fh)		;65f7
-	call nz,L_6690		;65fb
+	bit 6,(ix+00dh)		;65e9   ; mira el bit 6 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
+	call nz,L_6738		;65ed   ; el deslizar del periodo (orden 0xD8)
+	bit 2,(ix+00eh)		;65f0   ; mira el bit 2 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
+	call nz,L_6642		;65f4   ; el trino: cada IX+1B cuadros el periodo sube o baja IX+1C
+	bit 0,(ix+00fh)		;65f7   ; mira el bit 0 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
+	call nz,L_6690		;65fb   ; la envolvente del volumen
 	ret			;65fe
 L_65FF:
-	dec (ix+019h)		;65ff
+	dec (ix+019h)		;65ff   ; el guion de bateria: cada IX+19 cuadros su nota siguiente
 	ret nz			;6602
-	ld l,(ix+017h)		;6603
-	ld h,(ix+018h)		;6606
+	ld l,(ix+017h)		;6603   ; lee por donde va el guion de bateria (bajo)
+	ld h,(ix+018h)		;6606   ; lee por donde va el guion de bateria (alto)
 	ld a,(hl)			;6609
 	cp 0ffh		;660a
 	jr z,L_6616		;660c
-	set 7,(ix+009h)		;660e
-	call L_651C		;6612
+	set 7,(ix+009h)		;660e   ; pone a uno el bit 7 de el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
+	call L_651C		;6612   ; lee el guion de bateria hasta su primera nota
 	ret			;6615
 L_6616:
-	res 0,(ix+00eh)		;6616
+	res 0,(ix+00eh)		;6616   ; 0xFF: se acaba el guion
 	xor a			;661a
-	ld (ix+00ch),a		;661b
-	ld a,(ix+00dh)		;661e
+	ld (ix+00ch),a		;661b   ; guarda el volumen que suena
+	ld a,(ix+00dh)		;661e   ; lee las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	and 0f0h		;6621
-	ld (ix+00dh),a		;6623
+	ld (ix+00dh),a		;6623   ; guarda las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ret			;6626
 L_6627:
-	ld e,(ix+010h)		;6627
-	ld d,(ix+011h)		;662a
-	bit 1,(ix+00eh)		;662d
+	ld e,(ix+010h)		;6627   ; el periodo que suena = el de la nota + el desafinado (orden 0xEE)
+	ld d,(ix+011h)		;662a   ; lee el periodo de la nota (alto)
+	bit 1,(ix+00eh)		;662d   ; mira el bit 1 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	jr z,L_663B		;6631
-	ld a,(ix+026h)		;6633
+	ld a,(ix+026h)		;6633   ; lee el desafinado (orden 0xEE)
 	add a,e			;6636
 	ld e,a			;6637
 	jr nc,L_663B		;6638
 	inc d			;663a
 L_663B:
-	ld (ix+00ah),e		;663b
-	ld (ix+00bh),d		;663e
+	ld (ix+00ah),e		;663b   ; guarda el periodo que suena (bajo)
+	ld (ix+00bh),d		;663e   ; guarda el periodo que suena (alto)
 	ret			;6641
 L_6642:
-	inc (ix+01eh)		;6642
-	ld a,(ix+01eh)		;6645
-	ld b,(ix+00eh)		;6648
+	inc (ix+01eh)		;6642   ; el trino: cada IX+1B cuadros el periodo sube o baja IX+1C
+	ld a,(ix+01eh)		;6645   ; lee la cuenta del trino
+	ld b,(ix+00eh)		;6648   ; lee las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	bit 4,b		;664b
 	jr nz,L_6661		;664d
 	bit 3,b		;664f
 	jr z,L_6661		;6651
-	cp (ix+01ah)		;6653
+	cp (ix+01ah)		;6653   ; compara con la espera del trino (orden 0xF2)
 	ret nz			;6656
-	ld (ix+01eh),000h		;6657
-	set 4,(ix+00eh)		;665b
+	ld (ix+01eh),000h		;6657   ; la cuenta del trino = 0x00
+	set 4,(ix+00eh)		;665b   ; pone a uno el bit 4 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	jr L_6665		;665f
 L_6661:
-	cp (ix+01bh)		;6661
+	cp (ix+01bh)		;6661   ; compara con cada cuanto el trino (orden 0xF1)
 	ret nz			;6664
 L_6665:
-	ld e,(ix+00ah)		;6665
-	ld d,(ix+00bh)		;6668
-	ld b,(ix+01ch)		;666b
-	ld a,(ix+01dh)		;666e
+	ld e,(ix+00ah)		;6665   ; lee el periodo que suena (bajo)
+	ld d,(ix+00bh)		;6668   ; lee el periodo que suena (alto)
+	ld b,(ix+01ch)		;666b   ; lee cuanto sube y baja el trino
+	ld a,(ix+01dh)		;666e   ; lee el sentido del trino
 	cpl			;6671
-	ld (ix+01dh),a		;6672
+	ld (ix+01dh),a		;6672   ; guarda el sentido del trino
 	and a			;6675
 	ld a,e			;6676
 	jr nz,L_6680		;6677
@@ -820,73 +820,73 @@ L_6680:
 	jr nc,L_6685		;6682
 	dec d			;6684
 L_6685:
-	ld (ix+00ah),e		;6685
-	ld (ix+00bh),d		;6688
-	ld (ix+01eh),000h		;668b
+	ld (ix+00ah),e		;6685   ; guarda el periodo que suena (bajo)
+	ld (ix+00bh),d		;6688   ; guarda el periodo que suena (alto)
+	ld (ix+01eh),000h		;668b   ; la cuenta del trino = 0x00
 	ret			;668f
 L_6690:
-	ld a,(0e1e4h)		;6690
+	ld a,(0e1e4h)		;6690   ; la envolvente del volumen
 	cp 008h		;6693
 	jr nc,L_669C		;6695
-	bit 2,(ix+00dh)		;6697
+	bit 2,(ix+00dh)		;6697   ; mira el bit 2 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ret nz			;669b
 L_669C:
-	call L_66A3		;669c
-	ld (ix+00ch),e		;669f
+	call L_66A3		;669c   ; la envolvente: sube hasta el volumen de la nota, cae, se sostiene y se suelta
+	ld (ix+00ch),e		;669f   ; guarda el volumen que suena
 	ret			;66a2
 L_66A3:
-	ld e,(ix+00ch)		;66a3
-	inc (ix+01fh)		;66a6
-	ld b,(ix+01fh)		;66a9
-	ld a,(ix+024h)		;66ac
-	cp (ix+004h)		;66af
+	ld e,(ix+00ch)		;66a3   ; la envolvente: sube hasta el volumen de la nota, cae, se sostiene y se suelta
+	inc (ix+01fh)		;66a6   ; sube la cuenta de la envolvente
+	ld b,(ix+01fh)		;66a9   ; lee la cuenta de la envolvente
+	ld a,(ix+024h)		;66ac   ; lee cuando se suelta la nota
+	cp (ix+004h)		;66af   ; compara con los cuadros que le quedan a la nota
 	call nc,L_6733		;66b2
-	bit 5,(ix+00fh)		;66b5
+	bit 5,(ix+00fh)		;66b5   ; mira el bit 5 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	jr nz,L_6727		;66b9
-	bit 3,(ix+00fh)		;66bb
+	bit 3,(ix+00fh)		;66bb   ; mira el bit 3 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	jr nz,L_66EE		;66bf
-	bit 2,(ix+00fh)		;66c1
+	bit 2,(ix+00fh)		;66c1   ; mira el bit 2 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	jr nz,L_66DA		;66c5
-	ld a,e			;66c7
+	ld a,e			;66c7   ; subiendo
 	inc a			;66c8
 	ld e,a			;66c9
-	cp (ix+012h)		;66ca
+	cp (ix+012h)		;66ca   ; compara con el volumen de la nota
 	ret c			;66cd
-	set 2,(ix+00fh)		;66ce
-	ld e,(ix+012h)		;66d2
-	ld (ix+01fh),000h		;66d5
+	set 2,(ix+00fh)		;66ce   ; pone a uno el bit 2 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
+	ld e,(ix+012h)		;66d2   ; lee el volumen de la nota
+	ld (ix+01fh),000h		;66d5   ; la cuenta de la envolvente = 0x00
 	ret			;66d9
 L_66DA:
-	ld a,e			;66da
+	ld a,e			;66da   ; bajando hasta la fase siguiente
 	dec a			;66db
 	jp m,L_66E0		;66dc
 	ld e,a			;66df
 L_66E0:
 	ld a,b			;66e0
-	cp (ix+021h)		;66e1
+	cp (ix+021h)		;66e1   ; compara con la subida de la envolvente (orden 0xEB)
 	ret c			;66e4
-	ld (ix+01fh),000h		;66e5
-	set 3,(ix+00fh)		;66e9
+	ld (ix+01fh),000h		;66e5   ; la cuenta de la envolvente = 0x00
+	set 3,(ix+00fh)		;66e9   ; pone a uno el bit 3 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;66ed
 L_66EE:
-	bit 4,(ix+00fh)		;66ee
+	bit 4,(ix+00fh)		;66ee   ; cayendo paso a paso
 	jp nz,L_6711		;66f2
 	ld a,b			;66f5
-	cp (ix+022h)		;66f6
+	cp (ix+022h)		;66f6   ; compara con la caida de la envolvente
 	ret nz			;66f9
 	ld a,e			;66fa
 	dec a			;66fb
 	ret m			;66fc
 	ld e,a			;66fd
-	inc (ix+020h)		;66fe
-	ld a,(ix+020h)		;6701
-	cp (ix+023h)		;6704
-	ld (ix+01fh),000h		;6707
+	inc (ix+020h)		;66fe   ; sube los pasos de la envolvente
+	ld a,(ix+020h)		;6701   ; lee los pasos de la envolvente
+	cp (ix+023h)		;6704   ; compara con cuantos pasos cae
+	ld (ix+01fh),000h		;6707   ; la cuenta de la envolvente = 0x00
 	ret nz			;670b
-	set 5,(ix+00fh)		;670c
+	set 5,(ix+00fh)		;670c   ; pone a uno el bit 5 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;6710
 L_6711:
-	ld a,(ix+022h)		;6711
+	ld a,(ix+022h)		;6711   ; lee la caida de la envolvente
 	ld d,a			;6714
 	ld a,e			;6715
 	sub d			;6716
@@ -895,13 +895,13 @@ L_6711:
 	ld e,a			;671c
 L_671D:
 	ld a,b			;671d
-	cp (ix+023h)		;671e
+	cp (ix+023h)		;671e   ; compara con cuantos pasos cae
 	ret nz			;6721
-	set 5,(ix+00fh)		;6722
+	set 5,(ix+00fh)		;6722   ; pone a uno el bit 5 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;6726
 L_6727:
-	ld a,(ix+004h)		;6727
-	cp (ix+024h)		;672a
+	ld a,(ix+004h)		;6727   ; soltada: baja hasta 0
+	cp (ix+024h)		;672a   ; compara con cuando se suelta la nota
 	ret nc			;672d
 	ld a,e			;672e
 	dec a			;672f
@@ -909,71 +909,71 @@ L_6727:
 	ld e,a			;6731
 	ret			;6732
 L_6733:
-	set 5,(ix+00fh)		;6733
+	set 5,(ix+00fh)		;6733   ; pone a uno el bit 5 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;6737
 L_6738:
-	nop			;6738
-	bit 5,(ix+00dh)		;6739
+	nop			;6738   ; el deslizar del periodo (orden 0xD8)
+	bit 5,(ix+00dh)		;6739   ; mira el bit 5 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ret z			;673d
-	bit 3,(ix+031h)		;673e
+	bit 3,(ix+031h)		;673e   ; mira el bit 3 de los pasos del deslizar
 	jr z,L_6768		;6742
-	dec (ix+030h)		;6744
-	bit 3,(ix+030h)		;6747
+	dec (ix+030h)		;6744   ; baja la cuenta del deslizar (orden 0xD8)
+	bit 3,(ix+030h)		;6747   ; mira el bit 3 de la cuenta del deslizar (orden 0xD8)
 	jr z,L_6792		;674b
-	ld a,(ix+030h)		;674d
+	ld a,(ix+030h)		;674d   ; lee la cuenta del deslizar (orden 0xD8)
 	sub 008h		;6750
 	ld b,a			;6752
 	dec b			;6753
-	ld a,(ix+032h)		;6754
+	ld a,(ix+032h)		;6754   ; lee cuanto desliza cada paso
 	ld e,a			;6757
 L_6758:
 	add a,e			;6758
 	djnz L_6758		;6759
 	ld e,a			;675b
 	ld d,000h		;675c
-	ld l,(ix+010h)		;675e
-	ld h,(ix+011h)		;6761
+	ld l,(ix+010h)		;675e   ; lee el periodo de la nota (bajo)
+	ld h,(ix+011h)		;6761   ; lee el periodo de la nota (alto)
 	sbc hl,de		;6764
 	jr L_678B		;6766
 L_6768:
-	ld a,(ix+030h)		;6768
+	ld a,(ix+030h)		;6768   ; lee la cuenta del deslizar (orden 0xD8)
 	or a			;676b
 	jr z,L_6792		;676c
-	dec (ix+030h)		;676e
-	ld a,(ix+030h)		;6771
+	dec (ix+030h)		;676e   ; baja la cuenta del deslizar (orden 0xD8)
+	ld a,(ix+030h)		;6771   ; lee la cuenta del deslizar (orden 0xD8)
 	or a			;6774
 	jr z,L_6792		;6775
 	ld b,a			;6777
-	ld a,(ix+032h)		;6778
+	ld a,(ix+032h)		;6778   ; lee cuanto desliza cada paso
 	ld hl,00000h		;677b
 	ld d,000h		;677e
 L_6780:
 	ld e,a			;6780
 	add hl,de			;6781
 	djnz L_6780		;6782
-	ld e,(ix+010h)		;6784
-	ld d,(ix+011h)		;6787
+	ld e,(ix+010h)		;6784   ; lee el periodo de la nota (bajo)
+	ld d,(ix+011h)		;6787   ; lee el periodo de la nota (alto)
 	add hl,de			;678a
 L_678B:
-	ld (ix+00ah),l		;678b
-	ld (ix+00bh),h		;678e
+	ld (ix+00ah),l		;678b   ; guarda el periodo que suena (bajo)
+	ld (ix+00bh),h		;678e   ; guarda el periodo que suena (alto)
 	ret			;6791
 L_6792:
-	res 5,(ix+00dh)		;6792
-	ld e,(ix+010h)		;6796
-	ld d,(ix+011h)		;6799
-	ld (ix+00ah),e		;679c
-	ld (ix+00bh),d		;679f
-	ld a,(ix+031h)		;67a2
-	ld (ix+030h),a		;67a5
+	res 5,(ix+00dh)		;6792   ; pone a cero el bit 5 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
+	ld e,(ix+010h)		;6796   ; lee el periodo de la nota (bajo)
+	ld d,(ix+011h)		;6799   ; lee el periodo de la nota (alto)
+	ld (ix+00ah),e		;679c   ; guarda el periodo que suena (bajo)
+	ld (ix+00bh),d		;679f   ; guarda el periodo que suena (alto)
+	ld a,(ix+031h)		;67a2   ; lee los pasos del deslizar
+	ld (ix+030h),a		;67a5   ; guarda la cuenta del deslizar (orden 0xD8)
 	ret			;67a8
 L_67A9:
-	inc hl			;67a9
-	ld (ix+002h),l		;67aa
-	ld (ix+003h),h		;67ad
+	inc hl			;67a9   ; apunta por donde va la partitura
+	ld (ix+002h),l		;67aa   ; guarda por donde va la partitura (bajo)
+	ld (ix+003h),h		;67ad   ; guarda por donde va la partitura (alto)
 	ret			;67b0
 L_67B1:
-	ld de,0e1dfh		;67b1
+	ld de,0e1dfh		;67b1   ; bajando el volumen (orden 0x83): cada 0xE1DF cuadros un paso, hasta 0xE1E0 pasos
 	ld a,(de)			;67b4
 	ld b,a			;67b5
 	inc de			;67b6
@@ -990,7 +990,7 @@ L_67B1:
 	ld a,(hl)			;67c4
 	cp c			;67c5
 	ret nz			;67c6
-	ld hl,0e1cbh		;67c7
+	ld hl,0e1cbh		;67c7   ; acabado: se paran todos los canales
 	res 0,(hl)		;67ca
 	xor a			;67cc
 	ld hl,0e1e1h		;67cd
@@ -1003,35 +1003,35 @@ L_67B1:
 	cp e			;67da
 	jr nz,L_67EB		;67db
 	ld ix,0e066h		;67dd
-	call L_684D		;67e1
+	call L_684D		;67e1   ; se acaba el sonido del canal: todo a cero
 	ld ix,0e099h		;67e4
-	call L_684D		;67e8
+	call L_684D		;67e8   ; se acaba el sonido del canal: todo a cero
 L_67EB:
 	ld de,00033h		;67eb
 	ld ix,0e000h		;67ee
-	call L_684D		;67f2
+	call L_684D		;67f2   ; se acaba el sonido del canal: todo a cero
 	add ix,de		;67f5
-	call L_684D		;67f7
+	call L_684D		;67f7   ; se acaba el sonido del canal: todo a cero
 	ld ix,0e0cch		;67fa
-	call L_684D		;67fe
+	call L_684D		;67fe   ; se acaba el sonido del canal: todo a cero
 	add ix,de		;6801
-	call L_684D		;6803
+	call L_684D		;6803   ; se acaba el sonido del canal: todo a cero
 	add ix,de		;6806
-	call L_684D		;6808
+	call L_684D		;6808   ; se acaba el sonido del canal: todo a cero
 	add ix,de		;680b
-	call L_684D		;680d
+	call L_684D		;680d   ; se acaba el sonido del canal: todo a cero
 	ret			;6810
 L_6811:
-	ld a,(0e033h)		;6811
+	ld a,(0e033h)		;6811   ; el volumen menos lo que se ha bajado (0xE1E2)
 	ld b,a			;6814
 	ld a,(0e066h)		;6815
 	cp b			;6818
 	jr z,L_6821		;6819
-	ld a,(0e1e4h)		;681b
+	ld a,(0e1e4h)		;681b   ; lee el canal que se esta tocando (un bit)
 	and 0f3h		;681e
 	ret z			;6820
 L_6821:
-	bit 2,(ix+00dh)		;6821
+	bit 2,(ix+00dh)		;6821   ; mira el bit 2 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	jr nz,L_6832		;6825
 	ld a,(0e1e2h)		;6827
 	ld b,a			;682a
@@ -1045,7 +1045,7 @@ L_6832:
 	ld e,000h		;6832
 	ret			;6834
 L_6835:
-	ld hl,0e1e1h		;6835
+	ld hl,0e1e1h		;6835   ; con el bit 4 de 0xE1CB (lo pone p04:61AB, al que no llama nadie): el volumen vuelve poco a poco
 	inc (hl)			;6838
 	ld a,(hl)			;6839
 	cp 025h		;683a
@@ -1054,29 +1054,29 @@ L_6835:
 	inc hl			;683f
 	dec (hl)			;6840
 	ret nz			;6841
-	ld hl,0e1cbh		;6842
+	ld hl,0e1cbh		;6842   ; apunta a las marcas del motor de sonido
 	res 4,(hl)		;6845
 	ld hl,0e1e1h		;6847
 	ld (hl),000h		;684a
 	ret			;684c
 L_684D:
-	xor a			;684d
-	ld (ix+000h),a		;684e
-	ld (ix+001h),a		;6851
-	ld (ix+005h),a		;6854
-	ld (ix+006h),a		;6857
-	ld (ix+00ah),a		;685a
-	ld (ix+00bh),a		;685d
-	ld (ix+00ch),a		;6860
-	ld (ix+00dh),a		;6863
-	ld (ix+00eh),a		;6866
-	ld (ix+00fh),a		;6869
-	ld a,(0e1e4h)		;686c
+	xor a			;684d   ; se acaba el sonido del canal: todo a cero
+	ld (ix+000h),a		;684e   ; guarda el sonido del canal (0: libre)
+	ld (ix+001h),a		;6851   ; guarda la prioridad del sonido
+	ld (ix+005h),a		;6854   ; guarda la cuenta de la repeticion 0xFB/0xDB
+	ld (ix+006h),a		;6857   ; guarda la cuenta de la repeticion 0xFC
+	ld (ix+00ah),a		;685a   ; guarda el periodo que suena (bajo)
+	ld (ix+00bh),a		;685d   ; guarda el periodo que suena (alto)
+	ld (ix+00ch),a		;6860   ; guarda el volumen que suena
+	ld (ix+00dh),a		;6863   ; guarda las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
+	ld (ix+00eh),a		;6866   ; guarda las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
+	ld (ix+00fh),a		;6869   ; guarda las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
+	ld a,(0e1e4h)		;686c   ; en los canales del PSG, el ruido y la envolvente
 	cp 008h		;686f
 	ret nc			;6871
 	nop			;6872
 	cp 004h		;6873
-	ld hl,0e1e7h		;6875
+	ld hl,0e1e7h		;6875   ; apunta a las marcas del ruido y la envolvente del PSG
 	jr nz,L_6889		;6878
 	res 0,(hl)		;687a
 	res 1,(hl)		;687c
@@ -1092,7 +1092,7 @@ L_6889:
 	res 3,(hl)		;688b
 	ret			;688d
 L_688E:
-	cp 0e0h		;688e
+	cp 0e0h		;688e   ; una orden de la partitura: de 0xD0 a 0xDF por p04:6AF8; de 0xE0 a 0xFE por la tabla 0x68A3
 	jp c,L_6AF8		;6890
 	and 01fh		;6893
 	push hl			;6895
@@ -1124,122 +1124,122 @@ DATA_ordenes:
 
 
 L_68E1:
-	pop hl			;68e1
+	pop hl			;68e1   ; ordenes 0xE0-0xE3: la forma de la nota (IX+0D) y, salvo 0xE0, la duracion fija
 L_68E2:
-	res 6,(ix+00eh)		;68e2
+	res 6,(ix+00eh)		;68e2   ; pone a cero el bit 6 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ld a,(hl)			;68e6
 	and 003h		;68e7
-	ld (ix+00dh),a		;68e9
+	ld (ix+00dh),a		;68e9   ; guarda las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ld b,a			;68ec
 	inc hl			;68ed
 	ld a,(hl)			;68ee
-	ld (ix+013h),a		;68ef
+	ld (ix+013h),a		;68ef   ; guarda la duracion fija (ordenes 0xE1-0xE3)
 	ld a,b			;68f2
 	or a			;68f3
 	ret nz			;68f4
 	dec hl			;68f5
 	ret			;68f6
 L_68F7:
-	pop hl			;68f7
-	ld a,(0e1e4h)		;68f8
+	pop hl			;68f7   ; ordenes 0xE1 y 0xE3 en el canal 2: el ruido
+	ld a,(0e1e4h)		;68f8   ; lee el canal que se esta tocando (un bit)
 	cp 004h		;68fb
-	ld a,(0e1e7h)		;68fd
+	ld a,(0e1e7h)		;68fd   ; lee las marcas del ruido y la envolvente del PSG
 	jr nz,L_690B		;6900
 	set 0,a		;6902
 	res 1,a		;6904
-	ld (0e1e7h),a		;6906
+	ld (0e1e7h),a		;6906   ; guarda las marcas del ruido y la envolvente del PSG
 	jr L_68E2		;6909
 L_690B:
 	set 2,a		;690b
 	res 3,a		;690d
-	ld (0e1e7h),a		;690f
+	ld (0e1e7h),a		;690f   ; guarda las marcas del ruido y la envolvente del PSG
 	jr L_68E2		;6912
 L_6914:
-	pop hl			;6914
+	pop hl			;6914   ; orden 0xE4: el periodo del ruido
 	inc hl			;6915
 	ld a,(hl)			;6916
 	and 01fh		;6917
 	ld b,a			;6919
-	ld a,(0e1e4h)		;691a
+	ld a,(0e1e4h)		;691a   ; lee el canal que se esta tocando (un bit)
 	cp 004h		;691d
 	ld a,b			;691f
 	jr nz,L_6930		;6920
 	ld (0e1e5h),a		;6922
-	ld a,(0e1e7h)		;6925
+	ld a,(0e1e7h)		;6925   ; lee las marcas del ruido y la envolvente del PSG
 	set 0,a		;6928
 	res 1,a		;692a
-	ld (0e1e7h),a		;692c
+	ld (0e1e7h),a		;692c   ; guarda las marcas del ruido y la envolvente del PSG
 	ret			;692f
 L_6930:
 	ld (0e1e6h),a		;6930
-	ld a,(0e1e7h)		;6933
+	ld a,(0e1e7h)		;6933   ; lee las marcas del ruido y la envolvente del PSG
 	set 2,a		;6936
 	res 3,a		;6938
-	ld (0e1e7h),a		;693a
+	ld (0e1e7h),a		;693a   ; guarda las marcas del ruido y la envolvente del PSG
 	ret			;693d
 L_693E:
-	pop hl			;693e
+	pop hl			;693e   ; orden 0xE5: la envolvente del PSG (forma)
 	inc hl			;693f
-	res 3,(ix+00dh)		;6940
+	res 3,(ix+00dh)		;6940   ; pone a cero el bit 3 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ld a,(hl)			;6944
 	ld (0e1e8h),a		;6945
-	ld de,0e1e7h		;6948
+	ld de,0e1e7h		;6948   ; apunta a las marcas del ruido y la envolvente del PSG
 	ld a,(de)			;694b
 	set 5,a		;694c
 	ld (de),a			;694e
 	jp L_6953		;694f
 L_6952:
-	pop hl			;6952
+	pop hl			;6952   ; orden 0xE6: el periodo de la envolvente (alto)
 L_6953:
 	inc hl			;6953
 	ld a,(hl)			;6954
 	ld (0e1eah),a		;6955
-	ld de,0e1e7h		;6958
+	ld de,0e1e7h		;6958   ; apunta a las marcas del ruido y la envolvente del PSG
 	ld a,(de)			;695b
 	set 6,a		;695c
 	ld (de),a			;695e
 	jp L_6963		;695f
 L_6962:
-	pop hl			;6962
+	pop hl			;6962   ; orden 0xE7: el periodo de la envolvente (bajo)
 L_6963:
 	inc hl			;6963
 	ld a,(hl)			;6964
 	ld (0e1e9h),a		;6965
-	ld de,0e1e7h		;6968
+	ld de,0e1e7h		;6968   ; apunta a las marcas del ruido y la envolvente del PSG
 	ld a,(de)			;696b
 	set 7,a		;696c
 	ld (de),a			;696e
-	set 2,(ix+00dh)		;696f
+	set 2,(ix+00dh)		;696f   ; pone a uno el bit 2 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ret			;6973
 L_6974:
-	pop hl			;6974
+	pop hl			;6974   ; orden 0xE8: sin ruido ni envolvente
 L_6975:
-	ld de,0e1e7h		;6975
+	ld de,0e1e7h		;6975   ; apunta a las marcas del ruido y la envolvente del PSG
 	ld a,(de)			;6978
 	and 01fh		;6979
 	ld (de),a			;697b
-	ld a,(ix+00dh)		;697c
+	ld a,(ix+00dh)		;697c   ; lee las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	and 0f3h		;697f
-	ld (ix+00dh),a		;6981
+	ld (ix+00dh),a		;6981   ; guarda las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ret			;6984
 L_6985:
-	pop hl			;6985
+	pop hl			;6985   ; orden 0xE9: el multiplicador de la duracion
 	inc hl			;6986
 	ld a,(hl)			;6987
-	ld (ix+014h),a		;6988
+	ld (ix+014h),a		;6988   ; guarda el multiplicador de la duracion (orden 0xE9)
 	ret			;698b
 L_698C:
-	pop hl			;698c
+	pop hl			;698c   ; orden 0xEA: el volumen del canal
 	inc hl			;698d
 	ld a,(hl)			;698e
-	ld (ix+015h),a		;698f
+	ld (ix+015h),a		;698f   ; guarda el volumen del canal (orden 0xEA)
 	ret			;6992
 L_6993:
-	pop hl			;6993
+	pop hl			;6993   ; orden 0xEB: la envolvente (dos bytes de cuatro cifras)
 	inc hl			;6994
-	ld a,(ix+00fh)		;6995
+	ld a,(ix+00fh)		;6995   ; lee las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	and 080h		;6998
-	ld (ix+00fh),a		;699a
+	ld (ix+00fh),a		;699a   ; guarda las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ld a,(hl)			;699d
 	and 0f0h		;699e
 	rrca			;69a0
@@ -1248,24 +1248,24 @@ L_6993:
 	rrca			;69a3
 	cp 008h		;69a4
 	jp nc,L_69AD		;69a6
-	set 2,(ix+00fh)		;69a9
+	set 2,(ix+00fh)		;69a9   ; pone a uno el bit 2 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 L_69AD:
 	res 3,a		;69ad
 	inc a			;69af
-	bit 2,(ix+00fh)		;69b0
+	bit 2,(ix+00fh)		;69b0   ; mira el bit 2 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	jp nz,L_69BB		;69b4
-	set 1,(ix+00fh)		;69b7
+	set 1,(ix+00fh)		;69b7   ; pone a uno el bit 1 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 L_69BB:
-	ld (ix+021h),a		;69bb
+	ld (ix+021h),a		;69bb   ; guarda la subida de la envolvente (orden 0xEB)
 	ld a,(hl)			;69be
 	and 00fh		;69bf
 	cp 008h		;69c1
 	jp c,L_69CA		;69c3
-	set 4,(ix+00fh)		;69c6
+	set 4,(ix+00fh)		;69c6   ; pone a uno el bit 4 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 L_69CA:
 	res 3,a		;69ca
 	inc a			;69cc
-	ld (ix+022h),a		;69cd
+	ld (ix+022h),a		;69cd   ; guarda la caida de la envolvente
 	inc hl			;69d0
 	ld a,(hl)			;69d1
 	and 0f0h		;69d2
@@ -1273,93 +1273,93 @@ L_69CA:
 	rrca			;69d5
 	rrca			;69d6
 	rrca			;69d7
-	ld (ix+023h),a		;69d8
+	ld (ix+023h),a		;69d8   ; guarda cuantos pasos cae
 	ld a,(hl)			;69db
 	and 00fh		;69dc
-	ld (ix+024h),a		;69de
-	set 0,(ix+00fh)		;69e1
+	ld (ix+024h),a		;69de   ; guarda cuando se suelta la nota
+	set 0,(ix+00fh)		;69e1   ; pone a uno el bit 0 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;69e5
 L_69E6:
-	pop hl			;69e6
-	res 0,(ix+00fh)		;69e7
-	res 1,(ix+00fh)		;69eb
+	pop hl			;69e6   ; orden 0xEC: sin envolvente
+	res 0,(ix+00fh)		;69e7   ; pone a cero el bit 0 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
+	res 1,(ix+00fh)		;69eb   ; pone a cero el bit 1 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;69ef
 L_69F0:
-	pop hl			;69f0
+	pop hl			;69f0   ; orden 0xED: un volumen
 	inc hl			;69f1
 	ld a,(hl)			;69f2
-	ld (ix+025h),a		;69f3
+	ld (ix+025h),a		;69f3   ; guarda el volumen de la orden 0xED
 	ret			;69f6
 L_69F7:
-	pop hl			;69f7
+	pop hl			;69f7   ; orden 0xEE: desafinar
 	inc hl			;69f8
 	ld a,(hl)			;69f9
-	ld (ix+026h),a		;69fa
-	set 1,(ix+00eh)		;69fd
+	ld (ix+026h),a		;69fa   ; guarda el desafinado (orden 0xEE)
+	set 1,(ix+00eh)		;69fd   ; pone a uno el bit 1 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ret			;6a01
 L_6A02:
-	pop hl			;6a02
-	res 1,(ix+00eh)		;6a03
+	pop hl			;6a02   ; orden 0xEF: sin desafinar
+	res 1,(ix+00eh)		;6a03   ; pone a cero el bit 1 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ret			;6a07
 L_6A08:
-	pop hl			;6a08
-	ld a,(ix+00eh)		;6a09
+	pop hl			;6a08   ; orden 0xF0: sin trino ni efectos
+	ld a,(ix+00eh)		;6a09   ; lee las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	and 0e2h		;6a0c
-	ld (ix+00eh),a		;6a0e
+	ld (ix+00eh),a		;6a0e   ; guarda las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ret			;6a11
 L_6A12:
-	pop hl			;6a12
+	pop hl			;6a12   ; orden 0xF1: el trino (cada cuanto y cuanto)
 	inc hl			;6a13
-	ld a,(ix+00eh)		;6a14
+	ld a,(ix+00eh)		;6a14   ; lee las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	or 014h		;6a17
-	ld (ix+00eh),a		;6a19
+	ld (ix+00eh),a		;6a19   ; guarda las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ld a,(hl)			;6a1c
 	and 00fh		;6a1d
-	ld (ix+01ch),a		;6a1f
+	ld (ix+01ch),a		;6a1f   ; guarda cuanto sube y baja el trino
 	ld a,(hl)			;6a22
 	and 0f0h		;6a23
 	rrca			;6a25
 	rrca			;6a26
 	rrca			;6a27
 	rrca			;6a28
-	ld (ix+01bh),a		;6a29
+	ld (ix+01bh),a		;6a29   ; guarda cada cuanto el trino (orden 0xF1)
 	ret			;6a2c
 L_6A2D:
-	pop hl			;6a2d
+	pop hl			;6a2d   ; orden 0xF2: la espera del trino
 	inc hl			;6a2e
 	ld a,(hl)			;6a2f
-	ld (ix+01ah),a		;6a30
-	ld a,(ix+00eh)		;6a33
+	ld (ix+01ah),a		;6a30   ; guarda la espera del trino (orden 0xF2)
+	ld a,(ix+00eh)		;6a33   ; lee las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	or 00ch		;6a36
-	ld (ix+00eh),a		;6a38
+	ld (ix+00eh),a		;6a38   ; guarda las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ret			;6a3b
 L_6A3C:
-	pop hl			;6a3c
-	res 3,(ix+00eh)		;6a3d
+	pop hl			;6a3c   ; orden 0xF3: sin espera del trino
+	res 3,(ix+00eh)		;6a3d   ; pone a cero el bit 3 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ret			;6a41
 L_6A42:
-	pop hl			;6a42
-	set 6,(ix+00eh)		;6a43
+	pop hl			;6a42   ; orden 0xF4: bit 6 de IX+0E
+	set 6,(ix+00eh)		;6a43   ; pone a uno el bit 6 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ret			;6a47
 L_6A48:
-	pop hl			;6a48
-	set 5,(ix+00eh)		;6a49
+	pop hl			;6a48   ; orden 0xF5: bit 5 de IX+0E
+	set 5,(ix+00eh)		;6a49   ; pone a uno el bit 5 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ret			;6a4d
 L_6A4E:
-	pop hl			;6a4e
-	ld a,(ix+00eh)		;6a4f
+	pop hl			;6a4e   ; orden 0xF6: sin los bits 5 y 6
+	ld a,(ix+00eh)		;6a4f   ; lee las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	and 09fh		;6a52
-	ld (ix+00eh),a		;6a54
+	ld (ix+00eh),a		;6a54   ; guarda las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	ret			;6a57
 L_6A58:
-	pop hl			;6a58
-	set 7,(ix+00eh)		;6a59
+	pop hl			;6a58   ; orden 0xF7: restar al volumen
+	set 7,(ix+00eh)		;6a59   ; pone a uno el bit 7 de las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
 	inc hl			;6a5d
 	ld a,(hl)			;6a5e
-	ld (ix+029h),a		;6a5f
+	ld (ix+029h),a		;6a5f   ; guarda lo que se le resta al volumen (orden 0xF7)
 	ret			;6a62
 L_6A63:
-	pop hl			;6a63
+	pop hl			;6a63   ; orden 0xF8: la forma de onda del SCC (tabla 0x7210)
 	inc hl			;6a64
 	ld a,(hl)			;6a65
 	ld de,07210h		;6a66
@@ -1370,33 +1370,33 @@ L_6A63:
 	inc d			;6a6e
 L_6A6F:
 	ld a,(de)			;6a6f
-	ld (ix+027h),a		;6a70
+	ld (ix+027h),a		;6a70   ; guarda la forma de onda del SCC (bajo, orden 0xF8)
 	inc de			;6a73
 	ld a,(de)			;6a74
-	ld (ix+028h),a		;6a75
-	set 7,(ix+00fh)		;6a78
+	ld (ix+028h),a		;6a75   ; guarda la forma de onda del SCC (alto)
+	set 7,(ix+00fh)		;6a78   ; pone a uno el bit 7 de las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;6a7c
 L_6A7D:
-	pop hl			;6a7d
-	call L_6A9C		;6a7e
-	ld (ix+007h),e		;6a81
-	ld (ix+008h),d		;6a84
+	pop hl			;6a7d   ; orden 0xF9: llamada (la vuelta en IX+07)
+	call L_6A9C		;6a7e   ; salta a la palabra de detras
+	ld (ix+007h),e		;6a81   ; guarda la vuelta de la llamada 0xF9 (bajo)
+	ld (ix+008h),d		;6a84   ; guarda la vuelta de la llamada 0xF9 (alto)
 	ret			;6a87
 L_6A88:
-	pop hl			;6a88
-	ld l,(ix+007h)		;6a89
-	ld h,(ix+008h)		;6a8c
+	pop hl			;6a88   ; orden 0xFA: vuelta de la llamada
+	ld l,(ix+007h)		;6a89   ; lee la vuelta de la llamada 0xF9 (bajo)
+	ld h,(ix+008h)		;6a8c   ; lee la vuelta de la llamada 0xF9 (alto)
 	ret			;6a8f
 L_6A90:
-	pop hl			;6a90
+	pop hl			;6a90   ; orden 0xFB: repetir [veces][a donde]
 	inc hl			;6a91
-	ld a,(ix+005h)		;6a92
+	ld a,(ix+005h)		;6a92   ; lee la cuenta de la repeticion 0xFB/0xDB
 	inc a			;6a95
 	cp (hl)			;6a96
 	jr z,L_6AA3		;6a97
-	ld (ix+005h),a		;6a99
+	ld (ix+005h),a		;6a99   ; guarda la cuenta de la repeticion 0xFB/0xDB
 L_6A9C:
-	inc hl			;6a9c
+	inc hl			;6a9c   ; salta a la palabra de detras
 	ld e,(hl)			;6a9d
 	inc hl			;6a9e
 	ld d,(hl)			;6a9f
@@ -1406,59 +1406,59 @@ L_6A9C:
 L_6AA3:
 	inc hl			;6aa3
 	inc hl			;6aa4
-	ld (ix+005h),000h		;6aa5
+	ld (ix+005h),000h		;6aa5   ; la cuenta de la repeticion 0xFB/0xDB = 0x00
 	ret			;6aa9
 L_6AAA:
-	pop hl			;6aaa
+	pop hl			;6aaa   ; orden 0xFC: otra repeticion, con su propia cuenta
 	inc hl			;6aab
-	ld a,(ix+006h)		;6aac
+	ld a,(ix+006h)		;6aac   ; lee la cuenta de la repeticion 0xFC
 	inc a			;6aaf
 	cp (hl)			;6ab0
 	jr z,L_6AB8		;6ab1
-	ld (ix+006h),a		;6ab3
+	ld (ix+006h),a		;6ab3   ; guarda la cuenta de la repeticion 0xFC
 	jr L_6A9C		;6ab6
 L_6AB8:
 	inc hl			;6ab8
 	inc hl			;6ab9
-	ld (ix+006h),000h		;6aba
+	ld (ix+006h),000h		;6aba   ; la cuenta de la repeticion 0xFC = 0x00
 	ret			;6abe
 L_6ABF:
-	pop hl			;6abf
+	pop hl			;6abf   ; orden 0xFD: salto
 	jr L_6A9C		;6ac0
 L_6AC2:
-	pop hl			;6ac2
+	pop hl			;6ac2   ; orden 0xFE: el modo de las notas
 	inc hl			;6ac3
-	ld b,(ix+009h)		;6ac4
+	ld b,(ix+009h)		;6ac4   ; lee el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
 	ld a,(hl)			;6ac7
-	ld (ix+009h),a		;6ac8
+	ld (ix+009h),a		;6ac8   ; guarda el modo de las notas (bit 0 un byte, 1 dos, 2-4 bateria)
 	cp 001h		;6acb
 	ld a,b			;6acd
 	jp z,L_6AE8		;6ace
 	cp 001h		;6ad1
 	ret nz			;6ad3
-	ld a,(ix+00eh)		;6ad4
-	ld (ix+02ah),a		;6ad7
-	ld a,(ix+00fh)		;6ada
-	ld (ix+02bh),a		;6add
+	ld a,(ix+00eh)		;6ad4   ; lee las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
+	ld (ix+02ah),a		;6ad7   ; guarda las marcas de efectos guardadas (orden 0xFE)
+	ld a,(ix+00fh)		;6ada   ; lee las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
+	ld (ix+02bh),a		;6add   ; guarda las marcas de envolvente guardadas
 	xor a			;6ae0
-	ld (ix+00eh),a		;6ae1
-	ld (ix+00fh),a		;6ae4
+	ld (ix+00eh),a		;6ae1   ; guarda las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
+	ld (ix+00fh),a		;6ae4   ; guarda las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;6ae7
 L_6AE8:
 	cp 001h		;6ae8
 	ret z			;6aea
-	ld a,(ix+02ah)		;6aeb
-	ld (ix+00eh),a		;6aee
-	ld a,(ix+02bh)		;6af1
-	ld (ix+00fh),a		;6af4
+	ld a,(ix+02ah)		;6aeb   ; lee las marcas de efectos guardadas (orden 0xFE)
+	ld (ix+00eh),a		;6aee   ; guarda las marcas de efectos (bit 0 guion de bateria, 1 desafinar, 2-4 trino, 5-6, 7)
+	ld a,(ix+02bh)		;6af1   ; lee las marcas de envolvente guardadas
+	ld (ix+00fh),a		;6af4   ; guarda las marcas de la envolvente (bit 0 en marcha, 1-5 su fase, 7 onda nueva)
 	ret			;6af7
 L_6AF8:
-	ld a,(hl)			;6af8
+	ld a,(hl)			;6af8   ; ordenes 0xD0-0xDF por la cifra baja
 	and 00fh		;6af9
 	cp 006h		;6afb
 	jr nc,L_6B06		;6afd
-	ld (ix+016h),a		;6aff
-	ld (ix+02ch),a		;6b02
+	ld (ix+016h),a		;6aff   ; 0xD0-0xD5: la octava
+	ld (ix+02ch),a		;6b02   ; guarda la octava de la bateria
 	ret			;6b05
 L_6B06:
 	cp 007h		;6b06
@@ -1479,12 +1479,12 @@ L_6B06:
 	jr z,L_6B8D		;6b24
 	jr L_6B93		;6b26
 L_6B28:
-	res 6,(ix+00dh)		;6b28
-	res 5,(ix+00dh)		;6b2c
+	res 6,(ix+00dh)		;6b28   ; 0xD7: sin deslizar
+	res 5,(ix+00dh)		;6b2c   ; pone a cero el bit 5 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	ret			;6b30
 L_6B31:
-	set 6,(ix+00dh)		;6b31
-	set 5,(ix+00dh)		;6b35
+	set 6,(ix+00dh)		;6b31   ; 0xD8: deslizar (pasos y cuanto)
+	set 5,(ix+00dh)		;6b35   ; pone a uno el bit 5 de las marcas de la nota (bits 0-1 forma, 2, 5-6 deslizar, 7 orden 0xDC)
 	inc hl			;6b39
 	ld a,(hl)			;6b3a
 	and 0f0h		;6b3b
@@ -1492,29 +1492,29 @@ L_6B31:
 	rrca			;6b3e
 	rrca			;6b3f
 	rrca			;6b40
-	ld (ix+030h),a		;6b41
-	ld a,(ix+030h)		;6b44
-	ld (ix+031h),a		;6b47
+	ld (ix+030h),a		;6b41   ; guarda la cuenta del deslizar (orden 0xD8)
+	ld a,(ix+030h)		;6b44   ; lee la cuenta del deslizar (orden 0xD8)
+	ld (ix+031h),a		;6b47   ; guarda los pasos del deslizar
 	ld a,(hl)			;6b4a
 	and 00fh		;6b4b
-	ld (ix+032h),a		;6b4d
+	ld (ix+032h),a		;6b4d   ; guarda cuanto desliza cada paso
 	ret			;6b50
 L_6B51:
-	call L_6A9C		;6b51
-	ld (ix+02dh),e		;6b54
-	ld (ix+02eh),d		;6b57
+	call L_6A9C		;6b51   ; 0xD9: llamada (la vuelta en IX+2D)
+	ld (ix+02dh),e		;6b54   ; guarda la vuelta de la llamada 0xD9 (bajo)
+	ld (ix+02eh),d		;6b57   ; guarda la vuelta de la llamada 0xD9 (alto)
 	ret			;6b5a
 L_6B5B:
-	ld l,(ix+02dh)		;6b5b
-	ld h,(ix+02eh)		;6b5e
+	ld l,(ix+02dh)		;6b5b   ; 0xDA: vuelta
+	ld h,(ix+02eh)		;6b5e   ; lee la vuelta de la llamada 0xD9 (alto)
 	ret			;6b61
 L_6B62:
-	inc hl			;6b62
-	ld a,(ix+005h)		;6b63
+	inc hl			;6b62   ; 0xDB: repetir hacia atras [veces][cuanto atras]
+	ld a,(ix+005h)		;6b63   ; lee la cuenta de la repeticion 0xFB/0xDB
 	inc a			;6b66
 	cp (hl)			;6b67
 	jr z,L_6B78		;6b68
-	ld (ix+005h),a		;6b6a
+	ld (ix+005h),a		;6b6a   ; guarda la cuenta de la repeticion 0xFB/0xDB
 	inc hl			;6b6d
 	ld a,(hl)			;6b6e
 	ld e,a			;6b6f
@@ -1528,38 +1528,38 @@ L_6B76:
 	ret			;6b77
 L_6B78:
 	inc hl			;6b78
-	ld (ix+005h),000h		;6b79
+	ld (ix+005h),000h		;6b79   ; la cuenta de la repeticion 0xFB/0xDB = 0x00
 	ret			;6b7d
 L_6B7E:
-	set 7,(ix+00dh)		;6b7e
+	set 7,(ix+00dh)		;6b7e   ; 0xDC: bit 7 de IX+0D y su operando
 	inc hl			;6b82
 	ld a,(hl)			;6b83
-	ld (ix+02fh),a		;6b84
+	ld (ix+02fh),a		;6b84   ; guarda el operando de la orden 0xDC
 	ret			;6b87
 L_6B88:
-	res 7,(ix+00dh)		;6b88
+	res 7,(ix+00dh)		;6b88   ; 0xDD: sin el bit 7
 	ret			;6b8c
 L_6B8D:
-	inc hl			;6b8d
+	inc hl			;6b8d   ; 0xDE: el sonido del canal
 	ld a,(hl)			;6b8e
-	ld (ix+001h),a		;6b8f
+	ld (ix+001h),a		;6b8f   ; guarda la prioridad del sonido
 	ret			;6b92
 L_6B93:
-	res 7,(ix+00eh)		;6b93
+	res 7,(ix+00eh)		;6b93   ; 0xDF: sin el bit 7 de IX+0E
 	ret			;6b97
 L_6B98:
-	call L_6B9F		;6b98
-	call L_6C90		;6b9b
+	call L_6B9F		;6b98   ; manda todo al PSG y al SCC
+	call L_6C90		;6b9b   ; el SCC: periodos, volumenes, canales y ondas
 	ret			;6b9e
 L_6B9F:
-	call L_6BAF		;6b9f
-	call L_6BC6		;6ba2
-	call L_6BFB		;6ba5
-	call L_6C22		;6ba8
-	call L_6C50		;6bab
+	call L_6BAF		;6b9f   ; el PSG: ruido, tonos, envolvente y canales
+	call L_6BC6		;6ba2   ; los tres tonos del PSG (registros 0-5) y sus volumenes (8-10)
+	call L_6BFB		;6ba5   ; el periodo del ruido (registro 6)
+	call L_6C22		;6ba8   ; la envolvente del PSG (registros 11-13)
+	call L_6C50		;6bab   ; el registro 7 (que canales llevan tono y ruido)
 	ret			;6bae
 L_6BAF:
-	ld hl,0e00dh		;6baf
+	ld hl,0e00dh		;6baf   ; los canales 0 y 2 con ruido a la vez: el 0 sin el
 	ld a,(hl)			;6bb2
 	and 001h		;6bb3
 	jr z,L_6BC5		;6bb5
@@ -1573,17 +1573,17 @@ L_6BAF:
 L_6BC5:
 	ret			;6bc5
 L_6BC6:
-	ld b,000h		;6bc6
+	ld b,000h		;6bc6   ; los tres tonos del PSG (registros 0-5) y sus volumenes (8-10)
 	ld c,008h		;6bc8
 	ld hl,0e00ah		;6bca
-	call L_6BDD		;6bcd
+	call L_6BDD		;6bcd   ; un canal: periodo (dos registros) y volumen, salvo con envolvente
 	ld hl,0e03dh		;6bd0
-	call L_6BDD		;6bd3
+	call L_6BDD		;6bd3   ; un canal: periodo (dos registros) y volumen, salvo con envolvente
 	ld hl,0e070h		;6bd6
-	call L_6BDD		;6bd9
+	call L_6BDD		;6bd9   ; un canal: periodo (dos registros) y volumen, salvo con envolvente
 	ret			;6bdc
 L_6BDD:
-	ld e,(hl)			;6bdd
+	ld e,(hl)			;6bdd   ; un canal: periodo (dos registros) y volumen, salvo con envolvente
 	ld a,b			;6bde
 	call 00093h		;6bdf   ; BIOS WRTPSG - Writes data to PSG-register
 	inc hl			;6be2
@@ -1605,7 +1605,7 @@ L_6BDD:
 	set 3,(hl)		;6bf8
 	ret			;6bfa
 L_6BFB:
-	ld hl,0e1e7h		;6bfb
+	ld hl,0e1e7h		;6bfb   ; el periodo del ruido (registro 6)
 	bit 0,(hl)		;6bfe
 	jr z,L_6C0E		;6c00
 	res 0,(hl)		;6c02
@@ -1628,7 +1628,7 @@ L_6C1E:
 	call 00093h		;6c1e   ; BIOS WRTPSG - Writes data to PSG-register
 	ret			;6c21
 L_6C22:
-	ld hl,0e1e7h		;6c22
+	ld hl,0e1e7h		;6c22   ; la envolvente del PSG (registros 11-13)
 	bit 7,(hl)		;6c25
 	ret z			;6c27
 	res 7,(hl)		;6c28
@@ -1652,31 +1652,31 @@ L_6C22:
 	call 00093h		;6c4c   ; BIOS WRTPSG - Writes data to PSG-register
 	ret			;6c4f
 L_6C50:
-	ld hl,0e00dh		;6c50
+	ld hl,0e00dh		;6c50   ; el registro 7 (que canales llevan tono y ruido)
 	ld a,(hl)			;6c53
 	ld hl,06c84h		;6c54
-	call L_6C7D		;6c57
+	call L_6C7D		;6c57   ; HL = HL + A & 3
 	ld b,(hl)			;6c5a
 	ld hl,0e040h		;6c5b
 	ld a,(hl)			;6c5e
 	ld hl,06c88h		;6c5f
-	call L_6C7D		;6c62
+	call L_6C7D		;6c62   ; HL = HL + A & 3
 	ld c,(hl)			;6c65
 	ld hl,0e073h		;6c66
 	ld a,(hl)			;6c69
 	ld hl,06c8ch		;6c6a
-	call L_6C7D		;6c6d
+	call L_6C7D		;6c6d   ; HL = HL + A & 3
 	ld a,(hl)			;6c70
 	or b			;6c71
 	or c			;6c72
 L_6C73:
 	ld e,a			;6c73
-	ld (0e1e3h),a		;6c74
+	ld (0e1e3h),a		;6c74   ; guarda el registro 7 del PSG (los canales y el ruido)
 	ld a,007h		;6c77
 	call 00093h		;6c79   ; BIOS WRTPSG - Writes data to PSG-register
 	ret			;6c7c
 L_6C7D:
-	and 003h		;6c7d
+	and 003h		;6c7d   ; HL = HL + A & 3
 	ld e,a			;6c7f
 	ld d,000h		;6c80
 	add hl,de			;6c82
@@ -1696,13 +1696,13 @@ DATA_resto_6C84:
 
 
 L_6C90:
-	call L_6C9D		;6c90
-	call L_6DA2		;6c93
-	call L_6DF4		;6c96
-	call L_6EBB		;6c99
+	call L_6C9D		;6c90   ; el SCC: periodos, volumenes, canales y ondas
+	call L_6DA2		;6c93   ; los canales del SCC con volumen: si cambian, se mandan
+	call L_6DF4		;6c96   ; manda al SCC (0x9880-0x988E) lo que ha cambiado
+	call L_6EBB		;6c99   ; las ondas nuevas de los canales 3-6 (bit 7 de IX+0F) a 0x9800 + 0x20 x canal
 	ret			;6c9c
 L_6C9D:
-	ld ix,0e1ebh		;6c9d
+	ld ix,0e1ebh		;6c9d   ; compara cada periodo y volumen con lo ultimo mandado (0xE1ED, 0xE1F7) y marca los cambios
 	ld bc,0e1f7h		;6ca1
 	ld de,0e1edh		;6ca4
 	ld hl,0e0a3h		;6ca7
@@ -1857,7 +1857,7 @@ L_6DA0:
 	inc bc			;6da0
 	ret			;6da1
 L_6DA2:
-	ld e,000h		;6da2
+	ld e,000h		;6da2   ; los canales del SCC con volumen: si cambian, se mandan
 	ld hl,0e0a6h		;6da4
 	ld c,001h		;6da7
 	ld a,(hl)			;6da9
@@ -1903,7 +1903,7 @@ L_6DD2:
 L_6DDE:
 	or e			;6dde
 	ld e,a			;6ddf
-	ld hl,0e1fch		;6de0
+	ld hl,0e1fch		;6de0   ; apunta a los canales del SCC que suenan
 	ld a,(hl)			;6de3
 	cp e			;6de4
 	jr z,L_6DEE		;6de5
@@ -1916,105 +1916,105 @@ L_6DEE:
 	res 7,(hl)		;6df1
 	ret			;6df3
 L_6DF4:
-	ld ix,0e1ebh		;6df4
+	ld ix,0e1ebh		;6df4   ; manda al SCC (0x9880-0x988E) lo que ha cambiado
 	ld hl,0e1edh		;6df8
 	ld de,09880h		;6dfb
 	bit 0,(ix+000h)		;6dfe
 	jr z,L_6E07		;6e02
-	call L_6EAC		;6e04
+	call L_6EAC		;6e04   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E07:
 	inc hl			;6e07
 	inc de			;6e08
 	bit 1,(ix+000h)		;6e09
 	jr z,L_6E12		;6e0d
-	call L_6EAC		;6e0f
+	call L_6EAC		;6e0f   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E12:
 	inc hl			;6e12
 	inc de			;6e13
 	bit 2,(ix+000h)		;6e14
 	jr z,L_6E1D		;6e18
-	call L_6EAC		;6e1a
+	call L_6EAC		;6e1a   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E1D:
 	inc hl			;6e1d
 	inc de			;6e1e
 	bit 3,(ix+000h)		;6e1f
 	jr z,L_6E28		;6e23
-	call L_6EAC		;6e25
+	call L_6EAC		;6e25   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E28:
 	inc hl			;6e28
 	inc de			;6e29
 	bit 4,(ix+000h)		;6e2a
 	jr z,L_6E33		;6e2e
-	call L_6EAC		;6e30
+	call L_6EAC		;6e30   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E33:
 	inc hl			;6e33
 	inc de			;6e34
 	bit 5,(ix+000h)		;6e35
 	jr z,L_6E3E		;6e39
-	call L_6EAC		;6e3b
+	call L_6EAC		;6e3b   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E3E:
 	inc hl			;6e3e
 	inc de			;6e3f
 	bit 6,(ix+000h)		;6e40
 	jr z,L_6E49		;6e44
-	call L_6EAC		;6e46
+	call L_6EAC		;6e46   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E49:
 	inc hl			;6e49
 	inc de			;6e4a
 	bit 7,(ix+000h)		;6e4b
 	jr z,L_6E54		;6e4f
-	call L_6EAC		;6e51
+	call L_6EAC		;6e51   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E54:
 	inc hl			;6e54
 	inc de			;6e55
 	bit 0,(ix+001h)		;6e56
 	jr z,L_6E5F		;6e5a
-	call L_6EAC		;6e5c
+	call L_6EAC		;6e5c   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E5F:
 	inc hl			;6e5f
 	inc de			;6e60
 	bit 1,(ix+001h)		;6e61
 	jr z,L_6E6A		;6e65
-	call L_6EAC		;6e67
+	call L_6EAC		;6e67   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E6A:
 	inc hl			;6e6a
 	inc de			;6e6b
 	bit 2,(ix+001h)		;6e6c
 	jr z,L_6E75		;6e70
-	call L_6EAC		;6e72
+	call L_6EAC		;6e72   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E75:
 	inc hl			;6e75
 	inc de			;6e76
 	bit 3,(ix+001h)		;6e77
 	jr z,L_6E80		;6e7b
-	call L_6EAC		;6e7d
+	call L_6EAC		;6e7d   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E80:
 	inc hl			;6e80
 	inc de			;6e81
 	bit 4,(ix+001h)		;6e82
 	jr z,L_6E8B		;6e86
-	call L_6EAC		;6e88
+	call L_6EAC		;6e88   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E8B:
 	inc hl			;6e8b
 	inc de			;6e8c
 	bit 5,(ix+001h)		;6e8d
 	jr z,L_6E96		;6e91
-	call L_6EAC		;6e93
+	call L_6EAC		;6e93   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6E96:
 	inc hl			;6e96
 	inc de			;6e97
 	bit 6,(ix+001h)		;6e98
 	jr z,L_6EA1		;6e9c
-	call L_6EAC		;6e9e
+	call L_6EAC		;6e9e   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 L_6EA1:
 	inc hl			;6ea1
 	inc de			;6ea2
 	bit 7,(ix+001h)		;6ea3
 	ret z			;6ea7
-	call L_6EAC		;6ea8
+	call L_6EAC		;6ea8   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 	ret			;6eab
 L_6EAC:
-	ld a,(hl)			;6eac
+	ld a,(hl)			;6eac   ; un byte al SCC: lo enciende, escribe y vuelve a poner el banco 5
 	ld c,a			;6ead
 	ld a,03fh		;6eae
 	ld (09000h),a		;6eb0   ; el mapper: pone en 0x8000 el banco de A
@@ -2024,7 +2024,7 @@ L_6EAC:
 	ld (09000h),a		;6eb7   ; el mapper: pone en 0x8000 el banco de A
 	ret			;6eba
 L_6EBB:
-	ld hl,0e0a8h		;6ebb
+	ld hl,0e0a8h		;6ebb   ; las ondas nuevas de los canales 3-6 (bit 7 de IX+0F) a 0x9800 + 0x20 x canal
 	bit 7,(hl)		;6ebe
 	jr z,L_6ED1		;6ec0
 	res 7,(hl)		;6ec2
@@ -2034,7 +2034,7 @@ L_6EBB:
 	ld d,(hl)			;6ec9
 	ex de,hl			;6eca
 	ld de,09800h		;6ecb
-	call L_6F0F		;6ece
+	call L_6F0F		;6ece   ; 32 bytes de la onda al SCC, con los canales apagados mientras
 L_6ED1:
 	ld hl,0e0dbh		;6ed1
 	bit 7,(hl)		;6ed4
@@ -2046,7 +2046,7 @@ L_6ED1:
 	ld d,(hl)			;6edf
 	ex de,hl			;6ee0
 	ld de,09820h		;6ee1
-	call L_6F0F		;6ee4
+	call L_6F0F		;6ee4   ; 32 bytes de la onda al SCC, con los canales apagados mientras
 L_6EE7:
 	ld hl,0e10eh		;6ee7
 	bit 7,(hl)		;6eea
@@ -2058,7 +2058,7 @@ L_6EE7:
 	ld d,(hl)			;6ef5
 	ex de,hl			;6ef6
 	ld de,09840h		;6ef7
-	call L_6F0F		;6efa
+	call L_6F0F		;6efa   ; 32 bytes de la onda al SCC, con los canales apagados mientras
 L_6EFD:
 	ld hl,0e141h		;6efd
 	bit 7,(hl)		;6f00
@@ -2071,10 +2071,10 @@ L_6EFD:
 	ex de,hl			;6f0b
 	ld de,09860h		;6f0c
 L_6F0F:
-	ld a,03fh		;6f0f
+	ld a,03fh		;6f0f   ; 32 bytes de la onda al SCC, con los canales apagados mientras
 	ld (09000h),a		;6f11   ; el mapper: pone en 0x8000 el banco de A
 	xor a			;6f14
-	ld (0988fh),a		;6f15
+	ld (0988fh),a		;6f15   ; al SCC: los canales del SCC encendidos
 	ld b,020h		;6f18
 L_6F1A:
 	ld a,(hl)			;6f1a
@@ -2083,7 +2083,7 @@ L_6F1A:
 	inc de			;6f1d
 	djnz L_6F1A		;6f1e
 	ld hl,0988fh		;6f20
-	ld de,0e1fch		;6f23
+	ld de,0e1fch		;6f23   ; apunta a los canales del SCC que suenan
 	ld a,(de)			;6f26
 	ld (hl),a			;6f27
 	ld a,005h		;6f28

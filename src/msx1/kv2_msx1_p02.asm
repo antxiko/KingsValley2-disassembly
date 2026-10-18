@@ -141,7 +141,7 @@ L_80D1:
 	ld bc,00202h		;80d1
 	push bc			;80d4
 	push de			;80d5
-	call 053d6h		;80d6
+	call 053d6h		;80d6   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	pop hl			;80d9
 	pop bc			;80da
 	call 07b64h		;80db   ; A = la pantalla que se edita (de la casilla 0xE262)
@@ -281,7 +281,7 @@ L_81A4:
 	ld bc,00202h		;81a4
 	push bc			;81a7
 	push de			;81a8
-	call 053d6h		;81a9
+	call 053d6h		;81a9   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	pop hl			;81ac
 	pop bc			;81ad
 	call 07b64h		;81ae   ; A = la pantalla que se edita (de la casilla 0xE262)
@@ -315,7 +315,7 @@ L_81E6:
 	ld bc,00404h		;81e6   ; los 4 x 4 caracteres de la salida (0x9340)
 	push de			;81e9
 	push bc			;81ea
-	call 053d6h		;81eb
+	call 053d6h		;81eb   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	pop bc			;81ee
 	pop hl			;81ef
 L_81F0:
@@ -753,7 +753,7 @@ L_8496:
 	rla			;8496   ; cada bit a 1, el caracter
 	push af			;8497
 	ld a,c			;8498
-	call c,053efh		;8499   ; pinta el caracter como diga 0xEFC0
+	call c,053efh		;8499   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	ld a,d			;849c
 	add a,008h		;849d
 	ld d,a			;849f
@@ -791,7 +791,7 @@ DATA_tabla_84BC:
 
 L_84C8:
 	call L_8512		;84c8   ; paso 1: el nombre en blanco, el marcador y el letrero de 0xBE14
-	call 05a3dh		;84cb
+	call 05a3dh		;84cb   ; las fuentes del marcador (otra forma): 0xAA29, 0xAA89, 0xABA1 y 0xABB1, con color 0xF0
 	xor a			;84ce
 	call L_8474		;84cf   ; pinta el fondo del editor: el dibujo A de la tabla 0xBB38 (banco 13), un bit por caracter
 	call 041c7h		;84d2   ; pone el banco 13 en 0xA000
@@ -853,7 +853,7 @@ L_8521:
 	call 05b38h		;8534   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	call L_850D		;8537
 	call L_85D7		;853a   ; 0xF0F8 = donde se graba: la opcion, o 2 si no hay disco
-	call 04ec7h		;853d
+	call 04ec7h		;853d   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	xor a			;8540
 	call L_8474		;8541   ; pinta el fondo del editor: el dibujo A de la tabla 0xBB38 (banco 13), un bit por caracter
 	call 041c7h		;8544   ; pone el banco 13 en 0xA000
@@ -959,7 +959,7 @@ L_85F3:
 	jp nz,L_875A		;85f9
 	ld a,0e0h		;85fc
 	ld a,(0edeeh)		;85fe
-	call 04ec7h		;8601
+	call 04ec7h		;8601   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld a,(0f0f8h)		;8604   ; lee donde se graba la fase del editor (0 cinta, 1 disco, 2 Game Master 2)
 	cp 002h		;8607
 	jr z,L_85AD		;8609
@@ -988,7 +988,7 @@ L_8631:
 	ld a,b			;8631
 	push hl			;8632
 	push de			;8633
-	call 053efh		;8634   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;8634   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop de			;8637
 	pop hl			;8638
 	ld a,d			;8639
@@ -1177,7 +1177,7 @@ L_8761:
 	dec a			;8764
 	jr z,L_8779		;8765
 	call 05b38h		;8767   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
-	call 04ec7h		;876a
+	call 04ec7h		;876a   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	call 041c7h		;876d   ; pone el banco 13 en 0xA000
 	ld hl,0be6ah		;8770
 	call 04f0bh		;8773   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
@@ -1328,7 +1328,7 @@ L_885C:
 	ret nc			;8875
 	call L_85D7		;8876   ; 0xF0F8 = donde se graba: la opcion, o 2 si no hay disco
 	call 05b38h		;8879   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
-	call 04ec7h		;887c
+	call 04ec7h		;887c   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	call L_87CF		;887f
 	jp 041e8h		;8882
 L_8885:
@@ -1519,7 +1519,7 @@ L_89D3:
 	ld de,0e270h		;89d9   ; apunta a el nombre de la fase del editor (11 letras)
 	ld bc,0000bh		;89dc
 	ldir		;89df
-	call 04ec7h		;89e1
+	call 04ec7h		;89e1   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	call 05b38h		;89e4   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	call 041c7h		;89e7   ; pone el banco 13 en 0xA000
 	ld hl,0be06h		;89ea
@@ -1631,7 +1631,7 @@ L_8A92:
 	ld a,(0e27fh)		;8a9d   ; lee el resultado de grabar o cargar (0 bien, 2 error)
 	cp 002h		;8aa0
 	jp z,L_87CF		;8aa2
-	call 04ec7h		;8aa5
+	call 04ec7h		;8aa5   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	xor a			;8aa8
 	ld (0e25bh),a		;8aa9   ; guarda el paso dentro del menu del editor
 	ret			;8aac
@@ -1652,7 +1652,7 @@ L_8AC3:
 	ret z			;8ac7
 	ld a,002h		;8ac8
 	ld (0e27eh),a		;8aca
-	call 04ec7h		;8acd
+	call 04ec7h		;8acd   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	xor a			;8ad0
 	ld (0e25bh),a		;8ad1   ; guarda el paso dentro del menu del editor
 	ret			;8ad4
@@ -1685,11 +1685,11 @@ DATA_tabla_8AEB:
 L_8AFB:
 	ld a,001h		;8afb   ; los graficos de la piramide 1 y su paleta (en MSX2)
 	ld (0e241h),a		;8afd   ; guarda la piramide (1-6)
-	call 052fdh		;8b00   ; carga los graficos de la piramide (bancos 7-8-9)
+	call 052fdh		;8b00   ; los graficos de la piramide: su lista y la comun
 	ld a,(0f0f4h)		;8b03   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;8b06
 	call nz,053eeh		;8b07
-	call 076fah		;8b0a   ; las rachas de 0xBBFC a 0xF880 (banco 13)
+	call 076fah		;8b0a   ; las rachas de 0xBBFC a 0x1880 (los sprites del editor)
 	call L_8B16		;8b0d   ; borra los puntos y 0xE280-0xEFFF
 	call 07560h		;8b10   ; el nombre (0xE270, 12 bytes) en blanco
 	jp L_87F1		;8b13
@@ -1735,13 +1735,13 @@ L_8B6E:
 	ld a,(0e207h)		;8b6e   ; tras el error, una tecla vuelve
 	and a			;8b71
 	ret z			;8b72
-	call 04ec7h		;8b73
+	call 04ec7h		;8b73   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld a,002h		;8b76
 	ld (0e24ah),a		;8b78   ; guarda lo elegido en el menu
 	ret			;8b7b
 L_8B7C:
 	call 0532eh		;8b7c   ; los sprites, el personaje y la RAM de la fase a cero, en la piramide 1
-	call 056b0h		;8b7f   ; las rachas de 0x97A1 a 0xF880
+	call 056b0h		;8b7f   ; rachas de 0xA6D8 a 0x1880 (sprites)
 	ld hl,0e2c0h		;8b82   ; apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
 	ld de,0e2c1h		;8b85
 	ld bc,00d3fh		;8b88
@@ -1840,7 +1840,7 @@ L_8C31:
 L_8C34:
 	ld a,(hl)			;8c34
 	push hl			;8c35
-	call 053efh		;8c36   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;8c36   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop hl			;8c39
 	inc hl			;8c3a
 	ld a,d			;8c3b
@@ -1883,7 +1883,7 @@ L_8C5B:
 	ld a,0aeh		;8c75
 L_8C77:
 	push hl			;8c77
-	call 053efh		;8c78   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;8c78   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop hl			;8c7b
 	inc hl			;8c7c
 	djnz L_8C5B		;8c7d
@@ -2080,7 +2080,7 @@ L_8DA6:
 	ld d,000h		;8da8
 L_8DAA:
 	xor a			;8daa
-	call 053efh		;8dab   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;8dab   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	ld a,d			;8dae
 	add a,008h		;8daf
 	ld d,a			;8db1
@@ -2091,7 +2091,7 @@ L_8DB5:
 	inc (hl)			;8db8
 	xor a			;8db9
 	ld (0e249h),a		;8dba   ; guarda la marca de salida de la fase
-	call 04ec7h		;8dbd
+	call 04ec7h		;8dbd   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	call 041bdh		;8dc0   ; pone el banco 12 en 0xA000
 	ld hl,0b256h		;8dc3
 	call 04f0bh		;8dc6   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
@@ -4604,7 +4604,7 @@ L_9E97:
 	ld h,(hl)			;9eaa
 	ld l,a			;9eab
 	push hl			;9eac
-	call 04ec7h		;9ead
+	call 04ec7h		;9ead   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	pop hl			;9eb0
 	call 04f0bh		;9eb1   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld hl,0af60h		;9eb4

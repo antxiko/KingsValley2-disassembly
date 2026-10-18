@@ -976,7 +976,7 @@ L_A629:
 	inc hl			;a657
 	push hl			;a658
 	push de			;a659
-	call 053efh		;a65a   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;a65a   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop de			;a65d
 	pop hl			;a65e
 	ld a,d			;a65f
@@ -1122,7 +1122,7 @@ L_A736:
 	inc hl			;a73d
 	push hl			;a73e
 	push de			;a73f
-	call 053efh		;a740   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;a740   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop de			;a743
 	pop hl			;a744
 	ld a,e			;a745
@@ -1684,7 +1684,7 @@ L_AACE:
 	ld e,a			;aae6
 	ld d,(ix+005h)		;aae7
 	ld bc,00302h		;aaea
-	call 053d6h		;aaed
+	call 053d6h		;aaed   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	push ix		;aaf0
 	call 08e74h		;aaf2   ; las de la lista, al reves: guarda el fondo y pinta la cosa
 	call 093e8h		;aaf5   ; pinta los bloques de esta pantalla
@@ -3631,14 +3631,14 @@ L_B90E:
 	call 04094h		;b913   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;b916
 	push hl			;b917
-	call 053efh		;b918   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;b918   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop hl			;b91b
 	ld a,d			;b91c
 	add a,008h		;b91d
 	ld d,a			;b91f
 	inc hl			;b920
 	ld a,(hl)			;b921
-	call 053efh		;b922   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;b922   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop de			;b925
 	ld a,e			;b926
 	add a,008h		;b927
@@ -3859,7 +3859,7 @@ L_BAF5:
 	ld a,00ch		;bb07
 	call 04094h		;bb09   ; suma A a HL (HL = HL + A)
 	ld bc,00104h		;bb0c
-	call 053d6h		;bb0f
+	call 053d6h		;bb0f   ; un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 	ret			;bb12
 L_BB13:
 	ld a,l			;bb13
@@ -3871,7 +3871,7 @@ L_BB13:
 L_BB1C:
 	ld bc,02008h		;bb1c
 	ld a,001h		;bb1f
-	call 04f66h		;bb21
+	call 04f66h		;bb21   ; en este cartucho no hace nada: aqui iria el pintor de caracteres de MSX2
 	ret			;bb24
 
 ; ----------------------------------------------------------------------
@@ -3897,7 +3897,7 @@ L_BB43:
 	jr z,L_BB4E		;bb4a
 	ld a,0adh		;bb4c
 L_BB4E:
-	call 053efh		;bb4e   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;bb4e   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop de			;bb51
 	ld a,d			;bb52
 	add a,008h		;bb53
@@ -4045,12 +4045,12 @@ L_BC4B:
 	push hl			;bc4b   ; pinta dos caracteres A en fila en (D, E) y baja una fila
 	push de			;bc4c
 	push af			;bc4d
-	call 053efh		;bc4e   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;bc4e   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	ld a,d			;bc51
 	add a,008h		;bc52
 	ld d,a			;bc54
 	pop af			;bc55
-	call 053efh		;bc56   ; pinta el caracter como diga 0xEFC0
+	call 053efh		;bc56   ; escribe el caracter A en la posicion D, E de la tabla de nombres
 	pop de			;bc59
 	pop hl			;bc5a
 	ld a,e			;bc5b

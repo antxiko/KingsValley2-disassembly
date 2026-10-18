@@ -345,7 +345,7 @@ C 0xA615 guarda hacia donde mira el personaje
 C 0xA61C guarda la postura del personaje
 C 0xA61F lee la marca de personaje muerto
 C 0xA625 guarda el estado del personaje
-C 0xA65A pinta el caracter como diga 0xEFC0
+C 0xA65A escribe el caracter A en la posicion D, E de la tabla de nombres
 C 0xA678 lee la pantalla de la fase (desde 1)
 C 0xA68F el despachador de Konami: la tabla va detras del call
 C 0xA6A9 cada 8 cuadros, el paso del agujero: los dos caracteres de 0xAB03
@@ -354,7 +354,7 @@ C 0xA6C7 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0xA6D2 cada 8 cuadros, el paso del agujero: los dos caracteres de 0xAB03
 C 0xA6E3 el despachador de Konami: la tabla va detras del call
 C 0xA6FB cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
-C 0xA740 pinta el caracter como diga 0xEFC0
+C 0xA740 escribe el caracter A en la posicion D, E de la tabla de nombres
 C 0xA75E lee la pantalla de la fase (desde 1)
 C 0xA77B el despachador de Konami: la tabla va detras del call
 C 0xA795 cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
@@ -412,6 +412,7 @@ C 0xAAB5 C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas d
 C 0xAAC1 da la vuelta (IX+0B xor 1)
 C 0xAAD8 devuelve el fondo de los bloques de esta pantalla
 C 0xAADB las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xAAED un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
 C 0xAAF2 las de la lista, al reves: guarda el fondo y pinta la cosa
 C 0xAAF5 pinta los bloques de esta pantalla
 C 0xAAFE el despachador de Konami: la tabla va detras del call
@@ -621,8 +622,8 @@ C 0xB8F2 dos caracteres de la parte, segun el giro (IX+05)
 C 0xB8FF lee la pantalla que se lee del mapa y el byte siguiente (16 bits)
 C 0xB904 dos caracteres de la parte, segun el giro (IX+05)
 C 0xB913 suma A a HL (HL = HL + A)
-C 0xB918 pinta el caracter como diga 0xEFC0
-C 0xB922 pinta el caracter como diga 0xEFC0
+C 0xB918 escribe el caracter A en la posicion D, E de la tabla de nombres
+C 0xB922 escribe el caracter A en la posicion D, E de la tabla de nombres
 C 0xB931 lee la pantalla de la fase (desde 1)
 C 0xB938 lee el estado del personaje
 C 0xB945 lee la y del personaje
@@ -643,8 +644,10 @@ C 0xBADC el sonido 0x27 y se repinta el fondo (MSX1 de la ficha, MSX2 de la pagi
 C 0xBAEC marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 C 0xBB01 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0xBB09 suma A a HL (HL = HL + A)
+C 0xBB0F un rectangulo de caracteres de HL: B filas de C, en la tabla de nombres
+C 0xBB21 en este cartucho no hace nada: aqui iria el pintor de caracteres de MSX2
 C 0xBB44 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
-C 0xBB4E pinta el caracter como diga 0xEFC0
+C 0xBB4E escribe el caracter A en la posicion D, E de la tabla de nombres
 C 0xBB95 lee la pantalla de la fase (desde 1)
 C 0xBB9B el personaje sobre la columna: dentro de su alto y a menos de 16 pixeles en x
 C 0xBBA1 suma A a HL (HL = HL + A)
@@ -660,6 +663,6 @@ C 0xBC36 marca un rectangulo del mapa de la pantalla D: B filas de C casillas co
 C 0xBC39 pinta los bloques de esta pantalla
 C 0xBC3C las de la lista, al reves: guarda el fondo y pinta la cosa
 C 0xBC3F apunta a la y del personaje
-C 0xBC4E pinta el caracter como diga 0xEFC0
-C 0xBC56 pinta el caracter como diga 0xEFC0
+C 0xBC4E escribe el caracter A en la posicion D, E de la tabla de nombres
+C 0xBC56 escribe el caracter A en la posicion D, E de la tabla de nombres
 # --- fin de las anotaciones de anota.py ---

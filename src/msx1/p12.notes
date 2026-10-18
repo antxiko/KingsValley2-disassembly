@@ -347,6 +347,7 @@ C 0xB476 pide el sonido 0x2E
 C 0xB47D devuelve el fondo de los bloques de esta pantalla
 C 0xB480 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 C 0xB483 devuelve el fondo
+C 0xB486 el dibujo de 2 x 2 caracteres del sitio escondido (0x5377) en la posicion de 0xEF13
 C 0xB489 las de la lista, al reves: guarda el fondo y pinta la cosa
 C 0xB490 lee la pantalla de la fase (desde 1)
 C 0xB495 C si esta a menos de 4 en y y de 8 en x
@@ -361,8 +362,8 @@ C 0xB500 pasa la posicion de caracter de HL a direccion de la VRAM
 C 0xB520 lee la pantalla de la fase (desde 1)
 C 0xB6B7 el despachador de Konami: la tabla va detras del call
 C 0xB6C9 los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
-C 0xB6CC la fuente: 0x35 caracteres de 0xAFDD
-C 0xB6CF las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
+C 0xB6CC la fuente: 424 bytes de 0xAFDD a 0x2008 de los tres tercios, de color 0xF1
+C 0xB6CF los dibujos de los sprites: rachas de 0xBA96 a 0x1800
 C 0xB6DF pinta las 25 casillas (5 x 5) y el letrero
 C 0xB6E5 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0xB700 lee la cuenta de cuadros
@@ -380,8 +381,10 @@ C 0xB804 suma A a HL (HL = HL + A)
 C 0xB87C lee las vidas (BCD)
 C 0xB88A guarda las vidas (BCD)
 C 0xB890 lo mismo, borrando (caracter 0)
-C 0xB915 los graficos de la lista 0xB7DF (bancos 7-8-9) y la paleta de 0xBA78
-C 0xB918 las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
+C 0xB912 borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
+C 0xB915 los graficos de las musicas: rachas de 0x926A y 0x93C3 a los tres tercios
+C 0xB918 los dibujos de los sprites: rachas de 0xBA96 a 0x1800
+C 0xB91B rachas de 0x9A8F a la tabla de nombres (0x38C3)
 C 0xB91E los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 C 0xB92D lee el mando: lo que se acaba de pulsar
 C 0xB93B lee las teclas: lo que se acaba de pulsar (bit 0 pausa, 1 recuadro, 3 musica, 4 disparo)
@@ -425,10 +428,12 @@ C 0xBE43 apunta a el nombre de la fase del editor (11 letras)
 C 0xBE53 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0xBE56 pinta el nombre de 0xEE50
 C 0xBE73 lee BC bytes de la cinta a HL, sumandolos en D
+C 0xBE9C borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 C 0xBEA2 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0xBEA7 guarda el resultado de grabar o cargar (0 bien, 2 error)
 C 0xBEE3 escribe BC bytes de HL en la cinta, sumandolos en D
 C 0xBF06 escribe BC bytes de HL en la cinta, sumandolos en D
+C 0xBF22 borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 C 0xBF28 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 C 0xBF2D guarda el resultado de grabar o cargar (0 bien, 2 error)
 # --- fin de las anotaciones de anota.py ---

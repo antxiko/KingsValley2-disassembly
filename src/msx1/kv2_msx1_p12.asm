@@ -1207,7 +1207,7 @@ L_B46C:
 	call 09418h		;b47d   ; devuelve el fondo de los bloques de esta pantalla
 	call 08e2dh		;b480   ; las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 	call L_B509		;b483   ; devuelve el fondo
-	call 05368h		;b486
+	call 05368h		;b486   ; el dibujo de 2 x 2 caracteres del sitio escondido (0x5377) en la posicion de 0xEF13
 	call 08e74h		;b489   ; las de la lista, al reves: guarda el fondo y pinta la cosa
 	jp 093e8h		;b48c
 L_B48F:
@@ -1394,8 +1394,8 @@ DATA_tabla_B6BA:
 L_B6C6:
 	call 04ec7h		;b6c6   ; paso 0: la fuente, las piezas en orden (1-24 y el hueco) y el letrero
 	call 05b38h		;b6c9   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
-	call 05342h		;b6cc   ; la fuente: 0x35 caracteres de 0xAFDD
-	call 055ffh		;b6cf   ; las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
+	call 05342h		;b6cc   ; la fuente: 424 bytes de 0xAFDD a 0x2008 de los tres tercios, de color 0xF1
+	call 055ffh		;b6cf   ; los dibujos de los sprites: rachas de 0xBA96 a 0x1800
 	ld hl,0ef38h		;b6d2
 	ld (hl),000h		;b6d5
 	dec hl			;b6d7
@@ -1780,10 +1780,10 @@ L_B909:
 	cp 001h		;b90c
 	jr z,L_B92A		;b90e
 	jr nc,L_B973		;b910   ; paso 0: graficos, el dibujo de 0xBC05 y el letrero
-	call 04ec7h		;b912
-	call 055e4h		;b915   ; los graficos de la lista 0xB7DF (bancos 7-8-9) y la paleta de 0xBA78
-	call 055ffh		;b918   ; las rachas de 0xBA9A a 0xF800 (dibujos de los sprites)
-	call 055d2h		;b91b
+	call 04ec7h		;b912   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
+	call 055e4h		;b915   ; los graficos de las musicas: rachas de 0x926A y 0x93C3 a los tres tercios
+	call 055ffh		;b918   ; los dibujos de los sprites: rachas de 0xBA96 a 0x1800
+	call 055d2h		;b91b   ; rachas de 0x9A8F a la tabla de nombres (0x38C3)
 	call 05b38h		;b91e   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
 	inc (ix+001h)		;b921
 	ld hl,0b581h		;b924
@@ -2301,7 +2301,7 @@ L_BE90:
 	jp 08624h		;be96
 L_BE99:
 	call 000f0h		;be99   ; BIOS TAPOOF - Stops writing on the tape | error: el letrero de 0xBF0E y 0xE27F = 2
-	call 04ec7h		;be9c
+	call 04ec7h		;be9c   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld hl,0beabh		;be9f
 	call 04f0bh		;bea2   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld a,002h		;bea5
@@ -2378,7 +2378,7 @@ L_BEF9:
 	jp 000f0h		;bf1c   ; BIOS TAPOOF - Stops writing on the tape
 L_BF1F:
 	call 000f0h		;bf1f   ; BIOS TAPOOF - Stops writing on the tape | error: el letrero de 0xBF94 y 0xE27F = 2
-	call 04ec7h		;bf22
+	call 04ec7h		;bf22   ; borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 	ld hl,0bf31h		;bf25
 	call 04f0bh		;bf28   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld a,002h		;bf2b

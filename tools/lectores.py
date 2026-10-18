@@ -914,7 +914,7 @@ def graficos_msx1():
                         (0x926A, "las musicas", "p00:55E7"), (0x93C3, "las musicas", "p00:55F0"),
                         (0x9A8F, "la tabla de nombres", "p00:55D8")):
         rachas(v, a, "rachas_%04X" % a, que, lec)
-    rachas_destino(v, 0x9BF2, "rachas_9BF2", "el plano", "p00:4E23")
+    rachas_destino(v, 0x9BF2, "rachas_9BF2", "la presentacion", "p00:4E23")
     B.declara(v, 0x9434, 0x9438, "fundidos_lista", "2 punteros (desde 0x9432, por A): listas de "
               "fundido de 4 bytes [tercios][caracter][cuantos bytes], un 0 acaba", "p00:5416", F="w8")
     for k in range(3):
@@ -943,11 +943,11 @@ def graficos_msx1():
     for a, que, lec in ((0x9A54, "del titulo (no japones)", "p00:52DE"),
                         (0x99E9, "del titulo (japones)", "p00:52E8")):
         letrero(v, a, "letrero_%04X" % a, que, lec)
-    B.declara(v, 0x9BDA, 0x9BE6, "plano_mapas", "6 punteros: rachas que se desempaquetan en la RAM "
-              "(0xE900) para el plano", "p00:5A11", F="w8")
+    B.declara(v, 0x9BDA, 0x9BE6, "presentacion_trozos", "6 punteros: los trozos del dibujo de la "
+              "presentacion, en rachas que se desempaquetan en la RAM (0xE900)", "p00:5A11", F="w8")
     for k in range(6):
         a = v.w(0x9BDA + 2 * k)
-        B.declara(v, a, rachas_vram(v, a), "plano_%d" % k, "rachas a la RAM (como p00:5A21)",
+        B.declara(v, a, rachas_vram(v, a), "presentacion_%d" % k, "un trozo del dibujo de la presentacion: rachas a la RAM (p00:5A21)",
                   "p00:5A21", F=16)
     # bancos 14-15 (p00:41D4)
     v = B.Ventana((1, 14, 15))
