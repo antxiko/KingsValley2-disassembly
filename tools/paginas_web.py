@@ -377,7 +377,7 @@ En PASSWORD, antes de las normales, el cartucho mira otras dos (`p01:6B24`):
 - **FESTIVAL**: partida nueva y Vick no muere al tocar un enemigo (`0xE255`; `p02:9AB1` no los mira).
 - **TRYAGAIN**: partida nueva en la que se puede seguir tras el fin de la partida (`0xE217`).
 
-El propio cartucho trae un letrero con las pistas: SECRET COMMAND, F??T???L y ??Y?????.
+El cartucho las compara letra a letra con las dos que guarda en la ROM (`p01:6B47`; FESTIVAL en `p01:6B57` y TRYAGAIN en `p01:6B5F`). Y trae un letrero con pistas, SECRET COMMAND, F??T???L y ??Y?????, que son esas dos con letras tapadas. Solo sale con el *Game Master 2* puesto (`0xF0F7`, el slot donde lo encontró, `p01:6F39`) y pulsando la tecla de la fila 1, bit 5 del teclado (@ en uno japonés, [ en uno internacional) al elegir GAME en el título (`p00:4813`).
 
 ## Cómo es una contraseña
 
@@ -421,7 +421,7 @@ In PASSWORD, before the normal ones, the cartridge checks two others (`p01:6B24`
 - **FESTIVAL**: a new game in which Vick does not die when he touches an enemy (`0xE255`; `p02:9AB1` does not look at them).
 - **TRYAGAIN**: a new game in which you can carry on after the game is over (`0xE217`).
 
-The cartridge itself has a message with the hints: SECRET COMMAND, F??T???L and ??Y?????.
+The cartridge compares them letter by letter with the two it keeps in the ROM (`p01:6B47`; FESTIVAL at `p01:6B57` and TRYAGAIN at `p01:6B5F`). And it has a message with hints, SECRET COMMAND, F??T???L and ??Y?????, which are those two with letters hidden. It only shows with the *Game Master 2* plugged in (`0xF0F7`, the slot where it was found, `p01:6F39`) and holding the key at row 1, bit 5 of the keyboard (@ on a Japanese one, [ on an international one) when choosing GAME on the title screen (`p00:4813`).
 
 ## What a password is made of
 

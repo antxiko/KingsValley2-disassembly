@@ -7,7 +7,7 @@ In PASSWORD, before the normal ones, the cartridge checks two others (`p01:6B24`
 - **FESTIVAL**: a new game in which Vick does not die when he touches an enemy (`0xE255`; `p02:9AB1` does not look at them).
 - **TRYAGAIN**: a new game in which you can carry on after the game is over (`0xE217`).
 
-The cartridge itself has a message with the hints: SECRET COMMAND, F??T???L and ??Y?????.
+The cartridge compares them letter by letter with the two it keeps in the ROM (`p01:6B47`; FESTIVAL at `p01:6B57` and TRYAGAIN at `p01:6B5F`). And it has a message with hints, SECRET COMMAND, F??T???L and ??Y?????, which are those two with letters hidden. It only shows with the *Game Master 2* plugged in (`0xF0F7`, the slot where it was found, `p01:6F39`) and holding the key at row 1, bit 5 of the keyboard (@ on a Japanese one, [ on an international one) when choosing GAME on the title screen (`p00:4813`).
 
 ## What a password is made of
 

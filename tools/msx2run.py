@@ -200,9 +200,12 @@ class V9938:
     def sprites(self, im):
         """Los 32 sprites del modo 2 encima de im, como los pinta el chip: la tabla de
         atributos de R5/R11 (y = 216 acaba), la de colores 0x200 por debajo (un
-        color por linea; el bit 6, CC, suma su color al del sprite de encima y el
-        bit 7, EC, lo corre 32 puntos a la izquierda), los dibujos de R6, 16 x 16 con
-        el bit 1 de R1 y ampliados al doble con el bit 0."""
+        color por linea; el bit 7, EC, lo corre 32 puntos a la izquierda), los
+        dibujos de R6, 16 x 16 con el bit 1 de R1 y ampliados al doble con el bit 0.
+        El bit 6, CC: un sprite con CC va en el grupo del anterior sin CC, con su
+        misma prioridad; el grupo se pinta entero (lo que tapa cada uno) y donde se
+        tapan sus colores se suman con OR. Un CC sin sprite delante no se ve. El
+        color 0 es transparente: no tapa lo que hay debajo."""
         px = im.load()
         attr = ((self.r[11] & 3) << 15) | ((self.r[5] & 0xFC) << 7)
         cols = attr - 0x200
@@ -215,15 +218,28 @@ class V9938:
             if y == 216:
                 break
             lista.append(n)
-        visto = {}
+        visto = {}          # lo ya pintado por los grupos de mas prioridad
+        grupo = None        # el grupo en curso: {punto: color}
+
+        def cierra():
+            for k, c in grupo.items():
+                if c and k not in visto:
+                    visto[k] = c
         for n in lista:
             y, x, d = self.vram[attr + 4 * n:attr + 4 * n + 3]
             if grande == 16:
                 d &= 0xFC
             y = (y + 1) & 0xFF
+            cc_sprite = self.vram[cols + 16 * n] & 0x40
+            if not cc_sprite:
+                if grupo is not None:
+                    cierra()
+                grupo = {}
+            elif grupo is None:
+                continue                         # CC sin sprite delante
             for fila in range(grande):
                 c = self.vram[cols + 16 * n + fila]
-                color, cc = c & 15, c & 0x40
+                color = c & 15
                 dx = x - 32 if c & 0x80 else x
                 for col in range(grande):
                     b = self.vram[pat + 8 * d + (col // 8) * 16 + fila]
@@ -232,17 +248,12 @@ class V9938:
                     for ay in range(amp):
                         for ax in range(amp):
                             xx, yy = dx + col * amp + ax, (y + fila * amp + ay) & 0xFF
-                            if not (0 <= xx < 256 and yy < im.height):
-                                continue
-                            k = (xx, yy)
-                            if cc:
-                                if k in visto:
-                                    visto[k] |= color
-                            elif k not in visto:
-                                visto[k] = color
+                            if 0 <= xx < 256 and yy < im.height:
+                                grupo[(xx, yy)] = grupo.get((xx, yy), 0) | color
+        if grupo is not None:
+            cierra()
         for (xx, yy), c in visto.items():
-            if c:
-                px[xx, yy] = self.rgb(c)
+            px[xx, yy] = self.rgb(c)
         return im
 
 

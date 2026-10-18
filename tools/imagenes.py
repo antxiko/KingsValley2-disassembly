@@ -326,6 +326,12 @@ def hoja_objetos(m, v, salida):
         for o, val in ((0, 1), (2, 96), (3, x), (4, 1), (7, lado), (8, 4), (9, 1)):
             m.mem[f + o] = val
         m.llama(d[rut], ix=f)
+    if not m.msx2:
+        # en MSX el fondo (R7) es el color 15, blanco, y la pantalla borrada lo deja ver
+        # entero; en el juego no se ve porque la tapan los caracteres de la piramide.
+        # Para la hoja, el 1 (negro), como en MSX2: solo cambia lo vacio (el caracter
+        # 0); ninguna cosa tiene puntos de color 0.
+        m.vdp.regs[7] = (m.vdp.regs[7] & 0xF0) | 1
     im = pantalla(m).crop((0, 8, 208, 136))
     im = im.resize((im.width * 2, im.height * 2))
     im.save(os.path.join(salida, "objetos_%s.png" % v), optimize=True)
