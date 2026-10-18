@@ -534,12 +534,38 @@ D 0xB2AB 0xB400 relleno_B2AB  341 bytes a 0xFF: relleno; lo leen nadie (341 byte
 F 0xB2AB 16
 D 0xB42F 0xB437 tabla_B42F  4 destinos del despachador p00:409E (call en p12:B42C, el indice en A): B437, B462, B46C, B48F; lo leen p12:B42C (8 bytes)
 F 0xB42F w4
+D 0xB4F8 0xB4FC sitio_dibujo  2 x 2 caracteres del sitio escondido; lo leen p12:B4F5 (4 bytes)
+F 0xB4F8 4
+D 0xB544 0xB581 sitios_escondidos  12 sitios escondidos de 5 bytes [fase][tipo (1 musicas, 2 puzle)][pantalla][y][x], un 0 acaba; lo leen p12:B403 (61 bytes)
+F 0xB544 5
+D 0xB581 0xB5B4 letrero_B581  letrero (de las musicas): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p12:B927 (51 bytes)
+F 0xB581 16
+D 0xB5B4 0xB5C3 letrero_B5B4  letrero (del puzle): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p12:B742 (15 bytes)
+F 0xB5B4 16
+D 0xB5C3 0xB5DC letrero_B5C3  letrero (del puzle resuelto): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p12:B896 (25 bytes)
+F 0xB5C3 16
+D 0xB5DC 0xB5E4 puzles  4 punteros a los puzles revueltos; lo leen p12:B705 (8 bytes)
+F 0xB5DC w8
+D 0xB5E4 0xB5FD puzle_0  un puzle revuelto: las 25 casillas (0 el hueco); lo leen p12:B70B (25 bytes)
+F 0xB5E4 5
+D 0xB5FD 0xB616 puzle_1  un puzle revuelto: las 25 casillas (0 el hueco); lo leen p12:B70B (25 bytes)
+F 0xB5FD 5
+D 0xB616 0xB62F puzle_2  un puzle revuelto: las 25 casillas (0 el hueco); lo leen p12:B70B (25 bytes)
+F 0xB616 5
+D 0xB62F 0xB648 puzle_3  un puzle revuelto: las 25 casillas (0 el hueco); lo leen p12:B70B (25 bytes)
+F 0xB62F 5
+D 0xB648 0xB6AC piezas  los 2 x 2 caracteres de cada pieza del puzle (0 el hueco); lo leen p12:B7F0 (100 bytes)
+F 0xB648 4
 D 0xB6BA 0xB6C6 tabla_B6BA  6 destinos del despachador p00:409E (call en p12:B6B7, el indice en A): B6C6, B6EE, B6FD, B745, B85A, B899; lo leen p12:B6B7 (12 bytes)
 F 0xB6BA w6
 D 0xB7A1 0xB7A9 tabla_B7A1  4 destinos del despachador p00:409E (call en p12:B79E, el indice en A): B7B4, B7CE, B7DD, B7A9; lo leen p12:B79E (8 bytes)
 F 0xB7A1 w4
+D 0xB8AB 0xB8CB letrero_B8AB  letrero (del puzle): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; se solapan 2 bloques: (letrero_B8BA B8BA-B8CB); lo leen p12:B6E5, p12:B6FA (32 bytes)
+F 0xB8AB 16
 D 0xB97C 0xB9A2 tabla_B97C  19 destinos del despachador p00:409E (call en p12:B979, el indice en A): 41F2, 41FC, 4201, 4206, 420B, 4210, 4215, 421A, 421F, 4224, 4229, 422E, 4233, 4238, 423D, 4251, 42A6, 42AB, 4274; lo leen p12:B979 (38 bytes)
 F 0xB97C w8
+D 0xB9DE 0xB9F1 musicas_flecha  19 bytes: donde va la flecha de cada musica; lo leen p12:B9B6 (19 bytes)
+F 0xB9DE 19
 D 0xBA21 0xBA27 fases_demo  las fases de las 6 demostraciones (0xE219, de 1 a 6, desde 0xBA20: la entrada 0 cae en el codigo de delante); lo leen p12:BA07 (6 bytes)
 F 0xBA21 6
 D 0xBA7A 0xBA86 mandos_demo  6 punteros, uno por piramide (0xE241, desde 0xBA78: la entrada 0 cae en el codigo de delante): el mando grabado de su demostracion; lo leen p12:BA6E (12 bytes)
@@ -556,26 +582,26 @@ D 0xBBA0 0xBBFC mando_5  el mando grabado de la demostracion de la piramide 5: p
 F 0xBBA0 2
 D 0xBBFC 0xBC54 mando_6  el mando grabado de la demostracion de la piramide 6: parejas [cuadros][teclas]; unas teclas 0xFF acaban; lo leen p12:BA76 (88 bytes)
 F 0xBBFC 2
+D 0xBD72 0xBD92 estrellas_x  16 velocidades en x de las estrellas; lo leen p12:BD65 (32 bytes)
+F 0xBD72 w8
+D 0xBD92 0xBDB2 estrellas_y  16 velocidades en y de las estrellas; lo leen p12:BD53 (32 bytes)
+F 0xBD92 w8
+D 0xBE04 0xBE0B letrero_BE04  letrero (de la cinta): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p12:BE15 (7 bytes)
+F 0xBE04 16
+D 0xBE0B 0xBE12 letrero_BE0B  letrero (de la cinta): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p12:BE53 (7 bytes)
+F 0xBE0B 16
+D 0xBEAB 0xBEB8 letrero_BEAB  letrero (de error de cinta): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p12:BEA2 (13 bytes)
+F 0xBEAB 16
+D 0xBF31 0xBF3E letrero_BF31  letrero (de error de cinta): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p12:BF28 (13 bytes)
+F 0xBF31 16
 D 0xBF50 0xC000 relleno_ff  176 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (176 bytes)
 F 0xBF50 16
-D 0xB4F8 0xB4FC resto_B4F8  lo apuntan con el banco puesto p12:B4EF (0xB4F8); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B4EF (4 bytes)
-F 0xB4F8 16
-D 0xB544 0xB6AC resto_B544  lo apuntan con el banco puesto p12:B400 (0xB544), p12:B924 (0xB581), p12:B73F (0xB5B4), p12:B893 (0xB5C3), p12:B6FD (0xB5DC), p12:B7EA (0xB648); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B400, p12:B924, p12:B73F, p12:B893, p12:B6FD, p12:B7EA (360 bytes)
-F 0xB544 16
-D 0xB8AB 0xB8CB resto_B8AB  lo apuntan con el banco puesto p12:B6E2 (0xB8AB), p12:B88D (0xB8AB), p12:B6F7 (0xB8BA); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B6E2, p12:B88D, p12:B6F7 (32 bytes)
-F 0xB8AB 16
 D 0xB903 0xB909 resto_B903  lo apuntan con el banco puesto p12:B8CE (0xB903); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B8CE (6 bytes)
 F 0xB903 16
-D 0xB9DE 0xB9F7 resto_B9DE  lo apuntan con el banco puesto p12:B9B0 (0xB9DE), p12:B9A5 (0xB9F1); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B9B0, p12:B9A5 (25 bytes)
-F 0xB9DE 16
-D 0xBD72 0xBDB2 resto_BD72  lo apuntan con el banco puesto p12:BD62 (0xBD72), p12:BD50 (0xBD92); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BD62, p12:BD50 (64 bytes)
-F 0xBD72 16
-D 0xBDDC 0xBE12 resto_BDDC  lo apuntan con el banco puesto p12:BDBB (0xBDDC), p12:BE12 (0xBE04), p12:BE50 (0xBE0B); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BDBB, p12:BE12, p12:BE50 (54 bytes)
+D 0xB9F1 0xB9F7 resto_B9F1  lo apuntan con el banco puesto p12:B9A5 (0xB9F1); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B9A5 (6 bytes)
+F 0xB9F1 16
+D 0xBDDC 0xBE04 resto_BDDC  lo apuntan con el banco puesto p12:BDBB (0xBDDC); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BDBB (40 bytes)
 F 0xBDDC 16
-D 0xBEAB 0xBEB8 resto_BEAB  lo apuntan con el banco puesto p12:BE9F (0xBEAB); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BE9F (13 bytes)
-F 0xBEAB 16
-D 0xBF31 0xBF3E resto_BF31  lo apuntan con el banco puesto p12:BF25 (0xBF31); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:BF25 (13 bytes)
-F 0xBF31 16
 # --- fin de los bloques de bloques.py ---
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---

@@ -750,41 +750,59 @@ def graficos_msx2_resto():
             a = v.w(0xA792 + 5 * k + o)
             B.declara(v, a, a + 32, "pal_%04X" % a, "16 colores de paleta (2 bytes cada uno)",
                       tr("p01:77FE"), F=2)
-    # el banco 12 (p00:41B5)
+
+# El final del banco 12 (p00:41B5): los sitios escondidos, el puzle, la seleccion
+# de musicas, las estrellas del final y la cinta. Lo mismo en los dos cartuchos,
+# 4 bytes antes en MSX1 hasta el puzle y luego mas (el codigo de alrededor cambia);
+# cada direccion de MSX1 es la del mismo contenido, byte a byte, que en MSX2.
+FIN12 = {
+    "msx2": dict(letreros=(0xB585, 0xB5B8, 0xB5C7, 0xB8AF, 0xB8BE, 0xBE67, 0xBE6E, 0xBF0E, 0xBF94),
+                 sitio=0xB4F8, sitios=0xB548, puzles=0xB5E0, piezas=0xB64C, flecha=0xB9FA,
+                 estrellas=(0xBD97, 0xBDB7)),
+    "msx1": dict(letreros=(0xB581, 0xB5B4, 0xB5C3, 0xB8AB, 0xB8BA, 0xBE04, 0xBE0B, 0xBEAB, 0xBF31),
+                 sitio=0xB4F8, sitios=0xB544, puzles=0xB5DC, piezas=0xB648, flecha=0xB9DE,
+                 estrellas=(0xBD72, 0xBD92)),
+}
+
+
+def banco12_fin():
+    d = FIN12[actual()]
     v12 = B.Ventana((1, 2, 12))
-    for a, que, lec in ((0xB585, "de las musicas", "p12:B935"),
-                        (0xB5B8, "del puzle", "p12:B746"), (0xB5C7, "del puzle resuelto", "p12:B89A"),
-                        (0xB8AF, "del puzle", "p12:B6E9"), (0xB8BE, "del puzle", "p12:B6FE"),
-                        (0xBE67, "de la cinta", "p12:BE78"), (0xBE6E, "de la cinta", "p12:BEB6"),
-                        (0xBF0E, "de error de cinta", "p12:BF05"), (0xBF94, "de error de cinta",
-                                                                  "p12:BF8B")):
+    for a, (que, lec) in zip(d["letreros"], (
+            ("de las musicas", "p12:B935"), ("del puzle", "p12:B746"),
+            ("del puzle resuelto", "p12:B89A"), ("del puzle", "p12:B6E9"),
+            ("del puzle", "p12:B6FE"), ("de la cinta", "p12:BE78"), ("de la cinta", "p12:BEB6"),
+            ("de error de cinta", "p12:BF05"), ("de error de cinta", "p12:BF8B"))):
         letrero(v12, a, "letrero_%04X" % a, que, tr(lec))
-    B.declara(v12, 0xB4F8, 0xB4FC, "sitio_dibujo", "2 x 2 caracteres del sitio escondido",
-              tr("p12:B4F5"), F=4)
-    a = 0xB548
+    B.declara(v12, d["sitio"], d["sitio"] + 4, "sitio_dibujo", "2 x 2 caracteres del sitio "
+              "escondido", tr("p12:B4F5"), F=4)
+    a = d["sitios"]
     while v12(a):
         a += 5
-    B.declara(v12, 0xB548, a + 1, "sitios_escondidos", "%d sitios escondidos de 5 bytes [fase]"
-              "[tipo (1 musicas, 2 puzle)][pantalla][y][x], un 0 acaba" % ((a - 0xB548) // 5),
-              tr("p12:B403"), F=5)
-    B.declara(v12, 0xB5E0, 0xB5E8, "puzles", "4 punteros a los puzles revueltos", tr("p12:B709"),
-              F="w8")
+    B.declara(v12, d["sitios"], a + 1, "sitios_escondidos", "%d sitios escondidos de 5 bytes "
+              "[fase][tipo (1 musicas, 2 puzle)][pantalla][y][x], un 0 acaba"
+              % ((a - d["sitios"]) // 5), tr("p12:B403"), F=5)
+    B.declara(v12, d["puzles"], d["puzles"] + 8, "puzles", "4 punteros a los puzles revueltos",
+              tr("p12:B709"), F="w8")
     for k in range(4):
-        a = v12.w(0xB5E0 + 2 * k)
+        a = v12.w(d["puzles"] + 2 * k)
         B.declara(v12, a, a + 25, "puzle_%d" % k, "un puzle revuelto: las 25 casillas (0 el hueco)",
                   tr("p12:B70F"), F=5)
-    B.declara(v12, 0xB64C, 0xB64C + 4 * 25, "piezas", "los 2 x 2 caracteres de cada pieza del "
-              "puzle (0 el hueco)", tr("p12:B7F4"), F=4)
-    B.declara(v12, 0xB913, 0xB917, "colores_mano", "los colores de los 4 sprites de la mano del "
-              "puzle", tr("p12:B906"), F=4)
-    B.declara(v12, 0xB9FA, 0xBA0D, "musicas_flecha", "19 bytes: donde va la flecha de cada musica",
-              tr("p12:B9CB"), F=19)
-    B.declara(v12, 0xBA0D, 0xBA11, "colores_flecha", "los colores de los 4 sprites de la flecha",
-              tr("p12:B9ED"), F=4)
-    B.declara(v12, 0xBD97, 0xBDB7, "estrellas_x", "16 velocidades en x de las estrellas",
+    B.declara(v12, d["piezas"], d["piezas"] + 4 * 25, "piezas", "los 2 x 2 caracteres de cada "
+              "pieza del puzle (0 el hueco)", tr("p12:B7F4"), F=4)
+    B.declara(v12, d["flecha"], d["flecha"] + 19, "musicas_flecha", "19 bytes: donde va la flecha "
+              "de cada musica", tr("p12:B9CB"), F=19)
+    x, y = d["estrellas"]
+    B.declara(v12, x, x + 32, "estrellas_x", "16 velocidades en x de las estrellas",
               tr("p12:BD8A"), F="w8")
-    B.declara(v12, 0xBDB7, 0xBDD7, "estrellas_y", "16 velocidades en y de las estrellas",
+    B.declara(v12, y, y + 32, "estrellas_y", "16 velocidades en y de las estrellas",
               tr("p12:BD78"), F="w8")
+    if actual() == "msx2":
+        # en MSX1 los colores de los sprites van de otra manera (un color por sprite)
+        B.declara(v12, 0xB913, 0xB917, "colores_mano", "los colores de los 4 sprites de la mano "
+                  "del puzle", tr("p12:B906"), F=4)
+        B.declara(v12, 0xBA0D, 0xBA11, "colores_flecha", "los colores de los 4 sprites de la "
+                  "flecha", tr("p12:B9ED"), F=4)
 
 
 def letrero_sin_sitio_fin(v, a):
@@ -1122,4 +1140,5 @@ def todo():
     graficos_msx2_resto()
     graficos_msx1()
     banco12_comun()
+    banco12_fin()
     restos()

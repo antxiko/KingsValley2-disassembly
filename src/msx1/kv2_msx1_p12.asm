@@ -1538,11 +1538,10 @@ L_B4E3:
 	jp 053d6h		;b4f5
 
 ; ----------------------------------------------------------------------
-; DATOS resto_B4F8: lo apuntan con el banco puesto p12:B4EF (0xB4F8); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p12:B4EF (4 bytes)
+; DATOS sitio_dibujo: 2 x 2 caracteres del sitio escondido; lo leen p12:B4F5
+;   (4 bytes)
 ;   0xb4f8..0xb4fc  (4 bytes)
-DATA_resto_B4F8:
+DATA_sitio_dibujo:
 	defb 0ach,0adh,0c0h,0c1h	; b4f8
 
 ; ======================================================================
@@ -1594,36 +1593,130 @@ L_B536:
 	jp L_B6AC		;b541
 
 ; ----------------------------------------------------------------------
-; DATOS resto_B544: lo apuntan con el banco puesto p12:B400 (0xB544), p12:B924
-;   (0xB581), p12:B73F (0xB5B4), p12:B893 (0xB5C3), p12:B6FD (0xB5DC),
-;   p12:B7EA (0xB648); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p12:B400, p12:B924, p12:B73F, p12:B893, p12:B6FD,
-;   p12:B7EA (360 bytes)
-;   0xb544..0xb6ac  (360 bytes)
-DATA_resto_B544:
-	defb 007h,001h,002h,008h,008h,014h,002h,002h,088h,030h,018h,001h,004h,028h,0e0h,01dh	; b544  .........0...(..
-	defb 002h,001h,0a8h,0e0h,020h,001h,003h,080h,030h,023h,002h,003h,018h,0d8h,028h,001h	; b554  .... ...0#....(.
-	defb 001h,080h,070h,02bh,002h,001h,0a0h,098h,032h,001h,002h,0a8h,018h,034h,002h,001h	; b564  ..p+....2....4..
-	defb 0a8h,0e0h,035h,001h,003h,038h,0b0h,037h,002h,002h,078h,0c0h,000h,050h,018h,0f3h	; b574  ..5..8.7..x..P..
-	defb 0efh,0f5h,0eeh,0e4h,000h,0f3h,0e5h,0ech,0e5h,0e3h,0f4h,0feh,040h,0a8h,0f3h,0e5h	; b584  ............@...
-	defb 0ech,0e5h,0e3h,0f4h,000h,0fch,0fch,0fch,000h,0f3h,0f0h,0e1h,0e3h,0e5h,0feh,058h	; b594  ...............X
-	defb 0b8h,0e5h,0eeh,0e4h,000h,0fch,0fch,0fch,000h,0f2h,0e5h,0f4h,0f5h,0f2h,0eeh,0ffh	; b5a4  ................
-	defb 050h,018h,0f0h,0f5h,0fah,0fah,0ech,0e5h,000h,000h,0e7h,0e1h,0edh,0e5h,0ffh,060h	; b5b4  P..............`
-	defb 090h,0e1h,0ech,0ech,000h,0f2h,0e9h,0e7h,0e8h,0f4h,0feh,060h,0a0h,0f2h,0e5h,0f3h	; b5c4  ...........`....
-	defb 0f4h,000h,000h,0d3h,000h,0f5h,0f0h,0ffh,0e4h,0b5h,0fdh,0b5h,016h,0b6h,02fh,0b6h	; b5d4  ............../.
-	defb 00bh,011h,017h,004h,012h,00ah,001h,00ch,00dh,013h,007h,016h,009h,018h,00eh,015h	; b5e4  ................
-	defb 008h,014h,003h,000h,006h,002h,010h,005h,00fh,004h,012h,00fh,00bh,003h,008h,018h	; b5f4  ................
-	defb 017h,007h,013h,010h,005h,00ch,000h,00eh,015h,016h,011h,006h,00ah,001h,009h,00dh	; b604  ................
-	defb 014h,002h,007h,014h,00bh,010h,018h,012h,001h,006h,00ch,005h,008h,015h,00ah,011h	; b614  ................
-	defb 00dh,00eh,016h,002h,009h,000h,013h,00fh,017h,003h,004h,00fh,004h,008h,002h,00bh	; b624  ................
-	defb 000h,00dh,016h,00eh,013h,006h,00ch,007h,012h,015h,014h,017h,011h,018h,00ah,005h	; b634  ................
-	defb 010h,003h,009h,001h,035h,035h,035h,035h,001h,002h,003h,004h,005h,006h,007h,008h	; b644  ....5555........
-	defb 009h,00ah,00bh,00ch,00dh,00eh,00fh,010h,011h,012h,013h,00ch,014h,015h,016h,00ch	; b654  ................
-	defb 017h,018h,019h,01ah,01bh,00ah,016h,00ch,01ch,01dh,01eh,01fh,020h,024h,021h,025h	; b664  ............ $!%
-	defb 020h,026h,021h,027h,020h,028h,021h,029h,020h,02ah,021h,02bh,020h,02ch,021h,02dh	; b674   &!' (!) *!+ ,!-
-	defb 020h,02eh,021h,02fh,020h,030h,021h,025h,020h,031h,021h,032h,020h,033h,021h,025h	; b684   .!/ 0!% 1!2 3!%
-	defb 020h,024h,021h,034h,022h,024h,023h,025h,022h,026h,023h,027h,022h,028h,023h,029h	; b694   $!4"$#%"&#'"(#)
-	defb 022h,02ah,023h,02bh,022h,02ch,023h,02dh	; b6a4  "*#+",#-
+; DATOS sitios_escondidos: 12 sitios escondidos de 5 bytes [fase][tipo (1
+;   musicas, 2 puzle)][pantalla][y][x], un 0 acaba; lo leen p12:B403 (61
+;   bytes)
+;   0xb544..0xb581  (61 bytes)
+DATA_sitios_escondidos:
+	defb 007h,001h,002h,008h,008h	; b544
+	defb 014h,002h,002h,088h,030h	; b549
+	defb 018h,001h,004h,028h,0e0h	; b54e
+	defb 01dh,002h,001h,0a8h,0e0h	; b553
+	defb 020h,001h,003h,080h,030h	; b558
+	defb 023h,002h,003h,018h,0d8h	; b55d
+	defb 028h,001h,001h,080h,070h	; b562
+	defb 02bh,002h,001h,0a0h,098h	; b567
+	defb 032h,001h,002h,0a8h,018h	; b56c
+	defb 034h,002h,001h,0a8h,0e0h	; b571
+	defb 035h,001h,003h,038h,0b0h	; b576
+	defb 037h,002h,002h,078h,0c0h	; b57b
+	defb 000h	; b580
+
+; ----------------------------------------------------------------------
+; DATOS letrero_B581: letrero (de las musicas): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p12:B927 (51 bytes)
+;   0xb581..0xb5b4  (51 bytes)
+DATA_letrero_B581:
+	defb 050h,018h,0f3h,0efh,0f5h,0eeh,0e4h,000h,0f3h,0e5h,0ech,0e5h,0e3h,0f4h,0feh,040h	; b581  P..............@
+	defb 0a8h,0f3h,0e5h,0ech,0e5h,0e3h,0f4h,000h,0fch,0fch,0fch,000h,0f3h,0f0h,0e1h,0e3h	; b591  ................
+	defb 0e5h,0feh,058h,0b8h,0e5h,0eeh,0e4h,000h,0fch,0fch,0fch,000h,0f2h,0e5h,0f4h,0f5h	; b5a1  ..X.............
+	defb 0f2h,0eeh,0ffh	; b5b1
+
+; ----------------------------------------------------------------------
+; DATOS letrero_B5B4: letrero (del puzle): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p12:B742 (15 bytes)
+;   0xb5b4..0xb5c3  (15 bytes)
+DATA_letrero_B5B4:
+	defb 050h,018h,0f0h,0f5h,0fah,0fah,0ech,0e5h,000h,000h,0e7h,0e1h,0edh,0e5h,0ffh	; b5b4  P..............
+
+; ----------------------------------------------------------------------
+; DATOS letrero_B5C3: letrero (del puzle resuelto): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p12:B896 (25 bytes)
+;   0xb5c3..0xb5dc  (25 bytes)
+DATA_letrero_B5C3:
+	defb 060h,090h,0e1h,0ech,0ech,000h,0f2h,0e9h,0e7h,0e8h,0f4h,0feh,060h,0a0h,0f2h,0e5h	; b5c3  `...........`...
+	defb 0f3h,0f4h,000h,000h,0d3h,000h,0f5h,0f0h,0ffh	; b5d3  .........
+
+; ----------------------------------------------------------------------
+; DATOS puzles: 4 punteros a los puzles revueltos; lo leen p12:B705 (8 bytes)
+;   0xb5dc..0xb5e4  (8 bytes)
+DATA_puzles:
+	defw 0b5e4h,0b5fdh,0b616h,0b62fh	; b5dc  -> DATA_puzle_0 DATA_puzle_1 DATA_puzle_2 DATA_puzle_3
+
+; ----------------------------------------------------------------------
+; DATOS puzle_0: un puzle revuelto: las 25 casillas (0 el hueco); lo leen
+;   p12:B70B (25 bytes)
+;   0xb5e4..0xb5fd  (25 bytes)
+DATA_puzle_0:
+	defb 00bh,011h,017h,004h,012h	; b5e4
+	defb 00ah,001h,00ch,00dh,013h	; b5e9
+	defb 007h,016h,009h,018h,00eh	; b5ee
+	defb 015h,008h,014h,003h,000h	; b5f3
+	defb 006h,002h,010h,005h,00fh	; b5f8
+
+; ----------------------------------------------------------------------
+; DATOS puzle_1: un puzle revuelto: las 25 casillas (0 el hueco); lo leen
+;   p12:B70B (25 bytes)
+;   0xb5fd..0xb616  (25 bytes)
+DATA_puzle_1:
+	defb 004h,012h,00fh,00bh,003h	; b5fd
+	defb 008h,018h,017h,007h,013h	; b602
+	defb 010h,005h,00ch,000h,00eh	; b607
+	defb 015h,016h,011h,006h,00ah	; b60c
+	defb 001h,009h,00dh,014h,002h	; b611
+
+; ----------------------------------------------------------------------
+; DATOS puzle_2: un puzle revuelto: las 25 casillas (0 el hueco); lo leen
+;   p12:B70B (25 bytes)
+;   0xb616..0xb62f  (25 bytes)
+DATA_puzle_2:
+	defb 007h,014h,00bh,010h,018h	; b616
+	defb 012h,001h,006h,00ch,005h	; b61b
+	defb 008h,015h,00ah,011h,00dh	; b620
+	defb 00eh,016h,002h,009h,000h	; b625
+	defb 013h,00fh,017h,003h,004h	; b62a
+
+; ----------------------------------------------------------------------
+; DATOS puzle_3: un puzle revuelto: las 25 casillas (0 el hueco); lo leen
+;   p12:B70B (25 bytes)
+;   0xb62f..0xb648  (25 bytes)
+DATA_puzle_3:
+	defb 00fh,004h,008h,002h,00bh	; b62f
+	defb 000h,00dh,016h,00eh,013h	; b634
+	defb 006h,00ch,007h,012h,015h	; b639
+	defb 014h,017h,011h,018h,00ah	; b63e
+	defb 005h,010h,003h,009h,001h	; b643
+
+; ----------------------------------------------------------------------
+; DATOS piezas: los 2 x 2 caracteres de cada pieza del puzle (0 el hueco); lo
+;   leen p12:B7F0 (100 bytes)
+;   0xb648..0xb6ac  (100 bytes)
+DATA_piezas:
+	defb 035h,035h,035h,035h	; b648
+	defb 001h,002h,003h,004h	; b64c
+	defb 005h,006h,007h,008h	; b650
+	defb 009h,00ah,00bh,00ch	; b654
+	defb 00dh,00eh,00fh,010h	; b658
+	defb 011h,012h,013h,00ch	; b65c
+	defb 014h,015h,016h,00ch	; b660
+	defb 017h,018h,019h,01ah	; b664
+	defb 01bh,00ah,016h,00ch	; b668
+	defb 01ch,01dh,01eh,01fh	; b66c
+	defb 020h,024h,021h,025h	; b670
+	defb 020h,026h,021h,027h	; b674
+	defb 020h,028h,021h,029h	; b678
+	defb 020h,02ah,021h,02bh	; b67c
+	defb 020h,02ch,021h,02dh	; b680
+	defb 020h,02eh,021h,02fh	; b684
+	defb 020h,030h,021h,025h	; b688
+	defb 020h,031h,021h,032h	; b68c
+	defb 020h,033h,021h,025h	; b690
+	defb 020h,024h,021h,034h	; b694
+	defb 022h,024h,023h,025h	; b698
+	defb 022h,026h,023h,027h	; b69c
+	defb 022h,028h,023h,029h	; b6a0
+	defb 022h,02ah,023h,02bh	; b6a4
+	defb 022h,02ch,023h,02dh	; b6a8
 
 ; ======================================================================
 ; CODIGO 0xb6ac..0xb6ba  (14 bytes)
@@ -1966,11 +2059,11 @@ L_B89F:
 	jp 041e8h		;b8a8
 
 ; ----------------------------------------------------------------------
-; DATOS resto_B8AB: lo apuntan con el banco puesto p12:B6E2 (0xB8AB), p12:B88D
-;   (0xB8AB), p12:B6F7 (0xB8BA); el tamano es lo que hay hasta lo siguiente,
-;   no sale de recorrerlo; lo leen p12:B6E2, p12:B88D, p12:B6F7 (32 bytes)
+; DATOS letrero_B8AB: letrero (del puzle): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; se solapan 2 bloques: (letrero_B8BA B8BA-B8CB); lo
+;   leen p12:B6E5, p12:B6FA (32 bytes)
 ;   0xb8ab..0xb8cb  (32 bytes)
-DATA_resto_B8AB:
+DATA_letrero_B8AB:
 	defb 050h,0a0h,0e5h,0eeh,0e4h,000h,000h,0e5h,0f3h,0e3h,000h,0ebh,0e5h,0f9h,0feh,048h	; b8ab  P..............H
 	defb 090h,0f0h,0f5h,0f3h,0e8h,000h,0f3h,0f0h,0e1h,0e3h,0e5h,000h,0ebh,0e5h,0f9h,0ffh	; b8bb  ................
 
@@ -2151,13 +2244,19 @@ L_B9C9:
 	ret			;b9dd
 
 ; ----------------------------------------------------------------------
-; DATOS resto_B9DE: lo apuntan con el banco puesto p12:B9B0 (0xB9DE), p12:B9A5
-;   (0xB9F1); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p12:B9B0, p12:B9A5 (25 bytes)
-;   0xb9de..0xb9f7  (25 bytes)
-DATA_resto_B9DE:
-	defb 02ch,033h,03ch,045h,04ch,055h,05ch,06ch,073h,07ch,085h,08ch,09ch,0a3h,0ach,0b5h	; b9de  ,3<ELU\ls|......
-	defb 0bch,0c5h,0cch,001h,009h,00bh,001h,009h,00bh	; b9ee  .........
+; DATOS musicas_flecha: 19 bytes: donde va la flecha de cada musica; lo leen
+;   p12:B9B6 (19 bytes)
+;   0xb9de..0xb9f1  (19 bytes)
+DATA_musicas_flecha:
+	defb 02ch,033h,03ch,045h,04ch,055h,05ch,06ch,073h,07ch,085h,08ch,09ch,0a3h,0ach,0b5h,0bch,0c5h,0cch	; b9de  ,3<ELU\ls|.........
+
+; ----------------------------------------------------------------------
+; DATOS resto_B9F1: lo apuntan con el banco puesto p12:B9A5 (0xB9F1); el
+;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
+;   p12:B9A5 (6 bytes)
+;   0xb9f1..0xb9f7  (6 bytes)
+DATA_resto_B9F1:
+	defb 001h,009h,00bh,001h,009h,00bh	; b9f1
 
 ; ======================================================================
 ; CODIGO 0xb9f7..0xba21  (42 bytes)
@@ -2680,15 +2779,20 @@ L_BD6D:
 	ret			;bd71
 
 ; ----------------------------------------------------------------------
-; DATOS resto_BD72: lo apuntan con el banco puesto p12:BD62 (0xBD72), p12:BD50
-;   (0xBD92); el tamano es lo que hay hasta lo siguiente, no sale de
-;   recorrerlo; lo leen p12:BD62, p12:BD50 (64 bytes)
-;   0xbd72..0xbdb2  (64 bytes)
-DATA_resto_BD72:
-	defb 000h,000h,023h,0ffh,080h,000h,04bh,0ffh,080h,0ffh,000h,001h,080h,000h,023h,0ffh	; bd72  ..#...K.......#.
-	defb 0ddh,000h,04bh,0ffh,080h,0ffh,000h,000h,0b5h,000h,000h,0ffh,0b5h,000h,0ddh,000h	; bd82  ..K.............
-	defb 000h,001h,080h,0ffh,023h,0ffh,0b5h,000h,023h,0ffh,000h,000h,0ddh,000h,080h,000h	; bd92  ....#...#.......
-	defb 080h,0ffh,04bh,0ffh,0ddh,000h,000h,0ffh,0b5h,000h,000h,000h,04bh,0ffh,080h,000h	; bda2  ..K.........K...
+; DATOS estrellas_x: 16 velocidades en x de las estrellas; lo leen p12:BD65
+;   (32 bytes)
+;   0xbd72..0xbd92  (32 bytes)
+DATA_estrellas_x:
+	defw 00000h,0ff23h,00080h,0ff4bh,0ff80h,00100h,00080h,0ff23h	; bd72
+	defw 000ddh,0ff4bh,0ff80h,00000h,000b5h,0ff00h,000b5h,000ddh	; bd82
+
+; ----------------------------------------------------------------------
+; DATOS estrellas_y: 16 velocidades en y de las estrellas; lo leen p12:BD53
+;   (32 bytes)
+;   0xbd92..0xbdb2  (32 bytes)
+DATA_estrellas_y:
+	defw 00100h,0ff80h,0ff23h,000b5h,0ff23h,00000h,000ddh,00080h	; bd92
+	defw 0ff80h,0ff4bh,000ddh,0ff00h,000b5h,00000h,0ff4bh,00080h	; bda2
 
 ; ======================================================================
 ; CODIGO 0xbdb2..0xbddc  (42 bytes)
@@ -2722,15 +2826,28 @@ L_BDC9:
 	ret			;bddb
 
 ; ----------------------------------------------------------------------
-; DATOS resto_BDDC: lo apuntan con el banco puesto p12:BDBB (0xBDDC), p12:BE12
-;   (0xBE04), p12:BE50 (0xBE0B); el tamano es lo que hay hasta lo siguiente,
-;   no sale de recorrerlo; lo leen p12:BDBB, p12:BE12, p12:BE50 (54 bytes)
-;   0xbddc..0xbe12  (54 bytes)
+; DATOS resto_BDDC: lo apuntan con el banco puesto p12:BDBB (0xBDDC); el
+;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
+;   p12:BDBB (40 bytes)
+;   0xbddc..0xbe04  (40 bytes)
 DATA_resto_BDDC:
 	defb 078h,0b0h,004h,007h,078h,0b0h,008h,001h,088h,0b0h,00ch,007h,088h,0b0h,010h,00bh	; bddc  x...x...........
 	defb 088h,0b0h,014h,001h,078h,0b0h,018h,007h,078h,0b0h,01ch,001h,088h,0b0h,020h,007h	; bdec  ....x...x..... .
-	defb 088h,0b0h,024h,00bh,088h,0b0h,028h,001h,048h,070h,0f3h,0ebh,0e9h,0f0h,0ffh,048h	; bdfc  ..$...(.Hp.....H
-	defb 070h,0e6h,0e9h,0eeh,0e4h,0ffh	; be0c
+	defb 088h,0b0h,024h,00bh,088h,0b0h,028h,001h	; bdfc  ..$...(.
+
+; ----------------------------------------------------------------------
+; DATOS letrero_BE04: letrero (de la cinta): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p12:BE15 (7 bytes)
+;   0xbe04..0xbe0b  (7 bytes)
+DATA_letrero_BE04:
+	defb 048h,070h,0f3h,0ebh,0e9h,0f0h,0ffh	; be04
+
+; ----------------------------------------------------------------------
+; DATOS letrero_BE0B: letrero (de la cinta): [x][y] y caracteres, 0xFE [x][y]
+;   otro sitio, 0xFF acaba; lo leen p12:BE53 (7 bytes)
+;   0xbe0b..0xbe12  (7 bytes)
+DATA_letrero_BE0B:
+	defb 048h,070h,0e6h,0e9h,0eeh,0e4h,0ffh	; be0b
 
 ; ======================================================================
 ; CODIGO 0xbe12..0xbeab  (153 bytes)
@@ -2813,11 +2930,10 @@ L_BE99:
 	ret			;beaa
 
 ; ----------------------------------------------------------------------
-; DATOS resto_BEAB: lo apuntan con el banco puesto p12:BE9F (0xBEAB); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p12:BE9F (13 bytes)
+; DATOS letrero_BEAB: letrero (de error de cinta): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p12:BEA2 (13 bytes)
 ;   0xbeab..0xbeb8  (13 bytes)
-DATA_resto_BEAB:
+DATA_letrero_BEAB:
 	defb 050h,060h,0ech,0efh,0e1h,0e4h,000h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh	; beab  P`...........
 
 ; ======================================================================
@@ -2890,11 +3006,10 @@ L_BF1F:
 	ret			;bf30
 
 ; ----------------------------------------------------------------------
-; DATOS resto_BF31: lo apuntan con el banco puesto p12:BF25 (0xBF31); el
-;   tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen
-;   p12:BF25 (13 bytes)
+; DATOS letrero_BF31: letrero (de error de cinta): [x][y] y caracteres, 0xFE
+;   [x][y] otro sitio, 0xFF acaba; lo leen p12:BF28 (13 bytes)
 ;   0xbf31..0xbf3e  (13 bytes)
-DATA_resto_BF31:
+DATA_letrero_BF31:
 	defb 050h,060h,0f3h,0e1h,0f6h,0e5h,000h,0e5h,0f2h,0f2h,0efh,0f2h,0ffh	; bf31  P`...........
 
 ; ======================================================================
