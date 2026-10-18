@@ -39,9 +39,16 @@ C 0xB40E suma A a HL (HL = HL + A)
 C 0xB42C el despachador de Konami: la tabla va detras del call
 C 0xB438 lee la pantalla de la fase (desde 1)
 C 0xB43D lee el estado del personaje
+C 0xB450 devuelve el fondo de los bloques de esta pantalla
+C 0xB453 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
+C 0xB459 las de la lista, al reves: guarda el fondo y pinta la cosa
+C 0xB45C pinta los bloques de esta pantalla
 C 0xB46D lee la pantalla de la fase (desde 1)
 C 0xB476 pide el sonido 0x2E
+C 0xB47D devuelve el fondo de los bloques de esta pantalla
+C 0xB480 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 C 0xB486 un dibujo de 16 x 16 de 0xB1D6 en la posicion de 0xEF13 (HMMC)
+C 0xB489 las de la lista, al reves: guarda el fondo y pinta la cosa
 C 0xB490 lee la pantalla de la fase (desde 1)
 C 0xB499 lee el mando: lo pulsado
 C 0xB4A3 guarda el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final) y el byte siguiente (16 bits)
@@ -108,9 +115,16 @@ C 0xBD8A HL = la palabra A de la tabla de HL
 C 0xBE01 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0xBE35 apunta a los colores de los sprites (16 bytes por sprite)
 C 0xBE78 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBE95 apunta a la lista de las cosas de 0xE300 por orden de pintado
+C 0xBEA3 apunta a la lista de las cosas de 0xE300 por orden de pintado
+C 0xBEA6 apunta a el nombre de la fase del editor (11 letras)
 C 0xBEB6 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBEF3 apunta a la lista de las cosas de 0xE300 por orden de pintado
 C 0xBEFF pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0xBF05 pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBF0A guarda el resultado de grabar o cargar (0 bien, 2 error)
+C 0xBF40 apunta a el nombre de la fase del editor (11 letras)
 C 0xBF85 pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 C 0xBF8B pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
+C 0xBF90 guarda el resultado de grabar o cargar (0 bien, 2 error)
 # --- fin de las anotaciones de anota.py ---

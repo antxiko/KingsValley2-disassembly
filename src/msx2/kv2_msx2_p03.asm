@@ -40,7 +40,7 @@ L_A008:
 	ld a,(0e284h)		;a019   ; lee la x del personaje
 	ld h,a			;a01c
 	ld c,000h		;a01d
-	call 09910h		;a01f
+	call 09910h		;a01f   ; NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 	ret nc			;a022
 	ld a,(0e288h)		;a023
 	ld (0e289h),a		;a026
@@ -67,7 +67,7 @@ L_A045:
 	ld a,(0e207h)		;a04f   ; lee el mando: lo que se acaba de pulsar
 	bit 4,a		;a052
 	ret z			;a054
-	ld hl,0e300h		;a055
+	ld hl,0e300h		;a055   ; apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
 	ld b,040h		;a058
 L_A05A:
 	ld a,(hl)			;a05a
@@ -144,14 +144,14 @@ L_A0B2:
 	ld l,a			;a0c6
 	ld (0e2a2h),hl		;a0c7
 	push hl			;a0ca
-	call 098e2h		;a0cb
+	call 098e2h		;a0cb   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	pop hl			;a0ce
 	cp 002h		;a0cf
 	ret nz			;a0d1
 	ld a,h			;a0d2
 	add a,008h		;a0d3
 	ld h,a			;a0d5
-	call 098e2h		;a0d6
+	call 098e2h		;a0d6   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	cp 002h		;a0d9
 	ret nz			;a0db
 	exx			;a0dc
@@ -185,13 +185,13 @@ L_A0FE:
 	and 0f8h		;a10b
 	ld l,a			;a10d
 	ld (0e2a2h),hl		;a10e
-	call 098dch		;a111
+	call 098dch		;a111   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	cp 002h		;a114
 	ret nz			;a116
 	ld a,l			;a117
 	add a,008h		;a118
 	ld l,a			;a11a
-	call 098e2h		;a11b
+	call 098e2h		;a11b   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	cp 002h		;a11e
 	ret nz			;a120
 	exx			;a121
@@ -246,14 +246,14 @@ L_A179:
 	ld a,(0e284h)		;a179   ; lee la x del personaje
 	add a,h			;a17c
 	ld h,a			;a17d
-	call 098dch		;a17e
+	call 098dch		;a17e   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a181
 	ret nc			;a183
 	ld a,l			;a184
 	and 0f8h		;a185
 	add a,006h		;a187
 	ld a,a			;a189
-	call 098e2h		;a18a
+	call 098e2h		;a18a   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	sub 002h		;a18d
 	ret			;a18f
 L_A190:
@@ -275,7 +275,7 @@ L_A190:
 	ld (0e295h),a		;a1b4
 	inc a			;a1b7
 	ld (0e296h),a		;a1b8
-	call 09f20h		;a1bb
+	call 09f20h		;a1bb   ; el dibujo del paso (tablas 0x9F45 y 0x9F49 segun hacia donde mira)
 	jp 042e3h		;a1be
 L_A1C1:
 	ld hl,(0e292h)		;a1c1
@@ -316,13 +316,13 @@ L_A1F9:
 	ld a,(0e284h)		;a1f9   ; lee la x del personaje
 	add a,002h		;a1fc
 	ld h,a			;a1fe
-	call 098dch		;a1ff
+	call 098dch		;a1ff   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a202
 	ret nc			;a204
 	ld a,h			;a205
 	add a,00ch		;a206
 	ld h,a			;a208
-	call 098dch		;a209
+	call 098dch		;a209   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a20c
 	ret			;a20e
 L_A20F:
@@ -343,7 +343,7 @@ L_A221:
 	ld h,a			;a228
 	push hl			;a229
 	push bc			;a22a
-	call 09910h		;a22b
+	call 09910h		;a22b   ; NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 	pop bc			;a22e
 	pop hl			;a22f
 	jr nc,L_A290		;a230
@@ -358,19 +358,19 @@ L_A221:
 L_A23F:
 	add a,h			;a23f
 	ld h,a			;a240
-	call 098dch		;a241
+	call 098dch		;a241   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a244
 	jr nz,L_A270		;a245
 	ld a,l			;a247
 	add a,008h		;a248
 	ld l,a			;a24a
-	call 098dch		;a24b
+	call 098dch		;a24b   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a24e
 	jr nz,L_A270		;a24f
 	ld a,l			;a251
 	add a,008h		;a252
 	ld l,a			;a254
-	call 098dch		;a255
+	call 098dch		;a255   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a258
 	jr z,L_A270		;a259
 	ld a,l			;a25b
@@ -393,7 +393,7 @@ L_A270:
 	ld h,a			;a279
 	ld c,001h		;a27a
 	push hl			;a27c
-	call 09910h		;a27d
+	call 09910h		;a27d   ; NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 	pop hl			;a280
 	ld a,l			;a281
 	jr nc,L_A25E		;a282
@@ -448,7 +448,7 @@ L_A2D6:
 	ld l,h			;a2e1
 	ld a,(0e284h)		;a2e2   ; lee la x del personaje
 	ld h,a			;a2e5
-	call 09910h		;a2e6
+	call 09910h		;a2e6   ; NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 	pop hl			;a2e9
 	pop bc			;a2ea
 	ret nc			;a2eb
@@ -589,7 +589,7 @@ L_A3CE:
 	cp 010h		;a3d0
 	jr c,L_A3DD		;a3d2
 L_A3D4:
-	call 09910h		;a3d4
+	call 09910h		;a3d4   ; NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 	ld b,000h		;a3d7
 	jr nc,L_A3DD		;a3d9
 	ld b,010h		;a3db
@@ -680,13 +680,13 @@ L_A45E:
 	ld h,a			;a463
 	ld a,(0e282h)		;a464   ; lee la y del personaje
 	ld l,a			;a467
-	call 098dch		;a468
+	call 098dch		;a468   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	dec a			;a46b
 	ret z			;a46c
 	ld a,h			;a46d
 	add a,00ch		;a46e
 	ld h,a			;a470
-	call 098e2h		;a471
+	call 098e2h		;a471   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	dec a			;a474
 	ret			;a475
 L_A476:
@@ -694,13 +694,13 @@ L_A476:
 	ld h,a			;a479
 	ld a,(0e282h)		;a47a   ; lee la y del personaje
 	ld l,a			;a47d
-	call 098dch		;a47e
+	call 098dch		;a47e   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	dec a			;a481
 	ret z			;a482
 	ld a,l			;a483
 	add a,010h		;a484
 	ld l,a			;a486
-	call 098e2h		;a487
+	call 098e2h		;a487   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	dec a			;a48a
 	ret z			;a48b
 	jp 09fd4h		;a48c
@@ -715,13 +715,13 @@ L_A48F:
 	jr c,L_A4D0		;a49d
 	rra			;a49f
 	ret nc			;a4a0
-	call 098dch		;a4a1
+	call 098dch		;a4a1   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	cp 002h		;a4a4
 	jr nc,L_A4B2		;a4a6
 	ld a,h			;a4a8
 	add a,008h		;a4a9
 	ld h,a			;a4ab
-	call 098dch		;a4ac
+	call 098dch		;a4ac   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	cp 002h		;a4af
 	ret c			;a4b1
 L_A4B2:
@@ -749,13 +749,13 @@ L_A4D0:
 	ld a,l			;a4d8
 	sub 010h		;a4d9
 	ld l,a			;a4db
-	call 098dch		;a4dc
+	call 098dch		;a4dc   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a4df
 	ret nz			;a4e0
 	ld a,l			;a4e1
 	add a,009h		;a4e2
 	ld l,a			;a4e4
-	call 098dch		;a4e5
+	call 098dch		;a4e5   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a4e8
 	ret nz			;a4e9
 	ld a,l			;a4ea
@@ -792,19 +792,19 @@ L_A512:
 	ld a,(0e284h)		;a518   ; lee la x del personaje
 	add a,003h		;a51b
 	ld h,a			;a51d
-	call 098dch		;a51e
+	call 098dch		;a51e   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a521
 	ret nz			;a522
 	ld a,h			;a523
 	add a,005h		;a524
 	ld h,a			;a526
-	call 098dch		;a527
+	call 098dch		;a527   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a52a
 	ret nz			;a52b
 	ld a,h			;a52c
 	add a,005h		;a52d
 	ld h,a			;a52f
-	call 098dch		;a530
+	call 098dch		;a530   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a533
 	ret			;a534
 L_A535:
@@ -818,19 +818,19 @@ L_A535:
 	sub 00ch		;a541
 	and 0f8h		;a543
 	ld l,a			;a545
-	call 098dch		;a546
+	call 098dch		;a546   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a549
 	jr nz,L_A565		;a54a
 	ld a,l			;a54c
 	add a,008h		;a54d
 	ld l,a			;a54f
-	call 098dch		;a550
+	call 098dch		;a550   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a553
 	jr nz,L_A565		;a554
 	ld a,l			;a556
 	add a,008h		;a557
 	ld l,a			;a559
-	call 098dch		;a55a
+	call 098dch		;a55a   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	or a			;a55d
 	ret z			;a55e
 L_A55F:
@@ -848,19 +848,19 @@ L_A571:
 	ld a,(0e284h)		;a571   ; lee la x del personaje
 	add a,003h		;a574
 	ld h,a			;a576
-	call 098dch		;a577
+	call 098dch		;a577   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a57a
 	ret nc			;a57c
 	ld a,h			;a57d
 	add a,005h		;a57e
 	ld h,a			;a580
-	call 098dch		;a581
+	call 098dch		;a581   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a584
 	ret nc			;a586
 	ld a,h			;a587
 	add a,005h		;a588
 	ld h,a			;a58a
-	call 098dch		;a58b
+	call 098dch		;a58b   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a58e
 	ret			;a590
 L_A591:
@@ -883,7 +883,7 @@ L_A5A2:
 L_A5B1:
 	ld a,(0e284h)		;a5b1   ; lee la x del personaje
 	ld h,a			;a5b4
-	call 098dch		;a5b5
+	call 098dch		;a5b5   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	dec a			;a5b8
 	ld bc,00c0ch		;a5b9
 	jr z,L_A5CC		;a5bc
@@ -892,7 +892,7 @@ L_A5B1:
 	add a,010h		;a5c2
 	ld h,a			;a5c4
 	push bc			;a5c5
-	call 098dch		;a5c6
+	call 098dch		;a5c6   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	pop bc			;a5c9
 	dec a			;a5ca
 	ret nz			;a5cb
@@ -901,7 +901,7 @@ L_A5CC:
 	add a,b			;a5cd
 	ld h,a			;a5ce
 	push bc			;a5cf
-	call 098dch		;a5d0
+	call 098dch		;a5d0   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	pop bc			;a5d3
 	dec a			;a5d4
 	ret nz			;a5d5
@@ -948,7 +948,7 @@ L_A611:
 	sub 008h		;a616
 	ld h,a			;a618
 	push bc			;a619
-	call 098dch		;a61a
+	call 098dch		;a61a   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	pop bc			;a61d
 	dec a			;a61e
 	jr z,L_A611		;a61f
@@ -1048,7 +1048,7 @@ L_A6BD:
 	ld a,(0e248h)		;a6bd   ; lee el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	or a			;a6c0
 	ret nz			;a6c1
-	ld ix,0e300h		;a6c2
+	ld ix,0e300h		;a6c2   ; apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
 	ld b,040h		;a6c6
 L_A6C8:
 	push bc			;a6c8
@@ -1196,14 +1196,14 @@ L_A7B3:
 L_A7B9:
 	ld h,a			;a7b9
 	ld l,(ix+001h)		;a7ba
-	call 098dch		;a7bd
+	call 098dch		;a7bd   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a7c0
 	ld b,010h		;a7c2
 	jr nc,L_A7F9		;a7c4
 	ld a,l			;a7c6
 	add a,008h		;a7c7
 	ld l,a			;a7c9
-	call 098dch		;a7ca
+	call 098dch		;a7ca   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a7cd
 	ld b,010h		;a7cf
 	jr nc,L_A7F9		;a7d1
@@ -1221,13 +1221,13 @@ L_A7E2:
 L_A7E4:
 	ld h,a			;a7e4
 	ret c			;a7e5
-	call 098dch		;a7e6
+	call 098dch		;a7e6   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a7e9
 	jr nc,L_A7F7		;a7eb
 	ld a,l			;a7ed
 	add a,009h		;a7ee
 	ld l,a			;a7f0
-	call 098dch		;a7f1
+	call 098dch		;a7f1   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a7f4
 	ret c			;a7f6
 L_A7F7:
@@ -1281,7 +1281,7 @@ L_A83A:
 	ld h,(ix+002h)		;a847
 	ld l,(ix+001h)		;a84a
 	push bc			;a84d
-	call 09910h		;a84e
+	call 09910h		;a84e   ; NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 	pop bc			;a851
 	ret			;a852
 L_A853:
@@ -1307,7 +1307,7 @@ L_A86F:
 	ld h,(ix+002h)		;a873
 	ld l,(ix+001h)		;a876
 	push bc			;a879
-	call 09933h		;a87a
+	call 09933h		;a87a   ; lo mismo con el mapa de DE
 	pop bc			;a87d
 	ret			;a87e
 L_A87F:
@@ -1517,7 +1517,7 @@ L_A9F4:
 	ld a,(ix+002h)		;a9f5
 	add a,008h		;a9f8
 	ld h,a			;a9fa
-	call 098e2h		;a9fb
+	call 098e2h		;a9fb   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	cp 002h		;a9fe
 	jr nc,L_AA30		;aa00
 	ret			;aa02
@@ -1541,7 +1541,7 @@ L_AA20:
 	ld h,(ix+002h)		;aa24
 	ld l,(ix+001h)		;aa27
 	ld c,001h		;aa2a
-	call 09933h		;aa2c
+	call 09933h		;aa2c   ; lo mismo con el mapa de DE
 	ret c			;aa2f
 L_AA30:
 	ld hl,0e2a9h		;aa30
@@ -1555,13 +1555,13 @@ L_AA30:
 	ld a,(0e243h)		;aa44   ; lee la pantalla de la fase (desde 1)
 	cp (ix+003h)		;aa47
 	ret nz			;aa4a
-	call 09237h		;aa4b
+	call 09237h		;aa4b   ; pasa la cosa de IX al principio de la lista
 	push ix		;aa4e
-	call 096ffh		;aa50
+	call 096ffh		;aa50   ; devuelve el fondo de los bloques de esta pantalla
 	pop ix		;aa53
-	call 09116h		;aa55
+	call 09116h		;aa55   ; una cosa de 0xE300 en el suelo: guarda su fondo y la pinta (0x9328 + 4 x (tipo - 1))
 	push ix		;aa58
-	call 096cfh		;aa5a
+	call 096cfh		;aa5a   ; pinta los bloques de esta pantalla
 	pop ix		;aa5d
 	ret			;aa5f
 
@@ -1617,7 +1617,7 @@ L_AA95:
 	xor a			;aa98
 	ld (ix+000h),a		;aa99
 	ld (0e287h),a		;aa9c   ; guarda la postura del personaje
-	ld a,(0e298h)		;aa9f   ; lee lo que lleva el personaje en la mano
+	ld a,(0e298h)		;aa9f   ; lee la marca de personaje muerto
 	or a			;aaa2
 	ret nz			;aaa3
 	xor a			;aaa4
@@ -1719,13 +1719,13 @@ L_AB29:
 	add a,008h		;ab35
 	ld l,a			;ab37
 	ld (0e2a2h),hl		;ab38
-	call 098dch		;ab3b
+	call 098dch		;ab3b   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	cp 002h		;ab3e
 	jp nz,L_AA8C		;ab40
 	ld a,h			;ab43
 	add a,008h		;ab44
 	ld h,a			;ab46
-	call 098e2h		;ab47
+	call 098e2h		;ab47   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	cp 002h		;ab4a
 	jp nz,L_AA8C		;ab4c
 	call L_AB1A		;ab4f
@@ -1871,13 +1871,13 @@ L_AC2A:
 	add a,b			;ac2b
 	ld h,a			;ac2c
 	ld (0e2a2h),hl		;ac2d
-	call 098dch		;ac30
+	call 098dch		;ac30   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	cp 002h		;ac33
 	jp nz,L_AA8C		;ac35
 	ld a,l			;ac38
 	add a,008h		;ac39
 	ld l,a			;ac3b
-	call 098e2h		;ac3c
+	call 098e2h		;ac3c   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	cp 002h		;ac3f
 	jp nz,L_AA8C		;ac41
 	ld a,(0e294h)		;ac44
@@ -1910,7 +1910,7 @@ L_AC6D:
 	cp 005h		;ac71
 	ret nc			;ac73
 	exx			;ac74
-	ld hl,0e500h		;ac75
+	ld hl,0e500h		;ac75   ; apunta a los enemigos (8 x 32 bytes)
 	ld b,008h		;ac78
 	ld de,00020h		;ac7a
 	xor a			;ac7d
@@ -2065,8 +2065,8 @@ L_AD53:
 	ret nz			;ad59
 	push ix		;ad5a
 	push hl			;ad5c
-	call 096ffh		;ad5d
-	call 090abh		;ad60
+	call 096ffh		;ad5d   ; devuelve el fondo de los bloques de esta pantalla
+	call 090abh		;ad60   ; las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 	pop hl			;ad63
 	pop ix		;ad64
 	ld a,(ix+003h)		;ad66
@@ -2076,8 +2076,8 @@ L_AD53:
 	ld bc,00302h		;ad6f
 	call 0573bh		;ad72   ; un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
 	push ix		;ad75
-	call 090f7h		;ad77
-	call 096cfh		;ad7a
+	call 090f7h		;ad77   ; las de la lista, al reves: guarda el fondo y pinta la cosa
+	call 096cfh		;ad7a   ; pinta los bloques de esta pantalla
 	pop ix		;ad7d
 	ret			;ad7f
 L_AD80:
@@ -2343,8 +2343,8 @@ L_AFAA:
 	ld (ix+00bh),a		;afb0
 	ret			;afb3
 L_AFB4:
-	ld ix,0e500h		;afb4
-	call 09a0bh		;afb8
+	ld ix,0e500h		;afb4   ; apunta a los enemigos (8 x 32 bytes)
+	call 09a0bh		;afb8   ; E = la y del personaje, D = su x
 	ld b,008h		;afbb
 L_AFBD:
 	ld a,(ix+000h)		;afbd
@@ -2393,7 +2393,7 @@ L_B00F:
 	ld a,(0e243h)		;b00f   ; lee la pantalla de la fase (desde 1)
 	cp (ix+010h)		;b012
 	jp z,L_B0A4		;b015
-	call 09a0bh		;b018
+	call 09a0bh		;b018   ; E = la y del personaje, D = su x
 	ld l,(ix+003h)		;b01b
 	ld h,(ix+005h)		;b01e
 	ld a,(ix+00bh)		;b021
@@ -2522,7 +2522,7 @@ L_B0E5:
 	push de			;b0e5
 	push hl			;b0e6
 	push bc			;b0e7
-	call 098e6h		;b0e8
+	call 098e6h		;b0e8   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	pop bc			;b0eb
 	pop hl			;b0ec
 	pop de			;b0ed
@@ -2582,7 +2582,7 @@ L_B12F:
 	ld e,(ix+00ch)		;b12f
 	ld d,(ix+00dh)		;b132
 	push hl			;b135
-	call 098e6h		;b136
+	call 098e6h		;b136   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	pop hl			;b139
 	and a			;b13a
 	dec a			;b13b
@@ -2628,7 +2628,7 @@ L_B168:
 	ld d,(ix+00dh)		;b16f
 	push hl			;b172
 	push de			;b173
-	call 09933h		;b174
+	call 09933h		;b174   ; lo mismo con el mapa de DE
 	pop de			;b177
 	pop hl			;b178
 	ret			;b179
@@ -2639,7 +2639,7 @@ L_B17A:
 L_B181:
 	ld e,(ix+00ch)		;b181
 	ld d,(ix+00dh)		;b184
-	call 0995ah		;b187
+	call 0995ah		;b187   ; el primer punto de la orilla segun la direccion C (1 abajo, 2 izquierda, 3 derecha, si no arriba)
 	call L_B191		;b18a
 	ret nc			;b18d
 	call L_B19D		;b18e
@@ -2647,7 +2647,7 @@ L_B191:
 	push hl			;b191
 	push de			;b192
 	push bc			;b193
-	call 098e6h		;b194
+	call 098e6h		;b194   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	pop bc			;b197
 	pop de			;b198
 	pop hl			;b199
@@ -2973,7 +2973,7 @@ L_B3B7:
 	push bc			;b3b7
 	push hl			;b3b8
 	push de			;b3b9
-	call 098e6h		;b3ba
+	call 098e6h		;b3ba   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	pop de			;b3bd
 	pop hl			;b3be
 	pop bc			;b3bf
@@ -3008,7 +3008,7 @@ L_B3E7:
 	ld a,0f8h		;b3ec
 L_B3EE:
 	ld h,a			;b3ee
-	call 098e6h		;b3ef
+	call 098e6h		;b3ef   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	sub 002h		;b3f2
 	ret			;b3f4
 L_B3F5:
@@ -3204,7 +3204,7 @@ L_B564:
 L_B571:
 	push hl			;b571
 	push de			;b572
-	call 098e6h		;b573
+	call 098e6h		;b573   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	pop de			;b576
 	pop hl			;b577
 	and a			;b578
@@ -3216,7 +3216,7 @@ L_B571:
 	ld a,l			;b57e
 	sub 008h		;b57f
 	ld l,a			;b581
-	call 098e6h		;b582
+	call 098e6h		;b582   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	pop de			;b585
 	pop hl			;b586
 	dec a			;b587
@@ -3329,7 +3329,7 @@ L_B64E:
 	ld h,a			;b66b
 	ret c			;b66c
 L_B66D:
-	call 098e6h		;b66d
+	call 098e6h		;b66d   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 	sub 002h		;b670
 	ret			;b672
 L_B673:
@@ -3466,7 +3466,7 @@ L_B754:
 	jr nc,L_B778		;b76b
 	call L_B216		;b76d
 	ld c,001h		;b770
-	call 09933h		;b772
+	call 09933h		;b772   ; lo mismo con el mapa de DE
 	jp c,L_B856		;b775
 L_B778:
 	call L_B165		;b778
@@ -3499,7 +3499,7 @@ L_B7AB:
 L_B7B1:
 	call L_B833		;b7b1
 	ld c,001h		;b7b4
-	call 09933h		;b7b6
+	call 09933h		;b7b6   ; lo mismo con el mapa de DE
 	jp c,L_B856		;b7b9
 	call L_B938		;b7bc
 L_B7BF:
@@ -3525,7 +3525,7 @@ L_B7DF:
 	call L_B1AC		;b7e5
 	ccf			;b7e8
 	ret nc			;b7e9
-	ld iy,0e500h		;b7ea
+	ld iy,0e500h		;b7ea   ; apunta a los enemigos (8 x 32 bytes)
 	ld b,008h		;b7ee
 	ld de,00020h		;b7f0
 L_B7F3:
@@ -3850,7 +3850,7 @@ L_BA24:
 	add hl,de			;ba3a
 	ret			;ba3b
 L_BA3C:
-	ld ix,0e500h		;ba3c
+	ld ix,0e500h		;ba3c   ; apunta a los enemigos (8 x 32 bytes)
 	ld b,008h		;ba40
 L_BA42:
 	push bc			;ba42
@@ -3863,7 +3863,7 @@ L_BA42:
 	djnz L_BA42		;ba51
 	ret			;ba53
 L_BA54:
-	ld ix,0e500h		;ba54
+	ld ix,0e500h		;ba54   ; apunta a los enemigos (8 x 32 bytes)
 	ld b,008h		;ba58
 L_BA5A:
 	push bc			;ba5a
@@ -4126,7 +4126,7 @@ DATA_BC50:
 
 
 L_BC74:
-	ld ix,0e600h		;bc74
+	ld ix,0e600h		;bc74   ; apunta a las cosas de la fase (16 x 16 bytes)
 	ld b,010h		;bc78
 L_BC7A:
 	ld a,(ix+000h)		;bc7a
@@ -4232,7 +4232,7 @@ L_BD46:
 	ld h,(ix+003h)		;bd68
 	ld l,(ix+002h)		;bd6b
 	ld d,(ix+004h)		;bd6e
-	call 063edh		;bd71
+	call 063edh		;bd71   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 	ret			;bd74
 L_BD75:
 	ld (ix+00ah),001h		;bd75
@@ -4380,8 +4380,8 @@ L_BE76:
 	push hl			;be76
 	push de			;be77
 	push bc			;be78
-	call 096ffh		;be79
-	call 090abh		;be7c
+	call 096ffh		;be79   ; devuelve el fondo de los bloques de esta pantalla
+	call 090abh		;be7c   ; las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 	pop bc			;be7f
 	pop de			;be80
 	pop hl			;be81
@@ -4412,7 +4412,7 @@ L_BE76:
 	push bc			;bea6
 	ld a,002h		;bea7
 	ld b,001h		;bea9
-	call 063edh		;beab
+	call 063edh		;beab   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 	pop bc			;beae
 	pop de			;beaf
 	pop hl			;beb0
@@ -4422,9 +4422,9 @@ L_BE76:
 	ld a,(0eff0h)		;beb5
 	and a			;beb8
 	ld a,000h		;beb9
-	call nz,063edh		;bebb
-	call 096cfh		;bebe
-	call 090f7h		;bec1
+	call nz,063edh		;bebb   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+	call 096cfh		;bebe   ; pinta los bloques de esta pantalla
+	call 090f7h		;bec1   ; las de la lista, al reves: guarda el fondo y pinta la cosa
 	ld hl,0e282h		;bec4   ; apunta a la y del personaje
 	ld a,(hl)			;bec7
 	add a,003h		;bec8

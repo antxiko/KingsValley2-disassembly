@@ -880,7 +880,7 @@ L_44D4:
 	call L_4535		;44e3   ; los ladrillos del mapa
 	call L_418A		;44e6   ; los bancos 1-2-3
 	call L_46A4		;44e9   ; y lo que hay en 0xE2C0 en esta pantalla
-	call 0651dh		;44ec
+	call 0651dh		;44ec   ; pinta las cosas de 0xE700 de esta pantalla
 	jp 0ba54h		;44ef
 L_44F2:
 	ld a,(0e241h)		;44f2   ; el fondo: el dibujo de la piramide 0xE241 (tabla de 0x7FFE)
@@ -1390,7 +1390,7 @@ L_4801:
 	and a			;4807
 	jr z,L_4813		;4808
 	ld a,001h		;480a
-	ld (0e25ah),a		;480c
+	ld (0e25ah),a		;480c   ; guarda el paso del editor
 	ld a,00bh		;480f   ; ...al estado 0x0B
 	jr $-94		;4811
 L_4813:
@@ -1419,14 +1419,14 @@ L_483B:
 	ret z			;4840
 	jp L_479C		;4841
 L_4844:
-	xor a			;4844   ; paso 3: limpia 0xE24A y 0xE254 y llama a 0x677E (banco 1)
+	xor a			;4844   ; paso 3: el menu de empezar (opciones 0 empezar, 1 contrasena, 2 la de 0x8ECB)
 	ld (0e24ah),a		;4845   ; guarda lo elegido en el menu
 	ld (0e254h),a		;4848   ; guarda la marca de partida del editor
 	call L_5D41		;484b   ; los atributos de los sprites (0xE800, 0x80 bytes) a 0xE0: fuera de la pantalla
-	call 0677eh		;484e
+	call 0677eh		;484e   ; el menu de grabar y cargar (estado 3): el letrero de 0xB185
 	jp L_479C		;4851
 L_4854:
-	call 06794h		;4854   ; un cuadro del menu; cuando se elige (0xE24A) se pasa al paso 0xE24B x 2 + 5
+	call 06794h		;4854   ; un cuadro del menu; al elegir (0xE24A) se pasa al paso 0xE24B x 2 + 5
 	ld hl,0e24ah		;4857   ; apunta a lo elegido en el menu
 	ld a,(hl)			;485a
 	and a			;485b
@@ -1437,20 +1437,20 @@ L_4854:
 	add a,005h		;4863
 	jp L_493E		;4865
 L_4868:
-	call 06807h		;4868
+	call 06807h		;4868   ; la entrada (opcion 0 del menu, antes de empezar): graficos y paleta
 	jp L_479C		;486b
 L_486E:
-	call 0683eh		;486e
+	call 0683eh		;486e   ; un cuadro de la entrada; con disparo se salta
 	ld a,(0e24ah)		;4871   ; lee lo elegido en el menu
 	and a			;4874
 	ret z			;4875
 	ld a,00bh		;4876
 	jp L_493E		;4878
 L_487B:
-	call 06a0bh		;487b
+	call 06a0bh		;487b   ; la pantalla de meter la contrasena: 0xEDD9-0xEDFE a cero y el letrero de 0xBE91
 	jp L_479C		;487e
 L_4881:
-	call 06a32h		;4881
+	call 06a32h		;4881   ; un cuadro de la contrasena; tras el letrero de bien o mal, una espera (0xEDEC) y se sale con 0xEDED
 	ld a,(0e24ah)		;4884   ; lee lo elegido en el menu
 	and a			;4887
 	ret z			;4888
@@ -1458,10 +1458,10 @@ L_4881:
 	jp nz,L_47B2		;488a
 	jp L_4934		;488d
 L_4890:
-	call 08ecbh		;4890
+	call 08ecbh		;4890   ; la opcion 2 del menu de empezar: cargar una fase hecha con el editor
 	jp L_479C		;4893
 L_4896:
-	call 08edah		;4896
+	call 08edah		;4896   ; un cuadro de cargar la fase del editor, por pasos (0xE25B)
 	call L_583B		;4899   ; lo mismo sin cambiar el orden: colores de 0xD200 a 0xF400 y atributos de 0xE800 a 0xF600
 	ld a,(0e24ah)		;489c   ; lee lo elegido en el menu
 	and a			;489f
@@ -1593,7 +1593,7 @@ L_4958:
 	call L_427B		;499e   ; pide el sonido 0x20
 	jp L_4D8F		;49a1
 L_49A4:
-	ld a,(0e298h)		;49a4   ; bit 4 de 0xE20C: si 0xE298 es 0, 0xE280 = 4, llama a 0x92FF y el sonido 0x28
+	ld a,(0e298h)		;49a4   ; bit 4 de 0xE20C: rendirse; si no esta muerto, muere (0xE280 = 4) con el sonido 0x28
 	or a			;49a7
 	ret nz			;49a8
 	ld a,004h		;49a9
@@ -1604,7 +1604,7 @@ L_49B4:
 	xor a			;49b4   ; sale de la fase: 0xE257 = 1 y al estado 9
 	ld (0e249h),a		;49b5   ; guarda la marca de salida de la fase
 	inc a			;49b8
-	ld (0e257h),a		;49b9   ; guarda la marca de fase acabada
+	ld (0e257h),a		;49b9   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	ld a,009h		;49bc
 	jp L_47B3		;49be
 L_49C1:
@@ -1626,7 +1626,7 @@ L_49E1:
 	ld a,(0edc0h)		;49e4
 	or a			;49e7
 	ret nz			;49e8
-	call 09801h		;49e9
+	call 09801h		;49e9   ; la pausa: el personaje, por pasos (0xE2B0)
 	call L_5864		;49ec   ; copia el dibujo de la postura del personaje en la pagina 1 (columnas 0xF0)
 	call 09881h		;49ef
 	call L_583B		;49f2   ; lo mismo sin cambiar el orden: colores de 0xD200 a 0xF400 y atributos de 0xE800 a 0xF600
@@ -1652,7 +1652,7 @@ L_4A07:
 L_4A1D:
 	xor a			;4a1d   ; estado 6: se acaba la vida
 	ld (0e215h),a		;4a1e   ; guarda la cuenta para volver a poner la musica
-	ld (0e255h),a		;4a21
+	ld (0e255h),a		;4a21   ; guarda la marca de FESTIVAL (invencible: p02:9AB1 no mira los enemigos)
 	ld a,(0e254h)		;4a24   ; lee la marca de partida del editor
 	and a			;4a27
 	jr nz,L_4A35		;4a28
@@ -1676,7 +1676,7 @@ L_4A3D:
 	call L_51D0		;4a47   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld a,(0e254h)		;4a4a   ; lee la marca de partida del editor
 	ld b,a			;4a4d
-	ld a,(0e217h)		;4a4e
+	ld a,(0e217h)		;4a4e   ; lee la marca de TRYAGAIN (se puede seguir tras el fin de la partida)
 	or b			;4a51
 	ld (0e218h),a		;4a52
 	ld hl,05f59h		;4a55
@@ -1716,7 +1716,7 @@ L_4A6F:
 	ld a,(0e254h)		;4a93   ; lee la marca de partida del editor
 	and a			;4a96
 	jr z,L_4AC3		;4a97
-	ld a,(0f0f8h)		;4a99
+	ld a,(0f0f8h)		;4a99   ; lee donde se graba la fase del editor (0 cinta, 1 disco, 2 Game Master 2)
 	and a			;4a9c
 	jr z,L_4ABC		;4a9d
 	call 08f0ch		;4a9f
@@ -1728,7 +1728,7 @@ L_4A6F:
 	inc hl			;4aad
 	ld (hl),047h		;4aae
 	ld a,005h		;4ab0
-	ld (0e25bh),a		;4ab2
+	ld (0e25bh),a		;4ab2   ; guarda el paso dentro del menu del editor
 	ld hl,00a03h		;4ab5
 	ld (0e200h),hl		;4ab8   ; guarda el estado del juego (0 presentacion, 1 titulo, 3 menu, 4 empieza la fase, 5 juego, 6 se acaba la vida, 7 fin, 9 fase acabada, 0x0B editor, 0x0D final) y el byte siguiente (16 bits)
 	ret			;4abb
@@ -1742,7 +1742,7 @@ L_4AC3:
 	jp nz,L_4A30		;4ac7
 L_4ACA:
 	xor a			;4aca
-	ld (0e217h),a		;4acb
+	ld (0e217h),a		;4acb   ; guarda la marca de TRYAGAIN (se puede seguir tras el fin de la partida)
 	ld (0e254h),a		;4ace   ; guarda la marca de partida del editor
 	ld hl,0e202h		;4ad1   ; apunta a las marcas de la partida (bit 6: se pueden sumar puntos)
 	ld a,(hl)			;4ad4
@@ -1773,9 +1773,9 @@ L_4B01:
 L_4B06:
 	xor a			;4b06   ; estado 9: la fase acabada
 	ld (0e215h),a		;4b07   ; guarda la cuenta para volver a poner la musica
-	call 071deh		;4b0a
+	call 071deh		;4b0a   ; un cuadro de la fase acabada (estado 9), por pasos (0xE257)
 	call L_583B		;4b0d   ; lo mismo sin cambiar el orden: colores de 0xD200 a 0xF400 y atributos de 0xE800 a 0xF600
-	ld a,(0e257h)		;4b10   ; lee la marca de fase acabada
+	ld a,(0e257h)		;4b10   ; lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	ld b,a			;4b13
 	cp 004h		;4b14
 	jr nz,L_4B26		;4b16
@@ -1795,18 +1795,18 @@ L_4B26:
 	dec a			;4b31
 	jp nz,L_4A30		;4b32
 	ld a,001h		;4b35
-	ld (0e257h),a		;4b37   ; guarda la marca de fase acabada
+	ld (0e257h),a		;4b37   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	ld a,00ah		;4b3a
 	jp L_47B3		;4b3c
 L_4B3F:
 	ld a,001h		;4b3f
-	ld (0e257h),a		;4b41   ; guarda la marca de fase acabada
+	ld (0e257h),a		;4b41   ; guarda el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	call L_4E98		;4b44   ; pantalla en negro: quita sprites, borra la pagina y apaga la pantalla
 	ld a,00dh		;4b47
 	jp L_47B3		;4b49
 L_4B4C:
-	call 06f5dh		;4b4c   ; estado 10
-	ld a,(0e257h)		;4b4f   ; lee la marca de fase acabada
+	call 06f5dh		;4b4c   ; estado 10: la piramide acabada
+	ld a,(0e257h)		;4b4f   ; lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	and a			;4b52
 	ret nz			;4b53
 	ld bc,0e201h		;4b54   ; apunta a el paso dentro del estado
@@ -1814,9 +1814,9 @@ L_4B4C:
 	jp L_4A30		;4b5a
 L_4B5D:
 	call L_57D8		;4b5d   ; estado 11: el editor
-	call 07920h		;4b60
+	call 07920h		;4b60   ; el editor (estado 11), por pasos (0xE25A)
 	call L_57FB		;4b63   ; copia a la VRAM los 16 sprites en otro orden cada cuadro (asi parpadean en vez de desaparecer)
-	ld a,(0e25ah)		;4b66
+	ld a,(0e25ah)		;4b66   ; lee el paso del editor
 	and a			;4b69
 	ret nz			;4b6a
 	jp L_4BEA		;4b6b
@@ -1855,7 +1855,7 @@ L_4B8F:
 	jp L_418A		;4bac
 L_4BAF:
 	call 0734dh		;4baf   ; estado 13: el final
-	ld a,(0e257h)		;4bb2   ; lee la marca de fase acabada
+	ld a,(0e257h)		;4bb2   ; lee el paso de la secuencia en curso (entrada, fase o piramide acabada)
 	and a			;4bb5
 	ret nz			;4bb6
 	jp L_4ACA		;4bb7
@@ -2007,7 +2007,7 @@ L_4C8A:
 	ld a,(0e254h)		;4ca6   ; lee la marca de partida del editor
 	and a			;4ca9
 	jr z,L_4CB5		;4caa
-	ld hl,0e270h		;4cac
+	ld hl,0e270h		;4cac   ; apunta a el nombre de la fase del editor (11 letras)
 	ld de,090cah		;4caf
 	jp 08a1ah		;4cb2
 L_4CB5:
@@ -2033,7 +2033,7 @@ L_4CD6:
 	ld a,(0e254h)		;4cd6   ; lee la marca de partida del editor
 	and a			;4cd9
 	jr z,L_4CE7		;4cda
-	ld hl,0e270h		;4cdc
+	ld hl,0e270h		;4cdc   ; apunta a el nombre de la fase del editor (11 letras)
 	ld de,05068h		;4cdf
 	ld b,005h		;4ce2
 	jp 08a1ch		;4ce4
@@ -2155,7 +2155,7 @@ L_4D7B:
 	ret			;4d8e
 L_4D8F:
 	ld hl,03908h		;4d8f   ; el recuadro de estado: guarda la VRAM de 0x3908 (7 filas de 16) en 0xE880 y lo pinta
-	ld de,0e880h		;4d92   ; apunta a lo que tapa el recuadro de estado
+	ld de,0e880h		;4d92   ; apunta a lo que tapa el recuadro de estado; en las secuencias, el fundido de paleta en marcha (0 al acabar)
 	ld bc,00710h		;4d95
 L_4D98:
 	push bc			;4d98
@@ -2185,7 +2185,7 @@ L_4DB1:
 	jp L_4CB8		;4dcb
 L_4DCE:
 	ld de,03908h		;4dce   ; devuelve lo guardado en 0xE880 a 0x3908
-	ld hl,0e880h		;4dd1   ; apunta a lo que tapa el recuadro de estado
+	ld hl,0e880h		;4dd1   ; apunta a lo que tapa el recuadro de estado; en las secuencias, el fundido de paleta en marcha (0 al acabar)
 	ld bc,00710h		;4dd4
 L_4DD7:
 	push bc			;4dd7
@@ -3446,7 +3446,7 @@ L_54A0:
 L_54B9:
 	ld c,a			;54b9
 	ld b,000h		;54ba
-	ld de,0e700h		;54bc   ; apunta a la tabla de colores de los graficos que se cargan
+	ld de,0e700h		;54bc   ; apunta a la tabla de colores al cargar graficos; en la partida, las cosas de 2 x 2 de la fase (16 x 8 bytes)
 	ldir		;54bf
 	pop bc			;54c1
 	pop hl			;54c2
@@ -3955,7 +3955,7 @@ L_586A:
 	ld a,(0e24ch)		;586d   ; en pausa: el de 0xE2B3
 	or a			;5870
 	jr nz,L_58CD		;5871
-	ld a,(0e298h)		;5873   ; 0xE298: lo que lleva en la mano
+	ld a,(0e298h)		;5873   ; 0xE298: muerto
 	or a			;5876
 	jp nz,L_58BA		;5877
 	ld a,(0e287h)		;587a   ; 0xE287: su postura; si ha cambiado (0xE297), cambian sus sprites
@@ -3992,7 +3992,7 @@ L_586A:
 	ld a,005h		;58b5
 	jp L_5029		;58b7
 L_58BA:
-	ld a,(0e285h)		;58ba   ; lo que lleva en la mano: la columna 0xC0 + 0xE285
+	ld a,(0e285h)		;58ba   ; muerto: la columna 0xC0 + 0xE285
 L_58BD:
 	ld de,000f0h		;58bd
 	ld hl,000c0h		;58c0
@@ -4006,13 +4006,13 @@ L_58CD:
 	jr L_58BD		;58d0
 L_58D2:
 	call L_41CC		;58d2   ; los dibujos de los sprites del personaje, con los bancos 14-15
-	call L_58DB		;58d5   ; en pausa o con algo en la mano, otros dibujos
+	call L_58DB		;58d5   ; en pausa o muerto, otros dibujos
 	jp L_418A		;58d8
 L_58DB:
-	ld a,(0e24ch)		;58db   ; en pausa o con algo en la mano, otros dibujos
+	ld a,(0e24ch)		;58db   ; en pausa o muerto, otros dibujos
 	or a			;58de
 	jr nz,L_5937		;58df
-	ld a,(0e298h)		;58e1   ; lee lo que lleva el personaje en la mano
+	ld a,(0e298h)		;58e1   ; lee la marca de personaje muerto
 	or a			;58e4
 	jr nz,L_5928		;58e5
 	ld a,(0e287h)		;58e7   ; la postura 0xE287: su lista en la tabla de 0x858B
@@ -4068,7 +4068,7 @@ L_5925:
 	ld (hl),a			;5925   ; apunta la postura y carga sus dibujos
 	jr L_58DB		;5926
 L_5928:
-	call L_41CC		;5928   ; con algo en la mano: las rachas de 0x953D
+	call L_41CC		;5928   ; muerto: las rachas de 0x953D
 	ld hl,0e000h		;592b
 	ld de,0953dh		;592e
 	call L_4E54		;5931   ; lo mismo con el destino en HL
@@ -4492,17 +4492,17 @@ L_5C94:
 	ld bc,001ffh		;5cba
 	ld (hl),000h		;5cbd
 	ldir		;5cbf
-	call 0929dh		;5cc1
-	call 0674fh		;5cc4
-	call 064e3h		;5cc7
-	call 08f96h		;5cca
+	call 0929dh		;5cc1   ; el personaje al empezar la fase: la tabla 0xB844 (banco 13), 3 bytes por fase
+	call 0674fh		;5cc4   ; lee los sitios de salida de la fase (tabla 0xB7CD del banco 13) a 0xE2C0
+	call 064e3h		;5cc7   ; lee las cosas de 2 x 2 de la fase (tabla 0xA75D del banco 13) a 0xE700
+	call 08f96h		;5cca   ; la salida de la fase: 3 bytes de la tabla 0xB8F8 (banco 13) a 0xE2F1-0xE2F3
 	call L_5DAC		;5ccd   ; la rejilla de pantallas de la fase
 	call L_5EB5		;5cd0   ; los saltos entre pantallas
 	call L_5DE6		;5cd3   ; la casilla de la pantalla 0xE243
 	call L_43BB		;5cd6   ; el mapa de la fase
-	call 0632dh		;5cd9
-	call 097b2h		;5cdc
-	call 0921ah		;5cdf
+	call 0632dh		;5cd9   ; lee las cosas de la fase (tabla 0xAAE0 del banco 13) a 0xE600
+	call 097b2h		;5cdc   ; las cosas que se cogen de la fase (tabla 0xAFB1 del banco 13) a 0xE300
+	call 0921ah		;5cdf   ; la lista 0xEE50: el numero (desde 1) de cada cosa de 0xE300 que hay, y un 0
 	call L_41B5		;5ce2   ; pone el banco 12 en 0xA000
 	call 0b400h		;5ce5
 	call L_418A		;5ce8   ; pone los bancos 1-2-3 (el juego)
@@ -4514,17 +4514,17 @@ L_5CF5:
 	call L_4E98		;5cf5   ; pinta la pantalla en la que se esta: apaga, pinta y enciende
 	call L_4ECB		;5cf8   ; quita los sprites: 0xE0 en la y de las tablas de 0xF600 y 0xF200
 	call L_4EBE		;5cfb   ; apaga la pantalla (bit 6 de R#1 a cero)
-	call 0639ch		;5cfe
+	call 0639ch		;5cfe   ; las borra del mapa (valor 0)
 	call L_44D4		;5d01   ; los ladrillos, las puertas y lo de 0xE2C0
 	call L_41B5		;5d04   ; pone el banco 12 en 0xA000
 	call 0b51ch		;5d07
 	call L_418A		;5d0a   ; pone los bancos 1-2-3 (el juego)
-	call 09010h		;5d0d
-	call 093beh		;5d10
-	call 0644ah		;5d13
-	call 090f7h		;5d16
-	call 06461h		;5d19
-	call 06398h		;5d1c
+	call 09010h		;5d0d   ; pinta la salida si es de esta pantalla: 4 x 4 caracteres de 0x9340 + 16 x 0xE2F6
+	call 093beh		;5d10   ; al entrar en la pantalla por un lado: los bloques del borde se apartan
+	call 0644ah		;5d13   ; pinta las cosas de 0xE600 de esta pantalla (tabla 0x64D9 por tipo)
+	call 090f7h		;5d16   ; las de la lista, al reves: guarda el fondo y pinta la cosa
+	call 06461h		;5d19   ; las del tipo 5 de esta pantalla: 0x9661
+	call 06398h		;5d1c   ; marca en el mapa las cosas de 0xE600 con el valor 3
 	call L_4C8A		;5d1f   ; el marcador
 	call L_4EB1		;5d22   ; se enciende
 	ld hl,(0e243h)		;5d25   ; 0xE250 = el mapa de la pantalla 0xE243
@@ -4575,24 +4575,24 @@ L_5D63:
 	ret			;5d6c
 L_5D6D:
 	call L_5D4F		;5d6d   ; lo que pasa en un cuadro, en este orden
-	call 09ec4h		;5d70
+	call 09ec4h		;5d70   ; un cuadro del personaje: lo de su estado y sus dibujos
 	call L_5864		;5d73   ; los dibujos del personaje
-	call 09866h		;5d76
+	call 09866h		;5d76   ; los sprites del personaje; en el estado 0x0E, uno de cada dos cuadros no se ve (parpadea)
 	call 0a6bdh		;5d79
-	call 0916dh		;5d7c
-	call 09a14h		;5d7f
-	call 0999dh		;5d82
-	call 0671dh		;5d85
-	call 0654ch		;5d88
-	call 06645h		;5d8b
-	call 08fbeh		;5d8e
-	call 06483h		;5d91
+	call 0916dh		;5d7c   ; los sprites de las cosas de 0xE300 que brillan (tipo 2 o mas, estado < 3)
+	call 09a14h		;5d7f   ; coger una cosa de 0xE300 del suelo (si no lleva otra y no esta saliendo)
+	call 0999dh		;5d82   ; coger las cosas de 2 x 2 de esta pantalla que esten a menos de 12 pixeles del personaje
+	call 0671dh		;5d85   ; cada 4 cuadros, los 8 sitios de salida de 0xE2C0
+	call 0654ch		;5d88   ; un cuadro de los 8 enemigos de 0xE500 (32 bytes cada uno)
+	call 06645h		;5d8b   ; los sprites de los enemigos de esta pantalla; en MSX2, sus colores a 0xD300
+	call 08fbeh		;5d8e   ; el personaje en la salida: si esta en su pantalla y no queda nada por coger (0xE2F5)...
+	call 06483h		;5d91   ; un cuadro de las 16 cosas de 0xE600: cada tipo, su rutina (tabla 0x64A4)
 	call 0be15h		;5d94
 	call L_41B5		;5d97   ; pone el banco 12 en 0xA000
 	call 0b422h		;5d9a
 	call L_418A		;5d9d   ; pone los bancos 1-2-3 (el juego)
-	call 09ab1h		;5da0
-	call 09afeh		;5da3
+	call 09ab1h		;5da0   ; un enemigo de esta pantalla toca al personaje: muere (salvo con FESTIVAL o ya muerto)
+	call 09afeh		;5da3   ; las cosas lanzadas (tipo 1-3 de 0xE300 en vuelo) que dan a un enemigo
 	call L_4371		;5da6   ; la tecla de la musica
 	jp L_5C14		;5da9   ; y los colores que cambian solos
 L_5DAC:

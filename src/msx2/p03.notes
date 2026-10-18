@@ -56,11 +56,13 @@ C 0xA002 guarda el estado del personaje
 C 0xA00D lee la postura del personaje
 C 0xA012 lee la y del personaje
 C 0xA019 lee la x del personaje
+C 0xA01F NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 C 0xA030 guarda hacia donde mira el personaje
 C 0xA03D pide el sonido 0x13
 C 0xA040 apunta a el estado del personaje
 C 0xA04A lee la postura del personaje
 C 0xA04F lee el mando: lo que se acaba de pulsar
+C 0xA055 apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
 C 0xA06E lee la postura del personaje
 C 0xA072 el despachador de Konami: la tabla va detras del call
 C 0xA093 guarda hacia donde mira el personaje
@@ -68,27 +70,42 @@ C 0xA09B lee la postura del personaje
 C 0xA0A2 guarda el estado del personaje
 C 0xA0B6 lee la x del personaje
 C 0xA0BF lee la y del personaje
+C 0xA0CB A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
+C 0xA0D6 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0xA0DE guarda hacia donde mira el personaje
 C 0xA101 lee la x del personaje
 C 0xA108 lee la y del personaje
+C 0xA111 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA11B A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0xA123 guarda hacia donde mira el personaje
 C 0xA15B lee la y del personaje
 C 0xA179 lee la x del personaje
+C 0xA17E A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA18A A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0xA1A2 lee un dato de paso de la rutina en curso
 C 0xA1AB guarda el estado del personaje
+C 0xA1BB el dibujo del paso (tablas 0x9F45 y 0x9F49 segun hacia donde mira)
 C 0xA1F9 lee la x del personaje
+C 0xA1FF A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA209 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA212 lee el mando: lo pulsado
 C 0xA221 lee la y del personaje
 C 0xA225 lee la x del personaje
+C 0xA22B NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
+C 0xA241 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA24B A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA255 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA262 guarda el estado del personaje
 C 0xA270 lee la y del personaje
 C 0xA276 lee la x del personaje
+C 0xA27D NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 C 0xA285 guarda el estado del personaje
 C 0xA293 lee el estado del personaje
 C 0xA29C lee el estado del personaje
 C 0xA2B2 lee hacia donde mira el personaje
 C 0xA2B7 guarda hacia donde mira el personaje
 C 0xA2E2 lee la x del personaje
+C 0xA2E6 NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 C 0xA2F0 lee la x del personaje
 C 0xA2F4 lee la y del personaje
 C 0xA2FA guarda la y del personaje
@@ -106,6 +123,7 @@ C 0xA397 guarda el estado del personaje
 C 0xA3A3 guarda hacia donde mira el personaje
 C 0xA3B3 lee la y del personaje
 C 0xA3BA lee la x del personaje
+C 0xA3D4 NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 C 0xA3E5 lee la x del personaje
 C 0xA3F4 lee la pantalla de la fase (desde 1)
 C 0xA3F8 C = la casilla de la rejilla en la que esta la pantalla A
@@ -119,28 +137,49 @@ C 0xA442 guarda el estado del personaje
 C 0xA446 lee la y del personaje
 C 0xA45E lee la x del personaje
 C 0xA464 lee la y del personaje
+C 0xA468 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA471 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0xA476 lee la x del personaje
 C 0xA47A lee la y del personaje
+C 0xA47E A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA487 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0xA48F lee la x del personaje
 C 0xA493 lee la y del personaje
+C 0xA4A1 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA4AC A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA4C0 guarda el estado del personaje
 C 0xA4D0 lee la y del personaje
+C 0xA4DC A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA4E5 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA512 lee la y del personaje
 C 0xA518 lee la x del personaje
+C 0xA51E A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA527 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA530 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA536 guarda un dato de paso de la rutina en curso
+C 0xA546 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA550 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA55A A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA561 guarda un dato de paso de la rutina en curso
 C 0xA565 lee la y del personaje
 C 0xA571 lee la x del personaje
+C 0xA577 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA581 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA58B A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA594 lee el estado del personaje
 C 0xA59A lee la y del personaje
 C 0xA5A5 lee el estado del personaje
 C 0xA5AB lee la y del personaje
 C 0xA5B1 lee la x del personaje
+C 0xA5B5 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA5C6 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA5D0 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA5F2 guarda el estado del personaje
 C 0xA5F7 guarda hacia donde mira el personaje
 C 0xA5FB lee la y del personaje
 C 0xA603 lee el mando: lo pulsado
 C 0xA607 lee la y del personaje
+C 0xA61A A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA624 lee el mando: lo pulsado
 C 0xA62E lee el mando: lo que se acaba de pulsar
 C 0xA653 lee el mando: lo pulsado
@@ -153,14 +192,21 @@ C 0xA6A8 lee el estado del personaje
 C 0xA6B0 guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 C 0xA6B9 guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 C 0xA6BD lee el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xA6C2 apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
 C 0xA6DD el despachador de Konami: la tabla va detras del call
 C 0xA6F2 el despachador de Konami: la tabla va detras del call
 C 0xA6FF lee la pantalla de la fase (desde 1)
 C 0xA764 lee la pantalla de la fase (desde 1)
 C 0xA77D lee la pantalla de la fase (desde 1)
 C 0xA79F lee la pantalla de la fase (desde 1)
+C 0xA7BD A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA7CA A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA7E6 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xA7F1 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0xA83F lee la pantalla de la fase (desde 1)
+C 0xA84E NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 C 0xA857 C = la casilla de la rejilla en la que esta la pantalla A
+C 0xA87A lo mismo con el mapa de DE
 C 0xA87F lee la cuenta de cuadros
 C 0xA88D lee la pantalla de la fase (desde 1)
 C 0xA893 pide el sonido 0x1C
@@ -175,39 +221,62 @@ C 0xA99D lee la cuenta de cuadros
 C 0xA9AB lee la pantalla de la fase (desde 1)
 C 0xA9B1 pide el sonido 0x1B
 C 0xA9E1 lee la pantalla de la fase (desde 1)
+C 0xA9FB A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0xAA0B C = la casilla de la rejilla en la que esta la pantalla A
+C 0xAA2C lo mismo con el mapa de DE
 C 0xAA44 lee la pantalla de la fase (desde 1)
+C 0xAA4B pasa la cosa de IX al principio de la lista
+C 0xAA50 devuelve el fondo de los bloques de esta pantalla
+C 0xAA55 una cosa de 0xE300 en el suelo: guarda su fondo y la pinta (0x9328 + 4 x (tipo - 1))
+C 0xAA5A pinta los bloques de esta pantalla
 C 0xAA6C el despachador de Konami: la tabla va detras del call
 C 0xAA95 guarda hacia donde mira el personaje
 C 0xAA9C guarda la postura del personaje
-C 0xAA9F lee lo que lleva el personaje en la mano
+C 0xAA9F lee la marca de personaje muerto
 C 0xAAA5 guarda el estado del personaje
 C 0xAADA pinta el caracter A sin su color 0 (p00:5219)
 C 0xAAF8 lee la pantalla de la fase (desde 1)
 C 0xAB0F el despachador de Konami: la tabla va detras del call
+C 0xAB3B A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xAB47 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0xAB63 el despachador de Konami: la tabla va detras del call
 C 0xABC0 pinta el caracter A sin su color 0 (p00:5219)
 C 0xABDE lee la pantalla de la fase (desde 1)
 C 0xABFB el despachador de Konami: la tabla va detras del call
+C 0xAC30 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0xAC3C A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0xAC4E lee la x del personaje
 C 0xAC52 guarda la x del personaje
+C 0xAC75 apunta a los enemigos (8 x 32 bytes)
 C 0xACD9 el despachador de Konami: la tabla va detras del call
 C 0xACE4 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0xACF1 suma A a DE (DE = DE + A)
 C 0xAD01 suma A a DE (DE = DE + A)
 C 0xAD26 apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
 C 0xAD53 lee la pantalla de la fase (desde 1)
+C 0xAD5D devuelve el fondo de los bloques de esta pantalla
+C 0xAD60 las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 C 0xAD72 un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
+C 0xAD77 las de la lista, al reves: guarda el fondo y pinta la cosa
+C 0xAD7A pinta los bloques de esta pantalla
 C 0xAD83 el despachador de Konami: la tabla va detras del call
 C 0xAE26 el despachador de Konami: la tabla va detras del call
 C 0xAE64 lee la pantalla de la fase (desde 1)
 C 0xAE6A pide el sonido 0x25
 C 0xAE6F lee la pantalla de la fase (desde 1)
 C 0xAF1E lee la cuenta de cuadros
+C 0xAFB4 apunta a los enemigos (8 x 32 bytes)
+C 0xAFB8 E = la y del personaje, D = su x
 C 0xAFC9 lee la pantalla de la fase (desde 1)
 C 0xB00F lee la pantalla de la fase (desde 1)
+C 0xB018 E = la y del personaje, D = su x
 C 0xB09D lee la casilla de la rejilla de la pantalla
 C 0xB0AD suma A a HL (HL = HL + A)
+C 0xB0E8 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xB136 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xB174 lo mismo con el mapa de DE
+C 0xB187 el primer punto de la orilla segun la direccion C (1 abajo, 2 izquierda, 3 derecha, si no arriba)
+C 0xB194 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 C 0xB229 lee la casilla de la rejilla de la pantalla
 C 0xB236 lee la x del personaje
 C 0xB245 lee la casilla de la rejilla de la pantalla
@@ -216,16 +285,24 @@ C 0xB294 lee la pantalla de la fase (desde 1)
 C 0xB2AD el despachador de Konami: la tabla va detras del call
 C 0xB2BA lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0xB2D6 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0xB3BA A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xB3EF A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 C 0xB500 suma A a HL (HL = HL + A)
 C 0xB548 lee la pantalla de la fase (desde 1)
+C 0xB573 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0xB582 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 C 0xB62A lee la x del personaje
 C 0xB636 lee la cuenta de cuadros
+C 0xB66D A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 C 0xB679 suma A a DE (DE = DE + A)
 C 0xB691 el despachador de Konami: la tabla va detras del call
 C 0xB6C5 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0xB6E0 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0xB6F2 suma A a HL (HL = HL + A)
+C 0xB772 lo mismo con el mapa de DE
+C 0xB7B6 lo mismo con el mapa de DE
 C 0xB7BF lee la pantalla de la fase (desde 1)
+C 0xB7EA apunta a los enemigos (8 x 32 bytes)
 C 0xB8BB lee la pantalla de la fase (desde 1)
 C 0xB8F6 lee la cuenta de cuadros
 C 0xB91B suma A a HL (HL = HL + A)
@@ -233,6 +310,8 @@ C 0xB99B lee la pantalla de la fase (desde 1)
 C 0xB9D5 suma A a HL (HL = HL + A)
 C 0xB9E9 lee la pantalla de la fase (desde 1)
 C 0xBA1C suma A a HL (HL = HL + A)
+C 0xBA3C apunta a los enemigos (8 x 32 bytes)
+C 0xBA54 apunta a los enemigos (8 x 32 bytes)
 C 0xBA90 lee la pantalla de la fase (desde 1)
 C 0xBA97 lee el estado del personaje
 C 0xBAA4 lee la y del personaje
@@ -259,6 +338,7 @@ C 0xBC0C pide el sonido 0x22
 C 0xBC1D lee el mando: lo pulsado
 C 0xBC2A guarda el estado del personaje
 C 0xBC44 pide el sonido 0x22
+C 0xBC74 apunta a las cosas de la fase (16 x 16 bytes)
 C 0xBC9C lee la pantalla de la fase (desde 1)
 C 0xBCA4 lee la x del personaje
 C 0xBCB6 lee la y del personaje
@@ -266,6 +346,7 @@ C 0xBD21 lee la pantalla de la fase (desde 1)
 C 0xBD2E lee la y del personaje
 C 0xBD3A lee la x del personaje
 C 0xBD4F lee el estado del personaje
+C 0xBD71 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 C 0xBD7A pide el sonido 0x27
 C 0xBD86 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0xBD8E suma A a HL (HL = HL + A)
@@ -279,8 +360,14 @@ C 0xBE26 suma A a HL (HL = HL + A)
 C 0xBE3F lee la y del personaje
 C 0xBE45 lee la x del personaje
 C 0xBE6D lee el estado del personaje
+C 0xBE79 devuelve el fondo de los bloques de esta pantalla
+C 0xBE7C las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 C 0xBE92 una cosa de 2 x B caracteres de la piramide en (D, E)
 C 0xBE9E lee la pantalla de la fase (desde 1)
+C 0xBEAB marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0xBEBB marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0xBEBE pinta los bloques de esta pantalla
+C 0xBEC1 las de la lista, al reves: guarda el fondo y pinta la cosa
 C 0xBEC4 apunta a la y del personaje
 C 0xBED3 pinta el caracter A sin su color 0 (p00:5219)
 C 0xBEDB pinta el caracter A sin su color 0 (p00:5219)

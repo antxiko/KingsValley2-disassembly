@@ -413,11 +413,11 @@ L_B437:
 	inc l			;b44c
 	inc l			;b44d
 	ld (hl),040h		;b44e
-	call 096ffh		;b450
-	call 090abh		;b453
+	call 096ffh		;b450   ; devuelve el fondo de los bloques de esta pantalla
+	call 090abh		;b453   ; las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 	call L_B4E3		;b456
-	call 090f7h		;b459
-	call 096cfh		;b45c
+	call 090f7h		;b459   ; las de la lista, al reves: guarda el fondo y pinta la cosa
+	call 096cfh		;b45c   ; pinta los bloques de esta pantalla
 	jp 042efh		;b45f
 L_B462:
 	ld hl,0ef15h		;b462
@@ -436,11 +436,11 @@ L_B46C:
 	call 042bbh		;b476   ; pide el sonido 0x2E
 	ld hl,0ef11h		;b479
 	inc (hl)			;b47c
-	call 096ffh		;b47d
-	call 090abh		;b480
+	call 096ffh		;b47d   ; devuelve el fondo de los bloques de esta pantalla
+	call 090abh		;b480   ; las cosas de la lista 0xEE50 (por numero): lo que habia debajo se devuelve
 	call L_B50B		;b483
 	call 056c5h		;b486   ; un dibujo de 16 x 16 de 0xB1D6 en la posicion de 0xEF13 (HMMC)
-	call 090f7h		;b489
+	call 090f7h		;b489   ; las de la lista, al reves: guarda el fondo y pinta la cosa
 	jp 096cfh		;b48c
 L_B48F:
 	exx			;b48f
@@ -1566,13 +1566,13 @@ L_BE86:
 	jr nz,L_BE84		;be90
 	dec c			;be92
 	jr nz,L_BE86		;be93
-	ld hl,0ee50h		;be95
+	ld hl,0ee50h		;be95   ; apunta a la lista de las cosas de 0xE300 por orden de pintado
 	ld bc,00008h		;be98
 	call L_BF1B		;be9b
 	jr c,L_BEFC		;be9e
 	call 000f0h		;bea0   ; BIOS TAPOOF - Stops writing on the tape
-	ld hl,0ee50h		;bea3
-	ld de,0e270h		;bea6
+	ld hl,0ee50h		;bea3   ; apunta a la lista de las cosas de 0xE300 por orden de pintado
+	ld de,0e270h		;bea6   ; apunta a el nombre de la fase del editor (11 letras)
 	ld b,008h		;bea9
 L_BEAB:
 	ld a,(de)			;beab
@@ -1611,7 +1611,7 @@ L_BEC9:
 	jr nz,L_BEFC		;beee
 	jp 000f0h		;bef0   ; BIOS TAPOOF - Stops writing on the tape
 L_BEF3:
-	ld hl,0ee50h		;bef3
+	ld hl,0ee50h		;bef3   ; apunta a la lista de las cosas de 0xE300 por orden de pintado
 	ld de,07070h		;bef6
 	jp 08a1ah		;bef9
 L_BEFC:
@@ -1620,7 +1620,7 @@ L_BEFC:
 	ld hl,0bf0eh		;bf02
 	call 051d0h		;bf05   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld a,002h		;bf08
-	ld (0e27fh),a		;bf0a
+	ld (0e27fh),a		;bf0a   ; guarda el resultado de grabar o cargar (0 bien, 2 error)
 	ret			;bf0d
 
 ; ----------------------------------------------------------------------
@@ -1662,7 +1662,7 @@ L_BF35:
 	exx			;bf3b
 	jr c,L_BF82		;bf3c
 	djnz L_BF35		;bf3e
-	ld hl,0e270h		;bf40
+	ld hl,0e270h		;bf40   ; apunta a el nombre de la fase del editor (11 letras)
 	ld bc,00008h		;bf43
 	call L_BFA1		;bf46
 	jr c,L_BF82		;bf49
@@ -1697,7 +1697,7 @@ L_BF82:
 	ld hl,0bf94h		;bf88
 	call 051d0h		;bf8b   ; pinta un letrero: [D][E] y caracteres; 0xFE trae otra posicion; 0xFF acaba
 	ld a,002h		;bf8e
-	ld (0e27fh),a		;bf90
+	ld (0e27fh),a		;bf90   ; guarda el resultado de grabar o cargar (0 bien, 2 error)
 	ret			;bf93
 
 ; ----------------------------------------------------------------------
