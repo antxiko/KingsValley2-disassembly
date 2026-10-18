@@ -1,0 +1,40 @@
+# Puntos de entrada del banco 12 (se ejecuta en 0xa000).
+#
+# Cada uno lleva la instruccion que lo justifica. Los que ponen "pNN:XXXX"
+# vienen de OTRO banco: el trazador de una sola pagina no puede seguirlos,
+# porque en esa direccion -segun lo que haya en el registro del mapper- puede
+# estar cualquiera de seis bancos. Los que ponen "tabla" salen de una tabla
+# del despachador (cartucho.DESPACHADOR), que va pegada detras de su `call` y esta declarada
+# como datos en el .nocode: el trazador tampoco puede seguirla.
+#
+# Los saltos y llamadas DENTRO del propio banco no se ponen aqui: los
+# encuentra tools/z80trace.py solo, siguiendo el flujo.
+#
+# Este fichero lo regenera `make semillas` (tools/bancos.py escribe).
+0xB400   # p00:5ADF call
+0xB422   # p00:5B91 call
+0xB437   # p12:B42C entrada 0 de la tabla de 0xB42F (call 0x409E en 0xB42C)
+0xB462   # p12:B42C entrada 1 de la tabla de 0xB42F (call 0x409E en 0xB42C)
+0xB46C   # p12:B42C entrada 2 de la tabla de 0xB42F (call 0x409E en 0xB42C)
+0xB48F   # p12:B42C entrada 3 de la tabla de 0xB42F (call 0x409E en 0xB42C)
+0xB518   # p00:5AFE call
+0xB530   # p00:4B7E call
+0xB6C6   # p12:B6B7 entrada 0 de la tabla de 0xB6BA (call 0x409E en 0xB6B7)
+0xB6EE   # p12:B6B7 entrada 1 de la tabla de 0xB6BA (call 0x409E en 0xB6B7)
+0xB6FD   # p12:B6B7 entrada 2 de la tabla de 0xB6BA (call 0x409E en 0xB6B7)
+0xB745   # p12:B6B7 entrada 3 de la tabla de 0xB6BA (call 0x409E en 0xB6B7)
+0xB7A9   # p12:B79E entrada 3 de la tabla de 0xB7A1 (call 0x409E en 0xB79E)
+0xB7B4   # p12:B79E entrada 0 de la tabla de 0xB7A1 (call 0x409E en 0xB79E)
+0xB7CE   # p12:B79E entrada 1 de la tabla de 0xB7A1 (call 0x409E en 0xB79E)
+0xB7DD   # p12:B79E entrada 2 de la tabla de 0xB7A1 (call 0x409E en 0xB79E)
+0xB85A   # p12:B6B7 entrada 4 de la tabla de 0xB6BA (call 0x409E en 0xB6B7)
+0xB899   # p12:B6B7 entrada 5 de la tabla de 0xB6BA (call 0x409E en 0xB6B7)
+0xB9F7   # p00:4792 call
+0xBA27   # p00:47A8 call
+0xBA4C   # p00:47A5 call
+0xBC54   # p01:712A call
+0xBCB8   # p01:73CF call
+0xBDB2   # p01:6FB7 call
+0xBDC9   # p01:6FC0 call
+0xBE1B   # p02:8ABD call
+0xBEC8   # p02:878C call
