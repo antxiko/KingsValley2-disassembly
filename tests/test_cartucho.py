@@ -167,6 +167,14 @@ class Maquinaria(unittest.TestCase):
         m = re.search(r"^COMUNES  = (.*)$", mk, re.M)
         self.assertEqual(tuple(int(x) for x in m.group(1).split()), COMUNES)
 
+    def test_lo_llevado_a_msx1_es_de_msx1(self):
+        """Ningun comentario de MSX1 cita una direccion o una constante que
+        solo existen en MSX2 (tools/coteja_llevados.py)."""
+        r = subprocess.run([sys.executable, os.path.join(RAIZ, "tools", "coteja_llevados.py")],
+                           capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout[-2000:])
+
+
 
 if __name__ == "__main__":
     unittest.main()

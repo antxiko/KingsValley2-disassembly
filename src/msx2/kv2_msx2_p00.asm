@@ -118,7 +118,7 @@ L_40B5:
 	ld a,(0ffa7h)		;40bb   ; 0xFFA7 (H.PHYD) con algo: hay disco
 	cp 0c9h		;40be
 	call nz,L_4162		;40c0   ; con disco, se copian antes unas zonas de RAM
-	ld a,0c9h		;40c3   ; H.STKE vuelve a ret: que no se llame mas
+	ld a,0c9h		;40c3   ; H.KEYI (0xFD9A) a ret
 	ld (0fd9ah),a		;40c5
 	call L_4126		;40c8   ; pone en 0x8000-0xBFFF el slot de este cartucho
 	call L_4146		;40cb   ; y se apunta el slot en 0xF0E9

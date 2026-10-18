@@ -41,7 +41,7 @@ C 0x40B6 modo de interrupciones 1
 C 0x40B8 la pila debajo de la RAM del juego
 C 0x40BB 0xFFA7 (H.PHYD) con algo: hay disco
 C 0x40C0 con disco, se copian antes unas zonas de RAM
-C 0x40C3 H.STKE vuelve a ret: que no se llame mas
+C 0x40C3 H.KEYI (0xFD9A) a ret
 C 0x40C8 pone en 0x8000-0xBFFF el slot de este cartucho
 C 0x40CB y se apunta el slot en 0xF0E9
 C 0x40CE 0xF0F4 y 0xF0F5 a 1
