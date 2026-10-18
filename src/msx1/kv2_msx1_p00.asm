@@ -3306,7 +3306,7 @@ L_5668:
 	ld hl,084d7h		;5674
 	ld a,(0e287h)		;5677   ; lee la postura del personaje
 	call L_4D4D		;567a   ; HL = la palabra A de la tabla de HL
-	ld a,(0e285h)		;567d   ; lee hacia donde mira el personaje
+	ld a,(0e285h)		;567d   ; lee el dibujo del personaje (direccion y paso)
 	cp 00ah		;5680   ; las direcciones 10 y 11 usan las de la 8 y la 9
 	jr c,L_5686		;5682
 	sub 002h		;5684

@@ -977,7 +977,7 @@ C 0x5662 segun lo que lleva (tabla 0x84D7) y hacia donde mira, sus rachas a 0x18
 C 0x566E lee la marca de personaje muerto
 C 0x5677 lee la postura del personaje
 C 0x567A HL = la palabra A de la tabla de HL
-C 0x567D lee hacia donde mira el personaje
+C 0x567D lee el dibujo del personaje (direccion y paso)
 C 0x5686 HL = la palabra A de la tabla de HL
 C 0x5696 HL = la palabra A de la tabla de HL
 C 0x56A6 HL = la palabra A de la tabla de HL

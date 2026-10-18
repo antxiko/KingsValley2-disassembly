@@ -22,26 +22,57 @@ C 0xB6CA paso 0: la fuente, las piezas en orden (1-24 y el hueco) y el letrero
 C 0xB6F2 paso 1: espera el disparo
 C 0xB701 paso 2: un puzle revuelto de los 4 de la tabla 0xB5E0 (al azar con 0xE203)
 C 0xB71E pinta las 25 casillas (5 x 5) y el letrero
+C 0xB72D la pieza de la casilla
+C 0xB734 16 pixeles a la derecha
+C 0xB73C la fila siguiente, 16 mas abajo
 C 0xB749 paso 3: los cursores mueven la mano; el disparo mueve la pieza al hueco de al lado
 C 0xB78A la pieza: si tiene el hueco al lado, se corre
 C 0xB7AD al hueco de abajo
 C 0xB7B8 al de la izquierda
 C 0xB7D2 al de la derecha
+C 0xB7D3 el hueco donde estaba la pieza...
+C 0xB7DA ...la pieza en el de la derecha...
+C 0xB7DB ...y la mano con ella
 C 0xB7E1 al de arriba
 C 0xB7EC pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
 C 0xB7FA B = la pieza de la casilla de la mano (Z si es el hueco)
 C 0xB80F D, E = la casilla de la mano en pixeles
+C 0xB812 x 16 + 0x30
+C 0xB81C y x 16 + 0x58
 C 0xB824 C = hacia donde esta el hueco (1 arriba, 2 abajo, 3 izquierda, 4 derecha; 0 no esta al lado)
+C 0xB82C arriba (si no esta en la fila 0)
+C 0xB837 abajo (si no esta en la 4)
+C 0xB844 izquierda (si no esta en la columna 0)
+C 0xB850 derecha (si no esta en la 4)
+C 0xB85B ninguno
 C 0xB85E paso 4: si las piezas estan en orden (1-24)...
+C 0xB869 cada pieza tiene que ser la anterior + 1...
+C 0xB86E ...hasta la 24
+C 0xB876 no: sigue el puzle
 C 0xB87A ...resuelto: 3 vidas mas (hasta 99) y el letrero de 0xB5C7
 C 0xB89D paso 5: el disparo sale
 C 0xB8A3 sale: el borde a 0 y el sonido 1
 C 0xB8CF la mano (cuatro sprites con los colores de 0xB913)
+C 0xB8DE la x de la mano...
+C 0xB8E9 ...los dos de abajo 16 mas
+C 0xB8F3 la y
+C 0xB8FF el dibujo
+C 0xB906 su color, 16 veces
+C 0xB90F el sprite siguiente
 C 0xB917 las musicas: por pasos
 C 0xB91E paso 0: graficos, el dibujo de 0xBC05 y el letrero
 C 0xB938 paso 1: arriba y abajo eligen (19, IX+02), el disparo la pone; RETURN sale
 C 0xB981 la pone (tabla detras, una peticion de sonido por musica)
 C 0xB9B0 los sprites de la flecha (tablas 0xB9FA y 0xBA0D)
+C 0xB9BF la musica elegida: su sitio en la tabla 0xB9FA
+C 0xB9CB bit 0: columna 0x60 o 0x78
+C 0xB9D5 los dos de abajo 16 mas
+C 0xB9DE la x
+C 0xB9E1 la y (sin el bit 0)
+C 0xB9E6 el dibujo
+C 0xB9ED su color
+C 0xB9F2 16 veces
+C 0xB9F7 el sprite siguiente
 C 0xBA11 la demostracion: la fase de la tabla 0xBA3A (una de 6, 0xE219 va dando la vuelta)
 C 0xBA14 0xE209/0xE20A: el mando grabado
 C 0xBA2D cuenta a cero, empieza la fase y la musica
@@ -53,17 +84,38 @@ C 0xBA7A las teclas, como si se pulsaran
 C 0xBA80 A = las teclas y C = los cuadros del paso 0xE209 de la piramide
 C 0xBC6E las estrellas del final: 0xE910 (32 de 16 bytes) a cero
 C 0xBC86 cada 2 cuadros sale una estrella nueva del centro (0x70, 0x80)
+C 0xBC98 busca una estrella libre
+C 0xBC9E la siguiente (16 bytes)
 C 0xBCA6 su velocidad, de las tablas 0xBDB7 y 0xBD97 por la direccion
 C 0xBCD2 un cuadro de las estrellas
-C 0xBCF4 una estrella se mueve; al salir de la pantalla se quita
+C 0xBCF4 la x + su velocidad (16 bits)
+C 0xBD07 la y + su velocidad
+C 0xBD1A fuera de la pantalla (x o y mas alla de 0xF0)...
+C 0xBD2B ...se quita
 C 0xBD30 los sprites fuera, de color 5
 C 0xBD4B los sprites de las estrellas (dibujo 0xD0)
+C 0xBD54 cada estrella...
+C 0xBD59 ...su sprite
+C 0xBD5D la siguiente (16 bytes)
+C 0xBD65 un sprite: y...
+C 0xBD6A ...x...
+C 0xBD6F ...y el dibujo 0xD0
 C 0xBD74 HL, DE = la velocidad en y y en x de la direccion A, por B
 C 0xBDD7 el personaje de las secuencias: seis sprites
 C 0xBDDA y el sprite 12 en (0xEDCB, 0xEDCC)
+C 0xBDDD y
+C 0xBDE2 x
+C 0xBDE7 dibujo 0xD0
+C 0xBDE9 de color 7
 C 0xBDF7 dos posturas (0xEDD8)
 C 0xBE18 dos sprites de 16 x 16 uno al lado de otro
+C 0xBE1A el de la izquierda...
+C 0xBE23 ...y el de la derecha, 4 dibujos mas
+C 0xBE2A los dos de abajo, 16 pixeles mas
 C 0xBE35 sus colores, 13 y 0x4E
+C 0xBE3E el primero de color 13
+C 0xBE42 los demas: 0x4E, 13, 0x4E...
+C 0xBE5D 16 bytes de color 0x4E
 C 0xBE75 carga de cinta: el letrero de buscar y el nombre
 C 0xBE7E TAPION: la cabecera de la cinta
 C 0xBE84 16 bytes 0xAA seguidos
@@ -497,7 +549,7 @@ C 0xBC92 apunta a en el final, las estrellas (32 x 16 bytes); en la partida, par
 C 0xBCC2 HL, DE = la velocidad en y y en x de la direccion A, por B
 C 0xBCD5 los sprites fuera, de color 5
 C 0xBCDD apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
-C 0xBCE8 una estrella se mueve; al salir de la pantalla se quita
+C 0xBCE8 la x + su velocidad (16 bits)
 C 0xBD3D apunta a los colores de los sprites (16 bytes por sprite)
 C 0xBD4F apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0xBD78 HL = la palabra A de la tabla de HL

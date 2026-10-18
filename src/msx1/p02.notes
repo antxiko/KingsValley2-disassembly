@@ -583,6 +583,7 @@ C 0x8B0D borra los puntos y 0xE280-0xEFFF
 C 0x8B10 el nombre (0xE270, 12 bytes) en blanco
 C 0x8B17 apunta a los puntos (3 bytes BCD)
 C 0x8B23 apunta a el estado del personaje
+C 0x8B26 apunta a la y del personaje (16 bits: 0xE281 la parte fina)
 C 0x8B35 guarda el resultado de grabar o cargar (0 bien, 2 error)
 C 0x8B4A lee el resultado de grabar o cargar (0 bien, 2 error)
 C 0x8B51 0xE244 = la casilla de la pantalla 0xE243
@@ -591,6 +592,7 @@ C 0x8B57 la lista 0xEE50: el numero (desde 1) de cada cosa de 0xE300 que hay, y 
 C 0x8B5A marca en el mapa las 16 columnas de 0xE7C0
 C 0x8B5F guarda lo elegido en el menu
 C 0x8B62 guarda la marca de partida del editor
+C 0x8B6A guarda hacia que lado mira el personaje (0 izquierda, 1 derecha)
 C 0x8B73 borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)
 C 0x8B78 guarda lo elegido en el menu
 C 0x8B7F rachas de 0xA6D8 a 0x1880 (sprites)
@@ -648,6 +650,9 @@ C 0x8E49 lee la pantalla de la fase (desde 1)
 C 0x8E7D IX = la cosa A de 0xE300 (desde 1)
 C 0x8E80 lee la pantalla de la fase (desde 1)
 C 0x8E8A una cosa de 0xE300 en el suelo: guarda su fondo y la pinta (0x9328 + 4 x (tipo - 1))
+C 0x8EA1 lee el estado (cifra alta) y el tipo (cifra baja) de la cosa
+C 0x8EAB lee la y de la cosa
+C 0x8EAE lee la x de la cosa
 C 0x8EBD pasa la posicion de caracter de HL a direccion de la VRAM
 C 0x8ECD apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
 C 0x8EE7 uno, y el siguiente sprite
@@ -656,6 +661,7 @@ C 0x8F0D lee la pantalla de la fase (desde 1)
 C 0x8F1D suma A a HL (HL = HL + A)
 C 0x8F28 suma A a HL (HL = HL + A)
 C 0x8F38 apunta a la lista de las cosas de 0xE300 por orden de pintado
+C 0x8F41 lee el estado (cifra alta) y el tipo (cifra baja) de la cosa
 C 0x8F5F apunta a la lista de las cosas de 0xE300 por orden de pintado
 C 0x8F7B apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
 C 0x8F8E apunta a la lista de las cosas de 0xE300 por orden de pintado
@@ -667,38 +673,91 @@ C 0x8FD3 guarda la y del personaje
 C 0x8FD8 guarda la x del personaje
 C 0x8FDD guarda la pantalla de la fase (desde 1)
 C 0x8FE0 pone los bancos 1-2-3 (el juego)
-C 0x8FF5 guarda hacia donde mira el personaje
+C 0x8FE6 apunta a la velocidad al subir la escalera (16 bits)
+C 0x8FF0 guarda la cuenta de cuadros del paso de la animacion
+C 0x8FF5 guarda el dibujo del personaje (direccion y paso)
 C 0x9002 guarda el estado del personaje
-C 0x901C guarda hacia donde mira el personaje
-C 0x9028 guarda hacia donde mira el personaje
+C 0x9007 guarda la cuenta del parpadeo al aparecer
+C 0x900C guarda los cuadros desde que aparece (los 6 primeros sin teclas)
+C 0x9019 guarda el paso de la animacion del personaje
+C 0x901C guarda el dibujo del personaje (direccion y paso)
+C 0x9028 guarda el dibujo del personaje (direccion y paso)
 C 0x902D guarda la marca de personaje muerto
+C 0x9037 guarda la cuenta de cuadros del paso de la animacion
 C 0x90DD apunta a las cosas de la fase (16 x 16 bytes)
+C 0x90E4 lee el tipo de la cosa (0: libre)
 C 0x90E9 un bloque pegado al borde se corre a 0x10 o a 0xE0
+C 0x90FC la x de la cosa = 0x10
+C 0x9105 la x de la cosa = 0xE0
 C 0x910F el despachador de Konami: la tabla va detras del call
+C 0x911F guarda el paso de la cosa
+C 0x9123 guarda la cuenta de la cosa
+C 0x912A compara con la pantalla de la cosa
 C 0x912E lee el estado del personaje
 C 0x9133 lee la y del personaje
+C 0x9138 le resta la y de la cosa
+C 0x913F lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
+C 0x9146 lee la x de la cosa
 C 0x9152 lee el mando: lo pulsado
+C 0x9159 baja la cuenta de la cosa
+C 0x915D pone a cero el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+C 0x9161 sube el paso de la cosa
 C 0x916C lee el mando: lo pulsado
+C 0x9173 baja la cuenta de la cosa
+C 0x9177 pone a uno el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+C 0x918E lee la x de la cosa
 C 0x9194 NC si la casilla de al lado del bloque esta libre
+C 0x9199 mira el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+C 0x919D lee la x de la cosa
+C 0x91AB guarda la x de la cosa
+C 0x91AE pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 C 0x91B2 pide el sonido 0x24
+C 0x91B5 lee la y de la cosa
+C 0x91B8 guarda la marca de personaje encima
+C 0x91C0 la cuenta de la cosa = 0x01
+C 0x91C7 guarda el paso de la cosa
+C 0x91D0 mira el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+C 0x91DD lee la x de la cosa
+C 0x91E0 lee la y de la cosa
+C 0x91E3 guarda la x de la cosa
 C 0x91E6 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x91ED el bloque cambia de pantalla
 C 0x91F4 devuelve el fondo del bloque donde estaba
 C 0x91F7 C = la casilla de la rejilla de la pantalla del bloque
+C 0x9200 guarda la pantalla de la cosa
+C 0x921C la cuenta de la cosa = 0x02
+C 0x9220 pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+C 0x9224 lee la y de la cosa
+C 0x9227 guarda la marca de personaje encima
+C 0x922C guarda la y de la cosa
+C 0x9230 lee la x de la cosa
 C 0x9241 pide el sonido 0x25
+C 0x924A lee la marca de personaje encima
+C 0x924D la y de la cosa = 0x00
 C 0x9251 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x926B A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 C 0x9277 A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 C 0x9280 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
+C 0x9283 lee la x de la cosa
+C 0x9286 lee la y de la cosa
 C 0x9298 apunta a el mapa de la fase: 0xC0 bytes por pantalla, 4 casillas por byte
+C 0x92BD lee la y de la cosa
 C 0x92C0 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+C 0x92C3 lee la pantalla de la cosa
+C 0x92C6 guarda la pantalla de la cosa al empezar
 C 0x92DD A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
 C 0x92EB A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+C 0x92F4 lee la pantalla de la cosa
 C 0x92F7 DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 C 0x9309 suma A a HL (HL = HL + A)
+C 0x9314 lee la y de la cosa
 C 0x9317 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
+C 0x931A lee la pantalla de la cosa
+C 0x931D compara con la pantalla de la cosa al empezar
 C 0x9326 dos casillas
+C 0x9331 lee la pantalla de la cosa
 C 0x9337 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
+C 0x9343 lee la pantalla de la cosa
 C 0x9349 marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 C 0x938B lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0x9391 pasa la posicion de caracter de HL a direccion de la VRAM
@@ -706,9 +765,11 @@ C 0x9399 suma A a DE (DE = DE + A)
 C 0x93B9 lee la pantalla de la fase (desde 1)
 C 0x93C3 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 C 0x93CB suma A a HL (HL = HL + A)
+C 0x93EF lee el tipo de la cosa (0: libre)
 C 0x9400 lee la pantalla de la fase (desde 1)
 C 0x9407 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x9412 guarda el fondo: en MSX1 cuatro bytes de la VRAM, en MSX2 un trozo en la pagina 1
+C 0x941F lee el tipo de la cosa (0: libre)
 C 0x9430 lee la pantalla de la fase (desde 1)
 C 0x9437 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 C 0x944E el despachador de Konami: la tabla va detras del call
@@ -720,28 +781,48 @@ C 0x9483 usar lo que lleva (disparo con algo en la mano)
 C 0x9486 lee el estado del personaje
 C 0x948B las teclas: el disparo (0xA008), arriba (0xA5A2) y abajo (0xA591)
 C 0x948E lee el estado del personaje
+C 0x9493 lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
+C 0x94A8 guarda el paso de la animacion del personaje
+C 0x94AB lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 C 0x94B8 suma A a HL (HL = HL + A)
-C 0x94BC guarda hacia donde mira el personaje
+C 0x94BC guarda el dibujo del personaje (direccion y paso)
+C 0x94C2 guarda la cuenta de cuadros del paso de la animacion
 C 0x94D3 lee la y del personaje
+C 0x94D9 lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 C 0x94DD lee la x del personaje
 C 0x94E5 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0x94EB lee la y del personaje
 C 0x94F0 guarda la y del personaje
+C 0x94F4 guarda la marca de en el aire
 C 0x94FD lee el mando: lo que se acaba de pulsar
 C 0x9505 lee el mando: lo pulsado
 C 0x950B subir a una escalera
 C 0x9513 bajar a una escalera
 C 0x9516 lee el estado del personaje
+C 0x951E lee la velocidad al andar a la izquierda (16 bits)
+C 0x9528 lee la velocidad al andar a la derecha (16 bits)
+C 0x9532 lee la x del personaje (16 bits: 0xE283 la parte fina)
 C 0x9537 lee la y del personaje
 C 0x953B NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
+C 0x9551 guarda la x del personaje (16 bits: 0xE283 la parte fina)
+C 0x9557 guarda la marca de acabar de caer
 C 0x955A lee el estado del personaje
-C 0x957E guarda hacia donde mira el personaje
+C 0x9560 lee la marca de en el aire
+C 0x9567 guarda la marca de acabar de caer
+C 0x956B guarda el paso de la animacion del personaje
+C 0x9570 guarda la cuenta de cuadros del paso de la animacion
+C 0x9575 lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
+C 0x957E guarda el dibujo del personaje (direccion y paso)
 C 0x9583 guarda el estado del personaje
 C 0x958E lee la postura del personaje
 C 0x9593 lee la y del personaje
 C 0x959A lee la x del personaje
 C 0x95A0 NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
-C 0x95B1 guarda hacia donde mira el personaje
+C 0x95A7 guarda la direccion del salto
+C 0x95AA lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
+C 0x95B1 guarda el dibujo del personaje (direccion y paso)
+C 0x95B5 guarda la cuenta de la caida del salto
+C 0x95BB guarda la velocidad en y del salto o la caida (16 bits)
 C 0x95BE pide el sonido 0x13
 C 0x95C1 apunta a el estado del personaje
 C 0x95CB lee la postura del personaje
@@ -749,29 +830,45 @@ C 0x95D0 lee el mando: lo que se acaba de pulsar
 C 0x95D6 apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
 C 0x95EF lee la postura del personaje
 C 0x95F3 el despachador de Konami: la tabla va detras del call
-C 0x9614 guarda hacia donde mira el personaje
+C 0x960A lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
+C 0x9614 guarda el dibujo del personaje (direccion y paso)
+C 0x9619 guarda la cuenta de la animacion de usar lo que lleva
 C 0x9623 guarda el estado del personaje
 C 0x9637 lee la x del personaje
 C 0x9640 lee la y del personaje
 C 0x964C A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0x9657 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
-C 0x965F guarda hacia donde mira el personaje
+C 0x965F guarda el dibujo del personaje (direccion y paso)
+C 0x966C guarda la cuenta de la animacion de usar lo que lleva
 C 0x9682 lee la x del personaje
 C 0x9689 lee la y del personaje
+C 0x968F guarda donde se cava (y, x) y el byte siguiente (16 bits)
 C 0x9692 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x969C A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
-C 0x96A4 guarda hacia donde mira el personaje
+C 0x96A4 guarda el dibujo del personaje (direccion y paso)
+C 0x96A8 lee la cosa de 0xE300 que se esta usando (16 bits)
+C 0x96B1 guarda la cuenta de la animacion de usar lo que lleva
+C 0x96D8 lee la cuenta de la caida del salto
 C 0x96DC lee la y del personaje
 C 0x96E3 NC si hay pared al lado en la altura A
 C 0x96FA lee la x del personaje
 C 0x96FF A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x970B A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
+C 0x9712 guarda la cuenta de la caida del salto
 C 0x9715 la caida: la velocidad sube 0x80 por cuadro hasta 4
+C 0x9718 lee la direccion del salto
 C 0x971D en el aire, el paso hacia el lado del salto (0xFEC0 o 0x0140)
 C 0x9723 lee un dato de paso de la rutina en curso
 C 0x972C guarda el estado del personaje
+C 0x972F guarda la marca de en el aire
+C 0x9732 guarda la cuenta de la caida del salto
+C 0x9735 guarda el paso de la animacion del personaje
+C 0x9739 guarda la cuenta de cuadros del paso de la animacion
 C 0x973C el dibujo del paso (tablas 0x9F45 y 0x9F49 segun hacia donde mira)
+C 0x974E guarda la velocidad en y del salto o la caida (16 bits)
+C 0x9756 guarda la y del personaje (16 bits: 0xE281 la parte fina)
 C 0x9759 C si tiene techo o suelo (dos puntos de cada lado)
+C 0x975D apunta a la cuenta de la caida del salto
 C 0x9769 dos puntos en la fila L: x + 2 y x + 14
 C 0x9774 dos puntos en la fila L: x + 2 y x + 14
 C 0x9780 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
@@ -781,45 +878,73 @@ C 0x97A6 lee la x del personaje
 C 0x97CC A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x97D6 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x97E3 guarda el estado del personaje
+C 0x97E6 guarda los cuadros desde que aparece (los 6 primeros sin teclas)
+C 0x97E9 guarda la marca de en el aire
+C 0x97ED guarda la y del personaje (16 bits: 0xE281 la parte fina)
 C 0x97F7 lee la x del personaje
 C 0x97FE NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 C 0x9806 guarda el estado del personaje
+C 0x9809 guarda los cuadros desde que aparece (los 6 primeros sin teclas)
+C 0x980D guarda la marca de en el aire
 C 0x9814 lee el estado del personaje
 C 0x981A Z si hay escalera arriba o abajo; si no, se cae
 C 0x981D lee el estado del personaje
 C 0x9823 un paso en la escalera (0xE28A o 0xE28C segun la direccion)
-C 0x9833 lee hacia donde mira el personaje
-C 0x9838 guarda hacia donde mira el personaje
+C 0x9826 lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
+C 0x9833 lee el dibujo del personaje (direccion y paso)
+C 0x9838 guarda el dibujo del personaje (direccion y paso)
+C 0x9842 lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
+C 0x9848 lee la velocidad al bajar la escalera (16 bits)
+C 0x9851 apunta a la cuenta de cuadros del paso de la animacion
+C 0x9857 lee la y del personaje (16 bits: 0xE281 la parte fina)
 C 0x9863 lee la x del personaje
 C 0x9867 NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
+C 0x986D guarda la y del personaje (16 bits: 0xE281 la parte fina)
 C 0x9875 lee la y del personaje
 C 0x987B guarda la y del personaje
 C 0x9881 Z si debajo de los pies no hay nada (tres puntos)
 C 0x9885 la y a la fila de 8, sin la parte fina
 C 0x9889 guarda el estado del personaje
-C 0x98AF apunta a hacia donde mira el personaje
+C 0x988C guarda la marca de en el aire
+C 0x9890 guarda la cuenta de cuadros del paso de la animacion
+C 0x98A2 apunta a la cuenta de cuadros del paso de la animacion
+C 0x98A7 lee el paso de la animacion del personaje
+C 0x98AF apunta a el dibujo del personaje (direccion y paso)
+C 0x98B6 lee el paso de la animacion del personaje
+C 0x98BA guarda el paso de la animacion del personaje
+C 0x98C4 apunta a la cuenta de cuadros del paso de la animacion
 C 0x98CD guarda la marca de fase empezada
+C 0x98DB guarda la x del personaje (16 bits: 0xE283 la parte fina)
 C 0x98DE lee la x del personaje
 C 0x98E3 guarda la x del personaje
 C 0x98E9 guarda el estado del personaje
+C 0x98F7 guarda la x del personaje (16 bits: 0xE283 la parte fina)
 C 0x98FA lee la x del personaje
 C 0x98FF guarda la x del personaje
-C 0x990F apunta a hacia donde mira el personaje
+C 0x990F apunta a el dibujo del personaje (direccion y paso)
 C 0x9915 guarda la postura del personaje
 C 0x9918 guarda el estado del personaje
-C 0x9924 guarda hacia donde mira el personaje
+C 0x991B lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
+C 0x9924 guarda el dibujo del personaje (direccion y paso)
 C 0x9934 lee la y del personaje
+C 0x9941 lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 C 0x9955 NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
+C 0x9962 lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 C 0x9966 lee la x del personaje
 C 0x9975 lee la pantalla de la fase (desde 1)
 C 0x9979 C = la casilla de la rejilla en la que esta la pantalla A
 C 0x998B pide el sonido 0x15
+C 0x9990 lee la cuenta de la animacion de usar lo que lleva
 C 0x9995 pide el sonido 0x17
+C 0x999A lee la cuenta de la animacion de usar lo que lleva
 C 0x999F pide el sonido 0x18
+C 0x99A4 lee la cuenta de la animacion de usar lo que lleva
 C 0x99A9 pide el sonido 0x16
-C 0x99B4 lee hacia donde mira el personaje
-C 0x99B9 guarda hacia donde mira el personaje
+C 0x99B4 lee el dibujo del personaje (direccion y paso)
+C 0x99B9 guarda el dibujo del personaje (direccion y paso)
 C 0x99C3 guarda el estado del personaje
+C 0x99CF guarda la y del personaje (16 bits: 0xE281 la parte fina)
+C 0x99DA guarda los cuadros desde que aparece (los 6 primeros sin teclas)
 C 0x99E5 lee la y del personaje
 C 0x99E9 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x99F2 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
@@ -827,12 +952,22 @@ C 0x99FB lee la y del personaje
 C 0x99FF A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x9A08 A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 C 0x9A14 lee la y del personaje
+C 0x9A1A lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 C 0x9A22 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x9A2D A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0x9A3E guarda la y del personaje (16 bits: 0xE281 la parte fina)
 C 0x9A41 guarda el estado del personaje
+C 0x9A44 guarda la marca de en el aire
+C 0x9A48 guarda la marca de acabar de caer
+C 0x9A4B guarda la cuenta de cuadros del paso de la animacion
 C 0x9A51 lee la y del personaje
 C 0x9A5D A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x9A66 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
+C 0x9A72 lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
+C 0x9A81 lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
+C 0x9A86 guarda hacia que lado mira el personaje (0 izquierda, 1 derecha)
+C 0x9A8B guarda el paso de la animacion del personaje
+C 0x9A8F guarda la cuenta de cuadros del paso de la animacion
 C 0x9A99 lee la x del personaje
 C 0x9A9F A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x9AA8 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
@@ -856,13 +991,19 @@ C 0x9B36 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x9B47 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x9B51 A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x9B5F C si la escalera se corta
+C 0x9B64 guarda la x del personaje (16 bits: 0xE283 la parte fina)
+C 0x9B68 guarda el paso de la animacion del personaje
+C 0x9B6B guarda los cuadros desde que aparece (los 6 primeros sin teclas)
+C 0x9B6F guarda la cuenta de cuadros del paso de la animacion
 C 0x9B73 guarda el estado del personaje
-C 0x9B78 guarda hacia donde mira el personaje
+C 0x9B78 guarda el dibujo del personaje (direccion y paso)
 C 0x9B7C lee la y del personaje
 C 0x9B88 lee la y del personaje
 C 0x9B9B A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 C 0x9BAF lee el mando: lo que se acaba de pulsar
+C 0x9BD0 guarda las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 C 0x9BDE lee el mando: lo que se acaba de pulsar
+C 0x9C0C lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 C 0x9C10 lee la x del personaje
 C 0x9C1A guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 C 0x9C25 guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
@@ -872,6 +1013,7 @@ C 0x9C3A guarda el borde por el que se sale de la pantalla (1 arriba, 2 abajo, 3
 C 0x9C41 el despachador de Konami: la tabla va detras del call
 C 0x9C70 cada 0xE2B2 cuadros cambia el dibujo (xor C) y la espera se acorta hasta 5
 C 0x9C7B guarda el dibujo del personaje en pausa
+C 0x9CAA lee la cuenta del parpadeo al aparecer
 C 0x9CB0 apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0x9CBE apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 C 0x9CC1 lee la x del personaje
@@ -898,6 +1040,14 @@ C 0x9DCD A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo
 C 0x9E19 la palabra (fase - 1)
 C 0x9E26 lee la fase (1-60)
 C 0x9E2A HL = la palabra A de la tabla de HL
+C 0x9E3E guarda el estado (cifra alta) y el tipo (cifra baja) de la cosa
+C 0x9E48 guarda la pantalla de la cosa
+C 0x9E4D guarda la y de la cosa
+C 0x9E52 guarda la x de la cosa
+C 0x9E57 guarda el dibujo de la cosa en vuelo
+C 0x9E5A guarda el paso de la velocidad de la cosa
+C 0x9E5D guarda la cuenta de la cosa
+C 0x9E60 guarda el lado de la cosa
 C 0x9E98 la deja como estaba
 C 0x9EA1 pone el banco 12 en 0xA000
 C 0x9EAD borra los sprites y la tabla de nombres (0x3800, 0x300 bytes)

@@ -115,9 +115,31 @@ RAM = {
     0xE254: ("la marca de partida del editor", "p00:48B5"),
     0xE257: ("el paso de la secuencia en curso (entrada, fase o piramide acabada)", "p01:6827"),
     0xE280: ("el estado del personaje", "p00:49AB"),
+    0xE281: ("la y del personaje (16 bits: 0xE281 la parte fina)", "p03:A1D1"),
     0xE282: ("la y del personaje", "p00:5E2E"),
+    0xE283: ("la x del personaje (16 bits: 0xE283 la parte fina)", "p02:9FB1"),
     0xE284: ("la x del personaje", "p00:5E22"),
-    0xE285: ("hacia donde mira el personaje", "p00:5886"),
+    0xE286: ("la cuenta de la animacion de usar lo que lleva", "p03:A384"),
+    0xE288: ("las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)", "p03:A624"),
+    0xE289: ("la direccion del salto", "p03:A026"),
+    0xE28A: ("la velocidad al subir la escalera (16 bits)", "p03:A2BB"),
+    0xE28C: ("la velocidad al bajar la escalera (16 bits)", "p03:A2C7"),
+    0xE28E: ("la velocidad al andar a la izquierda (16 bits)", "p02:9F9D"),
+    0xE290: ("la velocidad al andar a la derecha (16 bits)", "p02:9FA7"),
+    0xE292: ("la velocidad en y del salto o la caida (16 bits)", "p03:A03A"),
+    0xE294: ("hacia que lado mira el personaje (0 izquierda, 1 derecha)", "p03:A505"),
+    0xE295: ("el paso de la animacion del personaje", "p02:9F20"),
+    0xE296: ("la cuenta de cuadros del paso de la animacion", "p02:9F19"),
+    0xE299: ("la cuenta de pasos al entrar por una puerta", "p03:A350"),
+    0xE2A0: ("la cosa de 0xE300 que se esta usando (16 bits)", "p03:A06B"),
+    0xE2A2: ("donde se cava (y, x)", "p03:A0C7"),
+    0xE2A4: ("los cuadros desde que aparece (los 6 primeros sin teclas)", "p03:A452"),
+    0xE2A5: ("la cuenta de la caida del salto", "p03:A1DC"),
+    0xE2A6: ("la marca de en el aire", "p03:A270"),
+    0xE2A7: ("la marca de acabar de caer", "p03:A4C7"),
+    0xE2A8: ("la cuenta del parpadeo al aparecer", "p03:A43C"),
+    0xE2A9: ("cuantas cosas lanzadas hay en el aire", "p03:A081"),
+    0xE285: ("el dibujo del personaje (direccion y paso)", "p00:5886"),
     0xE287: ("la postura del personaje", "p00:587A"),
     0xE297: ("la postura de la que estan cargados los sprites", "p00:5925"),
     0xE298: ("la marca de personaje muerto", "p02:9312"),
@@ -208,7 +230,68 @@ CAMPOS_CANAL = {
 }
 CARGAS_CANAL = tuple(0xE000 + 0x33 * k for k in range(8))
 IX_CANAL_POR_DEFECTO = {4: ((0x62DF, 0x62F8), (0x63CC, 0x6B98))}
-FICHAS = ((CARGAS_CANAL, IX_CANAL_POR_DEFECTO, CAMPOS_CANAL),)
+
+# Las fichas del juego. Los tramos con IX en una ficha se escriben con las
+# direcciones de MSX2; en MSX1 se traducen por el mapa de tools/paralelo.py.
+CAMPOS_ENEMIGO = {
+    0x00: "el tipo del enemigo (0: libre)", 0x01: "el paso del enemigo",
+    0x02: "la y del enemigo (fina)", 0x03: "la y del enemigo",
+    0x04: "la x del enemigo (fina)", 0x05: "la x del enemigo",
+    0x06: "la marca de enemigo en movimiento", 0x07: "la velocidad en y del enemigo (fina)",
+    0x08: "la velocidad en y del enemigo", 0x09: "la velocidad en x del enemigo (fina)",
+    0x0A: "la velocidad en x del enemigo", 0x0B: "la direccion del enemigo",
+    0x0C: "el mapa de la pantalla del enemigo (bajo)", 0x0D: "el mapa de la pantalla del enemigo (alto)",
+    0x0E: "una cuenta del enemigo", 0x10: "la pantalla del enemigo",
+    0x11: "el dibujo del enemigo (0xFF: no se ve)", 0x13: "las marcas del enemigo (bit 0 mata, bit 1 se le puede matar)",
+    0x14: "la espera del enemigo", 0x15: "el sitio de salida del enemigo (0-7)",
+    0x16: "la casilla de la rejilla del enemigo", 0x18: "los intentos del enemigo",
+    0x19: "la direccion guardada del enemigo", 0x1E: "el color del primer sprite del enemigo",
+    0x1F: "el color del segundo sprite del enemigo",
+}
+CAMPOS_COSA = {
+    0x00: "el tipo de la cosa (0: libre)", 0x01: "el paso de la cosa",
+    0x02: "la y de la cosa", 0x03: "la x de la cosa", 0x04: "la pantalla de la cosa",
+    0x05: "el giro o paso del dibujo de la cosa", 0x06: "la cuenta de la cosa",
+    0x07: "las marcas de la cosa (bit 0 repintar, bit 1 su lado)", 0x08: "el alto de la cosa",
+    0x09: "la pantalla de la cosa al empezar", 0x0A: "la marca de personaje encima",
+}
+CAMPOS_COGER = {
+    0x00: "el estado (cifra alta) y el tipo (cifra baja) de la cosa", 0x01: "la y de la cosa",
+    0x02: "la x de la cosa", 0x03: "la pantalla de la cosa", 0x04: "el dibujo de la cosa en vuelo",
+    0x05: "el paso de la velocidad de la cosa", 0x06: "la cuenta de la cosa", 0x07: "el lado de la cosa",
+}
+_TRAMOS2 = {
+    "enemigo": {1: ((0x654C, 0x6706),), 3: ((0xAC91, 0xACE4), (0xAD2C, 0xBA85))},
+    "cosa": {1: ((0x6343, 0x6483), (0x649B, 0x64E3)), 2: ((0x8203, 0x821C), (0x8266, 0x82B1),
+             (0x93BE, 0x9652)), 3: ((0xBA85, 0xBE15),)},
+    "coger": {2: ((0x9116, 0x9151), (0x9A46, 0x9AB1)), 3: ((0xA6D5, 0xAC6D),)},
+}
+
+
+def _tramos(cual):
+    from variante import actual
+    t = _TRAMOS2[cual]
+    if actual() == "msx2":
+        return t
+    import json
+    import os
+    m = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                    "work", "paralelo.json")))
+    r = {v: k for k, v in m.items()}
+    fuera = {}
+    for b, tr in t.items():
+        for i, f in tr:
+            ks = sorted(int(r[k][4:], 16) for k in r if k.startswith("p%02d:" % b)
+                        and i <= int(k[4:], 16) < f and r[k].startswith("p%02d:" % b))
+            if ks:
+                fuera.setdefault(b, []).append((ks[0], ks[-1] + 1))
+    return {b: tuple(x) for b, x in fuera.items()}
+
+
+FICHAS = ((CARGAS_CANAL, IX_CANAL_POR_DEFECTO, CAMPOS_CANAL),
+          (tuple(0xE500 + 0x20 * k for k in range(8)), _tramos("enemigo"), CAMPOS_ENEMIGO),
+          (tuple(0xE600 + 0x10 * k for k in range(16)), _tramos("cosa"), CAMPOS_COSA),
+          (tuple(0xE300 + 8 * k for k in range(64)), _tramos("coger"), CAMPOS_COGER))
 SCC = {0x988A + k: "el volumen del canal %d del SCC" % (k + 1) for k in range(5)}
 SCC.update({0x9880 + 2 * k: "el periodo del canal %d del SCC (bajo)" % (k + 1) for k in range(5)})
 SCC.update({0x9881 + 2 * k: "el periodo del canal %d del SCC (alto)" % (k + 1) for k in range(5)})

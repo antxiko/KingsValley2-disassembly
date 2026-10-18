@@ -283,43 +283,43 @@ L_614D:
 	rrca			;6153
 	rrca			;6154
 	and 00fh		;6155
-	ld (ix+000h),a		;6157
+	ld (ix+000h),a		;6157   ; guarda el tipo de la cosa (0: libre)
 	ld a,(hl)			;615a   ; la pantalla (cifra baja), en IX+04 y en IX+09
 	and 00fh		;615b
-	ld (ix+004h),a		;615d
-	ld (ix+009h),a		;6160
+	ld (ix+004h),a		;615d   ; guarda la pantalla de la cosa
+	ld (ix+009h),a		;6160   ; guarda la pantalla de la cosa al empezar
 	inc hl			;6163   ; la x
 	ld a,(hl)			;6164
-	ld (ix+002h),a		;6165
+	ld (ix+002h),a		;6165   ; guarda la y de la cosa
 	inc hl			;6168
 	ld a,(hl)			;6169   ; la y
-	ld (ix+003h),a		;616a
+	ld (ix+003h),a		;616a   ; guarda la x de la cosa
 	inc hl			;616d
 	ld a,(hl)			;616e   ; los 5 bits altos: IX+08
 	rrca			;616f
 	rrca			;6170
 	rrca			;6171
 	and 01fh		;6172
-	ld (ix+008h),a		;6174
+	ld (ix+008h),a		;6174   ; guarda el alto de la cosa
 	ld a,(hl)			;6177   ; los 3 bits bajos: la variante (bit 1 de IX+07 si no es 0)
 	and 007h		;6178
 	jr z,L_6182		;617a
-	set 1,(ix+007h)		;617c
+	set 1,(ix+007h)		;617c   ; pone a uno el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	jr L_6186		;6180
 L_6182:
-	res 1,(ix+007h)		;6182
+	res 1,(ix+007h)		;6182   ; pone a cero el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 L_6186:
 	ld b,a			;6186   ; IX+05 = variante x 3, solo en el tipo 1
 	add a,a			;6187
 	add a,b			;6188
 	ld b,a			;6189
-	ld a,(ix+000h)		;618a
+	ld a,(ix+000h)		;618a   ; lee el tipo de la cosa (0: libre)
 	cp 001h		;618d
 	jr z,L_6193		;618f
 	ld b,000h		;6191
 L_6193:
-	ld (ix+005h),b		;6193
-	ld (ix+006h),000h		;6196
+	ld (ix+005h),b		;6193   ; guarda el giro o paso del dibujo de la cosa
+	ld (ix+006h),000h		;6196   ; la cuenta de la cosa = 0x00
 	inc hl			;619a
 	ld de,00010h		;619b   ; la ficha siguiente
 	add ix,de		;619e
@@ -334,7 +334,7 @@ L_61A8:
 	ld ix,0e600h		;61aa   ; apunta a las cosas de la fase (16 x 16 bytes)
 L_61AE:
 	push bc			;61ae   ; las 16
-	ld a,(ix+000h)		;61af
+	ld a,(ix+000h)		;61af   ; lee el tipo de la cosa (0: libre)
 	and a			;61b2
 	call nz,L_61BF		;61b3   ; el tipo 3 no se marca; el 5, segun su estado
 	ld bc,00010h		;61b6
@@ -350,15 +350,15 @@ L_61BF:
 	ld a,c			;61c6
 	and a			;61c7
 	jp z,09311h		;61c8
-	ld a,(ix+001h)		;61cb
+	ld a,(ix+001h)		;61cb   ; lee el paso de la cosa
 	and a			;61ce
 	ret nz			;61cf
 L_61D0:
 	ld h,(ix+003h)		;61d0   ; su sitio
-	ld l,(ix+002h)		;61d3
+	ld l,(ix+002h)		;61d3   ; lee la y de la cosa
 	cp 002h		;61d6   ; el tipo 2 con variante: 8 pixeles mas abajo
 	jr nz,L_61E4		;61d8
-	bit 1,(ix+007h)		;61da
+	bit 1,(ix+007h)		;61da   ; mira el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	jr z,L_61E4		;61de
 	ld a,h			;61e0
 	add a,008h		;61e1
@@ -370,9 +370,9 @@ L_61E4:
 	ld a,(de)			;61ed
 	ld d,a			;61ee
 	ld a,c			;61ef
-	ld b,(ix+008h)		;61f0
+	ld b,(ix+008h)		;61f0   ; lee el alto de la cosa
 	ld c,d			;61f3
-	ld d,(ix+004h)		;61f4
+	ld d,(ix+004h)		;61f4   ; lee la pantalla de la cosa
 L_61F7:
 	ld (0efc0h),a		;61f7   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 	ld a,d			;61fa
@@ -449,7 +449,7 @@ L_6254:
 	ld b,010h		;6258
 L_625A:
 	push bc			;625a
-	ld a,(ix+000h)		;625b
+	ld a,(ix+000h)		;625b   ; lee el tipo de la cosa (0: libre)
 	and a			;625e
 	call nz,L_62C6		;625f   ; pinta la cosa, si es de esta pantalla
 	ld bc,00010h		;6262
@@ -462,11 +462,11 @@ L_626B:
 	ld b,010h		;626f
 L_6271:
 	push bc			;6271
-	ld a,(ix+000h)		;6272
+	ld a,(ix+000h)		;6272   ; lee el tipo de la cosa (0: libre)
 	cp 005h		;6275
 	jr nz,L_6284		;6277
 	ld a,(0e243h)		;6279   ; lee la pantalla de la fase (desde 1)
-	cp (ix+004h)		;627c
+	cp (ix+004h)		;627c   ; compara con la pantalla de la cosa
 	jr nz,L_6284		;627f
 	call 0937ah		;6281   ; guarda el fondo del bloque y lo pinta
 L_6284:
@@ -488,7 +488,7 @@ L_6293:
 	djnz L_6293		;62a0
 	jp 0b9efh		;62a2
 L_62A5:
-	ld a,(ix+000h)		;62a5
+	ld a,(ix+000h)		;62a5   ; lee el tipo de la cosa (0: libre)
 	and a			;62a8
 	ret z			;62a9
 	dec a			;62aa
@@ -510,13 +510,13 @@ L_62B8:
 	ld a,(ix+007h)		;62b8   ; con el bit 0 de IX+07, se repinta (tabla 0x64CF)
 	rra			;62bb
 	ret nc			;62bc
-	res 0,(ix+007h)		;62bd
+	res 0,(ix+007h)		;62bd   ; pone a cero el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	ld hl,062d9h		;62c1
 	jr L_62D0		;62c4
 L_62C6:
 	ld hl,062e3h		;62c6   ; pinta la cosa, si es de esta pantalla
 	ld a,(0e243h)		;62c9   ; lee la pantalla de la fase (desde 1)
-	cp (ix+004h)		;62cc
+	cp (ix+004h)		;62cc   ; compara con la pantalla de la cosa
 	ret nz			;62cf
 L_62D0:
 	ld a,(ix+000h)		;62d0   ; la rutina de su tipo
@@ -607,7 +607,7 @@ L_6356:
 	ld b,008h		;635a
 L_635C:
 	push bc			;635c
-	ld a,(ix+000h)		;635d
+	ld a,(ix+000h)		;635d   ; lee el tipo del enemigo (0: libre)
 	and a			;6360
 	jr z,L_636D		;6361
 	call L_6400		;6363   ; su rutina
@@ -624,17 +624,17 @@ L_6376:
 	cp 002h		;6379
 	jr c,L_639F		;637b
 	ld l,(ix+004h)		;637d   ; la x de 16 bits mas o menos su velocidad (IX+09)
-	ld h,(ix+005h)		;6380
-	ld e,(ix+009h)		;6383
-	ld d,(ix+00ah)		;6386
+	ld h,(ix+005h)		;6380   ; lee la x del enemigo
+	ld e,(ix+009h)		;6383   ; lee la velocidad en x del enemigo (fina)
+	ld d,(ix+00ah)		;6386   ; lee la velocidad en x del enemigo
 	jr z,L_6398		;6389
 	add hl,de			;638b
 	ld a,h			;638c
 	cp 0f1h		;638d   ; al pasar de 0xF1: sale por la derecha
 	jr nc,L_63CB		;638f
 L_6391:
-	ld (ix+004h),l		;6391
-	ld (ix+005h),h		;6394
+	ld (ix+004h),l		;6391   ; guarda la x del enemigo (fina)
+	ld (ix+005h),h		;6394   ; guarda la x del enemigo
 	ret			;6397
 L_6398:
 	and a			;6398
@@ -643,9 +643,9 @@ L_6398:
 	jr L_6391		;639d
 L_639F:
 	ld l,(ix+002h)		;639f   ; la y de 16 bits mas o menos su velocidad (IX+07)
-	ld h,(ix+003h)		;63a2
-	ld e,(ix+007h)		;63a5
-	ld d,(ix+008h)		;63a8
+	ld h,(ix+003h)		;63a2   ; lee la y del enemigo
+	ld e,(ix+007h)		;63a5   ; lee la velocidad en y del enemigo (fina)
+	ld d,(ix+008h)		;63a8   ; lee la velocidad en y del enemigo
 	and a			;63ab
 	jr nz,L_63B4		;63ac
 	sbc hl,de		;63ae
@@ -657,8 +657,8 @@ L_63B4:
 	cp 0b1h		;63b6   ; al pasar de 0xB1: sale por abajo
 	jr nc,L_63DF		;63b8
 L_63BA:
-	ld (ix+002h),l		;63ba
-	ld (ix+003h),h		;63bd
+	ld (ix+002h),l		;63ba   ; guarda la y del enemigo (fina)
+	ld (ix+003h),h		;63bd   ; guarda la y del enemigo
 	ret			;63c0
 L_63C1:
 	ld a,003h		;63c1   ; sale por la izquierda: aparece a la derecha (0xF0)
@@ -684,11 +684,11 @@ L_63E9:
 	ld b,(ix+016h)		;63e9   ; el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
 	call 05c2fh		;63ec
 	ld (ix+016h),h		;63ef   ; IX+16 la casilla, IX+10 la pantalla
-	ld (ix+010h),l		;63f2
+	ld (ix+010h),l		;63f2   ; guarda la pantalla del enemigo
 	ld a,l			;63f5
 	call 0aa90h		;63f6   ; DE = el mapa de la pantalla A
-	ld (ix+00ch),e		;63f9
-	ld (ix+00dh),d		;63fc
+	ld (ix+00ch),e		;63f9   ; guarda el mapa de la pantalla del enemigo (bajo)
+	ld (ix+00dh),d		;63fc   ; guarda el mapa de la pantalla del enemigo (alto)
 	ret			;63ff
 L_6400:
 	ld a,(ix+000h)		;6400   ; la rutina del tipo del enemigo (tabla detras)
@@ -710,25 +710,25 @@ DATA_tabla_6408:
 
 L_6412:
 	ld a,(0e243h)		;6412   ; entra en la pantalla en la que se esta: el sonido 0x2D y pasa al tipo 5
-	cp (ix+010h)		;6415
+	cp (ix+010h)		;6415   ; compara con la pantalla del enemigo
 	call z,042bfh		;6418   ; pide el sonido 0x2D
-	ld (ix+000h),005h		;641b
+	ld (ix+000h),005h		;641b   ; el tipo del enemigo (0: libre) = 0x05
 	xor a			;641f
-	ld (ix+013h),a		;6420
-	ld (ix+014h),a		;6423
-	ld (ix+006h),a		;6426
+	ld (ix+013h),a		;6420   ; guarda las marcas del enemigo (bit 0 mata, bit 1 se le puede matar)
+	ld (ix+014h),a		;6423   ; guarda la espera del enemigo
+	ld (ix+006h),a		;6426   ; guarda la marca de enemigo en movimiento
 	ld a,(0f0f4h)		;6429   ; en MSX2, sus colores: 0x0A y 0x4B
 	and a			;642c
 	ret z			;642d
-	ld (ix+01eh),00ah		;642e
-	ld (ix+01fh),04bh		;6432
+	ld (ix+01eh),00ah		;642e   ; el color del primer sprite del enemigo = 0x0A
+	ld (ix+01fh),04bh		;6432   ; el color del segundo sprite del enemigo = 0x4B
 	ret			;6436
 L_6437:
 	ld hl,06447h		;6437
 	ld de,0644bh		;643a
 	call 0b45bh		;643d   ; el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
 	jp z,L_6510		;6440
-	ld (ix+011h),a		;6443
+	ld (ix+011h),a		;6443   ; guarda el dibujo del enemigo (0xFF: no se ve)
 	ret			;6446
 
 ; ----------------------------------------------------------------------
@@ -775,11 +775,11 @@ L_646E:
 	jr z,L_64C3		;647b
 L_647D:
 	push bc			;647d
-	ld a,(ix+000h)		;647e
+	ld a,(ix+000h)		;647e   ; lee el tipo del enemigo (0: libre)
 	and a			;6481
 	jr z,L_64B5		;6482
 	ld a,(0e243h)		;6484   ; lee la pantalla de la fase (desde 1)
-	cp (ix+010h)		;6487
+	cp (ix+010h)		;6487   ; compara con la pantalla del enemigo
 	jr nz,L_64B5		;648a
 	ld l,(ix+011h)		;648c   ; IX+11: su dibujo (0xFF: no se ve)
 	ld a,l			;648f
@@ -790,9 +790,9 @@ L_647D:
 	call 041c7h		;6496   ; pone el banco 13 en 0xA000
 	ld bc,0beedh		;6499   ; de la tabla de 0xBEED (dos bytes por dibujo)
 	add hl,bc			;649c
-	ld c,(ix+01eh)		;649d
+	ld c,(ix+01eh)		;649d   ; lee el color del primer sprite del enemigo
 	call L_64FD		;64a0   ; un atributo: [y - 1][x][dibujo][color]
-	ld c,(ix+01fh)		;64a3
+	ld c,(ix+01fh)		;64a3   ; lee el color del segundo sprite del enemigo
 	call L_64FD		;64a6   ; un atributo: [y - 1][x][dibujo][color]
 	call 04192h		;64a9   ; pone los bancos 1-2-3 (el juego)
 L_64AC:
@@ -816,13 +816,13 @@ L_64B5:
 	jr L_64AC		;64c1
 L_64C3:
 	push bc			;64c3
-	ld a,(ix+000h)		;64c4
+	ld a,(ix+000h)		;64c4   ; lee el tipo del enemigo (0: libre)
 	and a			;64c7
 	jr z,L_64F4		;64c8
 	ld a,(0e243h)		;64ca   ; lee la pantalla de la fase (desde 1)
-	cp (ix+010h)		;64cd
+	cp (ix+010h)		;64cd   ; compara con la pantalla del enemigo
 	jr nz,L_64F4		;64d0
-	ld l,(ix+011h)		;64d2
+	ld l,(ix+011h)		;64d2   ; lee el dibujo del enemigo (0xFF: no se ve)
 	ld a,l			;64d5
 	inc a			;64d6
 	jr z,L_64F4		;64d7
@@ -830,7 +830,7 @@ L_64C3:
 	call 041c7h		;64db   ; pone el banco 13 en 0xA000
 	ld bc,0becfh		;64de   ; en MSX1, de la tabla 0xBECF (un byte)
 	add hl,bc			;64e1
-	ld c,(ix+01eh)		;64e2
+	ld c,(ix+01eh)		;64e2   ; lee el color del primer sprite del enemigo
 	call L_64FD		;64e5   ; un atributo: [y - 1][x][dibujo][color]
 	call 04192h		;64e8   ; pone los bancos 1-2-3 (el juego)
 L_64EB:
@@ -852,7 +852,7 @@ L_64FD:
 	dec a			;6500
 	ld (de),a			;6501
 	inc e			;6502
-	ld a,(ix+005h)		;6503
+	ld a,(ix+005h)		;6503   ; lee la x del enemigo
 	ld (de),a			;6506
 	inc e			;6507
 	ld a,(hl)			;6508
@@ -3351,7 +3351,7 @@ L_76DA:
 L_76EA:
 	call 0532eh		;76ea   ; los sprites, el personaje mirando a la derecha sin nada en la mano y sus dibujos
 	xor a			;76ed
-	ld (0e285h),a		;76ee   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;76ee   ; guarda el dibujo del personaje (direccion y paso)
 	ld (0e298h),a		;76f1   ; guarda la marca de personaje muerto
 	ld (0e287h),a		;76f4   ; guarda la postura del personaje
 	call 0565fh		;76f7   ; los dibujos del personaje (bancos 14-15)
@@ -4484,10 +4484,10 @@ L_7E00:
 	ld b,010h		;7e08
 L_7E0A:
 	push bc			;7e0a
-	ld a,(ix+004h)		;7e0b
+	ld a,(ix+004h)		;7e0b   ; lee la pantalla de la cosa
 	cp c			;7e0e
 	jr nz,L_7E18		;7e0f
-	ld a,(ix+000h)		;7e11
+	ld a,(ix+000h)		;7e11   ; lee el tipo de la cosa (0: libre)
 	and a			;7e14
 	call nz,L_7E21		;7e15   ; cada tipo, su dibujo (tabla detras)
 L_7E18:
@@ -4516,7 +4516,7 @@ L_7E2F:
 	ld ix,0e600h		;7e2f   ; Z si ya hay una cosa en el cursor
 	ld b,010h		;7e33
 L_7E35:
-	ld a,(ix+000h)		;7e35
+	ld a,(ix+000h)		;7e35   ; lee el tipo de la cosa (0: libre)
 	and a			;7e38
 	jr z,L_7E3F		;7e39
 	call L_7ED9		;7e3b   ; Z si la cosa de IX esta en el cursor
@@ -4573,7 +4573,7 @@ L_7E92:
 	ld ix,0e600h		;7e9d   ; apunta a las cosas de la fase (16 x 16 bytes)
 	ld b,010h		;7ea1
 L_7EA3:
-	ld a,(ix+000h)		;7ea3
+	ld a,(ix+000h)		;7ea3   ; lee el tipo de la cosa (0: libre)
 	and a			;7ea6
 	jr z,L_7EB1		;7ea7
 	push hl			;7ea9

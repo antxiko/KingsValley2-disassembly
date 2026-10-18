@@ -1745,18 +1745,18 @@ L_B72A:
 	push bc			;b72a
 	push de			;b72b
 	push hl			;b72c
-	ld a,(hl)			;b72d
+	ld a,(hl)			;b72d   ; la pieza de la casilla
 	call L_B7EC		;b72e   ; pinta la pieza A (2 x 2 caracteres de 0xB64C + 4 x A)
 	pop hl			;b731
 	inc hl			;b732
 	pop de			;b733
-	ld a,d			;b734
+	ld a,d			;b734   ; 16 pixeles a la derecha
 	add a,010h		;b735
 	ld d,a			;b737
 	pop bc			;b738
 	djnz L_B72A		;b739
 	pop de			;b73b
-	ld a,e			;b73c
+	ld a,e			;b73c   ; la fila siguiente, 16 mas abajo
 	add a,010h		;b73d
 	ld e,a			;b73f
 	pop bc			;b740
@@ -1864,14 +1864,14 @@ L_B7C5:
 	ret			;b7d1
 L_B7D2:
 	ex de,hl			;b7d2   ; al de la derecha
-	ld (hl),000h		;b7d3
+	ld (hl),000h		;b7d3   ; el hueco donde estaba la pieza...
 	inc hl			;b7d5
 	inc hl			;b7d6
 	inc hl			;b7d7
 	inc hl			;b7d8
 	inc hl			;b7d9
-	ld (hl),b			;b7da
-	inc (ix+002h)		;b7db
+	ld (hl),b			;b7da   ; ...la pieza en el de la derecha...
+	inc (ix+002h)		;b7db   ; ...y la mano con ella
 	ld a,b			;b7de
 	jr L_B7C5		;b7df
 L_B7E1:
@@ -1906,14 +1906,14 @@ L_B800:
 	ret			;b80e
 L_B80F:
 	ld a,(ix+002h)		;b80f   ; D, E = la casilla de la mano en pixeles
-	add a,a			;b812
+	add a,a			;b812   ; x 16 + 0x30
 	add a,a			;b813
 	add a,a			;b814
 	add a,a			;b815
 	add a,030h		;b816
 	ld e,a			;b818
 	ld a,(ix+003h)		;b819
-	add a,a			;b81c
+	add a,a			;b81c   ; y x 16 + 0x58
 	add a,a			;b81d
 	add a,a			;b81e
 	add a,a			;b81f
@@ -1924,7 +1924,7 @@ L_B824:
 	ld d,(ix+002h)		;b824   ; C = hacia donde esta el hueco (1 arriba, 2 abajo, 3 izquierda, 4 derecha; 0 no esta al lado)
 	ld e,(ix+003h)		;b827
 	ld c,001h		;b82a
-	ld a,d			;b82c
+	ld a,d			;b82c   ; arriba (si no esta en la fila 0)
 	and a			;b82d
 	jr z,L_B837		;b82e
 	push de			;b830
@@ -1933,7 +1933,7 @@ L_B824:
 	pop de			;b835
 	ret z			;b836
 L_B837:
-	inc c			;b837
+	inc c			;b837   ; abajo (si no esta en la 4)
 	ld a,d			;b838
 	cp 004h		;b839
 	jr nc,L_B844		;b83b
@@ -1943,7 +1943,7 @@ L_B837:
 	pop de			;b842
 	ret z			;b843
 L_B844:
-	inc c			;b844
+	inc c			;b844   ; izquierda (si no esta en la columna 0)
 	ld a,e			;b845
 	and a			;b846
 	jr z,L_B850		;b847
@@ -1953,7 +1953,7 @@ L_B844:
 	pop de			;b84e
 	ret z			;b84f
 L_B850:
-	inc c			;b850
+	inc c			;b850   ; derecha (si no esta en la 4)
 	ld a,e			;b851
 	cp 004h		;b852
 	jr nc,L_B85B		;b854
@@ -1961,7 +1961,7 @@ L_B850:
 	call L_B800		;b857
 	ret z			;b85a
 L_B85B:
-	ld c,000h		;b85b
+	ld c,000h		;b85b   ; ninguno
 	ret			;b85d
 L_B85E:
 	ld de,0ef20h		;b85e   ; paso 4: si las piezas estan en orden (1-24)...
@@ -1970,17 +1970,17 @@ L_B85E:
 	cp 001h		;b865
 	jr nz,L_B876		;b867
 L_B869:
-	ld a,(de)			;b869
+	ld a,(de)			;b869   ; cada pieza tiene que ser la anterior + 1...
 	inc a			;b86a
 	cp (hl)			;b86b
 	jr nz,L_B876		;b86c
-	cp 018h		;b86e
+	cp 018h		;b86e   ; ...hasta la 24
 	jr z,L_B87A		;b870
 	inc de			;b872
 	inc hl			;b873
 	jr L_B869		;b874
 L_B876:
-	dec (ix+001h)		;b876
+	dec (ix+001h)		;b876   ; no: sigue el puzle
 	ret			;b879
 L_B87A:
 	call 05d41h		;b87a   ; ...resuelto: 3 vidas mas (hasta 99) y el letrero de 0xB5C7
@@ -2032,7 +2032,7 @@ L_B8CF:
 	exx			;b8dc
 L_B8DD:
 	push bc			;b8dd
-	ld a,(ix+002h)		;b8de
+	ld a,(ix+002h)		;b8de   ; la x de la mano...
 	add a,a			;b8e1
 	add a,a			;b8e2
 	add a,a			;b8e3
@@ -2040,7 +2040,7 @@ L_B8DD:
 	add a,034h		;b8e5
 	ld c,a			;b8e7
 	ld a,b			;b8e8
-	cp 003h		;b8e9
+	cp 003h		;b8e9   ; ...los dos de abajo 16 mas
 	jr nc,L_B8F1		;b8eb
 	ld a,c			;b8ed
 	add a,010h		;b8ee
@@ -2048,7 +2048,7 @@ L_B8DD:
 L_B8F1:
 	ld (hl),c			;b8f1
 	inc hl			;b8f2
-	ld a,(ix+003h)		;b8f3
+	ld a,(ix+003h)		;b8f3   ; la y
 	add a,a			;b8f6
 	add a,a			;b8f7
 	add a,a			;b8f8
@@ -2057,13 +2057,13 @@ L_B8F1:
 	ld (hl),a			;b8fc
 	pop bc			;b8fd
 	inc hl			;b8fe
-	ld (hl),c			;b8ff
+	ld (hl),c			;b8ff   ; el dibujo
 	ld a,c			;b900
 	add a,004h		;b901
 	ld c,a			;b903
 	inc hl			;b904
 	inc hl			;b905
-	ld a,(de)			;b906
+	ld a,(de)			;b906   ; su color, 16 veces
 	inc de			;b907
 	exx			;b908
 	ld b,010h		;b909
@@ -2071,7 +2071,7 @@ L_B90B:
 	ld (hl),a			;b90b
 	inc hl			;b90c
 	djnz L_B90B		;b90d
-	exx			;b90f
+	exx			;b90f   ; el sprite siguiente
 	djnz L_B8DD		;b910
 	ret			;b912
 
@@ -2167,7 +2167,7 @@ L_B9B0:
 	exx			;b9bd
 L_B9BE:
 	push bc			;b9be
-	ld a,(ix+002h)		;b9bf
+	ld a,(ix+002h)		;b9bf   ; la musica elegida: su sitio en la tabla 0xB9FA
 	exx			;b9c2
 	ld de,0b9fah		;b9c3
 	add a,e			;b9c6
@@ -2175,7 +2175,7 @@ L_B9BE:
 	jr nc,L_B9CB		;b9c8
 	inc d			;b9ca
 L_B9CB:
-	ld a,(de)			;b9cb
+	ld a,(de)			;b9cb   ; bit 0: columna 0x60 o 0x78
 	exx			;b9cc
 	push af			;b9cd
 	rra			;b9ce
@@ -2183,36 +2183,36 @@ L_B9CB:
 	jr nc,L_B9D5		;b9d1
 	ld c,060h		;b9d3
 L_B9D5:
-	ld a,b			;b9d5
+	ld a,b			;b9d5   ; los dos de abajo 16 mas
 	cp 003h		;b9d6
 	jr nc,L_B9DE		;b9d8
 	ld a,c			;b9da
 	add a,010h		;b9db
 	ld c,a			;b9dd
 L_B9DE:
-	ld (hl),c			;b9de
+	ld (hl),c			;b9de   ; la x
 	pop af			;b9df
 	inc hl			;b9e0
-	and 0feh		;b9e1
+	and 0feh		;b9e1   ; la y (sin el bit 0)
 	ld (hl),a			;b9e3
 	pop bc			;b9e4
 	inc hl			;b9e5
-	ld (hl),c			;b9e6
+	ld (hl),c			;b9e6   ; el dibujo
 	ld a,c			;b9e7
 	add a,004h		;b9e8
 	ld c,a			;b9ea
 	inc hl			;b9eb
 	inc hl			;b9ec
-	ld a,(de)			;b9ed
+	ld a,(de)			;b9ed   ; su color
 	inc de			;b9ee
 	exx			;b9ef
 	ld b,010h		;b9f0
 L_B9F2:
-	ld (hl),a			;b9f2
+	ld (hl),a			;b9f2   ; 16 veces
 	inc hl			;b9f3
 	djnz L_B9F2		;b9f4
 	exx			;b9f6
-	djnz L_B9BE		;b9f7
+	djnz L_B9BE		;b9f7   ; el sprite siguiente
 	ret			;b9f9
 
 ; ----------------------------------------------------------------------
@@ -2384,10 +2384,10 @@ L_BC86:
 	ld ix,0e910h		;bc92   ; apunta a en el final, las estrellas (32 x 16 bytes); en la partida, parte del mapa
 	ld b,020h		;bc96
 L_BC98:
-	ld a,(ix+000h)		;bc98
+	ld a,(ix+000h)		;bc98   ; busca una estrella libre
 	or a			;bc9b
 	jr z,L_BCA6		;bc9c
-	ld de,00010h		;bc9e
+	ld de,00010h		;bc9e   ; la siguiente (16 bytes)
 	add ix,de		;bca1
 	djnz L_BC98		;bca3
 	ret			;bca5
@@ -2421,28 +2421,28 @@ L_BCE3:
 	ld a,(ix+000h)		;bce3
 	or a			;bce6
 	push bc			;bce7
-	call nz,L_BCF4		;bce8   ; una estrella se mueve; al salir de la pantalla se quita
+	call nz,L_BCF4		;bce8   ; la x + su velocidad (16 bits)
 	pop bc			;bceb
 	ld de,00010h		;bcec
 	add ix,de		;bcef
 	djnz L_BCE3		;bcf1
 	ret			;bcf3
 L_BCF4:
-	ld e,(ix+001h)		;bcf4   ; una estrella se mueve; al salir de la pantalla se quita
+	ld e,(ix+001h)		;bcf4   ; la x + su velocidad (16 bits)
 	ld d,(ix+002h)		;bcf7
 	ld l,(ix+005h)		;bcfa
 	ld h,(ix+006h)		;bcfd
 	add hl,de			;bd00
 	ld (ix+001h),l		;bd01
 	ld (ix+002h),h		;bd04
-	ld e,(ix+003h)		;bd07
+	ld e,(ix+003h)		;bd07   ; la y + su velocidad
 	ld d,(ix+004h)		;bd0a
 	ld l,(ix+007h)		;bd0d
 	ld h,(ix+008h)		;bd10
 	add hl,de			;bd13
 	ld (ix+003h),l		;bd14
 	ld (ix+004h),h		;bd17
-	ld a,(ix+002h)		;bd1a
+	ld a,(ix+002h)		;bd1a   ; fuera de la pantalla (x o y mas alla de 0xF0)...
 	add a,010h		;bd1d
 	cp 020h		;bd1f
 	jr c,L_BD2B		;bd21
@@ -2451,7 +2451,7 @@ L_BCF4:
 	cp 020h		;bd28
 	ret nc			;bd2a
 L_BD2B:
-	ld (ix+000h),000h		;bd2b
+	ld (ix+000h),000h		;bd2b   ; ...se quita
 	ret			;bd2f
 L_BD30:
 	ld hl,0e800h		;bd30   ; los sprites fuera, de color 5
@@ -2470,23 +2470,23 @@ L_BD4B:
 	ld hl,0e800h		;bd4f   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
 	ld b,020h		;bd52
 L_BD54:
-	ld a,(ix+000h)		;bd54
+	ld a,(ix+000h)		;bd54   ; cada estrella...
 	or a			;bd57
 	push bc			;bd58
-	call nz,L_BD65		;bd59
+	call nz,L_BD65		;bd59   ; ...su sprite
 	pop bc			;bd5c
-	ld de,00010h		;bd5d
+	ld de,00010h		;bd5d   ; la siguiente (16 bytes)
 	add ix,de		;bd60
 	djnz L_BD54		;bd62
 	ret			;bd64
 L_BD65:
-	ld a,(ix+002h)		;bd65
+	ld a,(ix+002h)		;bd65   ; un sprite: y...
 	ld (hl),a			;bd68
 	inc hl			;bd69
-	ld a,(ix+004h)		;bd6a
+	ld a,(ix+004h)		;bd6a   ; ...x...
 	ld (hl),a			;bd6d
 	inc hl			;bd6e
-	ld (hl),0d0h		;bd6f
+	ld (hl),0d0h		;bd6f   ; ...y el dibujo 0xD0
 	inc hl			;bd71
 	inc hl			;bd72
 	ret			;bd73
@@ -2540,14 +2540,14 @@ L_BDD7:
 	call L_BDF7		;bdd7   ; el personaje de las secuencias: seis sprites
 L_BDDA:
 	ld hl,0e830h		;bdda   ; y el sprite 12 en (0xEDCB, 0xEDCC)
-	ld a,(0edcbh)		;bddd
+	ld a,(0edcbh)		;bddd   ; y
 	ld (hl),a			;bde0
 	inc hl			;bde1
-	ld a,(0edcch)		;bde2
+	ld a,(0edcch)		;bde2   ; x
 	ld (hl),a			;bde5
 	inc hl			;bde6
-	ld (hl),0d0h		;bde7
-	ld hl,0d2c0h		;bde9
+	ld (hl),0d0h		;bde7   ; dibujo 0xD0
+	ld hl,0d2c0h		;bde9   ; de color 7
 	ld de,0d2c1h		;bdec
 	ld bc,0000fh		;bdef
 	ld (hl),007h		;bdf2
@@ -2571,7 +2571,7 @@ L_BE01:
 L_BE18:
 	ld b,002h		;be18   ; dos sprites de 16 x 16 uno al lado de otro
 L_BE1A:
-	ld (hl),e			;be1a
+	ld (hl),e			;be1a   ; el de la izquierda...
 	inc hl			;be1b
 	ld (hl),d			;be1c
 	inc hl			;be1d
@@ -2579,14 +2579,14 @@ L_BE1A:
 	inc hl			;be1f
 	inc hl			;be20
 	add a,004h		;be21
-	ld (hl),e			;be23
+	ld (hl),e			;be23   ; ...y el de la derecha, 4 dibujos mas
 	inc hl			;be24
 	ld (hl),d			;be25
 	inc hl			;be26
 	ld (hl),a			;be27
 	inc hl			;be28
 	inc hl			;be29
-	push af			;be2a
+	push af			;be2a   ; los dos de abajo, 16 pixeles mas
 	ld a,d			;be2b
 	add a,010h		;be2c
 	ld d,a			;be2e
@@ -2598,9 +2598,9 @@ L_BE35:
 	ld hl,0d200h		;be35   ; sus colores, 13 y 0x4E
 	ld de,0d201h		;be38
 	ld bc,0000fh		;be3b
-	ld (hl),00dh		;be3e
+	ld (hl),00dh		;be3e   ; el primero de color 13
 	ldir		;be40
-	call L_BE5D		;be42
+	call L_BE5D		;be42   ; los demas: 0x4E, 13, 0x4E...
 	call L_BE54		;be45
 	call L_BE54		;be48
 	call L_BE54		;be4b
@@ -2613,7 +2613,7 @@ L_BE54:
 	ld (hl),00dh		;be59
 	ldir		;be5b
 L_BE5D:
-	inc hl			;be5d
+	inc hl			;be5d   ; 16 bytes de color 0x4E
 	inc de			;be5e
 	ld bc,0000fh		;be5f
 	ld (hl),04eh		;be62

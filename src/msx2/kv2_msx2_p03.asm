@@ -43,16 +43,16 @@ L_A008:
 	call 09910h		;a01f   ; NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 	ret nc			;a022
 	ld a,(0e288h)		;a023   ; la direccion del salto: la que llevaba
-	ld (0e289h),a		;a026
-	ld a,(0e294h)		;a029
+	ld (0e289h),a		;a026   ; guarda la direccion del salto
+	ld a,(0e294h)		;a029   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	ld b,a			;a02c
 	ld a,008h		;a02d
 	add a,b			;a02f   ; mira hacia 8 + su lado
-	ld (0e285h),a		;a030   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;a030   ; guarda el dibujo del personaje (direccion y paso)
 	xor a			;a033
-	ld (0e2a5h),a		;a034
+	ld (0e2a5h),a		;a034   ; guarda la cuenta de la caida del salto
 	ld hl,0fc00h		;a037   ; 0xE292: la velocidad en y (16 bits, -4)
-	ld (0e292h),hl		;a03a
+	ld (0e292h),hl		;a03a   ; guarda la velocidad en y del salto o la caida (16 bits)
 	call 0423ah		;a03d   ; pide el sonido 0x13
 	ld hl,0e280h		;a040   ; apunta a el estado del personaje
 	inc (hl)			;a043
@@ -75,13 +75,13 @@ L_A05A:
 	rra			;a05c
 	rra			;a05d
 	rra			;a05e
-	and 00fh		;a05f
-	dec a			;a061
+	and 00fh		;a05f   ; el estado de la cosa
+	dec a			;a061   ; 1: la lleva el personaje
 	jr z,L_A06B		;a062
-	ld de,00008h		;a064
+	ld de,00008h		;a064   ; la siguiente (8 bytes)
 	add hl,de			;a067
 	djnz L_A05A		;a068
-	ret			;a06a
+	ret			;a06a   ; no lleva ninguna
 L_A06B:
 	ld (0e2a0h),hl		;a06b   ; 0xE2A0 = la cosa; cada tipo, lo suyo (tabla detras)
 	ld a,(0e287h)		;a06e   ; lee la postura del personaje
@@ -107,15 +107,15 @@ L_A081:
 	cp 006h		;a085
 	ret nc			;a087
 	inc (hl)			;a088
-	ld a,(0e294h)		;a089
+	ld a,(0e294h)		;a089   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;a08c
 	ld a,00ah		;a08d
 	jr z,L_A093		;a08f
 	ld a,00ch		;a091
 L_A093:
-	ld (0e285h),a		;a093   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;a093   ; guarda el dibujo del personaje (direccion y paso)
 	ld a,008h		;a096
-	ld (0e286h),a		;a098
+	ld (0e286h),a		;a098   ; guarda la cuenta de la animacion de usar lo que lleva
 L_A09B:
 	ld a,(0e287h)		;a09b   ; el estado del personaje: 7 + el tipo (la animacion de usarla)
 	and 00fh		;a09e
@@ -156,14 +156,14 @@ L_A0B2:
 	ret nz			;a0db
 	exx			;a0dc
 	ld a,c			;a0dd
-	ld (0e285h),a		;a0de   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;a0de   ; guarda el dibujo del personaje (direccion y paso)
 	exx			;a0e1
 	ld hl,(0e2a0h)		;a0e2   ; la cosa pasa a usarse (cifra alta + 1)
 	ld a,010h		;a0e5
 	add a,(hl)			;a0e7
 	ld (hl),a			;a0e8
 	ld a,020h		;a0e9
-	ld (0e286h),a		;a0eb
+	ld (0e286h),a		;a0eb   ; guarda la cuenta de la animacion de usar lo que lleva
 	jr L_A09B		;a0ee
 L_A0F0:
 	ld a,(0e294h)		;a0f0   ; tipos 5 y 6: cavar hacia el lado, si las dos casillas de al lado son de ladrillo
@@ -184,7 +184,7 @@ L_A0FE:
 	ld a,(0e282h)		;a108   ; lee la y del personaje
 	and 0f8h		;a10b
 	ld l,a			;a10d
-	ld (0e2a2h),hl		;a10e
+	ld (0e2a2h),hl		;a10e   ; guarda donde se cava (y, x) y el byte siguiente (16 bits)
 	call 098dch		;a111   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	cp 002h		;a114
 	ret nz			;a116
@@ -196,14 +196,14 @@ L_A0FE:
 	ret nz			;a120
 	exx			;a121
 	ld a,c			;a122
-	ld (0e285h),a		;a123   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;a123   ; guarda el dibujo del personaje (direccion y paso)
 	exx			;a126
-	ld hl,(0e2a0h)		;a127
+	ld hl,(0e2a0h)		;a127   ; lee la cosa de 0xE300 que se esta usando (16 bits)
 	ld a,010h		;a12a
 	add a,(hl)			;a12c
 	ld (hl),a			;a12d
 	ld a,020h		;a12e
-	ld (0e286h),a		;a130
+	ld (0e286h),a		;a130   ; guarda la cuenta de la animacion de usar lo que lleva
 	jp L_A09B		;a133
 L_A136:
 	ld de,0fec0h		;a136   ; en el aire, el paso hacia el lado del salto (0xFEC0 o 0x0140)
@@ -223,7 +223,7 @@ L_A14B:
 	jp nc,09fd0h		;a152
 	push bc			;a155
 	push hl			;a156
-	ld a,(0e2a5h)		;a157
+	ld a,(0e2a5h)		;a157   ; lee la cuenta de la caida del salto
 	or a			;a15a
 	ld a,(0e282h)		;a15b   ; lee la y del personaje
 	jr z,L_A162		;a15e
@@ -258,9 +258,9 @@ L_A179:
 	ret			;a18f
 L_A190:
 	xor a			;a190   ; estado 1: el salto
-	ld (0e2a5h),a		;a191
+	ld (0e2a5h),a		;a191   ; guarda la cuenta de la caida del salto
 	call L_A1C1		;a194   ; la caida: la velocidad sube 0x80 por cuadro hasta 4
-	ld a,(0e289h)		;a197
+	ld a,(0e289h)		;a197   ; lee la direccion del salto
 	and 00ch		;a19a
 	call nz,L_A136		;a19c   ; en el aire, el paso hacia el lado del salto (0xFEC0 o 0x0140)
 	call L_A535		;a19f   ; mira si toca suelo
@@ -270,11 +270,11 @@ L_A190:
 	call L_A446		;a1a7   ; en el suelo: estado 0, el paso y el sonido 0x38
 	xor a			;a1aa
 	ld (0e280h),a		;a1ab   ; guarda el estado del personaje
-	ld (0e2a6h),a		;a1ae
-	ld (0e2a5h),a		;a1b1
-	ld (0e295h),a		;a1b4
+	ld (0e2a6h),a		;a1ae   ; guarda la marca de en el aire
+	ld (0e2a5h),a		;a1b1   ; guarda la cuenta de la caida del salto
+	ld (0e295h),a		;a1b4   ; guarda el paso de la animacion del personaje
 	inc a			;a1b7
-	ld (0e296h),a		;a1b8
+	ld (0e296h),a		;a1b8   ; guarda la cuenta de cuadros del paso de la animacion
 	call 09f20h		;a1bb   ; el dibujo del paso (tablas 0x9F45 y 0x9F49 segun hacia donde mira)
 	jp 042e3h		;a1be
 L_A1C1:
@@ -284,15 +284,15 @@ L_A1C1:
 	jr z,L_A1E1		;a1c7
 	ld de,00080h		;a1c9
 	add hl,de			;a1cc
-	ld (0e292h),hl		;a1cd
+	ld (0e292h),hl		;a1cd   ; guarda la velocidad en y del salto o la caida (16 bits)
 	ex de,hl			;a1d0
 L_A1D1:
 	ld hl,(0e281h)		;a1d1   ; la y + la velocidad
 	add hl,de			;a1d4
-	ld (0e281h),hl		;a1d5
+	ld (0e281h),hl		;a1d5   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	call L_A1E6		;a1d8   ; C si tiene techo o suelo (dos puntos de cada lado)
 	ret c			;a1db
-	ld hl,0e2a5h		;a1dc
+	ld hl,0e2a5h		;a1dc   ; apunta a la cuenta de la caida del salto
 	inc (hl)			;a1df
 	ret			;a1e0
 L_A1E1:
@@ -380,10 +380,10 @@ L_A25E:
 	ld h,a			;a260
 	xor a			;a261
 	ld (0e280h),a		;a262   ; guarda el estado del personaje
-	ld (0e2a4h),a		;a265
-	ld (0e2a6h),a		;a268
+	ld (0e2a4h),a		;a265   ; guarda los cuadros desde que aparece (los 6 primeros sin teclas)
+	ld (0e2a6h),a		;a268   ; guarda la marca de en el aire
 	ld l,a			;a26b
-	ld (0e281h),hl		;a26c
+	ld (0e281h),hl		;a26c   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	ret			;a26f
 L_A270:
 	ld a,(0e282h)		;a270   ; sin escalera ni suelo: cae
@@ -399,9 +399,9 @@ L_A270:
 	jr nc,L_A25E		;a282
 	xor a			;a284
 	ld (0e280h),a		;a285   ; guarda el estado del personaje
-	ld (0e2a4h),a		;a288
+	ld (0e2a4h),a		;a288   ; guarda los cuadros desde que aparece (los 6 primeros sin teclas)
 	inc a			;a28b
-	ld (0e2a6h),a		;a28c
+	ld (0e2a6h),a		;a28c   ; guarda la marca de en el aire
 	ret			;a28f
 L_A290:
 	call L_A48F		;a290   ; subir o bajar por la escalera
@@ -413,32 +413,32 @@ L_A290:
 	cp 002h		;a29f
 	ret nz			;a2a1
 	call L_A2BB		;a2a2   ; un paso en la escalera (0xE28A o 0xE28C segun la direccion)
-	ld a,(0e288h)		;a2a5
+	ld a,(0e288h)		;a2a5   ; lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	and 003h		;a2a8
 	ret z			;a2aa
 	ld hl,0e296h		;a2ab   ; cada 4 cuadros el paso (xor 1)
 	dec (hl)			;a2ae
 	ret nz			;a2af
 	ld (hl),004h		;a2b0
-	ld a,(0e285h)		;a2b2   ; lee hacia donde mira el personaje
+	ld a,(0e285h)		;a2b2   ; lee el dibujo del personaje (direccion y paso)
 	xor 001h		;a2b5
-	ld (0e285h),a		;a2b7   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;a2b7   ; guarda el dibujo del personaje (direccion y paso)
 	ret			;a2ba
 L_A2BB:
 	ld de,(0e28ah)		;a2bb   ; un paso en la escalera (0xE28A o 0xE28C segun la direccion)
 	ld c,000h		;a2bf
-	ld a,(0e288h)		;a2c1
+	ld a,(0e288h)		;a2c1   ; lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	rra			;a2c4
 	jr c,L_A2D6		;a2c5
-	ld de,(0e28ch)		;a2c7
+	ld de,(0e28ch)		;a2c7   ; lee la velocidad al bajar la escalera (16 bits)
 	ld c,001h		;a2cb
 	rra			;a2cd
 	jr c,L_A2D6		;a2ce
-	ld hl,0e296h		;a2d0
+	ld hl,0e296h		;a2d0   ; apunta a la cuenta de cuadros del paso de la animacion
 	ld (hl),001h		;a2d3
 	ret			;a2d5
 L_A2D6:
-	ld hl,(0e281h)		;a2d6
+	ld hl,(0e281h)		;a2d6   ; lee la y del personaje (16 bits: 0xE281 la parte fina)
 	add hl,de			;a2d9
 	ld a,h			;a2da
 	cp 0e8h		;a2db
@@ -453,7 +453,7 @@ L_A2D6:
 	pop bc			;a2ea
 	ret nc			;a2eb
 L_A2EC:
-	ld (0e281h),hl		;a2ec
+	ld (0e281h),hl		;a2ec   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	ret			;a2ef
 L_A2F0:
 	ld a,(0e284h)		;a2f0   ; estado 3: cae 4 pixeles por cuadro hasta el suelo, con el sonido 0x38
@@ -469,9 +469,9 @@ L_A2F0:
 	call L_A446		;a304   ; la y a la fila de 8, sin la parte fina
 	xor a			;a307
 	ld (0e280h),a		;a308   ; guarda el estado del personaje
-	ld (0e2a6h),a		;a30b
+	ld (0e2a6h),a		;a30b   ; guarda la marca de en el aire
 	inc a			;a30e
-	ld (0e296h),a		;a30f
+	ld (0e296h),a		;a30f   ; guarda la cuenta de cuadros del paso de la animacion
 	jp 042e3h		;a312
 L_A315:
 	ld de,00a06h		;a315   ; estado 4 (rendirse): da vueltas hasta 10 pasos
@@ -481,28 +481,28 @@ L_A31C:
 	ld de,00504h		;a31c   ; estado 5 (muerto por un enemigo): 5 pasos
 	ld c,000h		;a31f
 L_A321:
-	ld hl,0e296h		;a321
+	ld hl,0e296h		;a321   ; apunta a la cuenta de cuadros del paso de la animacion
 	dec (hl)			;a324
 	ret nz			;a325
-	ld a,(0e295h)		;a326
+	ld a,(0e295h)		;a326   ; lee el paso de la animacion del personaje
 	cp d			;a329
 	jr z,L_A34B		;a32a
 	ld (hl),003h		;a32c
-	ld hl,0e285h		;a32e   ; apunta a hacia donde mira el personaje
+	ld hl,0e285h		;a32e   ; apunta a el dibujo del personaje (direccion y paso)
 	inc (hl)			;a331
 	ld a,(hl)			;a332
 	cp e			;a333
 	ret nz			;a334
-	ld a,(0e295h)		;a335
+	ld a,(0e295h)		;a335   ; lee el paso de la animacion del personaje
 	inc a			;a338
-	ld (0e295h),a		;a339
+	ld (0e295h),a		;a339   ; guarda el paso de la animacion del personaje
 	cp d			;a33c
 	jr z,L_A341		;a33d
 	ld (hl),c			;a33f
 	ret			;a340
 L_A341:
 	ld (hl),006h		;a341   ; al acabar, el sonido 0x29 y una espera de 0x28
-	ld hl,0e296h		;a343
+	ld hl,0e296h		;a343   ; apunta a la cuenta de cuadros del paso de la animacion
 	ld (hl),028h		;a346
 	jp 042a7h		;a348
 L_A34B:
@@ -516,7 +516,7 @@ L_A350:
 	sub 012h		;a355
 	jr z,L_A368		;a357
 	xor a			;a359
-	ld (0e283h),a		;a35a
+	ld (0e283h),a		;a35a   ; guarda la x del personaje (16 bits: 0xE283 la parte fina)
 	ld a,(0e284h)		;a35d   ; lee la x del personaje
 	dec a			;a360
 	dec a			;a361
@@ -532,7 +532,7 @@ L_A36C:
 	sub 012h		;a371
 	jr z,L_A368		;a373
 	xor a			;a375
-	ld (0e283h),a		;a376
+	ld (0e283h),a		;a376   ; guarda la x del personaje (16 bits: 0xE283 la parte fina)
 	ld a,(0e284h)		;a379   ; lee la x del personaje
 	inc a			;a37c
 	inc a			;a37d
@@ -545,20 +545,20 @@ L_A384:
 	ld a,(hl)			;a38a
 	cp 004h		;a38b
 	ret nz			;a38d
-	ld hl,0e285h		;a38e   ; apunta a hacia donde mira el personaje
+	ld hl,0e285h		;a38e   ; apunta a el dibujo del personaje (direccion y paso)
 	inc (hl)			;a391
 	ret			;a392
 L_A393:
 	xor a			;a393   ; al acabar, la cosa sale volando desde la mano
 	ld (0e287h),a		;a394   ; guarda la postura del personaje
 	ld (0e280h),a		;a397   ; guarda el estado del personaje
-	ld a,(0e294h)		;a39a
+	ld a,(0e294h)		;a39a   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;a39d
 	ld a,003h		;a39e
 	jr nz,L_A3A3		;a3a0
 	xor a			;a3a2
 L_A3A3:
-	ld (0e285h),a		;a3a3   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;a3a3   ; guarda el dibujo del personaje (direccion y paso)
 	ld hl,0e2a0h		;a3a6   ; la cosa: en vuelo (cifra alta + 1), su y...
 	ld a,(hl)			;a3a9
 	inc l			;a3aa
@@ -576,7 +576,7 @@ L_A3A3:
 	ld a,(0e284h)		;a3ba   ; ...y su x, 16 pixeles mas alla si no hay pared
 	ld h,a			;a3bd
 	ld b,000h		;a3be
-	ld a,(0e294h)		;a3c0
+	ld a,(0e294h)		;a3c0   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;a3c3
 	ld c,003h		;a3c4
 	jr z,L_A3CE		;a3c6
@@ -597,7 +597,7 @@ L_A3DD:
 	pop hl			;a3dd
 	inc l			;a3de
 	ld c,004h		;a3df
-	ld a,(0e294h)		;a3e1
+	ld a,(0e294h)		;a3e1   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;a3e4
 	ld a,(0e284h)		;a3e5   ; lee la x del personaje
 	jr nz,L_A3EF		;a3e8
@@ -628,17 +628,17 @@ L_A405:
 	call z,04244h		;a40a   ; pide el sonido 0x15
 	jr L_A42B		;a40d
 L_A40F:
-	ld a,(0e286h)		;a40f
+	ld a,(0e286h)		;a40f   ; lee la cuenta de la animacion de usar lo que lleva
 	and 003h		;a412
 	call z,0424eh		;a414   ; pide el sonido 0x17
 	jr L_A42B		;a417
 L_A419:
-	ld a,(0e286h)		;a419
+	ld a,(0e286h)		;a419   ; lee la cuenta de la animacion de usar lo que lleva
 	and 003h		;a41c
 	call z,04253h		;a41e   ; pide el sonido 0x18
 	jr L_A42B		;a421
 L_A423:
-	ld a,(0e286h)		;a423
+	ld a,(0e286h)		;a423   ; lee la cuenta de la animacion de usar lo que lleva
 	and 003h		;a426
 	call z,04249h		;a428   ; pide el sonido 0x16
 L_A42B:
@@ -648,9 +648,9 @@ L_A42B:
 	rra			;a430
 	rra			;a431
 	ret c			;a432
-	ld a,(0e285h)		;a433   ; lee hacia donde mira el personaje
+	ld a,(0e285h)		;a433   ; lee el dibujo del personaje (direccion y paso)
 	xor 001h		;a436
-	ld (0e285h),a		;a438   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;a438   ; guarda el dibujo del personaje (direccion y paso)
 	ret			;a43b
 L_A43C:
 	ld hl,0e2a8h		;a43c   ; estado 14: al empezar, parpadea 0xE2A8 cuadros
@@ -664,14 +664,14 @@ L_A446:
 	and 0f8h		;a449
 	ld h,a			;a44b
 	ld l,000h		;a44c
-	ld (0e281h),hl		;a44e
+	ld (0e281h),hl		;a44e   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	ret			;a451
 L_A452:
 	ld a,(0e2a4h)		;a452   ; C mientras 0xE2A4 < 6 (los primeros cuadros, sin teclas)
 	cp 006h		;a455
 	ret nc			;a457
 	inc a			;a458
-	ld (0e2a4h),a		;a459
+	ld (0e2a4h),a		;a459   ; guarda los cuadros desde que aparece (los 6 primeros sin teclas)
 	scf			;a45c
 	ret			;a45d
 L_A45E:
@@ -710,7 +710,7 @@ L_A48F:
 	ld a,(0e282h)		;a493   ; lee la y del personaje
 	add a,012h		;a496
 	ld l,a			;a498
-	ld a,(0e288h)		;a499
+	ld a,(0e288h)		;a499   ; lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	rra			;a49c
 	jr c,L_A4D0		;a49d
 	rra			;a49f
@@ -734,12 +734,12 @@ L_A4B8:
 	ld h,a			;a4ba
 	xor a			;a4bb
 	ld l,a			;a4bc
-	ld (0e281h),hl		;a4bd
+	ld (0e281h),hl		;a4bd   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	ld (0e280h),a		;a4c0   ; guarda el estado del personaje
-	ld (0e2a6h),a		;a4c3
+	ld (0e2a6h),a		;a4c3   ; guarda la marca de en el aire
 	inc a			;a4c6
-	ld (0e2a7h),a		;a4c7
-	ld (0e296h),a		;a4ca
+	ld (0e2a7h),a		;a4c7   ; guarda la marca de acabar de caer
+	ld (0e296h),a		;a4ca   ; guarda la cuenta de cuadros del paso de la animacion
 	jp 09f19h		;a4cd
 L_A4D0:
 	ld a,(0e282h)		;a4d0   ; lee la y del personaje
@@ -763,7 +763,7 @@ L_A4D0:
 	jr L_A4B8		;a4ed
 L_A4EF:
 	ld b,000h		;a4ef   ; hacia donde mira (0xE294) segun izquierda y derecha
-	ld a,(0e288h)		;a4f1
+	ld a,(0e288h)		;a4f1   ; lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	rra			;a4f4
 	rra			;a4f5
 	and 003h		;a4f6
@@ -775,15 +775,15 @@ L_A4EF:
 	ret nc			;a4fe
 L_A4FF:
 	ld a,b			;a4ff
-	ld a,(0e294h)		;a500
+	ld a,(0e294h)		;a500   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	cp b			;a503
 	ld a,b			;a504
-	ld (0e294h),a		;a505
+	ld (0e294h),a		;a505   ; guarda hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	ret z			;a508
 	xor a			;a509
-	ld (0e295h),a		;a50a
+	ld (0e295h),a		;a50a   ; guarda el paso de la animacion del personaje
 	inc a			;a50d
-	ld (0e296h),a		;a50e
+	ld (0e296h),a		;a50e   ; guarda la cuenta de cuadros del paso de la animacion
 	ret			;a511
 L_A512:
 	ld a,(0e282h)		;a512   ; Z si debajo de los pies no hay nada (tres puntos)
@@ -914,16 +914,16 @@ L_A5CC:
 	call L_A603		;a5de   ; C si la escalera se corta
 	pop hl			;a5e1
 	ret c			;a5e2
-	ld (0e283h),hl		;a5e3
+	ld (0e283h),hl		;a5e3   ; guarda la x del personaje (16 bits: 0xE283 la parte fina)
 	xor a			;a5e6
-	ld (0e295h),a		;a5e7
-	ld (0e2a4h),a		;a5ea
+	ld (0e295h),a		;a5e7   ; guarda el paso de la animacion del personaje
+	ld (0e2a4h),a		;a5ea   ; guarda los cuadros desde que aparece (los 6 primeros sin teclas)
 	inc a			;a5ed
-	ld (0e296h),a		;a5ee
+	ld (0e296h),a		;a5ee   ; guarda la cuenta de cuadros del paso de la animacion
 	inc a			;a5f1
 	ld (0e280h),a		;a5f2   ; guarda el estado del personaje
 	ld a,006h		;a5f5
-	ld (0e285h),a		;a5f7   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;a5f7   ; guarda el dibujo del personaje (direccion y paso)
 	ret			;a5fa
 L_A5FB:
 	ld a,(0e282h)		;a5fb   ; lee la y del personaje
@@ -941,38 +941,38 @@ L_A60E:
 L_A60F:
 	ld c,0ffh		;a60f
 L_A611:
-	inc c			;a611
+	inc c			;a611   ; cuenta las casillas de escalera seguidas hacia la izquierda
 	ld a,h			;a612
 	or a			;a613
-	jr z,L_A621		;a614
-	sub 008h		;a616
+	jr z,L_A621		;a614   ; en el borde, se acaba
+	sub 008h		;a616   ; 8 pixeles a la izquierda
 	ld h,a			;a618
 	push bc			;a619
 	call 098dch		;a61a   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	pop bc			;a61d
-	dec a			;a61e
+	dec a			;a61e   ; mientras sea escalera (1)
 	jr z,L_A611		;a61f
 L_A621:
-	ld a,c			;a621
+	ld a,c			;a621   ; C si son impares
 	rra			;a622
 	ret			;a623
 L_A624:
-	ld a,(0e208h)		;a624   ; 0xE288 = arriba (4) o abajo (8), el ultimo pulsado
+	ld a,(0e208h)		;a624   ; 0xE288 bits 2-3: izquierda (4) o derecha (8), la ultima pulsada
 	and 00ch		;a627
-	ld b,a			;a629
+	ld b,a			;a629   ; B = lo pulsado
 	ld c,000h		;a62a
-	jr z,L_A64E		;a62c
+	jr z,L_A64E		;a62c   ; sin izquierda ni derecha: 0
 	ld a,(0e207h)		;a62e   ; lee el mando: lo que se acaba de pulsar
 	and 00ch		;a631
-	cp 00ch		;a633
+	cp 00ch		;a633   ; las dos a la vez: se queda la de antes
 	ret z			;a635
-	bit 2,a		;a636
+	bit 2,a		;a636   ; recien pulsada la izquierda...
 	ld c,004h		;a638
 	jr nz,L_A64E		;a63a
-	bit 3,a		;a63c
+	bit 3,a		;a63c   ; ...o la derecha
 	ld c,008h		;a63e
 	jr nz,L_A64E		;a640
-	ld a,b			;a642
+	ld a,b			;a642   ; si no, la que este pulsada
 	cp 00ch		;a643
 	ret z			;a645
 	bit 2,a		;a646
@@ -980,26 +980,26 @@ L_A624:
 	jr nz,L_A64E		;a64a
 	ld c,008h		;a64c
 L_A64E:
-	ld a,c			;a64e
-	ld (0e288h),a		;a64f
+	ld a,c			;a64e   ; 0xE288 = la direccion
+	ld (0e288h),a		;a64f   ; guarda las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	ret			;a652
 L_A653:
-	ld a,(0e208h)		;a653   ; 0xE288 = izquierda (1) o derecha (2), el ultimo pulsado
+	ld a,(0e208h)		;a653   ; 0xE288 bits 0-1: arriba (1) o abajo (2), la ultima pulsada
 	and 003h		;a656
-	ld b,a			;a658
+	ld b,a			;a658   ; B = lo pulsado
 	ld c,000h		;a659
-	jr z,L_A64E		;a65b
+	jr z,L_A64E		;a65b   ; sin arriba ni abajo: 0
 	ld a,(0e207h)		;a65d   ; lee el mando: lo que se acaba de pulsar
 	and 003h		;a660
-	cp 003h		;a662
+	cp 003h		;a662   ; las dos a la vez: se queda la de antes
 	ret z			;a664
-	rra			;a665
+	rra			;a665   ; recien pulsado arriba...
 	ld c,001h		;a666
 	jr c,L_A64E		;a668
-	rra			;a66a
+	rra			;a66a   ; ...o abajo
 	ld c,002h		;a66b
 	jr c,L_A64E		;a66d
-	ld a,b			;a66f
+	ld a,b			;a66f   ; si no, el que este pulsado
 	cp 003h		;a670
 	ret z			;a672
 	rra			;a673
@@ -1015,7 +1015,7 @@ L_A67C:
 	sub 008h		;a685
 	cp 0aeh		;a687
 	jr nc,L_A6B4		;a689
-	ld a,(0e294h)		;a68b
+	ld a,(0e294h)		;a68b   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;a68e
 	ld a,(0e284h)		;a68f   ; lee la x del personaje
 	jr z,L_A69D		;a692
@@ -1051,15 +1051,15 @@ L_A6BD:
 	ld ix,0e300h		;a6c2   ; apunta a las cosas que se cogen y se llevan (64 x 8 bytes)
 	ld b,040h		;a6c6
 L_A6C8:
-	push bc			;a6c8
+	push bc			;a6c8   ; una cosa de 0xE300
 	call L_A6D5		;a6c9
 	pop bc			;a6cc
-	ld de,00008h		;a6cd
+	ld de,00008h		;a6cd   ; la siguiente (8 bytes)
 	add ix,de		;a6d0
 	djnz L_A6C8		;a6d2
 	ret			;a6d4
 L_A6D5:
-	ld a,(ix+000h)		;a6d5
+	ld a,(ix+000h)		;a6d5   ; lee el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	or a			;a6d8
 	ret z			;a6d9
 	dec a			;a6da
@@ -1099,12 +1099,12 @@ DATA_tabla_A6F5:
 
 L_A6FF:
 	ld a,(0e243h)		;a6ff   ; en la mano: en la pantalla del personaje
-	ld (ix+003h),a		;a702
+	ld (ix+003h),a		;a702   ; guarda la pantalla de la cosa
 	ret			;a705
 L_A706:
 	ld (ix+004h),000h		;a706   ; lanzado: sale
-	ld a,(0e294h)		;a70a
-	ld (ix+007h),a		;a70d
+	ld a,(0e294h)		;a70a   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
+	ld (ix+007h),a		;a70d   ; guarda el lado de la cosa
 	call L_A921		;a710
 	call L_A79F		;a713   ; al salir de la mano, se coloca delante (sin meterse en la pared)
 	ret nc			;a716
@@ -1112,7 +1112,7 @@ L_A717:
 	call L_A87F		;a717   ; vuela en linea recta
 	call L_A787		;a71a   ; C si es la cosa que ha dado a un enemigo (0xE2E8)
 	jr nc,L_A724		;a71d
-	ld a,(ix+007h)		;a71f
+	ld a,(ix+007h)		;a71f   ; lee el lado de la cosa
 	jr L_A729		;a722
 L_A724:
 	call L_A826		;a724   ; 4 pixeles hacia su lado
@@ -1124,67 +1124,67 @@ L_A729:
 	jr nc,L_A72F		;a72c
 	xor a			;a72e
 L_A72F:
-	add a,(ix+002h)		;a72f
+	add a,(ix+002h)		;a72f   ; le suma la x de la cosa
 	and 0f8h		;a732
 	cp 0f1h		;a734
 	jr c,L_A73A		;a736
 	ld a,0f0h		;a738
 L_A73A:
-	ld (ix+002h),a		;a73a
+	ld (ix+002h),a		;a73a   ; guarda la x de la cosa
 	call L_A921		;a73d
 	jp L_A814		;a740
 L_A743:
 	call L_A787		;a743   ; cae al suelo y se para
 	call L_A87F		;a746   ; el dibujo de la cosa en vuelo, cada dos cuadros; el sonido 0x1C
-	dec (ix+006h)		;a749
+	dec (ix+006h)		;a749   ; baja la cuenta de la cosa
 	ret nz			;a74c
 	xor a			;a74d
-	ld (ix+006h),004h		;a74e
-	ld (ix+005h),a		;a752
-	ld (ix+007h),a		;a755
+	ld (ix+006h),004h		;a74e   ; la cuenta de la cosa = 0x04
+	ld (ix+005h),a		;a752   ; guarda el paso de la velocidad de la cosa
+	ld (ix+007h),a		;a755   ; guarda el lado de la cosa
 	call L_A921		;a758
 	call L_AA17		;a75b
-	ld a,(ix+000h)		;a75e
+	ld a,(ix+000h)		;a75e   ; lee el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	and 0f0h		;a761
 	ret nz			;a763
 	ld a,(0e243h)		;a764   ; lee la pantalla de la fase (desde 1)
-	cp (ix+003h)		;a767
+	cp (ix+003h)		;a767   ; compara con la pantalla de la cosa
 	ret nz			;a76a
 	jp 042dbh		;a76b
 L_A76E:
 	call L_A787		;a76e   ; cae
 	call L_A87F		;a771   ; el dibujo de la cosa en vuelo, cada dos cuadros; el sonido 0x1C
 	call L_A9BA		;a774   ; cae cada vez mas deprisa (tabla 0xAA60) hasta el suelo
-	ld a,(ix+000h)		;a777
+	ld a,(ix+000h)		;a777   ; lee el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	and 0f0h		;a77a
 	ret nz			;a77c
 	ld a,(0e243h)		;a77d   ; lee la pantalla de la fase (desde 1)
-	cp (ix+003h)		;a780
+	cp (ix+003h)		;a780   ; compara con la pantalla de la cosa
 	ret nz			;a783
 	jp 042dbh		;a784
 L_A787:
 	ld a,(0edcdh)		;a787   ; C si es la cosa que ha dado a un enemigo (0xE2E8)
 	and a			;a78a
 	ret z			;a78b
-	push ix		;a78c
+	push ix		;a78c   ; IX es la cosa de 0xE2E8?
 	pop de			;a78e
 	ld hl,(0e2e8h)		;a78f
 	and a			;a792
 	sbc hl,de		;a793
 	jr nz,L_A79D		;a795
-	xor a			;a797
+	xor a			;a797   ; si: se borra la marca
 	ld (0edcdh),a		;a798
 	scf			;a79b
 	ret			;a79c
 L_A79D:
-	and a			;a79d
+	and a			;a79d   ; no: NC
 	ret			;a79e
 L_A79F:
 	ld a,(0e243h)		;a79f   ; al salir de la mano, se coloca delante (sin meterse en la pared)
-	cp (ix+003h)		;a7a2
+	cp (ix+003h)		;a7a2   ; compara con la pantalla de la cosa
 	ret nz			;a7a5
 	ld a,008h		;a7a6
-	add a,(ix+002h)		;a7a8
+	add a,(ix+002h)		;a7a8   ; le suma la x de la cosa
 	cp 0eeh		;a7ab
 	jr c,L_A7B3		;a7ad
 	ld a,0e8h		;a7af
@@ -1195,7 +1195,7 @@ L_A7B3:
 	ld a,008h		;a7b7
 L_A7B9:
 	ld h,a			;a7b9
-	ld l,(ix+001h)		;a7ba
+	ld l,(ix+001h)		;a7ba   ; lee la y de la cosa
 	call 098dch		;a7bd   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	sub 002h		;a7c0
 	ld b,010h		;a7c2
@@ -1210,7 +1210,7 @@ L_A7B9:
 	ld a,l			;a7d3
 	sub 008h		;a7d4
 	ld l,a			;a7d6
-	ld a,(0e294h)		;a7d7
+	ld a,(0e294h)		;a7d7   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;a7da
 	ld a,h			;a7db
 	jr nz,L_A7E2		;a7dc
@@ -1233,16 +1233,16 @@ L_A7E4:
 L_A7F7:
 	ld b,008h		;a7f7
 L_A7F9:
-	ld a,(0e294h)		;a7f9
+	ld a,(0e294h)		;a7f9   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;a7fc
 	ld a,b			;a7fd
 	jr z,L_A804		;a7fe
 	sub 008h		;a800
 	neg		;a802
 L_A804:
-	add a,(ix+002h)		;a804
+	add a,(ix+002h)		;a804   ; le suma la x de la cosa
 	and 0f8h		;a807
-	ld (ix+002h),a		;a809
+	ld (ix+002h),a		;a809   ; guarda la x de la cosa
 	call L_A814		;a80c   ; IX+06 = 0x18
 	call L_A921		;a80f
 	and a			;a812
@@ -1266,20 +1266,20 @@ L_A826:
 	jr z,L_A836		;a82d
 	inc c			;a82f
 L_A830:
-	ld a,(ix+002h)		;a830
+	ld a,(ix+002h)		;a830   ; lee la x de la cosa
 	add a,b			;a833
 	jr L_A83A		;a834
 L_A836:
-	ld a,(ix+002h)		;a836
+	ld a,(ix+002h)		;a836   ; lee la x de la cosa
 	sub b			;a839
 L_A83A:
-	ld (ix+002h),a		;a83a
+	ld (ix+002h),a		;a83a   ; guarda la x de la cosa
 	jr c,L_A853		;a83d
 	ld a,(0e243h)		;a83f   ; lee la pantalla de la fase (desde 1)
-	cp (ix+003h)		;a842
+	cp (ix+003h)		;a842   ; compara con la pantalla de la cosa
 	jr nz,L_A866		;a845
-	ld h,(ix+002h)		;a847
-	ld l,(ix+001h)		;a84a
+	ld h,(ix+002h)		;a847   ; lee la x de la cosa
+	ld l,(ix+001h)		;a84a   ; lee la y de la cosa
 	push bc			;a84d
 	call 09910h		;a84e   ; NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 	pop bc			;a851
@@ -1295,7 +1295,7 @@ L_A853:
 	inc a			;a85e
 	call 05e38h		;a85f
 	pop bc			;a862
-	ld (ix+003h),l		;a863
+	ld (ix+003h),l		;a863   ; guarda la pantalla de la cosa
 L_A866:
 	ld b,(ix+003h)		;a866   ; C si hay pared delante en el mapa de su pantalla
 	ld hl,0e840h		;a869
@@ -1304,8 +1304,8 @@ L_A86F:
 	add hl,de			;a86f
 	djnz L_A86F		;a870
 	ex de,hl			;a872
-	ld h,(ix+002h)		;a873
-	ld l,(ix+001h)		;a876
+	ld h,(ix+002h)		;a873   ; lee la x de la cosa
+	ld l,(ix+001h)		;a876   ; lee la y de la cosa
 	push bc			;a879
 	call 09933h		;a87a   ; lo mismo con el mapa de DE
 	pop bc			;a87d
@@ -1314,16 +1314,16 @@ L_A87F:
 	ld a,(0e203h)		;a87f   ; el dibujo de la cosa en vuelo, cada dos cuadros; el sonido 0x1C
 	and 001h		;a882
 	ret nz			;a884
-	ld a,(ix+004h)		;a885
+	ld a,(ix+004h)		;a885   ; lee el dibujo de la cosa en vuelo
 	inc a			;a888
 	cp 003h		;a889
 	jr c,L_A897		;a88b
 	ld a,(0e243h)		;a88d   ; lee la pantalla de la fase (desde 1)
-	cp (ix+003h)		;a890
+	cp (ix+003h)		;a890   ; compara con la pantalla de la cosa
 	call z,04267h		;a893   ; pide el sonido 0x1C
 	xor a			;a896
 L_A897:
-	ld (ix+004h),a		;a897
+	ld (ix+004h),a		;a897   ; guarda el dibujo de la cosa en vuelo
 	ret			;a89a
 L_A89B:
 	call L_AC63		;a89b   ; tipo 2: va y vuelve
@@ -1344,11 +1344,11 @@ DATA_tabla_A8A4:
 
 
 L_A8AE:
-	ld (ix+004h),003h		;a8ae
-	ld (ix+005h),000h		;a8b2
-	ld (ix+006h),008h		;a8b6
-	ld a,(0e294h)		;a8ba
-	ld (ix+007h),a		;a8bd
+	ld (ix+004h),003h		;a8ae   ; el dibujo de la cosa en vuelo = 0x03
+	ld (ix+005h),000h		;a8b2   ; el paso de la velocidad de la cosa = 0x00
+	ld (ix+006h),008h		;a8b6   ; la cuenta de la cosa = 0x08
+	ld a,(0e294h)		;a8ba   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
+	ld (ix+007h),a		;a8bd   ; guarda el lado de la cosa
 	call L_A921		;a8c0
 	call L_A79F		;a8c3   ; al salir de la mano, se coloca delante (sin meterse en la pared)
 	ret nc			;a8c6
@@ -1356,30 +1356,30 @@ L_A8C7:
 	call L_A99D		;a8c7   ; la velocidad sale de las tablas 0xA961 y 0xA96B: frena y vuelve
 	call L_A787		;a8ca   ; C si es la cosa que ha dado a un enemigo (0xE2E8)
 	jr nc,L_A8D4		;a8cd
-	ld a,(ix+007h)		;a8cf
+	ld a,(ix+007h)		;a8cf   ; lee el lado de la cosa
 	jr L_A90A		;a8d2
 L_A8D4:
-	dec (ix+006h)		;a8d4
+	dec (ix+006h)		;a8d4   ; baja la cuenta de la cosa
 	jr nz,L_A8F1		;a8d7
-	ld a,(ix+005h)		;a8d9
+	ld a,(ix+005h)		;a8d9   ; lee el paso de la velocidad de la cosa
 	inc a			;a8dc
 	cp 009h		;a8dd
 	jr c,L_A8E3		;a8df
 	ld a,009h		;a8e1
 L_A8E3:
-	ld (ix+005h),a		;a8e3
+	ld (ix+005h),a		;a8e3   ; guarda el paso de la velocidad de la cosa
 	ld e,a			;a8e6
 	ld d,000h		;a8e7
 	ld hl,0a96bh		;a8e9
 	add hl,de			;a8ec
 	ld a,(hl)			;a8ed
-	ld (ix+006h),a		;a8ee
+	ld (ix+006h),a		;a8ee   ; guarda la cuenta de la cosa
 L_A8F1:
-	ld e,(ix+005h)		;a8f1
+	ld e,(ix+005h)		;a8f1   ; lee el paso de la velocidad de la cosa
 	ld d,000h		;a8f4
 	ld hl,0a961h		;a8f6
 	add hl,de			;a8f9
-	ld a,(ix+007h)		;a8fa
+	ld a,(ix+007h)		;a8fa   ; lee el lado de la cosa
 	or a			;a8fd
 	ld a,(hl)			;a8fe
 	jr nz,L_A903		;a8ff
@@ -1395,44 +1395,44 @@ L_A90A:
 	jr nc,L_A910		;a90d
 	xor a			;a90f
 L_A910:
-	add a,(ix+002h)		;a910
+	add a,(ix+002h)		;a910   ; le suma la x de la cosa
 	and 0f8h		;a913
 	cp 0f1h		;a915
 	jr c,L_A91B		;a917
 	ld a,0f0h		;a919
 L_A91B:
-	ld (ix+002h),a		;a91b
+	ld (ix+002h),a		;a91b   ; guarda la x de la cosa
 	call L_A814		;a91e   ; IX+06 = 0x18
 L_A921:
-	ld a,(ix+000h)		;a921
+	ld a,(ix+000h)		;a921   ; lee el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	add a,010h		;a924
-	ld (ix+000h),a		;a926
+	ld (ix+000h),a		;a926   ; guarda el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	ret			;a929
 L_A92A:
 	ld a,(0e287h)		;a92a   ; vuelve a la mano si el personaje la toca (a menos de 13 pixeles), con el sonido 0x35
 	or a			;a92d
 	ret nz			;a92e
 	ld a,(0e243h)		;a92f   ; lee la pantalla de la fase (desde 1)
-	cp (ix+003h)		;a932
+	cp (ix+003h)		;a932   ; compara con la pantalla de la cosa
 	ret nz			;a935
 	ld a,(0e282h)		;a936   ; lee la y del personaje
-	sub (ix+001h)		;a939
+	sub (ix+001h)		;a939   ; le resta la y de la cosa
 	jr nc,L_A940		;a93c
 	neg		;a93e
 L_A940:
 	cp 00dh		;a940
 	ret nc			;a942
 	ld a,(0e284h)		;a943   ; lee la x del personaje
-	sub (ix+002h)		;a946
+	sub (ix+002h)		;a946   ; le resta la x de la cosa
 	jr nc,L_A94D		;a949
 	neg		;a94b
 L_A94D:
 	cp 00dh		;a94d
 	ret nc			;a94f
-	ld hl,0e2a9h		;a950
+	ld hl,0e2a9h		;a950   ; apunta a cuantas cosas lanzadas hay en el aire
 	dec (hl)			;a953
 	call 042d7h		;a954   ; pide el sonido 0x35
-	ld (ix+000h),012h		;a957
+	ld (ix+000h),012h		;a957   ; el estado (cifra alta) y el tipo (cifra baja) de la cosa = 0x12
 	ld a,002h		;a95b
 	ld (0e287h),a		;a95d   ; guarda la postura del personaje
 	ret			;a960
@@ -1454,13 +1454,13 @@ DATA_resto_A961:
 L_A975:
 	call L_A787		;a975   ; cae y se para
 	call L_A99D		;a978   ; su dibujo, cada dos cuadros; el sonido 0x1B
-	dec (ix+006h)		;a97b
+	dec (ix+006h)		;a97b   ; baja la cuenta de la cosa
 	ret nz			;a97e
 	xor a			;a97f
-	ld (ix+004h),003h		;a980
-	ld (ix+005h),a		;a984
-	ld (ix+006h),004h		;a987
-	ld (ix+007h),a		;a98b
+	ld (ix+004h),003h		;a980   ; el dibujo de la cosa en vuelo = 0x03
+	ld (ix+005h),a		;a984   ; guarda el paso de la velocidad de la cosa
+	ld (ix+006h),004h		;a987   ; la cuenta de la cosa = 0x04
+	ld (ix+007h),a		;a98b   ; guarda el lado de la cosa
 	call L_A921		;a98e
 	jp L_AA17		;a991
 L_A994:
@@ -1471,50 +1471,50 @@ L_A99D:
 	ld a,(0e203h)		;a99d   ; su dibujo, cada dos cuadros; el sonido 0x1B
 	and 001h		;a9a0
 	ret nz			;a9a2
-	ld a,(ix+004h)		;a9a3
+	ld a,(ix+004h)		;a9a3   ; lee el dibujo de la cosa en vuelo
 	inc a			;a9a6
 	cp 006h		;a9a7
 	jr c,L_A9B6		;a9a9
 	ld a,(0e243h)		;a9ab   ; lee la pantalla de la fase (desde 1)
-	cp (ix+003h)		;a9ae
+	cp (ix+003h)		;a9ae   ; compara con la pantalla de la cosa
 	call z,04262h		;a9b1   ; pide el sonido 0x1B
 	ld a,003h		;a9b4
 L_A9B6:
-	ld (ix+004h),a		;a9b6
+	ld (ix+004h),a		;a9b6   ; guarda el dibujo de la cosa en vuelo
 	ret			;a9b9
 L_A9BA:
 	dec (ix+006h)		;a9ba   ; cae cada vez mas deprisa (tabla 0xAA60) hasta el suelo
-	ld a,(ix+005h)		;a9bd
+	ld a,(ix+005h)		;a9bd   ; lee el paso de la velocidad de la cosa
 	jr nz,L_A9D6		;a9c0
 	cp 005h		;a9c2
 	jr nc,L_A9CA		;a9c4
 	inc a			;a9c6
-	ld (ix+005h),a		;a9c7
+	ld (ix+005h),a		;a9c7   ; guarda el paso de la velocidad de la cosa
 L_A9CA:
 	ld e,a			;a9ca
 	ld d,000h		;a9cb
 	ld hl,0aa60h		;a9cd
 	add hl,de			;a9d0
 	ld a,(hl)			;a9d1
-	ld (ix+006h),a		;a9d2
+	ld (ix+006h),a		;a9d2   ; guarda la cuenta de la cosa
 	ld a,e			;a9d5
 L_A9D6:
 	inc a			;a9d6
-	add a,(ix+001h)		;a9d7
-	ld (ix+001h),a		;a9da
+	add a,(ix+001h)		;a9d7   ; le suma la y de la cosa
+	ld (ix+001h),a		;a9da   ; guarda la y de la cosa
 	cp 0b8h		;a9dd
 	jr nc,L_AA03		;a9df
 	ld a,(0e243h)		;a9e1   ; lee la pantalla de la fase (desde 1)
-	cp (ix+003h)		;a9e4
+	cp (ix+003h)		;a9e4   ; compara con la pantalla de la cosa
 	jr nz,L_AA17		;a9e7
-	ld a,(ix+001h)		;a9e9
+	ld a,(ix+001h)		;a9e9   ; lee la y de la cosa
 	add a,010h		;a9ec
 	cp 0b8h		;a9ee
 	jr c,L_A9F4		;a9f0
 	ld a,0b8h		;a9f2
 L_A9F4:
 	ld l,a			;a9f4
-	ld a,(ix+002h)		;a9f5
+	ld a,(ix+002h)		;a9f5   ; lee la x de la cosa
 	add a,008h		;a9f8
 	ld h,a			;a9fa
 	call 098e2h		;a9fb   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
@@ -1523,37 +1523,37 @@ L_A9F4:
 	ret			;aa02
 L_AA03:
 	ld a,008h		;aa03   ; se sale por abajo: a la pantalla de abajo
-	ld (ix+001h),a		;aa05
-	ld a,(ix+003h)		;aa08
+	ld (ix+001h),a		;aa05   ; guarda la y de la cosa
+	ld a,(ix+003h)		;aa08   ; lee la pantalla de la cosa
 	call 05df0h		;aa0b   ; C = la casilla de la rejilla en la que esta la pantalla A
 	ld b,a			;aa0e
 	ld a,002h		;aa0f
 	call 05e38h		;aa11
-	ld (ix+003h),l		;aa14
+	ld (ix+003h),l		;aa14   ; guarda la pantalla de la cosa
 L_AA17:
-	ld b,(ix+003h)		;aa17
+	ld b,(ix+003h)		;aa17   ; lee la pantalla de la cosa
 	ld hl,0e840h		;aa1a
 	ld de,000c0h		;aa1d
 L_AA20:
 	add hl,de			;aa20
 	djnz L_AA20		;aa21
 	ex de,hl			;aa23
-	ld h,(ix+002h)		;aa24
-	ld l,(ix+001h)		;aa27
+	ld h,(ix+002h)		;aa24   ; lee la x de la cosa
+	ld l,(ix+001h)		;aa27   ; lee la y de la cosa
 	ld c,001h		;aa2a
 	call 09933h		;aa2c   ; lo mismo con el mapa de DE
 	ret c			;aa2f
 L_AA30:
 	ld hl,0e2a9h		;aa30   ; en el suelo: se queda, y se pinta
 	dec (hl)			;aa33
-	ld a,(ix+001h)		;aa34
+	ld a,(ix+001h)		;aa34   ; lee la y de la cosa
 	and 0f8h		;aa37
-	ld (ix+001h),a		;aa39
-	ld a,(ix+000h)		;aa3c
+	ld (ix+001h),a		;aa39   ; guarda la y de la cosa
+	ld a,(ix+000h)		;aa3c   ; lee el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	and 00fh		;aa3f
-	ld (ix+000h),a		;aa41
+	ld (ix+000h),a		;aa41   ; guarda el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	ld a,(0e243h)		;aa44   ; lee la pantalla de la fase (desde 1)
-	cp (ix+003h)		;aa47
+	cp (ix+003h)		;aa47   ; compara con la pantalla de la cosa
 	ret nz			;aa4a
 	call 09237h		;aa4b   ; pasa la cosa de IX al principio de la lista
 	push ix		;aa4e
@@ -1597,13 +1597,13 @@ DATA_tabla_AA6F:
 
 
 L_AA75:
-	ld (ix+006h),008h		;aa75
-	ld (ix+005h),0ffh		;aa79
-	ld (ix+007h),000h		;aa7d
+	ld (ix+006h),008h		;aa75   ; la cuenta de la cosa = 0x08
+	ld (ix+005h),0ffh		;aa79   ; el paso de la velocidad de la cosa = 0xFF
+	ld (ix+007h),000h		;aa7d   ; el lado de la cosa = 0x00
 	jp L_A921		;aa81
 L_AA84:
 	call L_AAA9		;aa84   ; cuando acaba, vuelve a la mano vacia
-	ld a,(ix+007h)		;aa87
+	ld a,(ix+007h)		;aa87   ; lee el lado de la cosa
 	or a			;aa8a
 	ret z			;aa8b
 L_AA8C:
@@ -1613,9 +1613,9 @@ L_AA8C:
 	jr nz,L_AA95		;aa92
 	xor a			;aa94
 L_AA95:
-	ld (0e285h),a		;aa95   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;aa95   ; guarda el dibujo del personaje (direccion y paso)
 	xor a			;aa98
-	ld (ix+000h),a		;aa99
+	ld (ix+000h),a		;aa99   ; guarda el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	ld (0e287h),a		;aa9c   ; guarda la postura del personaje
 	ld a,(0e298h)		;aa9f   ; lee la marca de personaje muerto
 	or a			;aaa2
@@ -1626,26 +1626,26 @@ L_AA95:
 L_AAA9:
 	dec (ix+006h)		;aaa9   ; cada 8 cuadros, el paso del agujero: los dos caracteres de 0xAB03
 	ret nz			;aaac
-	ld (ix+006h),008h		;aaad
-	ld a,(ix+005h)		;aab1
+	ld (ix+006h),008h		;aaad   ; la cuenta de la cosa = 0x08
+	ld a,(ix+005h)		;aab1   ; lee el paso de la velocidad de la cosa
 	inc a			;aab4
 	cp 003h		;aab5
 	jr z,L_AAE7		;aab7
 	push af			;aab9
-	ld hl,(0e2a2h)		;aaba
+	ld hl,(0e2a2h)		;aaba   ; lee donde se cava (y, x) y el byte siguiente (16 bits)
 	ld d,h			;aabd
 	ld e,l			;aabe
 	ld bc,00102h		;aabf
 	call 056deh		;aac2
 	pop af			;aac5
-	ld (ix+005h),a		;aac6
+	ld (ix+005h),a		;aac6   ; guarda el paso de la velocidad de la cosa
 	add a,a			;aac9
 	ld e,a			;aaca
 	ld d,000h		;aacb
 	ld hl,0ab03h		;aacd
 	add hl,de			;aad0
 	ex de,hl			;aad1
-	ld hl,(0e2a2h)		;aad2
+	ld hl,(0e2a2h)		;aad2   ; lee donde se cava (y, x) y el byte siguiente (16 bits)
 	ld a,(de)			;aad5
 	ex de,hl			;aad6
 	inc hl			;aad7
@@ -1665,8 +1665,8 @@ L_AAE7:
 	ld e,l			;aaeb
 	ld bc,00102h		;aaec
 	call 056deh		;aaef
-	inc (ix+007h)		;aaf2
-	ld hl,(0e2a2h)		;aaf5
+	inc (ix+007h)		;aaf2   ; sube el lado de la cosa
+	ld hl,(0e2a2h)		;aaf5   ; lee donde se cava (y, x) y el byte siguiente (16 bits)
 	ld a,(0e243h)		;aaf8   ; lee la pantalla de la fase (desde 1)
 	ld d,a			;aafb
 	ld bc,00102h		;aafc
@@ -1705,20 +1705,20 @@ DATA_tabla_AB12:
 
 
 L_AB1A:
-	ld (ix+006h),008h		;ab1a
-	ld (ix+005h),0ffh		;ab1e
-	ld (ix+007h),000h		;ab22
+	ld (ix+006h),008h		;ab1a   ; la cuenta de la cosa = 0x08
+	ld (ix+005h),0ffh		;ab1e   ; el paso de la velocidad de la cosa = 0xFF
+	ld (ix+007h),000h		;ab22   ; el lado de la cosa = 0x00
 	jp L_A921		;ab26
 L_AB29:
 	call L_AAA9		;ab29   ; cada 8 cuadros, el paso del agujero: los dos caracteres de 0xAB03
-	ld a,(ix+007h)		;ab2c
+	ld a,(ix+007h)		;ab2c   ; lee el lado de la cosa
 	or a			;ab2f
 	ret z			;ab30
 	ld hl,(0e2a2h)		;ab31   ; la fila de debajo: si tambien es de ladrillo, sigue
 	ld a,l			;ab34
 	add a,008h		;ab35
 	ld l,a			;ab37
-	ld (0e2a2h),hl		;ab38
+	ld (0e2a2h),hl		;ab38   ; guarda donde se cava (y, x) y el byte siguiente (16 bits)
 	call 098dch		;ab3b   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	cp 002h		;ab3e
 	jp nz,L_AA8C		;ab40
@@ -1731,7 +1731,7 @@ L_AB29:
 	call L_AB1A		;ab4f
 L_AB52:
 	call L_AAA9		;ab52   ; cada 8 cuadros, el paso del agujero: los dos caracteres de 0xAB03
-	ld a,(ix+007h)		;ab55
+	ld a,(ix+007h)		;ab55   ; lee el lado de la cosa
 	or a			;ab58
 	ret z			;ab59
 	jp L_AA8C		;ab5a
@@ -1754,44 +1754,44 @@ DATA_tabla_AB66:
 
 
 L_AB6C:
-	ld (ix+006h),008h		;ab6c
-	ld (ix+005h),0ffh		;ab70
-	ld (ix+007h),000h		;ab74
+	ld (ix+006h),008h		;ab6c   ; la cuenta de la cosa = 0x08
+	ld (ix+005h),0ffh		;ab70   ; el paso de la velocidad de la cosa = 0xFF
+	ld (ix+007h),000h		;ab74   ; el lado de la cosa = 0x00
 	jp L_A921		;ab78
 L_AB7B:
 	call L_AB86		;ab7b   ; cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
-	ld a,(ix+007h)		;ab7e
+	ld a,(ix+007h)		;ab7e   ; lee el lado de la cosa
 	or a			;ab81
 	ret z			;ab82
 	jp L_AA8C		;ab83
 L_AB86:
 	dec (ix+006h)		;ab86   ; cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
 	ret nz			;ab89
-	ld (ix+006h),008h		;ab8a
-	ld a,(ix+005h)		;ab8e
+	ld (ix+006h),008h		;ab8a   ; la cuenta de la cosa = 0x08
+	ld a,(ix+005h)		;ab8e   ; lee el paso de la velocidad de la cosa
 	inc a			;ab91
 	cp 003h		;ab92
 	jr z,L_ABCD		;ab94
 	push af			;ab96
-	ld hl,(0e2a2h)		;ab97
+	ld hl,(0e2a2h)		;ab97   ; lee donde se cava (y, x) y el byte siguiente (16 bits)
 	ld d,h			;ab9a
 	ld e,l			;ab9b
 	ld bc,00201h		;ab9c
 	call 056deh		;ab9f
 	pop af			;aba2
-	ld (ix+005h),a		;aba3
+	ld (ix+005h),a		;aba3   ; guarda el paso de la velocidad de la cosa
 	add a,a			;aba6
 	ld e,a			;aba7
 	ld d,000h		;aba8
 	ld hl,0abe9h		;abaa
-	ld a,(0e294h)		;abad
+	ld a,(0e294h)		;abad   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;abb0
 	jr z,L_ABB6		;abb1
 	ld hl,0abefh		;abb3
 L_ABB6:
 	add hl,de			;abb6
 	ex de,hl			;abb7
-	ld hl,(0e2a2h)		;abb8
+	ld hl,(0e2a2h)		;abb8   ; lee donde se cava (y, x) y el byte siguiente (16 bits)
 	ld a,(de)			;abbb
 	ex de,hl			;abbc
 	inc hl			;abbd
@@ -1811,8 +1811,8 @@ L_ABCD:
 	ld e,l			;abd1
 	ld bc,00201h		;abd2
 	call 056deh		;abd5
-	inc (ix+007h)		;abd8
-	ld hl,(0e2a2h)		;abdb
+	inc (ix+007h)		;abd8   ; sube el lado de la cosa
+	ld hl,(0e2a2h)		;abdb   ; lee donde se cava (y, x) y el byte siguiente (16 bits)
 	ld a,(0e243h)		;abde   ; lee la pantalla de la fase (desde 1)
 	ld d,a			;abe1
 	ld bc,00201h		;abe2
@@ -1851,18 +1851,18 @@ DATA_tabla_ABFE:
 
 
 L_AC06:
-	ld (ix+006h),008h		;ac06
-	ld (ix+005h),0ffh		;ac0a
-	ld (ix+007h),000h		;ac0e
+	ld (ix+006h),008h		;ac06   ; la cuenta de la cosa = 0x08
+	ld (ix+005h),0ffh		;ac0a   ; el paso de la velocidad de la cosa = 0xFF
+	ld (ix+007h),000h		;ac0e   ; el lado de la cosa = 0x00
 	jp L_A921		;ac12
 L_AC15:
 	call L_AB86		;ac15   ; cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
-	ld a,(ix+007h)		;ac18
+	ld a,(ix+007h)		;ac18   ; lee el lado de la cosa
 	or a			;ac1b
 	ret z			;ac1c
-	ld hl,(0e2a2h)		;ac1d
+	ld hl,(0e2a2h)		;ac1d   ; lee donde se cava (y, x) y el byte siguiente (16 bits)
 	ld b,0f8h		;ac20
-	ld a,(0e294h)		;ac22
+	ld a,(0e294h)		;ac22   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;ac25
 	jr z,L_AC2A		;ac26
 	ld b,008h		;ac28
@@ -1870,7 +1870,7 @@ L_AC2A:
 	ld a,h			;ac2a
 	add a,b			;ac2b
 	ld h,a			;ac2c
-	ld (0e2a2h),hl		;ac2d
+	ld (0e2a2h),hl		;ac2d   ; guarda donde se cava (y, x) y el byte siguiente (16 bits)
 	call 098dch		;ac30   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	cp 002h		;ac33
 	jp nz,L_AA8C		;ac35
@@ -1880,7 +1880,7 @@ L_AC2A:
 	call 098e2h		;ac3c   ; A = la casilla del mapa de la pantalla (0xE250) en el pixel (x H, y L)
 	cp 002h		;ac3f
 	jp nz,L_AA8C		;ac41
-	ld a,(0e294h)		;ac44
+	ld a,(0e294h)		;ac44   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;ac47
 	ld b,008h		;ac48
 	jr nz,L_AC4E		;ac4a
@@ -1892,7 +1892,7 @@ L_AC4E:
 	jp L_AC06		;ac55
 L_AC58:
 	call L_AB86		;ac58   ; cada 8 cuadros, el paso del agujero (tablas 0xABE9 y 0xABEF segun el lado)
-	ld a,(ix+007h)		;ac5b
+	ld a,(ix+007h)		;ac5b   ; lee el lado de la cosa
 	or a			;ac5e
 	ret z			;ac5f
 	jp L_AA8C		;ac60
@@ -1915,11 +1915,11 @@ L_AC6D:
 	ld de,00020h		;ac7a
 	xor a			;ac7d
 L_AC7E:
-	cp (hl)			;ac7e
+	cp (hl)			;ac7e   ; una ficha libre (tipo 0)
 	jr z,L_AC86		;ac7f
-	add hl,de			;ac81
+	add hl,de			;ac81   ; la siguiente (32 bytes)
 	djnz L_AC7E		;ac82
-	scf			;ac84
+	scf			;ac84   ; no hay: C
 	ret			;ac85
 L_AC86:
 	push hl			;ac86
@@ -2046,22 +2046,22 @@ L_AD15:
 	ret			;ad2b
 L_AD2C:
 	ld (ix+018h),000h		;ad2c   ; el enemigo sale de su sitio: el dibujo de salida (0x93B2) y espera 0x20
-	ld (ix+011h),0ffh		;ad30
+	ld (ix+011h),0ffh		;ad30   ; el dibujo del enemigo (0xFF: no se ve) = 0xFF
 	ld hl,093b2h		;ad34
 	call L_AD53		;ad37   ; pinta 3 x 2 caracteres en el sitio del enemigo
 	call L_B223		;ad3a   ; C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
 	inc c			;ad3d
 	inc c			;ad3e
-	ld (ix+00bh),c		;ad3f
-	ld a,(ix+000h)		;ad42
+	ld (ix+00bh),c		;ad3f   ; guarda la direccion del enemigo
+	ld a,(ix+000h)		;ad42   ; lee el tipo del enemigo (0: libre)
 	dec a			;ad45
 	call z,L_AE1A		;ad46   ; da la vuelta (IX+0B xor 1)
-	ld (ix+014h),020h		;ad49
+	ld (ix+014h),020h		;ad49   ; la espera del enemigo = 0x20
 	ld hl,04271h		;ad4d
 	jp L_B294		;ad50
 L_AD53:
 	ld a,(0e243h)		;ad53   ; pinta 3 x 2 caracteres en el sitio del enemigo
-	cp (ix+010h)		;ad56
+	cp (ix+010h)		;ad56   ; compara con la pantalla del enemigo
 	ret nz			;ad59
 	push ix		;ad5a
 	push hl			;ad5c
@@ -2100,8 +2100,8 @@ L_AD90:
 	call L_B15E		;ad90   ; paso 2: espera y empieza a andar
 	ld a,004h		;ad93
 	jp c,L_AF2C		;ad95
-	ld (ix+011h),000h		;ad98
-	dec (ix+014h)		;ad9c
+	ld (ix+011h),000h		;ad98   ; el dibujo del enemigo (0xFF: no se ve) = 0x00
+	dec (ix+014h)		;ad9c   ; baja la espera del enemigo
 	ret nz			;ad9f
 	ld de,00180h		;ada0
 	call L_B29C		;ada3   ; la velocidad en x
@@ -2125,19 +2125,19 @@ L_ADCF:
 	jr nc,L_ADDF		;add2
 	call L_B00F		;add4   ; A = el borde por el que el enemigo saldria hacia la pantalla del personaje (0 si esta en ella)
 	dec a			;add7
-	cp (ix+00bh)		;add8
+	cp (ix+00bh)		;add8   ; compara con la direccion del enemigo
 	ret nz			;addb
 	jp L_B0A6		;addc
 L_ADDF:
-	inc (ix+018h)		;addf
-	ld a,(ix+018h)		;ade2
+	inc (ix+018h)		;addf   ; sube los intentos del enemigo
+	ld a,(ix+018h)		;ade2   ; lee los intentos del enemigo
 	cp 010h		;ade5
 	jp nc,06608h		;ade7
 L_ADEA:
 	call L_B833		;adea   ; se centra en la casilla en la direccion en la que va
-	ld (ix+014h),010h		;aded
-	ld (ix+006h),000h		;adf1
-	ld (ix+001h),002h		;adf5
+	ld (ix+014h),010h		;aded   ; la espera del enemigo = 0x10
+	ld (ix+006h),000h		;adf1   ; la marca de enemigo en movimiento = 0x00
+	ld (ix+001h),002h		;adf5   ; el paso del enemigo = 0x02
 	ret			;adf9
 L_ADFA:
 	ld (ix+006h),001h		;adfa   ; paso 4: cae; al llegar al suelo vuelve a andar hacia el otro lado
@@ -2146,16 +2146,16 @@ L_ADFA:
 	call L_B833		;ae02   ; se centra en la casilla en la direccion en la que va
 	call L_B548		;ae05   ; el sonido 0x14 si esta en esta pantalla
 	call L_ADEA		;ae08
-	ld (ix+006h),000h		;ae0b
-	ld a,(ix+019h)		;ae0f
+	ld (ix+006h),000h		;ae0b   ; la marca de enemigo en movimiento = 0x00
+	ld a,(ix+019h)		;ae0f   ; lee la direccion guardada del enemigo
 	xor 001h		;ae12
 	or 002h		;ae14
-	ld (ix+00bh),a		;ae16
+	ld (ix+00bh),a		;ae16   ; guarda la direccion del enemigo
 	ret			;ae19
 L_AE1A:
 	ld a,(ix+00bh)		;ae1a   ; da la vuelta (IX+0B xor 1)
 	xor 001h		;ae1d
-	ld (ix+00bh),a		;ae1f
+	ld (ix+00bh),a		;ae1f   ; guarda la direccion del enemigo
 	ret			;ae22
 L_AE23:
 	ld a,(ix+001h)		;ae23   ; un cuadro de un enemigo de tipo 2, por pasos (IX+01)
@@ -2181,9 +2181,9 @@ L_AE35:
 	call L_AD53		;ae3c   ; pinta 3 x 2 caracteres en el sitio del enemigo
 	ld hl,04307h		;ae3f
 	call L_B294		;ae42   ; si esta en esta pantalla, salta a HL (un sonido)
-	ld (ix+013h),002h		;ae45
-	ld (ix+011h),000h		;ae49
-	ld (ix+014h),020h		;ae4d
+	ld (ix+013h),002h		;ae45   ; las marcas del enemigo (bit 0 mata, bit 1 se le puede matar) = 0x02
+	ld (ix+011h),000h		;ae49   ; el dibujo del enemigo (0xFF: no se ve) = 0x00
+	ld (ix+014h),020h		;ae4d   ; la espera del enemigo = 0x20
 L_AE51:
 	inc (ix+001h)		;ae51   ; el paso siguiente
 	ret			;ae54
@@ -2191,18 +2191,18 @@ L_AE55:
 	dec (ix+014h)		;ae55   ; paso 1: espera, borra la salida, ya mata y se le puede matar (IX+13 = 3), el sonido 0x25
 	ret nz			;ae58
 	call L_AE6F		;ae59   ; borra los 3 x 2 caracteres de la salida y pinta el sitio (0x93AC)
-	ld (ix+013h),003h		;ae5c
-	ld (ix+014h),020h		;ae60
+	ld (ix+013h),003h		;ae5c   ; las marcas del enemigo (bit 0 mata, bit 1 se le puede matar) = 0x03
+	ld (ix+014h),020h		;ae60   ; la espera del enemigo = 0x20
 	ld a,(0e243h)		;ae64   ; lee la pantalla de la fase (desde 1)
-	cp (ix+010h)		;ae67
+	cp (ix+010h)		;ae67   ; compara con la pantalla del enemigo
 	call z,04294h		;ae6a   ; pide el sonido 0x25
 	jr L_AE51		;ae6d
 L_AE6F:
 	ld a,(0e243h)		;ae6f   ; borra los 3 x 2 caracteres de la salida y pinta el sitio (0x93AC)
-	cp (ix+010h)		;ae72
+	cp (ix+010h)		;ae72   ; compara con la pantalla del enemigo
 	ret nz			;ae75
-	ld d,(ix+005h)		;ae76
-	ld a,(ix+003h)		;ae79
+	ld d,(ix+005h)		;ae76   ; lee la x del enemigo
+	ld a,(ix+003h)		;ae79   ; lee la y del enemigo
 	sub 008h		;ae7c
 	ld e,a			;ae7e
 	ld bc,00302h		;ae7f
@@ -2212,8 +2212,8 @@ L_AE6F:
 L_AE8B:
 	call L_B15E		;ae8b   ; paso 2: espera y sale hacia el personaje
 	jp c,L_AF2A		;ae8e
-	ld (ix+011h),000h		;ae91
-	dec (ix+014h)		;ae95
+	ld (ix+011h),000h		;ae91   ; el dibujo del enemigo (0xFF: no se ve) = 0x00
+	dec (ix+014h)		;ae95   ; baja la espera del enemigo
 	ret nz			;ae98
 	call L_B211		;ae99   ; la cuenta IX+0E a cero
 	call L_AFAA		;ae9c   ; mira hacia el personaje
@@ -2235,13 +2235,13 @@ L_AEB5:
 L_AEC6:
 	call L_B00F		;aec6   ; A = el borde por el que el enemigo saldria hacia la pantalla del personaje (0 si esta en ella)
 	dec a			;aec9
-	cp (ix+00bh)		;aeca
+	cp (ix+00bh)		;aeca   ; compara con la direccion del enemigo
 	jp z,L_B0A6		;aecd
 	call L_B165		;aed0   ; NC si puede avanzar hacia donde mira
 	jr c,L_AEE6		;aed3
 	call L_B833		;aed5   ; se centra en la casilla en la direccion en la que va
-	inc (ix+018h)		;aed8
-	ld a,(ix+018h)		;aedb
+	inc (ix+018h)		;aed8   ; sube los intentos del enemigo
+	ld a,(ix+018h)		;aedb   ; lee los intentos del enemigo
 	cp 010h		;aede
 	jp nc,06608h		;aee0
 	jp L_AF7D		;aee3
@@ -2259,18 +2259,18 @@ L_AEF5:
 	ret nz			;aef8
 	xor a			;aef9
 L_AEFA:
-	ld (ix+00bh),a		;aefa
+	ld (ix+00bh),a		;aefa   ; guarda la direccion del enemigo
 	ld de,00280h		;aefd
 	call L_B2A3		;af00   ; la velocidad en y
 	ld de,00000h		;af03
 	call L_B29C		;af06   ; la velocidad en x
-	ld a,(ix+005h)		;af09
+	ld a,(ix+005h)		;af09   ; lee la x del enemigo
 	and 0f8h		;af0c
-	ld (ix+005h),a		;af0e
+	ld (ix+005h),a		;af0e   ; guarda la x del enemigo
 	jp L_AE51		;af11
 L_AF14:
 	ld c,001h		;af14   ; el dibujo al andar: segun el lado y cada 4 cuadros
-	bit 0,(ix+00bh)		;af16
+	bit 0,(ix+00bh)		;af16   ; mira el bit 0 de la direccion del enemigo
 	jr z,L_AF1E		;af1a
 	ld c,003h		;af1c
 L_AF1E:
@@ -2279,20 +2279,20 @@ L_AF1E:
 	jr z,L_AF26		;af23
 	inc c			;af25
 L_AF26:
-	ld (ix+011h),c		;af26
+	ld (ix+011h),c		;af26   ; guarda el dibujo del enemigo (0xFF: no se ve)
 	ret			;af29
 L_AF2A:
 	ld a,005h		;af2a   ; cae (paso 5)
 L_AF2C:
 	ld (ix+001h),a		;af2c   ; pasa al paso A: cae con velocidad 5 en y
 	xor a			;af2f
-	ld (ix+009h),a		;af30
-	ld (ix+00ah),a		;af33
-	ld a,(ix+00bh)		;af36
-	ld (ix+019h),a		;af39
-	ld (ix+00bh),001h		;af3c
-	ld (ix+007h),000h		;af40
-	ld (ix+008h),005h		;af44
+	ld (ix+009h),a		;af30   ; guarda la velocidad en x del enemigo (fina)
+	ld (ix+00ah),a		;af33   ; guarda la velocidad en x del enemigo
+	ld a,(ix+00bh)		;af36   ; lee la direccion del enemigo
+	ld (ix+019h),a		;af39   ; guarda la direccion guardada del enemigo
+	ld (ix+00bh),001h		;af3c   ; la direccion del enemigo = 0x01
+	ld (ix+007h),000h		;af40   ; la velocidad en y del enemigo (fina) = 0x00
+	ld (ix+008h),005h		;af44   ; la velocidad en y del enemigo = 0x05
 L_AF48:
 	ld hl,042b3h		;af48   ; el sonido 0x2C si esta en esta pantalla
 	jp L_B294		;af4b
@@ -2304,24 +2304,24 @@ L_AF4E:
 	jp c,L_AF73		;af5a
 	call L_B00F		;af5d   ; A = el borde por el que el enemigo saldria hacia la pantalla del personaje (0 si esta en ella)
 	dec a			;af60
-	cp (ix+00bh)		;af61
+	cp (ix+00bh)		;af61   ; compara con la direccion del enemigo
 	jr z,L_AF6A		;af64
 	call L_B165		;af66   ; NC si puede avanzar hacia donde mira
 	ret c			;af69
 L_AF6A:
-	ld a,(ix+00bh)		;af6a
+	ld a,(ix+00bh)		;af6a   ; lee la direccion del enemigo
 	xor 001h		;af6d
-	ld (ix+00bh),a		;af6f
+	ld (ix+00bh),a		;af6f   ; guarda la direccion del enemigo
 	ret			;af72
 L_AF73:
 	call L_B833		;af73   ; se centra en la casilla en la direccion en la que va
 	xor a			;af76
-	ld (ix+002h),a		;af77
-	ld (ix+018h),a		;af7a
+	ld (ix+002h),a		;af77   ; guarda la y del enemigo (fina)
+	ld (ix+018h),a		;af7a   ; guarda los intentos del enemigo
 L_AF7D:
-	ld (ix+014h),010h		;af7d
-	ld (ix+006h),000h		;af81
-	ld (ix+001h),002h		;af85
+	ld (ix+014h),010h		;af7d   ; la espera del enemigo = 0x10
+	ld (ix+006h),000h		;af81   ; la marca de enemigo en movimiento = 0x00
+	ld (ix+001h),002h		;af85   ; el paso del enemigo = 0x02
 	ret			;af89
 L_AF8A:
 	ld (ix+006h),001h		;af8a   ; paso: cae; al llegar al suelo, vuelve a andar
@@ -2330,37 +2330,37 @@ L_AF8A:
 	call L_B833		;af92   ; se centra en la casilla en la direccion en la que va
 	call L_B548		;af95   ; el sonido 0x14 si esta en esta pantalla
 	call L_AF7D		;af98
-	ld a,(ix+019h)		;af9b
+	ld a,(ix+019h)		;af9b   ; lee la direccion guardada del enemigo
 	xor 001h		;af9e
 	or 003h		;afa0
-	ld (ix+00bh),a		;afa2
-	ld (ix+006h),000h		;afa5
+	ld (ix+00bh),a		;afa2   ; guarda la direccion del enemigo
+	ld (ix+006h),000h		;afa5   ; la marca de enemigo en movimiento = 0x00
 	ret			;afa9
 L_AFAA:
 	call L_B223		;afaa   ; mira hacia el personaje
 	ld a,c			;afad
 	or 002h		;afae
-	ld (ix+00bh),a		;afb0
+	ld (ix+00bh),a		;afb0   ; guarda la direccion del enemigo
 	ret			;afb3
 L_AFB4:
 	ld ix,0e500h		;afb4   ; al entrar en una pantalla, se quitan los enemigos que esten a menos de 24 pixeles del personaje
 	call 09a0bh		;afb8   ; E = la y del personaje, D = su x
 	ld b,008h		;afbb
 L_AFBD:
-	ld a,(ix+000h)		;afbd
+	ld a,(ix+000h)		;afbd   ; lee el tipo del enemigo (0: libre)
 	and a			;afc0
 	jr z,L_AFEC		;afc1
-	bit 0,(ix+013h)		;afc3
+	bit 0,(ix+013h)		;afc3   ; mira el bit 0 de las marcas del enemigo (bit 0 mata, bit 1 se le puede matar)
 	jr z,L_AFEC		;afc7
 	ld a,(0e243h)		;afc9   ; lee la pantalla de la fase (desde 1)
-	cp (ix+010h)		;afcc
+	cp (ix+010h)		;afcc   ; compara con la pantalla del enemigo
 	jr nz,L_AFEC		;afcf
-	ld a,(ix+003h)		;afd1
+	ld a,(ix+003h)		;afd1   ; lee la y del enemigo
 	sub e			;afd4
 	add a,018h		;afd5
 	cp 030h		;afd7
 	jr nc,L_AFEC		;afd9
-	ld a,(ix+005h)		;afdb
+	ld a,(ix+005h)		;afdb   ; lee la x del enemigo
 	sub d			;afde
 	add a,018h		;afdf
 	cp 030h		;afe1
@@ -2371,7 +2371,7 @@ L_AFBD:
 	pop bc			;afea
 	pop de			;afeb
 L_AFEC:
-	ex de,hl			;afec
+	ex de,hl			;afec   ; el enemigo siguiente (32 bytes)
 	ld de,00020h		;afed
 	add ix,de		;aff0
 	ex de,hl			;aff2
@@ -2381,7 +2381,7 @@ L_AFF6:
 	ld a,(ix+000h)		;aff6   ; el enemigo de tipo 4 en los pasos 1 o 4 deja algo (0xB9F0); todos se van
 	cp 004h		;aff9
 	jp nz,06706h		;affb
-	ld a,(ix+001h)		;affe
+	ld a,(ix+001h)		;affe   ; lee el paso del enemigo
 	cp 004h		;b001
 	jr z,L_B009		;b003
 	dec a			;b005
@@ -2391,12 +2391,12 @@ L_B009:
 	jp 06706h		;b00c
 L_B00F:
 	ld a,(0e243h)		;b00f   ; A = el borde por el que el enemigo saldria hacia la pantalla del personaje (0 si esta en ella)
-	cp (ix+010h)		;b012
+	cp (ix+010h)		;b012   ; compara con la pantalla del enemigo
 	jp z,L_B0A4		;b015
 	call 09a0bh		;b018   ; E = la y del personaje, D = su x
-	ld l,(ix+003h)		;b01b
-	ld h,(ix+005h)		;b01e
-	ld a,(ix+00bh)		;b021
+	ld l,(ix+003h)		;b01b   ; lee la y del enemigo
+	ld h,(ix+005h)		;b01e   ; lee la x del enemigo
+	ld a,(ix+00bh)		;b021   ; lee la direccion del enemigo
 	ret z			;b024
 	dec a			;b025
 	jr z,L_B048		;b026
@@ -2469,7 +2469,7 @@ L_B07C:
 	ret			;b095
 L_B096:
 	push af			;b096   ; Z si la pantalla de ese lado es la del personaje
-	ld b,(ix+016h)		;b097
+	ld b,(ix+016h)		;b097   ; lee la casilla de la rejilla del enemigo
 	call 05e38h		;b09a
 	ld a,(0e244h)		;b09d   ; lee la casilla de la rejilla de la pantalla
 	cp h			;b0a0
@@ -2513,16 +2513,16 @@ L_B0A6:
 	call L_B21C		;b0d7   ; L = la y del enemigo, H = su x
 	ld a,c			;b0da
 	add a,l			;b0db
-	ld (ix+003h),a		;b0dc
+	ld (ix+003h),a		;b0dc   ; guarda la y del enemigo
 	ld a,b			;b0df
 	add a,h			;b0e0
-	ld (ix+005h),a		;b0e1
+	ld (ix+005h),a		;b0e1   ; guarda la x del enemigo
 	ret			;b0e4
 L_B0E5:
 	push de			;b0e5   ; C si la casilla esta libre
 	push hl			;b0e6
 	push bc			;b0e7
-	call 098e6h		;b0e8   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+	call 098e6h		;b0e8   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
 	pop bc			;b0eb
 	pop hl			;b0ec
 	pop de			;b0ed
@@ -2580,9 +2580,9 @@ L_B128:
 	jr L_B0FF		;b12d
 L_B12F:
 	ld e,(ix+00ch)		;b12f   ; Z si en el mapa del enemigo la casilla es escalera (1)
-	ld d,(ix+00dh)		;b132
+	ld d,(ix+00dh)		;b132   ; lee el mapa de la pantalla del enemigo (alto)
 	push hl			;b135
-	call 098e6h		;b136   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+	call 098e6h		;b136   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
 	pop hl			;b139
 	and a			;b13a
 	dec a			;b13b
@@ -2624,8 +2624,8 @@ L_B165:
 L_B168:
 	call L_B1AC		;b168   ; el sitio al que iria con su velocidad (C si se sale de la pantalla)
 	ret c			;b16b
-	ld e,(ix+00ch)		;b16c
-	ld d,(ix+00dh)		;b16f
+	ld e,(ix+00ch)		;b16c   ; lee el mapa de la pantalla del enemigo (bajo)
+	ld d,(ix+00dh)		;b16f   ; lee el mapa de la pantalla del enemigo (alto)
 	push hl			;b172
 	push de			;b173
 	call 09933h		;b174   ; lo mismo con el mapa de DE
@@ -2637,27 +2637,27 @@ L_B17A:
 	call L_B1AC		;b17d   ; el sitio al que iria con su velocidad (C si se sale de la pantalla)
 	ret c			;b180
 L_B181:
-	ld e,(ix+00ch)		;b181
-	ld d,(ix+00dh)		;b184
+	ld e,(ix+00ch)		;b181   ; lee el mapa de la pantalla del enemigo (bajo)
+	ld d,(ix+00dh)		;b184   ; lee el mapa de la pantalla del enemigo (alto)
 	call 0995ah		;b187   ; el primer punto de la orilla segun la direccion C (1 abajo, 2 izquierda, 3 derecha, si no arriba)
 	call L_B191		;b18a   ; C si la casilla esta libre
 	ret nc			;b18d
-	call L_B19D		;b18e
+	call L_B19D		;b18e   ; la orilla siguiente: en vertical 8 pixeles a la derecha...
 L_B191:
 	push hl			;b191   ; C si la casilla esta libre
 	push de			;b192
 	push bc			;b193
-	call 098e6h		;b194   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+	call 098e6h		;b194   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
 	pop bc			;b197
 	pop de			;b198
 	pop hl			;b199
 	sub 001h		;b19a
 	ret			;b19c
 L_B19D:
-	ld a,c			;b19d
+	ld a,c			;b19d   ; la orilla siguiente: en vertical 8 pixeles a la derecha...
 	cp 002h		;b19e
 	jr c,L_B1A7		;b1a0
-	ld a,l			;b1a2
+	ld a,l			;b1a2   ; ...en horizontal 8 mas abajo
 	add a,008h		;b1a3
 	ld l,a			;b1a5
 	ret			;b1a6
@@ -2668,29 +2668,29 @@ L_B1A7:
 	ret			;b1ab
 L_B1AC:
 	ld a,(ix+006h)		;b1ac   ; el sitio al que iria con su velocidad (C si se sale de la pantalla)
-	and a			;b1af
+	and a			;b1af   ; quieto: su sitio tal cual
 	jp z,L_B21C		;b1b0
-	ld a,c			;b1b3
+	ld a,c			;b1b3   ; segun la direccion C: 1 abajo...
 	dec a			;b1b4
 	jr z,L_B1C0		;b1b5
-	dec a			;b1b7
+	dec a			;b1b7   ; ...2 izquierda, 3 derecha...
 	jr z,L_B1DC		;b1b8
 	dec a			;b1ba
 	jr z,L_B1DF		;b1bb
-	xor a			;b1bd
+	xor a			;b1bd   ; ...si no, arriba
 	jr L_B1C2		;b1be
 L_B1C0:
 	ld a,001h		;b1c0
 L_B1C2:
-	ld l,(ix+002h)		;b1c2
-	ld h,(ix+003h)		;b1c5
-	ld e,(ix+007h)		;b1c8
-	ld d,(ix+008h)		;b1cb
+	ld l,(ix+002h)		;b1c2   ; lee la y del enemigo (fina)
+	ld h,(ix+003h)		;b1c5   ; lee la y del enemigo
+	ld e,(ix+007h)		;b1c8   ; lee la velocidad en y del enemigo (fina)
+	ld d,(ix+008h)		;b1cb   ; lee la velocidad en y del enemigo
 	and a			;b1ce
 	call z,L_B200		;b1cf   ; DE = -DE
 	add hl,de			;b1d2
 	ld l,h			;b1d3
-	ld h,(ix+005h)		;b1d4
+	ld h,(ix+005h)		;b1d4   ; lee la x del enemigo
 	ld a,l			;b1d7
 	cp 0c0h		;b1d8
 	ccf			;b1da
@@ -2701,15 +2701,15 @@ L_B1DC:
 L_B1DF:
 	ld a,001h		;b1df
 L_B1E1:
-	ld l,(ix+004h)		;b1e1
-	ld h,(ix+005h)		;b1e4
-	ld e,(ix+009h)		;b1e7
+	ld l,(ix+004h)		;b1e1   ; lee la x del enemigo (fina)
+	ld h,(ix+005h)		;b1e4   ; lee la x del enemigo
+	ld e,(ix+009h)		;b1e7   ; lee la velocidad en x del enemigo (fina)
 	ld b,h			;b1ea
-	ld d,(ix+00ah)		;b1eb
+	ld d,(ix+00ah)		;b1eb   ; lee la velocidad en x del enemigo
 	and a			;b1ee
 	call z,L_B200		;b1ef   ; DE = -DE
 	add hl,de			;b1f2
-	ld l,(ix+003h)		;b1f3
+	ld l,(ix+003h)		;b1f3   ; lee la y del enemigo
 	ld a,h			;b1f6
 	sub b			;b1f7
 	jr nc,L_B1FC		;b1f8
@@ -2740,18 +2740,18 @@ DATA_B208:
 
 L_B20A:
 	inc (ix+00eh)		;b20a   ; sube la cuenta IX+0E y la compara con A
-	cp (ix+00eh)		;b20d
+	cp (ix+00eh)		;b20d   ; compara con una cuenta del enemigo
 	ret			;b210
 L_B211:
 	xor a			;b211   ; la cuenta IX+0E a cero
-	ld (ix+00eh),a		;b212
+	ld (ix+00eh),a		;b212   ; guarda una cuenta del enemigo
 	ret			;b215
 L_B216:
 	ld e,(ix+00ch)		;b216   ; DE = el mapa del enemigo
-	ld d,(ix+00dh)		;b219
+	ld d,(ix+00dh)		;b219   ; lee el mapa de la pantalla del enemigo (alto)
 L_B21C:
 	ld l,(ix+003h)		;b21c   ; L = la y del enemigo, H = su x
-	ld h,(ix+005h)		;b21f
+	ld h,(ix+005h)		;b21f   ; lee la x del enemigo
 	ret			;b222
 L_B223:
 	ld a,(ix+016h)		;b223   ; C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
@@ -2767,7 +2767,7 @@ L_B223:
 	ret			;b235
 L_B236:
 	ld a,(0e284h)		;b236   ; lee la x del personaje
-	cp (ix+005h)		;b239
+	cp (ix+005h)		;b239   ; compara con la x del enemigo
 	ret c			;b23c
 	inc c			;b23d
 	ret			;b23e
@@ -2786,7 +2786,7 @@ L_B23F:
 	ret			;b252
 L_B253:
 	ld a,(0e282h)		;b253   ; lee la y del personaje
-	sub (ix+003h)		;b256
+	sub (ix+003h)		;b256   ; le resta la y del enemigo
 	jr c,L_B261		;b259
 	cp 010h		;b25b
 	ret c			;b25d
@@ -2811,23 +2811,23 @@ L_B274:
 	call L_B223		;b27c   ; C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
 	ld a,c			;b27f
 	or 002h		;b280
-	ld (ix+00bh),a		;b282
-	ld (ix+011h),018h		;b285
-	ld (ix+018h),0ffh		;b289
+	ld (ix+00bh),a		;b282   ; guarda la direccion del enemigo
+	ld (ix+011h),018h		;b285   ; el dibujo del enemigo (0xFF: no se ve) = 0x18
+	ld (ix+018h),0ffh		;b289   ; los intentos del enemigo = 0xFF
 	ld (ix+01ch),000h		;b28d
 	ld hl,0426ch		;b291
 L_B294:
 	ld a,(0e243h)		;b294   ; si esta en esta pantalla, salta a HL (un sonido)
-	cp (ix+010h)		;b297
+	cp (ix+010h)		;b297   ; compara con la pantalla del enemigo
 	ret nz			;b29a
 	jp (hl)			;b29b
 L_B29C:
 	ld (ix+009h),e		;b29c   ; la velocidad en x
-	ld (ix+00ah),d		;b29f
+	ld (ix+00ah),d		;b29f   ; guarda la velocidad en x del enemigo
 	ret			;b2a2
 L_B2A3:
 	ld (ix+007h),e		;b2a3   ; la velocidad en y
-	ld (ix+008h),d		;b2a6
+	ld (ix+008h),d		;b2a6   ; guarda la velocidad en y del enemigo
 	ret			;b2a9
 L_B2AA:
 	ld a,(ix+001h)		;b2aa   ; un cuadro de un enemigo de tipo 3, por pasos (IX+01)
@@ -2853,23 +2853,23 @@ L_B2BA:
 	jr z,L_B2E8		;b2c6
 	cp 007h		;b2c8
 	jr nz,L_B2E4		;b2ca
-	bit 0,(ix+00bh)		;b2cc
+	bit 0,(ix+00bh)		;b2cc   ; mira el bit 0 de la direccion del enemigo
 	jr z,L_B2D3		;b2d0
 	inc a			;b2d2
 L_B2D3:
-	ld (ix+011h),a		;b2d3
+	ld (ix+011h),a		;b2d3   ; guarda el dibujo del enemigo (0xFF: no se ve)
 	ld a,(0f0f4h)		;b2d6   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;b2d9
 	ret z			;b2da
-	ld (ix+01eh),00ah		;b2db
-	ld (ix+01fh),047h		;b2df
+	ld (ix+01eh),00ah		;b2db   ; el color del primer sprite del enemigo = 0x0A
+	ld (ix+01fh),047h		;b2df   ; el color del segundo sprite del enemigo = 0x47
 	ret			;b2e3
 L_B2E4:
-	ld (ix+011h),a		;b2e4
+	ld (ix+011h),a		;b2e4   ; guarda el dibujo del enemigo (0xFF: no se ve)
 	ret			;b2e7
 L_B2E8:
 	ld (ix+014h),008h		;b2e8   ; sale: ya mata y se le puede matar
-	ld (ix+013h),003h		;b2ec
+	ld (ix+013h),003h		;b2ec   ; las marcas del enemigo (bit 0 mata, bit 1 se le puede matar) = 0x03
 L_B2F0:
 	inc (ix+001h)		;b2f0   ; el paso siguiente
 	ret			;b2f3
@@ -2893,13 +2893,13 @@ L_B307:
 	jp z,L_B50B		;b30a
 	ld c,009h		;b30d
 	call L_B4AF		;b30f   ; el dibujo C (o C + 2 mirando a la derecha)
-	dec (ix+014h)		;b312
+	dec (ix+014h)		;b312   ; baja la espera del enemigo
 	ret nz			;b315
 	ld a,(ix+01dh)		;b316
 	cp 002h		;b319
 	jr nc,L_B329		;b31b
-	ld a,(ix+018h)		;b31d
-	sub (ix+005h)		;b320
+	ld a,(ix+018h)		;b31d   ; lee los intentos del enemigo
+	sub (ix+005h)		;b320   ; le resta la x del enemigo
 	add a,00ch		;b323
 	cp 019h		;b325
 	jr c,L_B33C		;b327
@@ -2916,10 +2916,10 @@ L_B33C:
 	call L_B60E		;b33c   ; salta hacia su lado si puede; si no, da la vuelta; tras 16 intentos se va a otra pantalla
 	call L_B385		;b33f   ; C si puede saltar (no hay techo encima)
 	jr c,L_B35F		;b342
-	ld a,(ix+00bh)		;b344
+	ld a,(ix+00bh)		;b344   ; lee la direccion del enemigo
 	xor 001h		;b347
 	or 002h		;b349
-	ld (ix+00bh),a		;b34b
+	ld (ix+00bh),a		;b34b   ; guarda la direccion del enemigo
 	call L_B385		;b34e   ; C si puede saltar (no hay techo encima)
 	jp nc,06608h		;b351
 	ld a,(ix+01ch)		;b354
@@ -2929,12 +2929,12 @@ L_B33C:
 L_B35F:
 	ld de,000f0h		;b35f   ; el salto: velocidad en x 0xF0 y el sonido 0x1F
 	call L_B29C		;b362   ; la velocidad en x
-	ld (ix+006h),000h		;b365
-	ld (ix+014h),011h		;b369
-	ld a,(ix+005h)		;b36d
-	ld (ix+018h),a		;b370
-	ld a,(ix+00bh)		;b373
-	ld (ix+019h),a		;b376
+	ld (ix+006h),000h		;b365   ; la marca de enemigo en movimiento = 0x00
+	ld (ix+014h),011h		;b369   ; la espera del enemigo = 0x11
+	ld a,(ix+005h)		;b36d   ; lee la x del enemigo
+	ld (ix+018h),a		;b370   ; guarda los intentos del enemigo
+	ld a,(ix+00bh)		;b373   ; lee la direccion del enemigo
+	ld (ix+019h),a		;b376   ; guarda la direccion guardada del enemigo
 	inc (ix+01dh)		;b379
 	ld hl,04276h		;b37c
 	call L_B294		;b37f   ; si esta en esta pantalla, salta a HL (un sonido)
@@ -2955,7 +2955,7 @@ L_B39A:
 	ld a,l			;b39d
 	sub 008h		;b39e
 	ld l,a			;b3a0
-	bit 0,(ix+00bh)		;b3a1
+	bit 0,(ix+00bh)		;b3a1   ; mira el bit 0 de la direccion del enemigo
 	jr z,L_B3AF		;b3a5
 	ld a,h			;b3a7
 	add a,008h		;b3a8
@@ -2970,20 +2970,20 @@ L_B3AF:
 L_B3B5:
 	ld b,003h		;b3b5
 L_B3B7:
-	push bc			;b3b7
+	push bc			;b3b7   ; tres casillas de la fila de arriba
 	push hl			;b3b8
 	push de			;b3b9
-	call 098e6h		;b3ba   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+	call 098e6h		;b3ba   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
 	pop de			;b3bd
 	pop hl			;b3be
 	pop bc			;b3bf
-	cp 002h		;b3c0
+	cp 002h		;b3c0   ; una de ladrillo (2 o 3): hay techo
 	jr nc,L_B3D0		;b3c2
-	ld a,h			;b3c4
+	ld a,h			;b3c4   ; 8 pixeles a la derecha
 	add a,008h		;b3c5
 	ld h,a			;b3c7
 	djnz L_B3B7		;b3c8
-	ld (ix+01ah),000h		;b3ca
+	ld (ix+01ah),000h		;b3ca   ; sin techo: IX+1A = 0
 	scf			;b3ce
 	ret			;b3cf
 L_B3D0:
@@ -3008,7 +3008,7 @@ L_B3E7:
 	ld a,0f8h		;b3ec
 L_B3EE:
 	ld h,a			;b3ee
-	call 098e6h		;b3ef   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+	call 098e6h		;b3ef   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
 	sub 002h		;b3f2
 	ret			;b3f4
 L_B3F5:
@@ -3044,13 +3044,13 @@ L_B42F:
 	ld (ix+00bh),a		;b42f   ; a la escalera: paso 3, velocidad en y 0x100
 	ld (ix+01bh),a		;b432
 	ld (ix+01dh),000h		;b435
-	ld (ix+006h),001h		;b439
+	ld (ix+006h),001h		;b439   ; la marca de enemigo en movimiento = 0x01
 	ld (ix+01ch),000h		;b43d
 	ld de,00000h		;b441
 	call L_B29C		;b444   ; la velocidad en x
 	ld de,00100h		;b447
 	call L_B2A3		;b44a   ; la velocidad en y
-	ld (ix+001h),003h		;b44d
+	ld (ix+001h),003h		;b44d   ; el paso del enemigo = 0x03
 	ret			;b451
 L_B452:
 	ld a,(ix+01bh)		;b452   ; baja por la escalera
@@ -3083,13 +3083,13 @@ L_B479:
 	jr z,L_B486		;b482
 	set 1,c		;b484
 L_B486:
-	ld a,c			;b486
+	ld a,c			;b486   ; C: las dos casillas son escalera (bit 0 la de la izquierda, bit 1 la de la derecha)
 	and a			;b487
-	jr z,L_B4A4		;b488
-	cp 003h		;b48a
+	jr z,L_B4A4		;b488   ; ninguna: se queda donde esta
+	cp 003h		;b48a   ; las dos: C
 	scf			;b48c
 	ret z			;b48d
-	dec a			;b48e
+	dec a			;b48e   ; solo la izquierda: se corre 8 a la izquierda si esta casi en la casilla
 	jr z,L_B49C		;b48f
 	ld a,h			;b491
 	and 007h		;b492
@@ -3099,16 +3099,16 @@ L_B486:
 	ld c,0f8h		;b498
 	jr L_B4A4		;b49a
 L_B49C:
-	ld a,h			;b49c
+	ld a,h			;b49c   ; solo la derecha: 8 a la derecha
 	and 007h		;b49d
 	cp 001h		;b49f
 	ret c			;b4a1
 	ld c,008h		;b4a2
 L_B4A4:
-	ld a,(ix+005h)		;b4a4
+	ld a,(ix+005h)		;b4a4   ; la x se mueve C y se centra en la casilla
 	add a,c			;b4a7
 	and 0f8h		;b4a8
-	ld (ix+005h),a		;b4aa
+	ld (ix+005h),a		;b4aa   ; guarda la x del enemigo
 	xor a			;b4ad
 	ret			;b4ae
 L_B4AF:
@@ -3117,26 +3117,26 @@ L_B4AF:
 	inc c			;b4b5
 	inc c			;b4b6
 L_B4B7:
-	ld (ix+011h),c		;b4b7
+	ld (ix+011h),c		;b4b7   ; guarda el dibujo del enemigo (0xFF: no se ve)
 	ret			;b4ba
 L_B4BB:
 	call L_B00F		;b4bb   ; paso 2: en el aire
 	dec a			;b4be
-	cp (ix+00bh)		;b4bf
-	ld (ix+006h),000h		;b4c2
+	cp (ix+00bh)		;b4bf   ; compara con la direccion del enemigo
+	ld (ix+006h),000h		;b4c2   ; la marca de enemigo en movimiento = 0x00
 	ret z			;b4c6
-	ld (ix+006h),001h		;b4c7
+	ld (ix+006h),001h		;b4c7   ; la marca de enemigo en movimiento = 0x01
 	ld c,00ah		;b4cb
 	call L_B4AF		;b4cd   ; el dibujo C (o C + 2 mirando a la derecha)
-	ld a,(ix+014h)		;b4d0
+	ld a,(ix+014h)		;b4d0   ; lee la espera del enemigo
 	and a			;b4d3
 	jr z,L_B50B		;b4d4
-	dec (ix+014h)		;b4d6
+	dec (ix+014h)		;b4d6   ; baja la espera del enemigo
 	ld de,000f0h		;b4d9
 	call L_B29C		;b4dc   ; la velocidad en x
 	call L_B64E		;b4df   ; C si delante hay ladrillo
 	call nc,L_B58F		;b4e2   ; sin velocidad en x
-	ld a,(ix+014h)		;b4e5
+	ld a,(ix+014h)		;b4e5   ; lee la espera del enemigo
 	cp 008h		;b4e8
 	jr nc,L_B4F1		;b4ea
 	call L_B555		;b4ec   ; lo mismo, a la altura del paso del salto
@@ -3150,33 +3150,33 @@ L_B4F1:
 L_B500:
 	call 0408fh		;b500   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;b503
-	add a,(ix+003h)		;b504
-	ld (ix+003h),a		;b507
+	add a,(ix+003h)		;b504   ; le suma la y del enemigo
+	ld (ix+003h),a		;b507   ; guarda la y del enemigo
 	ret			;b50a
 L_B50B:
 	ld (ix+014h),000h		;b50b   ; al acabar el salto: si no hay suelo, cae (paso 4)
-	ld (ix+006h),001h		;b50f
+	ld (ix+006h),001h		;b50f   ; la marca de enemigo en movimiento = 0x01
 	call L_B555		;b513   ; lo mismo, a la altura del paso del salto
 	jr nz,L_B52F		;b516
 	ld de,00500h		;b518
 	call L_B2A3		;b51b   ; la velocidad en y
 	ld de,00000h		;b51e
 	call L_B29C		;b521   ; la velocidad en x
-	ld (ix+00bh),001h		;b524
-	ld (ix+001h),004h		;b528
+	ld (ix+00bh),001h		;b524   ; la direccion del enemigo = 0x01
+	ld (ix+001h),004h		;b528   ; el paso del enemigo = 0x04
 	jp L_AF48		;b52c
 L_B52F:
 	call L_B58F		;b52f   ; en el suelo: se centra en la fila y vuelve a andar (paso 1)
-	ld (ix+006h),000h		;b532
-	ld (ix+014h),008h		;b536
-	ld a,(ix+003h)		;b53a
+	ld (ix+006h),000h		;b532   ; la marca de enemigo en movimiento = 0x00
+	ld (ix+014h),008h		;b536   ; la espera del enemigo = 0x08
+	ld a,(ix+003h)		;b53a   ; lee la y del enemigo
 	add a,007h		;b53d
 	and 0f8h		;b53f
-	ld (ix+003h),a		;b541
-	ld (ix+001h),001h		;b544
+	ld (ix+003h),a		;b541   ; guarda la y del enemigo
+	ld (ix+001h),001h		;b544   ; el paso del enemigo = 0x01
 L_B548:
 	ld a,(0e243h)		;b548   ; el sonido 0x14 si esta en esta pantalla
-	cp (ix+010h)		;b54b
+	cp (ix+010h)		;b54b   ; compara con la pantalla del enemigo
 	jp z,0423fh		;b54e
 	ret			;b551
 L_B552:
@@ -3204,7 +3204,7 @@ L_B564:
 L_B571:
 	push hl			;b571   ; Z si la casilla es suelo (ladrillo, o escalera con otra encima)
 	push de			;b572
-	call 098e6h		;b573   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+	call 098e6h		;b573   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
 	pop de			;b576
 	pop hl			;b577
 	and a			;b578
@@ -3216,7 +3216,7 @@ L_B571:
 	ld a,l			;b57e
 	sub 008h		;b57f
 	ld l,a			;b581
-	call 098e6h		;b582   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+	call 098e6h		;b582   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
 	pop de			;b585
 	pop hl			;b586
 	dec a			;b587
@@ -3248,53 +3248,53 @@ DATA_resto_B595:
 L_B5B7:
 	call L_B00F		;b5b7   ; paso: cae; si se puede, avanza hacia donde mira
 	dec a			;b5ba
-	cp (ix+00bh)		;b5bb
-	ld (ix+006h),000h		;b5be
+	cp (ix+00bh)		;b5bb   ; compara con la direccion del enemigo
+	ld (ix+006h),000h		;b5be   ; la marca de enemigo en movimiento = 0x00
 	ret z			;b5c2
-	ld (ix+006h),001h		;b5c3
+	ld (ix+006h),001h		;b5c3   ; la marca de enemigo en movimiento = 0x01
 	ld c,00dh		;b5c7
 	call L_AF1E		;b5c9
 	call L_B0F9		;b5cc   ; C si al moverse en vertical choca
 	jr c,L_B5DE		;b5cf
 	call L_B165		;b5d1   ; NC si puede avanzar hacia donde mira
 	ret c			;b5d4
-	ld a,(ix+00bh)		;b5d5
+	ld a,(ix+00bh)		;b5d5   ; lee la direccion del enemigo
 	xor 001h		;b5d8
-	ld (ix+00bh),a		;b5da
+	ld (ix+00bh),a		;b5da   ; guarda la direccion del enemigo
 	ret			;b5dd
 L_B5DE:
 	call L_B833		;b5de   ; se centra en la casilla en la direccion en la que va
 	ld de,00000h		;b5e1
 	call L_B2A3		;b5e4   ; la velocidad en y
 	call L_B29C		;b5e7   ; la velocidad en x
-	ld (ix+006h),000h		;b5ea
-	ld (ix+014h),008h		;b5ee
-	ld (ix+018h),0ffh		;b5f2
-	ld (ix+001h),001h		;b5f6
+	ld (ix+006h),000h		;b5ea   ; la marca de enemigo en movimiento = 0x00
+	ld (ix+014h),008h		;b5ee   ; la espera del enemigo = 0x08
+	ld (ix+018h),0ffh		;b5f2   ; los intentos del enemigo = 0xFF
+	ld (ix+001h),001h		;b5f6   ; el paso del enemigo = 0x01
 	ret			;b5fa
 L_B5FB:
 	call L_B555		;b5fb   ; en el aire: si toca suelo, aterriza
 	ret z			;b5fe
 	ld de,00000h		;b5ff
 	call L_B2A3		;b602   ; la velocidad en y
-	ld a,(ix+019h)		;b605
-	ld (ix+00bh),a		;b608
+	ld a,(ix+019h)		;b605   ; lee la direccion guardada del enemigo
+	ld (ix+00bh),a		;b608   ; guarda la direccion del enemigo
 	jp L_B52F		;b60b
 L_B60E:
 	set 1,(ix+00bh)		;b60e   ; hacia donde salta: si esta debajo del personaje, al azar (0xE203); si no, hacia el
-	ld a,(ix+018h)		;b612
+	ld a,(ix+018h)		;b612   ; lee los intentos del enemigo
 	cp 0ffh		;b615
 	jr z,L_B62A		;b617
-	cp (ix+005h)		;b619
+	cp (ix+005h)		;b619   ; compara con la x del enemigo
 	ret nz			;b61c
-	ld a,(ix+00bh)		;b61d
+	ld a,(ix+00bh)		;b61d   ; lee la direccion del enemigo
 	xor 001h		;b620
 	or 002h		;b622
-	ld (ix+00bh),a		;b624
+	ld (ix+00bh),a		;b624   ; guarda la direccion del enemigo
 	jp L_B211		;b627
 L_B62A:
 	ld a,(0e284h)		;b62a   ; lee la x del personaje
-	sub (ix+005h)		;b62d
+	sub (ix+005h)		;b62d   ; le resta la x del enemigo
 	add a,002h		;b630
 	cp 004h		;b632
 	jr nc,L_B644		;b634
@@ -3304,13 +3304,13 @@ L_B62A:
 	jr z,L_B640		;b63d
 	inc c			;b63f
 L_B640:
-	ld (ix+00bh),c		;b640
+	ld (ix+00bh),c		;b640   ; guarda la direccion del enemigo
 	ret			;b643
 L_B644:
 	call L_B223		;b644   ; C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
 	ld a,c			;b647
 	or 002h		;b648
-	ld (ix+00bh),a		;b64a
+	ld (ix+00bh),a		;b64a   ; guarda la direccion del enemigo
 	ret			;b64d
 L_B64E:
 	ld c,(ix+00bh)		;b64e   ; C si delante hay ladrillo
@@ -3320,16 +3320,16 @@ L_B64E:
 	add a,l			;b658
 	add a,00fh		;b659
 	ld l,a			;b65b
-	ld e,(ix+00ch)		;b65c
-	ld d,(ix+00dh)		;b65f
-	bit 0,(ix+00bh)		;b662
+	ld e,(ix+00ch)		;b65c   ; lee el mapa de la pantalla del enemigo (bajo)
+	ld d,(ix+00dh)		;b65f   ; lee el mapa de la pantalla del enemigo (alto)
+	bit 0,(ix+00bh)		;b662   ; mira el bit 0 de la direccion del enemigo
 	jr z,L_B66D		;b666
 	ld a,010h		;b668
 	add a,h			;b66a
 	ld h,a			;b66b
 	ret c			;b66c
 L_B66D:
-	call 098e6h		;b66d   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1-3 ladrillo o cosa
+	call 098e6h		;b66d   ; A = la casilla del mapa de DE en el pixel (H, L): 0 libre, 1 escalera, 2-3 ladrillo
 	sub 002h		;b670
 	ret			;b672
 L_B673:
@@ -3340,9 +3340,9 @@ L_B673:
 	ret			;b67d
 L_B67E:
 	xor a			;b67e   ; sale un enemigo de tipo 4: el sonido 0x1D
-	ld (ix+014h),a		;b67f
+	ld (ix+014h),a		;b67f   ; guarda la espera del enemigo
 	ld (ix+01ch),a		;b682
-	ld (ix+013h),a		;b685
+	ld (ix+013h),a		;b685   ; guarda las marcas del enemigo (bit 0 mata, bit 1 se le puede matar)
 	ld hl,0426ch		;b688
 	jp L_B294		;b68b
 L_B68E:
@@ -3367,7 +3367,7 @@ L_B6A0:
 	ld de,0b6b6h		;b6a3
 	call L_B6E0		;b6a6   ; el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
 	jr z,$+20		;b6a9
-	ld (ix+011h),a		;b6ab
+	ld (ix+011h),a		;b6ab   ; guarda el dibujo del enemigo (0xFF: no se ve)
 	ret			;b6ae
 
 ; ----------------------------------------------------------------------
@@ -3385,17 +3385,17 @@ DATA_resto_B6AF:
 
 L_B6BD:
 	ld (ix+013h),003h		;b6bd   ; sale: mata y se le puede matar, espera 0x3C; en MSX2 sus colores; se marca en el mapa
-	ld (ix+014h),03ch		;b6c1
+	ld (ix+014h),03ch		;b6c1   ; la espera del enemigo = 0x3C
 	ld a,(0f0f4h)		;b6c5   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
 	and a			;b6c8
 	jr z,L_B6DC		;b6c9
-	ld (ix+01eh),007h		;b6cb
-	ld (ix+01fh),049h		;b6cf
+	ld (ix+01eh),007h		;b6cb   ; el color del primer sprite del enemigo = 0x07
+	ld (ix+01fh),049h		;b6cf   ; el color del segundo sprite del enemigo = 0x49
 	call L_B9A2		;b6d3
 	call L_BA6E		;b6d6   ; C si al marcarse piso algo que no estaba libre
 	jp c,L_BA7F		;b6d9
 L_B6DC:
-	inc (ix+001h)		;b6dc
+	inc (ix+001h)		;b6dc   ; sube el paso del enemigo
 	ret			;b6df
 L_B6E0:
 	ld a,(0f0f4h)		;b6e0   ; el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
@@ -3403,8 +3403,8 @@ L_B6E0:
 	jr z,L_B6E7		;b6e4
 	ex de,hl			;b6e6
 L_B6E7:
-	inc (ix+014h)		;b6e7
-	ld a,(ix+014h)		;b6ea
+	inc (ix+014h)		;b6e7   ; sube la espera del enemigo
+	ld a,(ix+014h)		;b6ea   ; lee la espera del enemigo
 	rra			;b6ed
 	rra			;b6ee
 	rra			;b6ef
@@ -3421,16 +3421,16 @@ L_B6F9:
 	jp L_B856		;b703
 L_B706:
 	call L_B956		;b706   ; parpadea mientras espera (dibujos 0x0F y 0x10)
-	dec (ix+014h)		;b709
+	dec (ix+014h)		;b709   ; baja la espera del enemigo
 	jr z,L_B721		;b70c
-	ld (ix+013h),003h		;b70e
-	ld a,(ix+014h)		;b712
+	ld (ix+013h),003h		;b70e   ; las marcas del enemigo (bit 0 mata, bit 1 se le puede matar) = 0x03
+	ld a,(ix+014h)		;b712   ; lee la espera del enemigo
 	and 010h		;b715
 	ld c,00fh		;b717
 	jr z,L_B71D		;b719
 	ld c,010h		;b71b
 L_B71D:
-	ld (ix+011h),c		;b71d
+	ld (ix+011h),c		;b71d   ; guarda el dibujo del enemigo (0xFF: no se ve)
 	ret			;b720
 L_B721:
 	call L_B9F0		;b721   ; al acabar, tres veces: va hacia el personaje
@@ -3440,27 +3440,27 @@ L_B721:
 	call L_B223		;b72c   ; C = el lado hacia el personaje (0 izquierda, 1 derecha), por columnas de la rejilla o por x
 	ld a,c			;b72f
 	or 002h		;b730
-	ld (ix+00bh),a		;b732
+	ld (ix+00bh),a		;b732   ; guarda la direccion del enemigo
 	call L_B165		;b735   ; NC si puede avanzar hacia donde mira
 	jr c,L_B748		;b738
-	ld a,(ix+00bh)		;b73a
+	ld a,(ix+00bh)		;b73a   ; lee la direccion del enemigo
 	xor 001h		;b73d
-	ld (ix+00bh),a		;b73f
+	ld (ix+00bh),a		;b73f   ; guarda la direccion del enemigo
 	call L_B165		;b742   ; NC si puede avanzar hacia donde mira
 	jp nc,06608h		;b745
 L_B748:
 	ld de,00200h		;b748   ; se mueve a velocidad 2
 	call L_B29C		;b74b   ; la velocidad en x
-	ld (ix+006h),001h		;b74e
+	ld (ix+006h),001h		;b74e   ; la marca de enemigo en movimiento = 0x01
 	jr L_B6DC		;b752
 L_B754:
 	call L_B00F		;b754   ; paso: anda; a otra pantalla si el personaje esta alli
 	dec a			;b757
-	cp (ix+00bh)		;b758
+	cp (ix+00bh)		;b758   ; compara con la direccion del enemigo
 	jp z,L_B0A6		;b75b
-	dec (ix+014h)		;b75e
+	dec (ix+014h)		;b75e   ; baja la espera del enemigo
 	call L_B874		;b761   ; el dibujo al andar (0x11-0x14)
-	ld a,(ix+005h)		;b764
+	ld a,(ix+005h)		;b764   ; lee la x del enemigo
 	and 007h		;b767
 	cp 003h		;b769
 	jr nc,L_B778		;b76b
@@ -3473,18 +3473,18 @@ L_B778:
 	jr nc,L_B7B1		;b77b
 	call L_B7DF		;b77d   ; C si choca con otro enemigo de tipo 4 de su pantalla
 	ret nc			;b780
-	ld a,(ix+00bh)		;b781
+	ld a,(ix+00bh)		;b781   ; lee la direccion del enemigo
 	cp 002h		;b784
-	ld a,(ix+005h)		;b786
+	ld a,(ix+005h)		;b786   ; lee la x del enemigo
 	jr nz,L_B78D		;b789
 	add a,007h		;b78b
 L_B78D:
 	and 0f8h		;b78d
-	ld (ix+005h),a		;b78f
-	ld a,(iy+006h)		;b792
+	ld (ix+005h),a		;b78f   ; guarda la x del enemigo
+	ld a,(iy+006h)		;b792   ; el otro enemigo (IY) tambien se centra si se mueve
 	and a			;b795
 	jr z,L_B7AB		;b796
-	ld a,(iy+00bh)		;b798
+	ld a,(iy+00bh)		;b798   ; hacia el lado
 	cp 002h		;b79b
 	jr c,L_B7AB		;b79d
 	ld a,(iy+005h)		;b79f
@@ -3504,7 +3504,7 @@ L_B7B1:
 	call L_B938		;b7bc   ; se marca en el mapa; si choca con algo, se va
 L_B7BF:
 	ld a,(0e243h)		;b7bf   ; el sonido 0x24 si esta en esta pantalla
-	cp (ix+010h)		;b7c2
+	cp (ix+010h)		;b7c2   ; compara con la pantalla del enemigo
 	ret nz			;b7c5
 	jp 0428fh		;b7c6
 
@@ -3521,7 +3521,7 @@ DATA_B7C9:
 
 L_B7DF:
 	ld l,(ix+003h)		;b7df   ; C si choca con otro enemigo de tipo 4 de su pantalla
-	ld h,(ix+005h)		;b7e2
+	ld h,(ix+005h)		;b7e2   ; lee la x del enemigo
 	call L_B1AC		;b7e5   ; el sitio al que iria con su velocidad (C si se sale de la pantalla)
 	ccf			;b7e8
 	ret nc			;b7e9
@@ -3532,10 +3532,10 @@ L_B7F3:
 	ld a,(iy+000h)		;b7f3
 	cp 004h		;b7f6
 	jr nz,L_B81E		;b7f8
-	ld a,(ix+015h)		;b7fa
+	ld a,(ix+015h)		;b7fa   ; lee el sitio de salida del enemigo (0-7)
 	cp (iy+015h)		;b7fd
 	jr z,L_B81E		;b800
-	ld a,(ix+010h)		;b802
+	ld a,(ix+010h)		;b802   ; lee la pantalla del enemigo
 	cp (iy+010h)		;b805
 	jr nz,L_B81E		;b808
 	ld a,l			;b80a
@@ -3557,7 +3557,7 @@ L_B824:
 	ld a,(iy+006h)		;b824
 	and a			;b827
 	jr z,L_B831		;b828
-	ld a,(ix+00bh)		;b82a
+	ld a,(ix+00bh)		;b82a   ; lee la direccion del enemigo
 	cp (iy+00bh)		;b82d
 	ret z			;b830
 L_B831:
@@ -3567,32 +3567,32 @@ L_B833:
 	ld a,(ix+00bh)		;b833   ; se centra en la casilla en la direccion en la que va
 	cp 002h		;b836
 	jr c,L_B847		;b838
-	ld a,(ix+005h)		;b83a
+	ld a,(ix+005h)		;b83a   ; lee la x del enemigo
 	jr z,L_B841		;b83d
 	add a,007h		;b83f
 L_B841:
 	and 0f8h		;b841
-	ld (ix+005h),a		;b843
+	ld (ix+005h),a		;b843   ; guarda la x del enemigo
 	ret			;b846
 L_B847:
 	and a			;b847
 	ld b,a			;b848
-	ld a,(ix+003h)		;b849
+	ld a,(ix+003h)		;b849   ; lee la y del enemigo
 	jr z,L_B850		;b84c
 	add a,007h		;b84e
 L_B850:
 	and 0f8h		;b850
-	ld (ix+003h),a		;b852
+	ld (ix+003h),a		;b852   ; guarda la y del enemigo
 	ret			;b855
 L_B856:
 	call L_B211		;b856   ; cae: paso 3, velocidad en y 5, el sonido 0x2C
-	ld (ix+00bh),001h		;b859
+	ld (ix+00bh),001h		;b859   ; la direccion del enemigo = 0x01
 	ld de,00500h		;b85d
 	call L_B2A3		;b860   ; la velocidad en y
 	ld de,00000h		;b863
 	call L_B29C		;b866   ; la velocidad en x
 	ld (ix+01ch),000h		;b869
-	ld (ix+001h),003h		;b86d
+	ld (ix+001h),003h		;b86d   ; el paso del enemigo = 0x03
 	jp L_AF48		;b871
 L_B874:
 	ld a,(ix+014h)		;b874   ; el dibujo al andar (0x11-0x14)
@@ -3600,14 +3600,14 @@ L_B874:
 	rra			;b878
 	and 003h		;b879
 	add a,011h		;b87b
-	ld (ix+011h),a		;b87d
+	ld (ix+011h),a		;b87d   ; guarda el dibujo del enemigo (0xFF: no se ve)
 	ret			;b880
 L_B881:
 	inc (ix+01ch)		;b881   ; paso: anda hasta chocar
 	jr nz,L_B889		;b884
 	dec (ix+01ch)		;b886
 L_B889:
-	ld (ix+006h),001h		;b889
+	ld (ix+006h),001h		;b889   ; la marca de enemigo en movimiento = 0x01
 	call L_B874		;b88d   ; el dibujo al andar (0x11-0x14)
 	call L_B165		;b890   ; NC si puede avanzar hacia donde mira
 	jr nc,L_B8A8		;b893
@@ -3621,17 +3621,17 @@ L_B889:
 	jp L_B7BF		;b8a5
 L_B8A8:
 	call L_B833		;b8a8   ; se para: paso 5 y el sonido 0x25
-	ld (ix+006h),000h		;b8ab
-	ld (ix+011h),011h		;b8af
-	ld (ix+014h),000h		;b8b3
-	ld (ix+001h),005h		;b8b7
+	ld (ix+006h),000h		;b8ab   ; la marca de enemigo en movimiento = 0x00
+	ld (ix+011h),011h		;b8af   ; el dibujo del enemigo (0xFF: no se ve) = 0x11
+	ld (ix+014h),000h		;b8b3   ; la espera del enemigo = 0x00
+	ld (ix+001h),005h		;b8b7   ; el paso del enemigo = 0x05
 	ld a,(0e243h)		;b8bb   ; lee la pantalla de la fase (desde 1)
-	cp (ix+010h)		;b8be
+	cp (ix+010h)		;b8be   ; compara con la pantalla del enemigo
 	ret nz			;b8c1
 	jp 04294h		;b8c2
 L_B8C5:
 	ld (ix+013h),001h		;b8c5   ; el enemigo de tipo 4 se para en su casilla
-	ld a,(ix+001h)		;b8c9
+	ld a,(ix+001h)		;b8c9   ; lee el paso del enemigo
 	dec a			;b8cc
 	jr z,L_B8D6		;b8cd
 	dec a			;b8cf
@@ -3644,10 +3644,10 @@ L_B8D6:
 L_B8DB:
 	ld a,(ix+005h)		;b8db   ; se centra en la casilla
 	and 0f8h		;b8de
-	ld (ix+005h),a		;b8e0
-	ld a,(ix+003h)		;b8e3
+	ld (ix+005h),a		;b8e0   ; guarda la x del enemigo
+	ld a,(ix+003h)		;b8e3   ; lee la y del enemigo
 	and 0f8h		;b8e6
-	ld (ix+003h),a		;b8e8
+	ld (ix+003h),a		;b8e8   ; guarda la y del enemigo
 	ret			;b8eb
 L_B8EC:
 	call L_B956		;b8ec   ; paso: espera 0x3C cuadros quieto y vuelve al paso 1
@@ -3656,10 +3656,10 @@ L_B8EC:
 	jr c,L_B908		;b8f4
 	ld a,(0e203h)		;b8f6   ; lee la cuenta de cuadros
 	and 003h		;b8f9
-	dec (ix+014h)		;b8fb
+	dec (ix+014h)		;b8fb   ; baja la espera del enemigo
 	ret nz			;b8fe
-	ld (ix+014h),03ch		;b8ff
-	ld (ix+001h),001h		;b903
+	ld (ix+014h),03ch		;b8ff   ; la espera del enemigo = 0x3C
+	ld (ix+001h),001h		;b903   ; el paso del enemigo = 0x01
 	ret			;b907
 L_B908:
 	call L_B9F0		;b908   ; quita del mapa sus cuatro casillas, devolviendo lo que habia
@@ -3668,12 +3668,12 @@ L_B90E:
 	ld a,(ix+014h)		;b90e   ; paso: un pequeno salto (tabla 0xB926)
 	cp 012h		;b911
 	jr z,$+37		;b913
-	inc (ix+014h)		;b915
+	inc (ix+014h)		;b915   ; sube la espera del enemigo
 	ld hl,0b926h		;b918
 	call 0408fh		;b91b   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;b91e
-	add a,(ix+003h)		;b91f
-	ld (ix+003h),a		;b922
+	add a,(ix+003h)		;b91f   ; le suma la y del enemigo
+	ld (ix+003h),a		;b922   ; guarda la y del enemigo
 	ret			;b925
 
 ; ----------------------------------------------------------------------
@@ -3696,34 +3696,34 @@ L_B938:
 	jp c,L_BA7F		;b93e
 L_B941:
 	ld (ix+006h),000h		;b941   ; quieto: paso 4, espera 0xB4
-	ld (ix+011h),011h		;b945
-	ld (ix+013h),001h		;b949
-	ld (ix+014h),0b4h		;b94d
-	ld (ix+001h),004h		;b951
+	ld (ix+011h),011h		;b945   ; el dibujo del enemigo (0xFF: no se ve) = 0x11
+	ld (ix+013h),001h		;b949   ; las marcas del enemigo (bit 0 mata, bit 1 se le puede matar) = 0x01
+	ld (ix+014h),0b4h		;b94d   ; la espera del enemigo = 0xB4
+	ld (ix+001h),004h		;b951   ; el paso del enemigo = 0x04
 	ret			;b955
 L_B956:
 	call L_B216		;b956   ; marca en el mapa sus cuatro casillas, guardando lo que habia
-	call L_BA24		;b959   ; HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+	call L_BA24		;b959   ; x / 8: la columna
 	call L_B9C5		;b95c   ; pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
 	ld a,e			;b95f
 	and a			;b960
 	jr z,L_B966		;b961
 	jp pe,L_B969		;b963
 L_B966:
-	ld (ix+018h),e		;b966
+	ld (ix+018h),e		;b966   ; guarda los intentos del enemigo
 L_B969:
 	ld a,d			;b969
 	and a			;b96a
 	jr z,L_B970		;b96b
 	jp pe,L_B973		;b96d
 L_B970:
-	ld (ix+019h),d		;b970
+	ld (ix+019h),d		;b970   ; guarda la direccion guardada del enemigo
 L_B973:
 	call L_B216		;b973   ; DE = el mapa del enemigo
 	ld a,h			;b976
 	add a,008h		;b977
 	ld h,a			;b979
-	call L_BA24		;b97a   ; HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+	call L_BA24		;b97a   ; x / 8: la columna
 	call L_B9C5		;b97d   ; pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
 	ld a,e			;b980
 	and a			;b981
@@ -3746,19 +3746,19 @@ L_B992:
 	ret nz			;b99a
 L_B99B:
 	ld a,(0e243h)		;b99b   ; lee la pantalla de la fase (desde 1)
-	cp (ix+010h)		;b99e
+	cp (ix+010h)		;b99e   ; compara con la pantalla del enemigo
 	ret nz			;b9a1
 L_B9A2:
 	call L_B216		;b9a2   ; DE = el mapa del enemigo
-	call L_BA24		;b9a5   ; HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+	call L_BA24		;b9a5   ; x / 8: la columna
 	call L_B9C5		;b9a8   ; pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
-	ld (ix+018h),e		;b9ab
-	ld (ix+019h),d		;b9ae
+	ld (ix+018h),e		;b9ab   ; guarda los intentos del enemigo
+	ld (ix+019h),d		;b9ae   ; guarda la direccion guardada del enemigo
 	call L_B216		;b9b1   ; DE = el mapa del enemigo
 	ld a,h			;b9b4
 	add a,008h		;b9b5
 	ld h,a			;b9b7
-	call L_BA24		;b9b8   ; HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+	call L_BA24		;b9b8   ; x / 8: la columna
 	call L_B9C5		;b9bb   ; pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
 	ld (ix+01ah),e		;b9be
 	ld (ix+01bh),d		;b9c1
@@ -3767,20 +3767,20 @@ L_B9C5:
 	ld b,c			;b9c5   ; pone su valor en una casilla y la de debajo, y devuelve lo que habia (E, D)
 	ld a,003h		;b9c6
 L_B9C8:
-	rrca			;b9c8
+	rrca			;b9c8   ; corre la mascara a la casilla C
 	rrca			;b9c9
 	djnz L_B9C8		;b9ca
 	ld b,a			;b9cc
-	ld e,(hl)			;b9cd
-	or (hl)			;b9ce
+	ld e,(hl)			;b9cd   ; lo que habia...
+	or (hl)			;b9ce   ; ...y se marca
 	ld (hl),a			;b9cf
-	ld a,e			;b9d0
+	ld a,e			;b9d0   ; E = lo que habia en la casilla
 	and b			;b9d1
 	ld e,a			;b9d2
-	ld a,008h		;b9d3
+	ld a,008h		;b9d3   ; la fila de abajo (8 bytes)
 	call 0408fh		;b9d5   ; suma A a HL (HL = HL + A)
 	ld a,b			;b9d8
-	ld d,(hl)			;b9d9
+	ld d,(hl)			;b9d9   ; D = lo que habia en la de abajo
 	or (hl)			;b9da
 	ld (hl),a			;b9db
 	ld a,d			;b9dc
@@ -3795,66 +3795,66 @@ L_B9E0:
 	ret nz			;b9e8
 L_B9E9:
 	ld a,(0e243h)		;b9e9   ; lee la pantalla de la fase (desde 1)
-	cp (ix+010h)		;b9ec
+	cp (ix+010h)		;b9ec   ; compara con la pantalla del enemigo
 	ret nz			;b9ef
 L_B9F0:
 	call L_B216		;b9f0   ; quita del mapa sus cuatro casillas, devolviendo lo que habia
 	ld a,h			;b9f3
 	add a,008h		;b9f4
 	ld h,a			;b9f6
-	call L_BA24		;b9f7   ; HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+	call L_BA24		;b9f7   ; x / 8: la columna
 	ld e,(ix+01ah)		;b9fa
 	ld d,(ix+01bh)		;b9fd
 	call L_BA0F		;ba00
 	call L_B216		;ba03   ; DE = el mapa del enemigo
-	call L_BA24		;ba06   ; HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
-	ld e,(ix+018h)		;ba09
-	ld d,(ix+019h)		;ba0c
+	call L_BA24		;ba06   ; x / 8: la columna
+	ld e,(ix+018h)		;ba09   ; lee los intentos del enemigo
+	ld d,(ix+019h)		;ba0c   ; lee la direccion guardada del enemigo
 L_BA0F:
 	ld a,0fch		;ba0f
 	ld b,c			;ba11
 L_BA12:
-	rrca			;ba12
+	rrca			;ba12   ; corre la mascara a la casilla C
 	rrca			;ba13
 	djnz L_BA12		;ba14
 	ld b,a			;ba16
-	and (hl)			;ba17
-	or e			;ba18
+	and (hl)			;ba17   ; borra la casilla...
+	or e			;ba18   ; ...y pone lo que habia (E)
 	ld (hl),a			;ba19
-	ld a,008h		;ba1a
+	ld a,008h		;ba1a   ; la fila de abajo
 	call 0408fh		;ba1c   ; suma A a HL (HL = HL + A)
 	ld a,b			;ba1f
 	and (hl)			;ba20
-	or d			;ba21
+	or d			;ba21   ; lo que habia (D)
 	ld (hl),a			;ba22
 	ret			;ba23
 L_BA24:
-	ld a,h			;ba24   ; HL = el byte del mapa de DE en (H, L), C = la casilla dentro del byte (1-4)
+	ld a,h			;ba24   ; x / 8: la columna
 	rra			;ba25
 	rra			;ba26
 	rra			;ba27
 	ld b,a			;ba28
-	and 003h		;ba29
+	and 003h		;ba29   ; la casilla dentro del byte (x / 8 & 3) + 1
 	ld c,a			;ba2b
 	inc c			;ba2c
-	ld a,b			;ba2d
+	ld a,b			;ba2d   ; el byte de la fila: x / 32
 	rra			;ba2e
 	rra			;ba2f
 	and 007h		;ba30
 	ld b,a			;ba32
-	ld a,l			;ba33
+	ld a,l			;ba33   ; la fila: y & 0xF8 (8 bytes por fila)
 	and 0f8h		;ba34
 	or b			;ba36
 	ld l,a			;ba37
 	ld h,000h		;ba38
-	add hl,de			;ba3a
+	add hl,de			;ba3a   ; mas el mapa
 	ret			;ba3b
 L_BA3C:
 	ld ix,0e500h		;ba3c   ; quita del mapa los enemigos de tipo 4
 	ld b,008h		;ba40
 L_BA42:
 	push bc			;ba42
-	ld a,(ix+000h)		;ba43
+	ld a,(ix+000h)		;ba43   ; lee el tipo del enemigo (0: libre)
 	cp 004h		;ba46
 	call z,L_B9E0		;ba48   ; si esta quieto y en esta pantalla, se quita del mapa
 	ld de,00020h		;ba4b
@@ -3867,7 +3867,7 @@ L_BA54:
 	ld b,008h		;ba58
 L_BA5A:
 	push bc			;ba5a
-	ld a,(ix+000h)		;ba5b
+	ld a,(ix+000h)		;ba5b   ; lee el tipo del enemigo (0: libre)
 	cp 004h		;ba5e
 	jr nz,L_BA65		;ba60
 	call L_B992		;ba62   ; si esta quieto y en esta pantalla, se marca en el mapa
@@ -3879,7 +3879,7 @@ L_BA65:
 	ret			;ba6d
 L_BA6E:
 	ld a,(ix+018h)		;ba6e   ; C si al marcarse piso algo que no estaba libre
-	or (ix+019h)		;ba71
+	or (ix+019h)		;ba71   ; OR con la direccion guardada del enemigo
 	or (ix+01ah)		;ba74
 	or (ix+01bh)		;ba77
 	and 0aah		;ba7a
@@ -3895,26 +3895,26 @@ L_BA85:
 	jp z,L_BB0E		;ba8a
 	jp nc,L_BB2B		;ba8d
 	ld a,(0e243h)		;ba90   ; lee la pantalla de la fase (desde 1)
-	cp (ix+004h)		;ba93
+	cp (ix+004h)		;ba93   ; compara con la pantalla de la cosa
 	ret nz			;ba96
 	ld a,(0e280h)		;ba97   ; cerrada: si el personaje la empuja por su lado 10 cuadros seguidos...
 	and a			;ba9a
 	jr nz,L_BAE5		;ba9b
-	ld a,(ix+008h)		;ba9d
+	ld a,(ix+008h)		;ba9d   ; lee el alto de la cosa
 	add a,a			;baa0
 	add a,a			;baa1
 	add a,a			;baa2
 	ld b,a			;baa3
 	ld a,(0e282h)		;baa4   ; lee la y del personaje
 	add a,00fh		;baa7
-	sub (ix+002h)		;baa9
+	sub (ix+002h)		;baa9   ; le resta la y de la cosa
 	sub b			;baac
 	jr nc,L_BAE5		;baad
-	ld a,(ix+007h)		;baaf
+	ld a,(ix+007h)		;baaf   ; lee las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	rra			;bab2
 	rra			;bab3
 	ld a,(0e284h)		;bab4   ; lee la x del personaje
-	ld b,(ix+003h)		;bab7
+	ld b,(ix+003h)		;bab7   ; lee la x de la cosa
 	jr c,L_BAEA		;baba
 	cp b			;babc
 	jr nc,L_BAE5		;babd
@@ -3924,7 +3924,7 @@ L_BA85:
 	ld a,(0e208h)		;bac4   ; ...empujando a la derecha...
 	and 008h		;bac7
 	jr z,L_BAE5		;bac9
-	dec (ix+006h)		;bacb
+	dec (ix+006h)		;bacb   ; baja la cuenta de la cosa
 	ret nz			;bace
 	inc (ix+005h)		;bacf   ; ...gira: el personaje pasa andando (estado 7) con el sonido 0x21
 	ld a,007h		;bad2
@@ -3932,9 +3932,9 @@ L_BA85:
 	call 04280h		;bad7   ; pide el sonido 0x21
 L_BADA:
 	xor a			;bada   ; la puerta en marcha (bit 0 de IX+07) y el paso siguiente
-	ld (0e299h),a		;badb
-	set 0,(ix+007h)		;bade
-	inc (ix+001h)		;bae2
+	ld (0e299h),a		;badb   ; guarda la cuenta de pasos al entrar por una puerta
+	set 0,(ix+007h)		;bade   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+	inc (ix+001h)		;bae2   ; sube el paso de la cosa
 L_BAE5:
 	ld (ix+006h),00ah		;bae5   ; si no, la cuenta vuelve a 10
 	ret			;bae9
@@ -3947,36 +3947,36 @@ L_BAEA:
 	ld a,(0e208h)		;baf2   ; lee el mando: lo pulsado
 	and 004h		;baf5
 	jr z,L_BAE5		;baf7
-	dec (ix+006h)		;baf9
+	dec (ix+006h)		;baf9   ; baja la cuenta de la cosa
 	ret nz			;bafc
-	dec (ix+005h)		;bafd
+	dec (ix+005h)		;bafd   ; baja el giro o paso del dibujo de la cosa
 	ld a,006h		;bb00
 	ld (0e280h),a		;bb02   ; guarda el estado del personaje
 	call L_BADA		;bb05   ; la puerta en marcha (bit 0 de IX+07) y el paso siguiente
-	inc (ix+001h)		;bb08
+	inc (ix+001h)		;bb08   ; sube el paso de la cosa
 	jp 04280h		;bb0b
 L_BB0E:
 	dec (ix+006h)		;bb0e   ; paso 1: cada 10 cuadros un giro, hasta 3: se queda del otro lado
 	ret nz			;bb11
 	call L_BAE5		;bb12   ; si no, la cuenta vuelve a 10
-	set 0,(ix+007h)		;bb15
-	inc (ix+005h)		;bb19
-	ld a,(ix+005h)		;bb1c
+	set 0,(ix+007h)		;bb15   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+	inc (ix+005h)		;bb19   ; sube el giro o paso del dibujo de la cosa
+	ld a,(ix+005h)		;bb1c   ; lee el giro o paso del dibujo de la cosa
 	cp 003h		;bb1f
 	ret nz			;bb21
-	ld (ix+001h),000h		;bb22
-	set 1,(ix+007h)		;bb26
+	ld (ix+001h),000h		;bb22   ; el paso de la cosa = 0x00
+	set 1,(ix+007h)		;bb26   ; pone a uno el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	ret			;bb2a
 L_BB2B:
 	dec (ix+006h)		;bb2b   ; paso 2: gira al reves hasta 0
 	ret nz			;bb2e
 	call L_BAE5		;bb2f   ; si no, la cuenta vuelve a 10
-	set 0,(ix+007h)		;bb32
-	dec (ix+005h)		;bb36
+	set 0,(ix+007h)		;bb32   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+	dec (ix+005h)		;bb36   ; baja el giro o paso del dibujo de la cosa
 	ret nz			;bb39
 	xor a			;bb3a
-	ld (ix+001h),a		;bb3b
-	res 1,(ix+007h)		;bb3e
+	ld (ix+001h),a		;bb3b   ; guarda el paso de la cosa
+	res 1,(ix+007h)		;bb3e   ; pone a cero el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	ret			;bb42
 
 ; ----------------------------------------------------------------------
@@ -3994,11 +3994,11 @@ L_BB63:
 	ld (0efc0h),hl		;bb63   ; pinta la puerta: la parte de arriba (HL), la del medio (DE) repetida y la de abajo (BC)
 	ld (0efc2h),de		;bb66   ; guarda la pantalla que se lee del mapa y el byte siguiente (16 bits)
 	ld (0efc4h),bc		;bb6a
-	ld d,(ix+003h)		;bb6e
-	ld e,(ix+002h)		;bb71
+	ld d,(ix+003h)		;bb6e   ; lee la x de la cosa
+	ld e,(ix+002h)		;bb71   ; lee la y de la cosa
 	ld hl,(0efc0h)		;bb74   ; lee un dato de paso de la rutina en curso y el byte siguiente (16 bits)
 	call L_BB93		;bb77   ; dos caracteres de la parte, segun el giro (IX+05)
-	ld a,(ix+008h)		;bb7a
+	ld a,(ix+008h)		;bb7a   ; lee el alto de la cosa
 	cp 003h		;bb7d
 	jr c,L_BB90		;bb7f
 	ld b,a			;bb81
@@ -4016,7 +4016,7 @@ L_BB90:
 	ld hl,(0efc4h)		;bb90
 L_BB93:
 	push de			;bb93   ; dos caracteres de la parte, segun el giro (IX+05)
-	ld a,(ix+005h)		;bb94
+	ld a,(ix+005h)		;bb94   ; lee el giro o paso del dibujo de la cosa
 	add a,a			;bb97
 	call 0408fh		;bb98   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;bb9b
@@ -4039,26 +4039,26 @@ L_BBB0:
 	and a			;bbb3
 	jr nz,L_BC2F		;bbb4
 	ld a,(0e243h)		;bbb6   ; lee la pantalla de la fase (desde 1)
-	cp (ix+004h)		;bbb9
+	cp (ix+004h)		;bbb9   ; compara con la pantalla de la cosa
 	ret nz			;bbbc
 	ld a,(0e280h)		;bbbd   ; lee el estado del personaje
 	and a			;bbc0
 	jr nz,L_BC10		;bbc1
-	ld a,(ix+008h)		;bbc3
+	ld a,(ix+008h)		;bbc3   ; lee el alto de la cosa
 	add a,a			;bbc6
 	add a,a			;bbc7
 	add a,a			;bbc8
 	ld b,a			;bbc9
 	ld a,(0e282h)		;bbca   ; lee la y del personaje
 	add a,00fh		;bbcd
-	sub (ix+002h)		;bbcf
+	sub (ix+002h)		;bbcf   ; le resta la y de la cosa
 	sub b			;bbd2
 	jr nc,L_BC10		;bbd3
-	ld a,(ix+007h)		;bbd5
+	ld a,(ix+007h)		;bbd5   ; lee las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	rra			;bbd8
 	rra			;bbd9
 	ld a,(0e284h)		;bbda   ; lee la x del personaje
-	ld b,(ix+003h)		;bbdd
+	ld b,(ix+003h)		;bbdd   ; lee la x de la cosa
 	jr c,L_BC15		;bbe0
 	cp b			;bbe2
 	jr nc,L_BC10		;bbe3
@@ -4068,17 +4068,17 @@ L_BBB0:
 	ld a,(0e208h)		;bbea   ; lee el mando: lo pulsado
 	and 008h		;bbed
 	jr z,L_BC10		;bbef
-	dec (ix+006h)		;bbf1
+	dec (ix+006h)		;bbf1   ; baja la cuenta de la cosa
 	ret nz			;bbf4
 	ld a,007h		;bbf5   ; gira: el personaje pasa andando
 	ld (0e280h),a		;bbf7   ; guarda el estado del personaje
 L_BBFA:
 	xor a			;bbfa   ; la puerta en marcha y el sonido 0x22
-	ld (0e299h),a		;bbfb
-	set 0,(ix+007h)		;bbfe
-	inc (ix+005h)		;bc02
-	inc (ix+001h)		;bc05
-	ld (ix+006h),008h		;bc08
+	ld (0e299h),a		;bbfb   ; guarda la cuenta de pasos al entrar por una puerta
+	set 0,(ix+007h)		;bbfe   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+	inc (ix+005h)		;bc02   ; sube el giro o paso del dibujo de la cosa
+	inc (ix+001h)		;bc05   ; sube el paso de la cosa
+	ld (ix+006h),008h		;bc08   ; la cuenta de la cosa = 0x08
 	call 04285h		;bc0c   ; pide el sonido 0x22
 	ret			;bc0f
 L_BC10:
@@ -4093,7 +4093,7 @@ L_BC15:
 	ld a,(0e208h)		;bc1d   ; lee el mando: lo pulsado
 	and 004h		;bc20
 	jr z,L_BC10		;bc22
-	dec (ix+006h)		;bc24
+	dec (ix+006h)		;bc24   ; baja la cuenta de la cosa
 	ret nz			;bc27
 	ld a,006h		;bc28
 	ld (0e280h),a		;bc2a   ; guarda el estado del personaje
@@ -4101,16 +4101,16 @@ L_BC15:
 L_BC2F:
 	dec (ix+006h)		;bc2f   ; gira cada 8 cuadros; a los 4 pasos vuelve a estar cerrada (sonido 0x22)
 	ret nz			;bc32
-	set 0,(ix+007h)		;bc33
-	inc (ix+005h)		;bc37
-	ld a,(ix+005h)		;bc3a
-	ld (ix+006h),008h		;bc3d
+	set 0,(ix+007h)		;bc33   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+	inc (ix+005h)		;bc37   ; sube el giro o paso del dibujo de la cosa
+	ld a,(ix+005h)		;bc3a   ; lee el giro o paso del dibujo de la cosa
+	ld (ix+006h),008h		;bc3d   ; la cuenta de la cosa = 0x08
 	cp 004h		;bc41
 	ret nz			;bc43
 	call 04285h		;bc44   ; pide el sonido 0x22
 	xor a			;bc47
-	ld (ix+005h),a		;bc48
-	ld (ix+001h),a		;bc4b
+	ld (ix+005h),a		;bc48   ; guarda el giro o paso del dibujo de la cosa
+	ld (ix+001h),a		;bc4b   ; guarda el paso de la cosa
 	jr L_BC10		;bc4e
 
 ; ----------------------------------------------------------------------
@@ -4129,7 +4129,7 @@ L_BC74:
 	ld ix,0e600h		;bc74   ; las cosas de tipo 3 de 0xE600: si el personaje pasa por su columna, empiezan a moverse
 	ld b,010h		;bc78
 L_BC7A:
-	ld a,(ix+000h)		;bc7a
+	ld a,(ix+000h)		;bc7a   ; lee el tipo de la cosa (0: libre)
 	cp 003h		;bc7d
 	jr z,L_BC89		;bc7f
 L_BC81:
@@ -4138,30 +4138,30 @@ L_BC81:
 	djnz L_BC7A		;bc86
 	ret			;bc88
 L_BC89:
-	ld a,(ix+001h)		;bc89
+	ld a,(ix+001h)		;bc89   ; lee el paso de la cosa
 	and a			;bc8c
 	jr nz,L_BC81		;bc8d
 	call L_BC9C		;bc8f   ; C si el personaje esta en su pantalla, a menos de 8 pixeles en x y dentro de su alto
 	jr nc,L_BC81		;bc92
-	inc (ix+001h)		;bc94
-	ld (ix+006h),01eh		;bc97
+	inc (ix+001h)		;bc94   ; sube el paso de la cosa
+	ld (ix+006h),01eh		;bc97   ; la cuenta de la cosa = 0x1E
 	ret			;bc9b
 L_BC9C:
 	ld a,(0e243h)		;bc9c   ; C si el personaje esta en su pantalla, a menos de 8 pixeles en x y dentro de su alto
-	cp (ix+004h)		;bc9f
+	cp (ix+004h)		;bc9f   ; compara con la pantalla de la cosa
 	jr nz,L_BCBE		;bca2
 	ld a,(0e284h)		;bca4   ; lee la x del personaje
 	add a,008h		;bca7
-	sub (ix+003h)		;bca9
+	sub (ix+003h)		;bca9   ; le resta la x de la cosa
 	cp 008h		;bcac
 	ret nc			;bcae
-	ld a,(ix+008h)		;bcaf
+	ld a,(ix+008h)		;bcaf   ; lee el alto de la cosa
 	add a,a			;bcb2
 	add a,a			;bcb3
 	add a,a			;bcb4
 	ld c,a			;bcb5
 	ld a,(0e282h)		;bcb6   ; lee la y del personaje
-	sub (ix+002h)		;bcb9
+	sub (ix+002h)		;bcb9   ; le resta la y de la cosa
 	cp c			;bcbc
 	ret			;bcbd
 L_BCBE:
@@ -4171,17 +4171,17 @@ L_BCC0:
 	ld a,(ix+001h)		;bcc0   ; la cosa de tipo 3 en marcha: cada 0x1E cuadros un paso, hasta su alto (IX+08); luego se quita
 	and a			;bcc3
 	ret z			;bcc4
-	dec (ix+006h)		;bcc5
+	dec (ix+006h)		;bcc5   ; baja la cuenta de la cosa
 	ret nz			;bcc8
-	set 0,(ix+007h)		;bcc9
-	ld (ix+006h),01eh		;bccd
-	ld a,(ix+005h)		;bcd1
-	cp (ix+008h)		;bcd4
+	set 0,(ix+007h)		;bcc9   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+	ld (ix+006h),01eh		;bccd   ; la cuenta de la cosa = 0x1E
+	ld a,(ix+005h)		;bcd1   ; lee el giro o paso del dibujo de la cosa
+	cp (ix+008h)		;bcd4   ; compara con el alto de la cosa
 	jr nc,L_BCDD		;bcd7
-	inc (ix+005h)		;bcd9
+	inc (ix+005h)		;bcd9   ; sube el giro o paso del dibujo de la cosa
 	ret			;bcdc
 L_BCDD:
-	ld (ix+000h),000h		;bcdd
+	ld (ix+000h),000h		;bcdd   ; el tipo de la cosa (0: libre) = 0x00
 	ret			;bce1
 
 ; ----------------------------------------------------------------------
@@ -4199,18 +4199,18 @@ DATA_BCE2:
 
 L_BD21:
 	ld a,(0e243h)		;bd21   ; una cosa de tipo 4 (suelo que se rompe): mira si el personaje esta encima
-	cp (ix+004h)		;bd24
+	cp (ix+004h)		;bd24   ; compara con la pantalla de la cosa
 	ret nz			;bd27
-	ld a,(ix+00ah)		;bd28
+	ld a,(ix+00ah)		;bd28   ; lee la marca de personaje encima
 	ld (ix+00bh),a		;bd2b
 	ld a,(0e282h)		;bd2e   ; lee la y del personaje
 	add a,014h		;bd31
-	sub (ix+002h)		;bd33
+	sub (ix+002h)		;bd33   ; le resta la y de la cosa
 	cp 008h		;bd36
 	jr nc,L_BD46		;bd38
 	ld a,(0e284h)		;bd3a   ; lee la x del personaje
 	add a,008h		;bd3d
-	sub (ix+003h)		;bd3f
+	sub (ix+003h)		;bd3f   ; le resta la x de la cosa
 	cp 020h		;bd42
 	jr c,L_BD75		;bd44
 L_BD46:
@@ -4221,17 +4221,17 @@ L_BD46:
 	ld a,(0e280h)		;bd4f   ; lee el estado del personaje
 	and a			;bd52
 	ret nz			;bd53
-	inc (ix+006h)		;bd54
-	ld a,(ix+006h)		;bd57
+	inc (ix+006h)		;bd54   ; sube la cuenta de la cosa
+	ld a,(ix+006h)		;bd57   ; lee la cuenta de la cosa
 	cp 002h		;bd5a
 	ret c			;bd5c
 	ld (ix+000h),000h		;bd5d   ; se quita: su dibujo y sus 4 casillas del mapa a 0
 	call L_BD7A		;bd61   ; el sonido 0x27 y se repinta el fondo (MSX1 de la ficha, MSX2 de la pagina 1)
 	xor a			;bd64
 	ld bc,00104h		;bd65
-	ld h,(ix+003h)		;bd68
-	ld l,(ix+002h)		;bd6b
-	ld d,(ix+004h)		;bd6e
+	ld h,(ix+003h)		;bd68   ; lee la x de la cosa
+	ld l,(ix+002h)		;bd6b   ; lee la y de la cosa
+	ld d,(ix+004h)		;bd6e   ; lee la pantalla de la cosa
 	call 063edh		;bd71   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 	ret			;bd74
 L_BD75:
@@ -4239,8 +4239,8 @@ L_BD75:
 	ret			;bd79
 L_BD7A:
 	call 0429eh		;bd7a   ; el sonido 0x27 y se repinta el fondo (MSX1 de la ficha, MSX2 de la pagina 1)
-	ld d,(ix+003h)		;bd7d
-	ld e,(ix+002h)		;bd80
+	ld d,(ix+003h)		;bd7d   ; lee la x de la cosa
+	ld e,(ix+002h)		;bd80   ; lee la y de la cosa
 	push ix		;bd83
 	pop hl			;bd85
 	ld a,(0f0f4h)		;bd86   ; lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
@@ -4252,7 +4252,7 @@ L_BD7A:
 	call 0573bh		;bd94   ; un rectangulo de caracteres de HL: B filas de C, sin pintar el color 0
 	ret			;bd97
 L_BD98:
-	ld a,l			;bd98
+	ld a,l			;bd98   ; en MSX2: el fondo guardado en la pagina 1 (x = 2 x el numero de la ficha, y 0x40 o 0x50)
 	add a,a			;bd99
 	ld h,a			;bd9a
 	ld l,040h		;bd9b
@@ -4277,7 +4277,7 @@ DATA_BDAA:
 
 L_BDC0:
 	ld d,(ix+003h)		;bdc0   ; pinta una fila de 4 caracteres (0xAD en MSX2, 0x61 en MSX1)
-	ld e,(ix+002h)		;bdc3
+	ld e,(ix+002h)		;bdc3   ; lee la y de la cosa
 	ld b,004h		;bdc6
 L_BDC8:
 	push de			;bdc8
@@ -4351,7 +4351,7 @@ L_BE2D:
 	and a			;be4f
 	jr z,L_BE6D		;be50
 	xor a			;be52
-	ld (0e2a7h),a		;be53
+	ld (0e2a7h),a		;be53   ; guarda la marca de acabar de caer
 	ld a,(hl)			;be56
 	and 020h		;be57
 	ret z			;be59

@@ -441,45 +441,99 @@ C 0x6101 mas el margen del plano (0x20, 0x18)
 C 0x6107 lo mismo con la posicion de caracter en DE
 C 0x613A la palabra de la fase
 C 0x6146 HL = la palabra A de la tabla de HL
+C 0x6157 guarda el tipo de la cosa (0: libre)
+C 0x615D guarda la pantalla de la cosa
+C 0x6160 guarda la pantalla de la cosa al empezar
+C 0x6165 guarda la y de la cosa
+C 0x616A guarda la x de la cosa
+C 0x6174 guarda el alto de la cosa
+C 0x617C pone a uno el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+C 0x6182 pone a cero el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+C 0x618A lee el tipo de la cosa (0: libre)
+C 0x6193 guarda el giro o paso del dibujo de la cosa
+C 0x6196 la cuenta de la cosa = 0x00
 C 0x61AA apunta a las cosas de la fase (16 x 16 bytes)
+C 0x61AF lee el tipo de la cosa (0: libre)
 C 0x61B3 el tipo 3 no se marca; el 5, segun su estado
+C 0x61CB lee el paso de la cosa
+C 0x61D3 lee la y de la cosa
+C 0x61DA mira el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 C 0x61EA suma A a DE (DE = DE + A)
+C 0x61F0 lee el alto de la cosa
+C 0x61F4 lee la pantalla de la cosa
 C 0x621B HL = 0xE900 + HL x 0xC0: el mapa de la pantalla HL (0-5)
 C 0x621E suma A a HL (HL = HL + A)
 C 0x6224 corre A a la casilla C & 3 del byte
 C 0x6229 lee un dato de paso de la rutina en curso
 C 0x623D suma A a HL (HL = HL + A)
+C 0x625B lee el tipo de la cosa (0: libre)
 C 0x625F pinta la cosa, si es de esta pantalla
+C 0x6272 lee el tipo de la cosa (0: libre)
 C 0x6279 lee la pantalla de la fase (desde 1)
+C 0x627C compara con la pantalla de la cosa
 C 0x6281 guarda el fondo del bloque y lo pinta
 C 0x6297 con el bit 0 de IX+07, se repinta (tabla 0x64CF)
+C 0x62A5 lee el tipo de la cosa (0: libre)
 C 0x62AB el despachador de Konami: la tabla va detras del call
+C 0x62BD pone a cero el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 C 0x62C9 lee la pantalla de la fase (desde 1)
+C 0x62CC compara con la pantalla de la cosa
 C 0x62F7 pone el banco 13 en 0xA000
 C 0x62FA la palabra de la fase
 C 0x6306 HL = la palabra A de la tabla de HL
 C 0x6309 apunta a la tabla de colores al cargar graficos; en la partida, las cosas de 2 x 2 de la fase (16 x 8 bytes)
 C 0x632A apunta a la tabla de colores al cargar graficos; en la partida, las cosas de 2 x 2 de la fase (16 x 8 bytes)
 C 0x6333 si es de esta pantalla...
+C 0x635D lee el tipo del enemigo (0: libre)
 C 0x636A el movimiento fuera de la vista: en x (IX+0B 2 o 3) o en y (0 o 1)
+C 0x6380 lee la x del enemigo
+C 0x6383 lee la velocidad en x del enemigo (fina)
+C 0x6386 lee la velocidad en x del enemigo
+C 0x6391 guarda la x del enemigo (fina)
+C 0x6394 guarda la x del enemigo
+C 0x63A2 lee la y del enemigo
+C 0x63A5 lee la velocidad en y del enemigo (fina)
+C 0x63A8 lee la velocidad en y del enemigo
+C 0x63BA guarda la y del enemigo (fina)
+C 0x63BD guarda la y del enemigo
 C 0x63C3 el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
 C 0x63CD el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
 C 0x63D7 el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
 C 0x63E1 el enemigo pasa a la pantalla de al lado (la misma busqueda que el personaje, p00:5C2F)
+C 0x63F2 guarda la pantalla del enemigo
 C 0x63F6 DE = el mapa de la pantalla A
+C 0x63F9 guarda el mapa de la pantalla del enemigo (bajo)
+C 0x63FC guarda el mapa de la pantalla del enemigo (alto)
 C 0x6405 el despachador de Konami: la tabla va detras del call
+C 0x6415 compara con la pantalla del enemigo
 C 0x6418 pide el sonido 0x2D
+C 0x641B el tipo del enemigo (0: libre) = 0x05
+C 0x6420 guarda las marcas del enemigo (bit 0 mata, bit 1 se le puede matar)
+C 0x6423 guarda la espera del enemigo
+C 0x6426 guarda la marca de enemigo en movimiento
+C 0x642E el color del primer sprite del enemigo = 0x0A
+C 0x6432 el color del segundo sprite del enemigo = 0x4B
 C 0x643D el dibujo de salida: cada 8 cuadros el siguiente de la tabla (0xFF acaba)
+C 0x6443 guarda el dibujo del enemigo (0xFF: no se ve)
 C 0x6452 lee la marca de MSX2 (1 en el cartucho de MSX2, 0 en el de MSX1)
+C 0x647E lee el tipo del enemigo (0: libre)
 C 0x6484 lee la pantalla de la fase (desde 1)
+C 0x6487 compara con la pantalla del enemigo
 C 0x6496 pone el banco 13 en 0xA000
+C 0x649D lee el color del primer sprite del enemigo
 C 0x64A0 un atributo: [y - 1][x][dibujo][color]
+C 0x64A3 lee el color del segundo sprite del enemigo
 C 0x64A6 un atributo: [y - 1][x][dibujo][color]
 C 0x64A9 pone los bancos 1-2-3 (el juego)
+C 0x64C4 lee el tipo del enemigo (0: libre)
 C 0x64CA lee la pantalla de la fase (desde 1)
+C 0x64CD compara con la pantalla del enemigo
+C 0x64D2 lee el dibujo del enemigo (0xFF: no se ve)
 C 0x64DB pone el banco 13 en 0xA000
+C 0x64E2 lee el color del primer sprite del enemigo
 C 0x64E5 un atributo: [y - 1][x][dibujo][color]
 C 0x64E8 pone los bancos 1-2-3 (el juego)
+C 0x6503 lee la x del enemigo
 C 0x651E apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
 C 0x6521 suma A a HL (HL = HL + A)
 C 0x652D apunta a los sitios de los que salen los enemigos (8 x 5 bytes)
@@ -790,7 +844,7 @@ C 0x76A4 llena BC bytes de la VRAM con A (BIGFIL)
 C 0x76B9 suma A a HL (HL = HL + A)
 C 0x76C2 suma A a HL (HL = HL + A)
 C 0x76E4 suma A a HL (HL = HL + A)
-C 0x76EE guarda hacia donde mira el personaje
+C 0x76EE guarda el dibujo del personaje (direccion y paso)
 C 0x76F1 guarda la marca de personaje muerto
 C 0x76F4 guarda la postura del personaje
 C 0x76F7 los dibujos del personaje (bancos 14-15)
@@ -939,11 +993,15 @@ C 0x7DB9 Z si ya hay una cosa en el cursor
 C 0x7DC8 suma A a HL (HL = HL + A)
 C 0x7DF4 A = la pantalla que se edita (de la casilla 0xE262)
 C 0x7E04 apunta a las cosas de la fase (16 x 16 bytes)
+C 0x7E0B lee la pantalla de la cosa
+C 0x7E11 lee el tipo de la cosa (0: libre)
 C 0x7E15 cada tipo, su dibujo (tabla detras)
 C 0x7E22 el despachador de Konami: la tabla va detras del call
+C 0x7E35 lee el tipo de la cosa (0: libre)
 C 0x7E3B Z si la cosa de IX esta en el cursor
 C 0x7E88 escribe el caracter A en la posicion D, E de la tabla de nombres
 C 0x7E9D apunta a las cosas de la fase (16 x 16 bytes)
+C 0x7EA3 lee el tipo de la cosa (0: libre)
 C 0x7EAA Z si la cosa de IX esta en el cursor
 C 0x7EAD se borra: su tamano de la tabla 0x82F3 y el fondo de 0x86C5
 C 0x7EC4 suma A a HL (HL = HL + A)

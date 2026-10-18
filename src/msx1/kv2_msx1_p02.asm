@@ -1701,7 +1701,7 @@ L_8B16:
 	ld (hl),a			;8b20
 	ldir		;8b21
 	ld hl,0e280h		;8b23   ; apunta a el estado del personaje
-	ld de,0e281h		;8b26
+	ld de,0e281h		;8b26   ; apunta a la y del personaje (16 bits: 0xE281 la parte fina)
 	ld bc,00d7fh		;8b29
 	ld (hl),a			;8b2c
 	ldir		;8b2d
@@ -1729,7 +1729,7 @@ L_8B47:
 	ld a,(0e282h)		;8b65   ; sin y del personaje, 0xE294 = 0
 	or a			;8b68
 	ret nz			;8b69
-	ld (0e294h),a		;8b6a
+	ld (0e294h),a		;8b6a   ; guarda hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	ret			;8b6d
 L_8B6E:
 	ld a,(0e207h)		;8b6e   ; tras el error, una tecla vuelve
@@ -2224,15 +2224,15 @@ L_8E93:
 	ret nz			;8e9a
 	call L_8EB7		;8e9b
 	ld hl,09041h		;8e9e
-	ld a,(ix+000h)		;8ea1
+	ld a,(ix+000h)		;8ea1   ; lee el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	dec a			;8ea4
 	add a,a			;8ea5
 	add a,a			;8ea6
 	ld e,a			;8ea7
 	ld d,000h		;8ea8
 	add hl,de			;8eaa
-	ld e,(ix+001h)		;8eab
-	ld d,(ix+002h)		;8eae
+	ld e,(ix+001h)		;8eab   ; lee la y de la cosa
+	ld d,(ix+002h)		;8eae   ; lee la x de la cosa
 	ld bc,00202h		;8eb1
 	jp 053d6h		;8eb4
 L_8EB7:
@@ -2322,7 +2322,7 @@ L_8F34:
 	ld bc,04001h		;8f3b
 	ld de,00008h		;8f3e
 L_8F41:
-	ld a,(ix+000h)		;8f41
+	ld a,(ix+000h)		;8f41   ; lee el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	or a			;8f44
 	jr z,L_8F49		;8f45
 	ld (hl),c			;8f47
@@ -2442,13 +2442,13 @@ L_8FB6:
 	call 04192h		;8fe0   ; pone los bancos 1-2-3 (el juego)
 L_8FE3:
 	ld hl,09010h		;8fe3   ; el personaje a punto: 8 bytes de 0x92F7 a 0xE28A, mirando a la derecha
-	ld de,0e28ah		;8fe6
+	ld de,0e28ah		;8fe6   ; apunta a la velocidad al subir la escalera (16 bits)
 	ld bc,00008h		;8fe9
 	ldir		;8fec
 	ld a,004h		;8fee
-	ld (0e296h),a		;8ff0
+	ld (0e296h),a		;8ff0   ; guarda la cuenta de cuadros del paso de la animacion
 	ld a,001h		;8ff3
-	ld (0e285h),a		;8ff5   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;8ff5   ; guarda el dibujo del personaje (direccion y paso)
 	ld a,(0e202h)		;8ff8   ; si no se pueden sumar puntos (bit 6 de 0xE202), estado 0x0E; si no, 0
 	and 040h		;8ffb
 	ld a,00eh		;8ffd
@@ -2457,9 +2457,9 @@ L_8FE3:
 L_9002:
 	ld (0e280h),a		;9002   ; guarda el estado del personaje
 	ld a,020h		;9005   ; 0xE2A8 = 0x20, 0xE2A4 = 6
-	ld (0e2a8h),a		;9007
+	ld (0e2a8h),a		;9007   ; guarda la cuenta del parpadeo al aparecer
 	ld a,006h		;900a
-	ld (0e2a4h),a		;900c
+	ld (0e2a4h),a		;900c   ; guarda los cuadros desde que aparece (los 6 primeros sin teclas)
 	ret			;900f
 
 ; ----------------------------------------------------------------------
@@ -2477,20 +2477,20 @@ DATA_resto_9010:
 
 L_9018:
 	xor a			;9018   ; el personaje muere (0xE298 = 1)
-	ld (0e295h),a		;9019
-	ld (0e285h),a		;901c   ; guarda hacia donde mira el personaje
+	ld (0e295h),a		;9019   ; guarda el paso de la animacion del personaje
+	ld (0e285h),a		;901c   ; guarda el dibujo del personaje (direccion y paso)
 	ld a,(0e280h)		;901f   ; con el estado 4, mira hacia 4
 	cp 004h		;9022
 	jr nz,L_902B		;9024
 	ld a,004h		;9026
-	ld (0e285h),a		;9028   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;9028   ; guarda el dibujo del personaje (direccion y paso)
 L_902B:
 	ld a,001h		;902b
 	ld (0e298h),a		;902d   ; guarda la marca de personaje muerto
 	ld hl,0e215h		;9030   ; sin cuenta de la musica
 	ld (hl),000h		;9033
 	ld a,003h		;9035   ; 0xE296 = 3 y los dibujos de muerto
-	ld (0e296h),a		;9037
+	ld (0e296h),a		;9037   ; guarda la cuenta de cuadros del paso de la animacion
 	jp L_9D06		;903a
 
 ; ----------------------------------------------------------------------
@@ -2525,7 +2525,7 @@ L_90D7:
 	ld b,010h		;90e1
 L_90E3:
 	push bc			;90e3
-	ld a,(ix+000h)		;90e4
+	ld a,(ix+000h)		;90e4   ; lee el tipo de la cosa (0: libre)
 	cp 005h		;90e7
 	call z,L_90F5		;90e9   ; un bloque pegado al borde se corre a 0x10 o a 0xE0
 	ld bc,00010h		;90ec
@@ -2537,12 +2537,12 @@ L_90F5:
 	ld a,(ix+003h)		;90f5   ; un bloque pegado al borde se corre a 0x10 o a 0xE0
 	cp 010h		;90f8
 	jr nc,L_9102		;90fa
-	ld (ix+003h),010h		;90fc
+	ld (ix+003h),010h		;90fc   ; la x de la cosa = 0x10
 	jr L_9109		;9100
 L_9102:
 	cp 0e8h		;9102
 	ret c			;9104
-	ld (ix+003h),0e0h		;9105
+	ld (ix+003h),0e0h		;9105   ; la x de la cosa = 0xE0
 L_9109:
 	jp L_92BA		;9109
 L_910C:
@@ -2565,26 +2565,26 @@ L_9118:
 	call L_9262		;9118   ; paso 0: si no tiene suelo, cae (paso 2)
 	jr nc,L_9127		;911b
 	ld a,002h		;911d
-	ld (ix+001h),a		;911f
+	ld (ix+001h),a		;911f   ; guarda el paso de la cosa
 	dec a			;9122
-	ld (ix+006h),a		;9123
+	ld (ix+006h),a		;9123   ; guarda la cuenta de la cosa
 	ret			;9126
 L_9127:
 	ld a,(0e243h)		;9127   ; si el personaje esta a su altura y pegado...
-	cp (ix+004h)		;912a
+	cp (ix+004h)		;912a   ; compara con la pantalla de la cosa
 	ret nz			;912d
 	ld a,(0e280h)		;912e   ; lee el estado del personaje
 	and a			;9131
 	ret nz			;9132
 	ld a,(0e282h)		;9133   ; lee la y del personaje
 	add a,00fh		;9136
-	sub (ix+002h)		;9138
+	sub (ix+002h)		;9138   ; le resta la y de la cosa
 	cp 010h		;913b
 	jr nc,L_917D		;913d
-	ld a,(0e294h)		;913f
+	ld a,(0e294h)		;913f   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	and a			;9142
 	ld a,(0e284h)		;9143   ; ...por la izquierda empujando a la derecha...
-	ld b,(ix+003h)		;9146
+	ld b,(ix+003h)		;9146   ; lee la x de la cosa
 	jr z,L_9165		;9149
 	add a,014h		;914b
 	sub b			;914d
@@ -2593,11 +2593,11 @@ L_9127:
 	ld a,(0e208h)		;9152   ; lee el mando: lo pulsado
 	and 008h		;9155
 	jr z,L_917D		;9157
-	dec (ix+006h)		;9159
+	dec (ix+006h)		;9159   ; baja la cuenta de la cosa
 	ret nz			;915c
-	res 1,(ix+007h)		;915d
+	res 1,(ix+007h)		;915d   ; pone a cero el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 L_9161:
-	inc (ix+001h)		;9161
+	inc (ix+001h)		;9161   ; sube el paso de la cosa
 	ret			;9164
 L_9165:
 	sub 00ch		;9165   ; ...o por la derecha empujando a la izquierda
@@ -2607,9 +2607,9 @@ L_9165:
 	ld a,(0e208h)		;916c   ; lee el mando: lo pulsado
 	and 004h		;916f
 	jr z,L_917D		;9171
-	dec (ix+006h)		;9173
+	dec (ix+006h)		;9173   ; baja la cuenta de la cosa
 	ret nz			;9176
-	set 1,(ix+007h)		;9177
+	set 1,(ix+007h)		;9177   ; pone a uno el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	jr L_9161		;917b
 L_917D:
 	ld (ix+006h),00ah		;917d   ; si no, la cuenta vuelve a 10
@@ -2620,13 +2620,13 @@ L_9182:
 	jr nz,L_918E		;9189
 	ld bc,0f003h		;918b
 L_918E:
-	ld a,(ix+003h)		;918e
+	ld a,(ix+003h)		;918e   ; lee la x de la cosa
 	cp b			;9191
 	jr z,L_91CC		;9192
 	call L_925C		;9194   ; NC si la casilla de al lado del bloque esta libre
 	jr nc,L_91C6		;9197
-	bit 1,(ix+007h)		;9199
-	ld a,(ix+003h)		;919d
+	bit 1,(ix+007h)		;9199   ; mira el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+	ld a,(ix+003h)		;919d   ; lee la x de la cosa
 	ld (ix+00bh),a		;91a0
 	jr nz,L_91A9		;91a3
 	add a,008h		;91a5
@@ -2634,30 +2634,30 @@ L_918E:
 L_91A9:
 	sub 008h		;91a9
 L_91AB:
-	ld (ix+003h),a		;91ab
-	set 0,(ix+007h)		;91ae
+	ld (ix+003h),a		;91ab   ; guarda la x de la cosa
+	set 0,(ix+007h)		;91ae   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	call 04297h		;91b2   ; pide el sonido 0x24
-	ld l,(ix+002h)		;91b5
-	ld (ix+00ah),l		;91b8
+	ld l,(ix+002h)		;91b5   ; lee la y de la cosa
+	ld (ix+00ah),l		;91b8   ; guarda la marca de personaje encima
 	call L_9262		;91bb   ; sin suelo debajo: cae
 	jr nc,L_91C6		;91be
-	ld (ix+006h),001h		;91c0
+	ld (ix+006h),001h		;91c0   ; la cuenta de la cosa = 0x01
 	jr L_9161		;91c4
 L_91C6:
 	xor a			;91c6
-	ld (ix+001h),a		;91c7
+	ld (ix+001h),a		;91c7   ; guarda el paso de la cosa
 	jr L_917D		;91ca
 L_91CC:
 	set 0,(ix+007h)		;91cc   ; en el borde: pasa a la pantalla de al lado
-	bit 1,(ix+007h)		;91d0
+	bit 1,(ix+007h)		;91d0   ; mira el bit 1 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
 	ld bc,01004h		;91d4
 	jr z,L_91DC		;91d7
 	ld bc,0e003h		;91d9
 L_91DC:
 	push bc			;91dc
-	ld h,(ix+003h)		;91dd
-	ld l,(ix+002h)		;91e0
-	ld (ix+003h),b		;91e3
+	ld h,(ix+003h)		;91dd   ; lee la x de la cosa
+	ld l,(ix+002h)		;91e0   ; lee la y de la cosa
+	ld (ix+003h),b		;91e3   ; guarda la x de la cosa
 	call L_92F3		;91e6   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 	call L_931A		;91e9
 	pop bc			;91ec
@@ -2671,7 +2671,7 @@ L_91F3:
 	ld b,a			;91fb
 	ld a,c			;91fc
 	call 05c2fh		;91fd
-	ld (ix+004h),l		;9200
+	ld (ix+004h),l		;9200   ; guarda la pantalla de la cosa
 	ret			;9203
 L_9204:
 	ld a,(ix+004h)		;9204   ; C = la casilla de la rejilla de la pantalla del bloque
@@ -2690,14 +2690,14 @@ L_9216:
 L_9218:
 	dec (ix+006h)		;9218   ; paso 2: cae 8 pixeles cada dos cuadros
 	ret nz			;921b
-	ld (ix+006h),002h		;921c
-	set 0,(ix+007h)		;9220
-	ld a,(ix+002h)		;9224
-	ld (ix+00ah),a		;9227
+	ld (ix+006h),002h		;921c   ; la cuenta de la cosa = 0x02
+	set 0,(ix+007h)		;9220   ; pone a uno el bit 0 de las marcas de la cosa (bit 0 repintar, bit 1 su lado)
+	ld a,(ix+002h)		;9224   ; lee la y de la cosa
+	ld (ix+00ah),a		;9227   ; guarda la marca de personaje encima
 	add a,008h		;922a
-	ld (ix+002h),a		;922c
+	ld (ix+002h),a		;922c   ; guarda la y de la cosa
 	ld e,a			;922f
-	ld h,(ix+003h)		;9230
+	ld h,(ix+003h)		;9230   ; lee la x de la cosa
 	ld (ix+00bh),h		;9233
 	cp 0b8h		;9236
 	jr nc,L_9247		;9238
@@ -2709,8 +2709,8 @@ L_9218:
 	jp L_91C6		;9244
 L_9247:
 	ld h,(ix+00bh)		;9247   ; se sale por abajo: a la pantalla de abajo
-	ld l,(ix+00ah)		;924a
-	ld (ix+002h),000h		;924d
+	ld l,(ix+00ah)		;924a   ; lee la marca de personaje encima
+	ld (ix+002h),000h		;924d   ; la y de la cosa = 0x00
 	call L_92F3		;9251   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 	call L_931A		;9254
 	ld c,002h		;9257
@@ -2738,8 +2738,8 @@ L_9262:
 L_927D:
 	ld a,(ix+004h)		;927d   ; DE = el mapa de la pantalla del bloque, H, L = su sitio
 	call L_928A		;9280   ; DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
-	ld h,(ix+003h)		;9283
-	ld l,(ix+002h)		;9286
+	ld h,(ix+003h)		;9283   ; lee la x de la cosa
+	ld l,(ix+002h)		;9286   ; lee la y de la cosa
 	ret			;9289
 L_928A:
 	ld l,a			;928a   ; DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
@@ -2773,10 +2773,10 @@ DATA_929E:
 
 L_92BA:
 	ld h,(ix+003h)		;92ba   ; guarda las casillas que tapa el bloque (en 0xEF40)
-	ld l,(ix+002h)		;92bd
+	ld l,(ix+002h)		;92bd   ; lee la y de la cosa
 	call L_92F3		;92c0   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
-	ld a,(ix+004h)		;92c3
-	ld (ix+009h),a		;92c6
+	ld a,(ix+004h)		;92c3   ; lee la pantalla de la cosa
+	ld (ix+009h),a		;92c6   ; guarda la pantalla de la cosa al empezar
 	ld bc,(0e2feh)		;92c9
 	ld de,(0e2fch)		;92cd
 	push hl			;92d1
@@ -2808,7 +2808,7 @@ L_92DA:
 	ret			;92f2
 L_92F3:
 	exx			;92f3   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
-	ld a,(ix+004h)		;92f4
+	ld a,(ix+004h)		;92f4   ; lee la pantalla de la cosa
 	call L_928A		;92f7   ; DE = 0xE900 + (A - 1) x 0xC0: el mapa de la pantalla A
 	ld (0e2fch),de		;92fa
 	push ix		;92fe
@@ -2824,11 +2824,11 @@ L_92F3:
 	ret			;9310
 L_9311:
 	ld h,(ix+003h)		;9311   ; devuelve al mapa las casillas que tapaba el bloque
-	ld l,(ix+002h)		;9314
+	ld l,(ix+002h)		;9314   ; lee la y de la cosa
 	call L_92F3		;9317   ; 0xE2FC = el mapa de la pantalla del bloque, 0xE2FE = donde guardar sus casillas
 L_931A:
-	ld a,(ix+004h)		;931a
-	cp (ix+009h)		;931d
+	ld a,(ix+004h)		;931a   ; lee la pantalla de la cosa
+	cp (ix+009h)		;931d   ; compara con la pantalla de la cosa al empezar
 	ret nz			;9320
 	ld de,(0e2feh)		;9321
 	push hl			;9325
@@ -2841,7 +2841,7 @@ L_932E:
 	push hl			;932e   ; dos casillas
 	push de			;932f
 	ld a,(de)			;9330
-	ld d,(ix+004h)		;9331
+	ld d,(ix+004h)		;9331   ; lee la pantalla de la cosa
 	ld bc,00101h		;9334
 	call 061f7h		;9337   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 	pop de			;933a
@@ -2852,7 +2852,7 @@ L_932E:
 	ld h,a			;9340
 	ld a,(de)			;9341
 	push de			;9342
-	ld d,(ix+004h)		;9343
+	ld d,(ix+004h)		;9343   ; lee la pantalla de la cosa
 	ld bc,00101h		;9346
 	call 061f7h		;9349   ; marca un rectangulo del mapa de la pantalla D: B filas de C casillas con el valor A
 	pop de			;934c
@@ -2940,7 +2940,7 @@ L_93E8:
 	ld b,010h		;93ec
 L_93EE:
 	push bc			;93ee
-	ld a,(ix+000h)		;93ef
+	ld a,(ix+000h)		;93ef   ; lee el tipo de la cosa (0: libre)
 	cp 005h		;93f2
 	call z,L_9400		;93f4
 	ld bc,00010h		;93f7
@@ -2964,7 +2964,7 @@ L_9418:
 	ld b,010h		;941c
 L_941E:
 	push bc			;941e
-	ld a,(ix+000h)		;941f
+	ld a,(ix+000h)		;941f   ; lee el tipo de la cosa (0: libre)
 	cp 005h		;9422
 	call z,L_9430		;9424
 	ld bc,00010h		;9427
@@ -3020,7 +3020,7 @@ L_9483:
 	ld a,(0e280h)		;948e   ; lee el estado del personaje
 	or a			;9491
 	ret nz			;9492
-	ld a,(0e288h)		;9493
+	ld a,(0e288h)		;9493   ; lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	and 00ch		;9496
 	jr z,L_94C0		;9498
 L_949A:
@@ -3033,8 +3033,8 @@ L_94A1:
 	inc a			;94a4
 	and 003h		;94a5
 	ld b,a			;94a7
-	ld (0e295h),a		;94a8
-	ld a,(0e294h)		;94ab
+	ld (0e295h),a		;94a8   ; guarda el paso de la animacion del personaje
+	ld a,(0e294h)		;94ab   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;94ae
 	ld hl,094c6h		;94af
 	jr z,L_94B7		;94b2
@@ -3043,11 +3043,11 @@ L_94B7:
 	ld a,b			;94b7
 	call 04094h		;94b8   ; suma A a HL (HL = HL + A)
 	ld a,(hl)			;94bb
-	ld (0e285h),a		;94bc   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;94bc   ; guarda el dibujo del personaje (direccion y paso)
 	ret			;94bf
 L_94C0:
 	ld a,001h		;94c0
-	ld (0e296h),a		;94c2
+	ld (0e296h),a		;94c2   ; guarda la cuenta de cuadros del paso de la animacion
 	ret			;94c5
 
 ; ----------------------------------------------------------------------
@@ -3070,7 +3070,7 @@ L_94CE:
 	ld a,(0e282h)		;94d3   ; lee la y del personaje
 	add a,010h		;94d6
 	ld l,a			;94d8
-	ld a,(0e294h)		;94d9
+	ld a,(0e294h)		;94d9   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;94dc
 	ld a,(0e284h)		;94dd   ; lee la x del personaje
 	jr z,L_94E4		;94e0
@@ -3084,7 +3084,7 @@ L_94E4:
 	and 0f8h		;94ee
 	ld (0e282h),a		;94f0   ; guarda la y del personaje
 	xor a			;94f3
-	ld (0e2a6h),a		;94f4
+	ld (0e2a6h),a		;94f4   ; guarda la marca de en el aire
 	ret			;94f7
 L_94F8:
 	call L_99D3		;94f8   ; las teclas: el disparo (0xA008), arriba (0xA5A2) y abajo (0xA591)
@@ -3107,17 +3107,17 @@ L_9516:
 	ret nz			;951a
 L_951B:
 	ld a,(0e288h)		;951b   ; izquierda o derecha: un paso si no hay pared
-	ld de,(0e28eh)		;951e
+	ld de,(0e28eh)		;951e   ; lee la velocidad al andar a la izquierda (16 bits)
 	ld c,002h		;9522
 	bit 2,a		;9524
 	jr nz,L_9531		;9526
-	ld de,(0e290h)		;9528
+	ld de,(0e290h)		;9528   ; lee la velocidad al andar a la derecha (16 bits)
 	ld c,003h		;952c
 	bit 3,a		;952e
 	ret z			;9530
 L_9531:
 	push bc			;9531
-	ld hl,(0e283h)		;9532
+	ld hl,(0e283h)		;9532   ; lee la x del personaje (16 bits: 0xE283 la parte fina)
 	add hl,de			;9535
 	push hl			;9536
 	ld a,(0e282h)		;9537   ; lee la y del personaje
@@ -3138,32 +3138,32 @@ L_954B:
 	and 0f8h		;954e
 	ld h,a			;9550
 L_9551:
-	ld (0e283h),hl		;9551
+	ld (0e283h),hl		;9551   ; guarda la x del personaje (16 bits: 0xE283 la parte fina)
 	ret			;9554
 L_9555:
 	ld a,001h		;9555   ; 0xE2A7 = 1 (o 0 si anda en el suelo) y el paso vuelve al principio
-	ld (0e2a7h),a		;9557
+	ld (0e2a7h),a		;9557   ; guarda la marca de acabar de caer
 	ld a,(0e280h)		;955a   ; lee el estado del personaje
 	or a			;955d
 	jr nz,L_956A		;955e
-	ld a,(0e2a6h)		;9560
+	ld a,(0e2a6h)		;9560   ; lee la marca de en el aire
 	or a			;9563
 	jr nz,L_956A		;9564
 	xor a			;9566
-	ld (0e2a7h),a		;9567
+	ld (0e2a7h),a		;9567   ; guarda la marca de acabar de caer
 L_956A:
 	xor a			;956a
-	ld (0e295h),a		;956b
+	ld (0e295h),a		;956b   ; guarda el paso de la animacion del personaje
 	ld a,007h		;956e
-	ld (0e296h),a		;9570
+	ld (0e296h),a		;9570   ; guarda la cuenta de cuadros del paso de la animacion
 	ld b,001h		;9573
-	ld a,(0e294h)		;9575
+	ld a,(0e294h)		;9575   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;9578
 	jr z,L_957D		;9579
 	ld b,004h		;957b
 L_957D:
 	ld a,b			;957d
-	ld (0e285h),a		;957e   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;957e   ; guarda el dibujo del personaje (direccion y paso)
 	ld a,003h		;9581   ; estado 3 y el sonido 0x3C
 	ld (0e280h),a		;9583   ; guarda el estado del personaje
 	jp 042fbh		;9586
@@ -3184,16 +3184,16 @@ L_9589:
 	call L_9D89		;95a0   ; NC si hay pared en la direccion C (tres puntos de la orilla, en el mapa de la pantalla)
 	ret nc			;95a3
 	ld a,(0e288h)		;95a4   ; la direccion del salto: la que llevaba
-	ld (0e289h),a		;95a7
-	ld a,(0e294h)		;95aa
+	ld (0e289h),a		;95a7   ; guarda la direccion del salto
+	ld a,(0e294h)		;95aa   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	ld b,a			;95ad
 	ld a,008h		;95ae
 	add a,b			;95b0   ; mira hacia 8 + su lado
-	ld (0e285h),a		;95b1   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;95b1   ; guarda el dibujo del personaje (direccion y paso)
 	xor a			;95b4
-	ld (0e2a5h),a		;95b5
+	ld (0e2a5h),a		;95b5   ; guarda la cuenta de la caida del salto
 	ld hl,0fc00h		;95b8   ; 0xE292: la velocidad en y (16 bits, -4)
-	ld (0e292h),hl		;95bb
+	ld (0e292h),hl		;95bb   ; guarda la velocidad en y del salto o la caida (16 bits)
 	call 04242h		;95be   ; pide el sonido 0x13
 	ld hl,0e280h		;95c1   ; apunta a el estado del personaje
 	inc (hl)			;95c4
@@ -3248,15 +3248,15 @@ L_9602:
 	cp 006h		;9606
 	ret nc			;9608
 	inc (hl)			;9609
-	ld a,(0e294h)		;960a
+	ld a,(0e294h)		;960a   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;960d
 	ld a,00ah		;960e
 	jr z,L_9614		;9610
 	ld a,00ch		;9612
 L_9614:
-	ld (0e285h),a		;9614   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;9614   ; guarda el dibujo del personaje (direccion y paso)
 	ld a,008h		;9617
-	ld (0e286h),a		;9619
+	ld (0e286h),a		;9619   ; guarda la cuenta de la animacion de usar lo que lleva
 L_961C:
 	ld a,(0e287h)		;961c   ; el estado del personaje: 7 + el tipo (la animacion de usarla)
 	and 00fh		;961f
@@ -3297,14 +3297,14 @@ L_9633:
 	ret nz			;965c
 	exx			;965d
 	ld a,c			;965e
-	ld (0e285h),a		;965f   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;965f   ; guarda el dibujo del personaje (direccion y paso)
 	exx			;9662
 	ld hl,(0e2a0h)		;9663   ; la cosa pasa a usarse (cifra alta + 1)
 	ld a,010h		;9666
 	add a,(hl)			;9668
 	ld (hl),a			;9669
 	ld a,020h		;966a
-	ld (0e286h),a		;966c
+	ld (0e286h),a		;966c   ; guarda la cuenta de la animacion de usar lo que lleva
 	jr L_961C		;966f
 L_9671:
 	ld a,(0e294h)		;9671   ; tipos 5 y 6: cavar hacia el lado, si las dos casillas de al lado son de ladrillo
@@ -3325,7 +3325,7 @@ L_967F:
 	ld a,(0e282h)		;9689   ; lee la y del personaje
 	and 0f8h		;968c
 	ld l,a			;968e
-	ld (0e2a2h),hl		;968f
+	ld (0e2a2h),hl		;968f   ; guarda donde se cava (y, x) y el byte siguiente (16 bits)
 	call L_9D55		;9692   ; A = la casilla del mapa de la pantalla en (H, L), sin tocar HL
 	cp 002h		;9695
 	ret nz			;9697
@@ -3337,14 +3337,14 @@ L_967F:
 	ret nz			;96a1
 	exx			;96a2
 	ld a,c			;96a3
-	ld (0e285h),a		;96a4   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;96a4   ; guarda el dibujo del personaje (direccion y paso)
 	exx			;96a7
-	ld hl,(0e2a0h)		;96a8
+	ld hl,(0e2a0h)		;96a8   ; lee la cosa de 0xE300 que se esta usando (16 bits)
 	ld a,010h		;96ab
 	add a,(hl)			;96ad
 	ld (hl),a			;96ae
 	ld a,020h		;96af
-	ld (0e286h),a		;96b1
+	ld (0e286h),a		;96b1   ; guarda la cuenta de la animacion de usar lo que lleva
 	jp L_961C		;96b4
 L_96B7:
 	ld de,0fec0h		;96b7   ; en el aire, el paso hacia el lado del salto (0xFEC0 o 0x0140)
@@ -3364,7 +3364,7 @@ L_96CC:
 	jp nc,L_9551		;96d3
 	push bc			;96d6
 	push hl			;96d7
-	ld a,(0e2a5h)		;96d8
+	ld a,(0e2a5h)		;96d8   ; lee la cuenta de la caida del salto
 	or a			;96db
 	ld a,(0e282h)		;96dc   ; lee la y del personaje
 	jr z,L_96E3		;96df
@@ -3399,9 +3399,9 @@ L_96FA:
 	ret			;9710
 L_9711:
 	xor a			;9711   ; estado 1: el salto
-	ld (0e2a5h),a		;9712
+	ld (0e2a5h),a		;9712   ; guarda la cuenta de la caida del salto
 	call L_9742		;9715   ; la caida: la velocidad sube 0x80 por cuadro hasta 4
-	ld a,(0e289h)		;9718
+	ld a,(0e289h)		;9718   ; lee la direccion del salto
 	and 00ch		;971b
 	call nz,L_96B7		;971d   ; en el aire, el paso hacia el lado del salto (0xFEC0 o 0x0140)
 	call L_9AB6		;9720   ; mira si toca suelo
@@ -3411,11 +3411,11 @@ L_9711:
 	call L_99C7		;9728   ; en el suelo: estado 0, el paso y el sonido 0x38
 	xor a			;972b
 	ld (0e280h),a		;972c   ; guarda el estado del personaje
-	ld (0e2a6h),a		;972f
-	ld (0e2a5h),a		;9732
-	ld (0e295h),a		;9735
+	ld (0e2a6h),a		;972f   ; guarda la marca de en el aire
+	ld (0e2a5h),a		;9732   ; guarda la cuenta de la caida del salto
+	ld (0e295h),a		;9735   ; guarda el paso de la animacion del personaje
 	inc a			;9738
-	ld (0e296h),a		;9739
+	ld (0e296h),a		;9739   ; guarda la cuenta de cuadros del paso de la animacion
 	call L_94A1		;973c   ; el dibujo del paso (tablas 0x9F45 y 0x9F49 segun hacia donde mira)
 	jp 042ebh		;973f
 L_9742:
@@ -3425,15 +3425,15 @@ L_9742:
 	jr z,L_9762		;9748
 	ld de,00080h		;974a
 	add hl,de			;974d
-	ld (0e292h),hl		;974e
+	ld (0e292h),hl		;974e   ; guarda la velocidad en y del salto o la caida (16 bits)
 	ex de,hl			;9751
 L_9752:
 	ld hl,(0e281h)		;9752   ; la y + la velocidad
 	add hl,de			;9755
-	ld (0e281h),hl		;9756
+	ld (0e281h),hl		;9756   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	call L_9767		;9759   ; C si tiene techo o suelo (dos puntos de cada lado)
 	ret c			;975c
-	ld hl,0e2a5h		;975d
+	ld hl,0e2a5h		;975d   ; apunta a la cuenta de la caida del salto
 	inc (hl)			;9760
 	ret			;9761
 L_9762:
@@ -3521,10 +3521,10 @@ L_97DF:
 	ld h,a			;97e1
 	xor a			;97e2
 	ld (0e280h),a		;97e3   ; guarda el estado del personaje
-	ld (0e2a4h),a		;97e6
-	ld (0e2a6h),a		;97e9
+	ld (0e2a4h),a		;97e6   ; guarda los cuadros desde que aparece (los 6 primeros sin teclas)
+	ld (0e2a6h),a		;97e9   ; guarda la marca de en el aire
 	ld l,a			;97ec
-	ld (0e281h),hl		;97ed
+	ld (0e281h),hl		;97ed   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	ret			;97f0
 L_97F1:
 	ld a,(0e282h)		;97f1   ; sin escalera ni suelo: cae
@@ -3540,9 +3540,9 @@ L_97F1:
 	jr nc,L_97DF		;9803
 	xor a			;9805
 	ld (0e280h),a		;9806   ; guarda el estado del personaje
-	ld (0e2a4h),a		;9809
+	ld (0e2a4h),a		;9809   ; guarda los cuadros desde que aparece (los 6 primeros sin teclas)
 	inc a			;980c
-	ld (0e2a6h),a		;980d
+	ld (0e2a6h),a		;980d   ; guarda la marca de en el aire
 	ret			;9810
 L_9811:
 	call L_9A10		;9811   ; subir o bajar por la escalera
@@ -3554,32 +3554,32 @@ L_9811:
 	cp 002h		;9820
 	ret nz			;9822
 	call L_983C		;9823   ; un paso en la escalera (0xE28A o 0xE28C segun la direccion)
-	ld a,(0e288h)		;9826
+	ld a,(0e288h)		;9826   ; lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	and 003h		;9829
 	ret z			;982b
 	ld hl,0e296h		;982c   ; cada 4 cuadros el paso (xor 1)
 	dec (hl)			;982f
 	ret nz			;9830
 	ld (hl),004h		;9831
-	ld a,(0e285h)		;9833   ; lee hacia donde mira el personaje
+	ld a,(0e285h)		;9833   ; lee el dibujo del personaje (direccion y paso)
 	xor 001h		;9836
-	ld (0e285h),a		;9838   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;9838   ; guarda el dibujo del personaje (direccion y paso)
 	ret			;983b
 L_983C:
 	ld de,(0e28ah)		;983c   ; un paso en la escalera (0xE28A o 0xE28C segun la direccion)
 	ld c,000h		;9840
-	ld a,(0e288h)		;9842
+	ld a,(0e288h)		;9842   ; lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	rra			;9845
 	jr c,L_9857		;9846
-	ld de,(0e28ch)		;9848
+	ld de,(0e28ch)		;9848   ; lee la velocidad al bajar la escalera (16 bits)
 	ld c,001h		;984c
 	rra			;984e
 	jr c,L_9857		;984f
-	ld hl,0e296h		;9851
+	ld hl,0e296h		;9851   ; apunta a la cuenta de cuadros del paso de la animacion
 	ld (hl),001h		;9854
 	ret			;9856
 L_9857:
-	ld hl,(0e281h)		;9857
+	ld hl,(0e281h)		;9857   ; lee la y del personaje (16 bits: 0xE281 la parte fina)
 	add hl,de			;985a
 	ld a,h			;985b
 	cp 0e8h		;985c
@@ -3594,7 +3594,7 @@ L_9857:
 	pop bc			;986b
 	ret nc			;986c
 L_986D:
-	ld (0e281h),hl		;986d
+	ld (0e281h),hl		;986d   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	ret			;9870
 L_9871:
 	ld a,(0e284h)		;9871   ; estado 3: cae 4 pixeles por cuadro hasta el suelo, con el sonido 0x38
@@ -3610,9 +3610,9 @@ L_9871:
 	call L_99C7		;9885   ; la y a la fila de 8, sin la parte fina
 	xor a			;9888
 	ld (0e280h),a		;9889   ; guarda el estado del personaje
-	ld (0e2a6h),a		;988c
+	ld (0e2a6h),a		;988c   ; guarda la marca de en el aire
 	inc a			;988f
-	ld (0e296h),a		;9890
+	ld (0e296h),a		;9890   ; guarda la cuenta de cuadros del paso de la animacion
 	jp 042ebh		;9893
 L_9896:
 	ld de,00a06h		;9896   ; estado 4 (rendirse): da vueltas hasta 10 pasos
@@ -3622,28 +3622,28 @@ L_989D:
 	ld de,00504h		;989d   ; estado 5 (muerto por un enemigo): 5 pasos
 	ld c,000h		;98a0
 L_98A2:
-	ld hl,0e296h		;98a2
+	ld hl,0e296h		;98a2   ; apunta a la cuenta de cuadros del paso de la animacion
 	dec (hl)			;98a5
 	ret nz			;98a6
-	ld a,(0e295h)		;98a7
+	ld a,(0e295h)		;98a7   ; lee el paso de la animacion del personaje
 	cp d			;98aa
 	jr z,L_98CC		;98ab
 	ld (hl),003h		;98ad
-	ld hl,0e285h		;98af   ; apunta a hacia donde mira el personaje
+	ld hl,0e285h		;98af   ; apunta a el dibujo del personaje (direccion y paso)
 	inc (hl)			;98b2
 	ld a,(hl)			;98b3
 	cp e			;98b4
 	ret nz			;98b5
-	ld a,(0e295h)		;98b6
+	ld a,(0e295h)		;98b6   ; lee el paso de la animacion del personaje
 	inc a			;98b9
-	ld (0e295h),a		;98ba
+	ld (0e295h),a		;98ba   ; guarda el paso de la animacion del personaje
 	cp d			;98bd
 	jr z,L_98C2		;98be
 	ld (hl),c			;98c0
 	ret			;98c1
 L_98C2:
 	ld (hl),006h		;98c2   ; al acabar, el sonido 0x29 y una espera de 0x28
-	ld hl,0e296h		;98c4
+	ld hl,0e296h		;98c4   ; apunta a la cuenta de cuadros del paso de la animacion
 	ld (hl),028h		;98c7
 	jp 042afh		;98c9
 L_98CC:
@@ -3657,7 +3657,7 @@ L_98D1:
 	sub 012h		;98d6
 	jr z,L_98E9		;98d8
 	xor a			;98da
-	ld (0e283h),a		;98db
+	ld (0e283h),a		;98db   ; guarda la x del personaje (16 bits: 0xE283 la parte fina)
 	ld a,(0e284h)		;98de   ; lee la x del personaje
 	dec a			;98e1
 	dec a			;98e2
@@ -3673,7 +3673,7 @@ L_98ED:
 	sub 012h		;98f2
 	jr z,L_98E9		;98f4
 	xor a			;98f6
-	ld (0e283h),a		;98f7
+	ld (0e283h),a		;98f7   ; guarda la x del personaje (16 bits: 0xE283 la parte fina)
 	ld a,(0e284h)		;98fa   ; lee la x del personaje
 	inc a			;98fd
 	inc a			;98fe
@@ -3686,20 +3686,20 @@ L_9905:
 	ld a,(hl)			;990b
 	cp 004h		;990c
 	ret nz			;990e
-	ld hl,0e285h		;990f   ; apunta a hacia donde mira el personaje
+	ld hl,0e285h		;990f   ; apunta a el dibujo del personaje (direccion y paso)
 	inc (hl)			;9912
 	ret			;9913
 L_9914:
 	xor a			;9914   ; al acabar, la cosa sale volando desde la mano
 	ld (0e287h),a		;9915   ; guarda la postura del personaje
 	ld (0e280h),a		;9918   ; guarda el estado del personaje
-	ld a,(0e294h)		;991b
+	ld a,(0e294h)		;991b   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;991e
 	ld a,003h		;991f
 	jr nz,L_9924		;9921
 	xor a			;9923
 L_9924:
-	ld (0e285h),a		;9924   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;9924   ; guarda el dibujo del personaje (direccion y paso)
 	ld hl,0e2a0h		;9927   ; la cosa: en vuelo (cifra alta + 1), su y...
 	ld a,(hl)			;992a
 	inc l			;992b
@@ -3717,7 +3717,7 @@ L_9924:
 	ld a,(0e284h)		;993b   ; ...y su x, 16 pixeles mas alla si no hay pared
 	ld h,a			;993e
 	ld b,000h		;993f
-	ld a,(0e294h)		;9941
+	ld a,(0e294h)		;9941   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;9944
 	ld c,003h		;9945
 	jr z,L_994F		;9947
@@ -3738,7 +3738,7 @@ L_995E:
 	pop hl			;995e
 	inc l			;995f
 	ld c,004h		;9960
-	ld a,(0e294h)		;9962
+	ld a,(0e294h)		;9962   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;9965
 	ld a,(0e284h)		;9966   ; lee la x del personaje
 	jr nz,L_9970		;9969
@@ -3769,17 +3769,17 @@ L_9986:
 	call z,0424ch		;998b   ; pide el sonido 0x15
 	jr L_99AC		;998e
 L_9990:
-	ld a,(0e286h)		;9990
+	ld a,(0e286h)		;9990   ; lee la cuenta de la animacion de usar lo que lleva
 	and 003h		;9993
 	call z,04256h		;9995   ; pide el sonido 0x17
 	jr L_99AC		;9998
 L_999A:
-	ld a,(0e286h)		;999a
+	ld a,(0e286h)		;999a   ; lee la cuenta de la animacion de usar lo que lleva
 	and 003h		;999d
 	call z,0425bh		;999f   ; pide el sonido 0x18
 	jr L_99AC		;99a2
 L_99A4:
-	ld a,(0e286h)		;99a4
+	ld a,(0e286h)		;99a4   ; lee la cuenta de la animacion de usar lo que lleva
 	and 003h		;99a7
 	call z,04251h		;99a9   ; pide el sonido 0x16
 L_99AC:
@@ -3789,9 +3789,9 @@ L_99AC:
 	rra			;99b1
 	rra			;99b2
 	ret c			;99b3
-	ld a,(0e285h)		;99b4   ; lee hacia donde mira el personaje
+	ld a,(0e285h)		;99b4   ; lee el dibujo del personaje (direccion y paso)
 	xor 001h		;99b7
-	ld (0e285h),a		;99b9   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;99b9   ; guarda el dibujo del personaje (direccion y paso)
 	ret			;99bc
 L_99BD:
 	ld hl,0e2a8h		;99bd   ; estado 14: al empezar, parpadea 0xE2A8 cuadros
@@ -3805,14 +3805,14 @@ L_99C7:
 	and 0f8h		;99ca
 	ld h,a			;99cc
 	ld l,000h		;99cd
-	ld (0e281h),hl		;99cf
+	ld (0e281h),hl		;99cf   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	ret			;99d2
 L_99D3:
 	ld a,(0e2a4h)		;99d3   ; C mientras 0xE2A4 < 6 (los primeros cuadros, sin teclas)
 	cp 006h		;99d6
 	ret nc			;99d8
 	inc a			;99d9
-	ld (0e2a4h),a		;99da
+	ld (0e2a4h),a		;99da   ; guarda los cuadros desde que aparece (los 6 primeros sin teclas)
 	scf			;99dd
 	ret			;99de
 L_99DF:
@@ -3851,7 +3851,7 @@ L_9A10:
 	ld a,(0e282h)		;9a14   ; lee la y del personaje
 	add a,012h		;9a17
 	ld l,a			;9a19
-	ld a,(0e288h)		;9a1a
+	ld a,(0e288h)		;9a1a   ; lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	rra			;9a1d
 	jr c,L_9A51		;9a1e
 	rra			;9a20
@@ -3875,12 +3875,12 @@ L_9A39:
 	ld h,a			;9a3b
 	xor a			;9a3c
 	ld l,a			;9a3d
-	ld (0e281h),hl		;9a3e
+	ld (0e281h),hl		;9a3e   ; guarda la y del personaje (16 bits: 0xE281 la parte fina)
 	ld (0e280h),a		;9a41   ; guarda el estado del personaje
-	ld (0e2a6h),a		;9a44
+	ld (0e2a6h),a		;9a44   ; guarda la marca de en el aire
 	inc a			;9a47
-	ld (0e2a7h),a		;9a48
-	ld (0e296h),a		;9a4b
+	ld (0e2a7h),a		;9a48   ; guarda la marca de acabar de caer
+	ld (0e296h),a		;9a4b   ; guarda la cuenta de cuadros del paso de la animacion
 	jp L_949A		;9a4e
 L_9A51:
 	ld a,(0e282h)		;9a51   ; lee la y del personaje
@@ -3904,7 +3904,7 @@ L_9A51:
 	jr L_9A39		;9a6e
 L_9A70:
 	ld b,000h		;9a70   ; hacia donde mira (0xE294) segun izquierda y derecha
-	ld a,(0e288h)		;9a72
+	ld a,(0e288h)		;9a72   ; lee las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	rra			;9a75
 	rra			;9a76
 	and 003h		;9a77
@@ -3916,15 +3916,15 @@ L_9A70:
 	ret nc			;9a7f
 L_9A80:
 	ld a,b			;9a80
-	ld a,(0e294h)		;9a81
+	ld a,(0e294h)		;9a81   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	cp b			;9a84
 	ld a,b			;9a85
-	ld (0e294h),a		;9a86
+	ld (0e294h),a		;9a86   ; guarda hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	ret z			;9a89
 	xor a			;9a8a
-	ld (0e295h),a		;9a8b
+	ld (0e295h),a		;9a8b   ; guarda el paso de la animacion del personaje
 	inc a			;9a8e
-	ld (0e296h),a		;9a8f
+	ld (0e296h),a		;9a8f   ; guarda la cuenta de cuadros del paso de la animacion
 	ret			;9a92
 L_9A93:
 	ld a,(0e282h)		;9a93   ; Z si debajo de los pies no hay nada (tres puntos)
@@ -4055,16 +4055,16 @@ L_9B4D:
 	call L_9B84		;9b5f   ; C si la escalera se corta
 	pop hl			;9b62
 	ret c			;9b63
-	ld (0e283h),hl		;9b64
+	ld (0e283h),hl		;9b64   ; guarda la x del personaje (16 bits: 0xE283 la parte fina)
 	xor a			;9b67
-	ld (0e295h),a		;9b68
-	ld (0e2a4h),a		;9b6b
+	ld (0e295h),a		;9b68   ; guarda el paso de la animacion del personaje
+	ld (0e2a4h),a		;9b6b   ; guarda los cuadros desde que aparece (los 6 primeros sin teclas)
 	inc a			;9b6e
-	ld (0e296h),a		;9b6f
+	ld (0e296h),a		;9b6f   ; guarda la cuenta de cuadros del paso de la animacion
 	inc a			;9b72
 	ld (0e280h),a		;9b73   ; guarda el estado del personaje
 	ld a,006h		;9b76
-	ld (0e285h),a		;9b78   ; guarda hacia donde mira el personaje
+	ld (0e285h),a		;9b78   ; guarda el dibujo del personaje (direccion y paso)
 	ret			;9b7b
 L_9B7C:
 	ld a,(0e282h)		;9b7c   ; lee la y del personaje
@@ -4122,7 +4122,7 @@ L_9BA5:
 	ld c,008h		;9bcd
 L_9BCF:
 	ld a,c			;9bcf
-	ld (0e288h),a		;9bd0
+	ld (0e288h),a		;9bd0   ; guarda las direcciones pulsadas (1 arriba, 2 abajo, 4 izquierda, 8 derecha: la ultima de cada pareja)
 	ret			;9bd3
 L_9BD4:
 	ld a,(0e208h)		;9bd4   ; 0xE288 = izquierda (1) o derecha (2), el ultimo pulsado
@@ -4156,7 +4156,7 @@ L_9BFD:
 	sub 008h		;9c06
 	cp 0aeh		;9c08
 	jr nc,L_9C35		;9c0a
-	ld a,(0e294h)		;9c0c
+	ld a,(0e294h)		;9c0c   ; lee hacia que lado mira el personaje (0 izquierda, 1 derecha)
 	or a			;9c0f
 	ld a,(0e284h)		;9c10   ; lee la x del personaje
 	jr z,L_9C1E		;9c13
@@ -4270,7 +4270,7 @@ L_9CA3:
 	ld a,(0e280h)		;9ca3   ; los sprites del personaje; en el estado 0x0E, uno de cada dos cuadros no se ve (parpadea)
 	cp 00eh		;9ca6
 	jr nz,L_9CBE		;9ca8
-	ld a,(0e2a8h)		;9caa
+	ld a,(0e2a8h)		;9caa   ; lee la cuenta del parpadeo al aparecer
 	rra			;9cad
 	jr c,L_9CBE		;9cae
 	ld hl,0e800h		;9cb0   ; apunta a los atributos de los sprites (y, x, dibujo, color); al cargar graficos, su bufer
@@ -4549,26 +4549,26 @@ L_9E38:
 	cp 0ffh		;9e39
 	ret z			;9e3b
 	and 00fh		;9e3c
-	ld (ix+000h),a		;9e3e
+	ld (ix+000h),a		;9e3e   ; guarda el estado (cifra alta) y el tipo (cifra baja) de la cosa
 	ld a,(hl)			;9e41
 	rra			;9e42
 	rra			;9e43
 	rra			;9e44
 	rra			;9e45
 	and 00fh		;9e46
-	ld (ix+003h),a		;9e48
+	ld (ix+003h),a		;9e48   ; guarda la pantalla de la cosa
 	inc hl			;9e4b
 	ld a,(hl)			;9e4c
-	ld (ix+001h),a		;9e4d
+	ld (ix+001h),a		;9e4d   ; guarda la y de la cosa
 	inc hl			;9e50
 	ld a,(hl)			;9e51
-	ld (ix+002h),a		;9e52
+	ld (ix+002h),a		;9e52   ; guarda la x de la cosa
 	inc hl			;9e55
 	xor a			;9e56
-	ld (ix+004h),a		;9e57
-	ld (ix+005h),a		;9e5a
-	ld (ix+006h),a		;9e5d
-	ld (ix+007h),a		;9e60
+	ld (ix+004h),a		;9e57   ; guarda el dibujo de la cosa en vuelo
+	ld (ix+005h),a		;9e5a   ; guarda el paso de la velocidad de la cosa
+	ld (ix+006h),a		;9e5d   ; guarda la cuenta de la cosa
+	ld (ix+007h),a		;9e60   ; guarda el lado de la cosa
 	inc a			;9e63
 	ret			;9e64
 
