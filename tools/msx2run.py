@@ -197,6 +197,54 @@ class V9938:
                 px[x, y] = self.rgb(self.punto(x, base + y))
         return im
 
+    def sprites(self, im):
+        """Los 32 sprites del modo 2 encima de im, como los pinta el chip: la tabla de
+        atributos de R5/R11 (y = 216 acaba), la de colores 0x200 por debajo (un
+        color por linea; el bit 6, CC, suma su color al del sprite de encima y el
+        bit 7, EC, lo corre 32 puntos a la izquierda), los dibujos de R6, 16 x 16 con
+        el bit 1 de R1 y ampliados al doble con el bit 0."""
+        px = im.load()
+        attr = ((self.r[11] & 3) << 15) | ((self.r[5] & 0xFC) << 7)
+        cols = attr - 0x200
+        pat = (self.r[6] & 0x3F) << 11
+        grande = 16 if self.r[1] & 2 else 8
+        amp = 2 if self.r[1] & 1 else 1
+        lista = []
+        for n in range(32):
+            y = self.vram[attr + 4 * n]
+            if y == 216:
+                break
+            lista.append(n)
+        visto = {}
+        for n in lista:
+            y, x, d = self.vram[attr + 4 * n:attr + 4 * n + 3]
+            if grande == 16:
+                d &= 0xFC
+            y = (y + 1) & 0xFF
+            for fila in range(grande):
+                c = self.vram[cols + 16 * n + fila]
+                color, cc = c & 15, c & 0x40
+                dx = x - 32 if c & 0x80 else x
+                for col in range(grande):
+                    b = self.vram[pat + 8 * d + (col // 8) * 16 + fila]
+                    if not (b >> (7 - col % 8)) & 1:
+                        continue
+                    for ay in range(amp):
+                        for ax in range(amp):
+                            xx, yy = dx + col * amp + ax, (y + fila * amp + ay) & 0xFF
+                            if not (0 <= xx < 256 and yy < im.height):
+                                continue
+                            k = (xx, yy)
+                            if cc:
+                                if k in visto:
+                                    visto[k] |= color
+                            elif k not in visto:
+                                visto[k] = color
+        for (xx, yy), c in visto.items():
+            if c:
+                px[xx, yy] = self.rgb(c)
+        return im
+
 
 class MaquinaMsx(Maquina):
     def __init__(self, msx2):
@@ -249,6 +297,19 @@ class Msx(Z80):
         self.mem[d] = v
 
     # --------------------------------------------------------------- BIOS
+    def pon_registro(self, n, x):
+        """Un registro del VDP y su copia en la RAM de la BIOS (RG0SAV-RG7SAV en
+        0xF3DF, RG8SAV-RG23SAV en 0xFFE7): el juego lee esas copias para cambiar un
+        bit (p00:4EBE apaga la pantalla con la de R#1)."""
+        if self.msx2:
+            self.vdp.registro(n, x)
+        else:
+            self.vdp.regs[n & 7] = x
+        if n < 8:
+            self.mem[0xF3DF + n] = x
+        elif n < 24:
+            self.mem[0xFFE7 + n - 8] = x
+
     def _vram16(self, a):
         return a & (0xFFFF if self.msx2 else 0x3FFF)
 
@@ -258,10 +319,7 @@ class Msx(Z80):
         de = (self.d << 8) | self.e
         bc = (self.b << 8) | self.c
         if pc == 0x0047:                                  # WRTVDP
-            if self.msx2:
-                v.registro(self.c & 0x3F, self.b)
-            else:
-                v.regs[self.c & 7] = self.b
+            self.pon_registro(self.c & 0x3F, self.b)
         elif pc in (0x0171, 0x0053):                      # NSTWRT / SETWRT
             v.dir = self._vram16(hl)
         elif pc in (0x0174, 0x004A):                      # NRDVRM / RDVRM
@@ -281,7 +339,7 @@ class Msx(Z80):
             if self.msx2 and self.a == 5:
                 for r, x in ((0, 0x06), (1, 0x60), (2, 0x1F), (5, 0xEF), (6, 0x0F),
                              (8, 0x08), (9, 0x00), (11, 0x00)):
-                    v.registro(r, x)
+                    self.pon_registro(r, x)
         elif pc == 0x0138:                                # RSLREG
             self.a = 0
         elif pc == 0x0141:                                # SNSMAT: nada pulsado

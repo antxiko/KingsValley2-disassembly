@@ -567,6 +567,19 @@ class Z80:
                     break
             self.f &= ~(FN | FH | FPV)
             return
+        if op in (0xB1, 0xB9, 0xA1, 0xA9):               # cpir/cpdr/cpi/cpd
+            paso = 1 if op in (0xB1, 0xA1) else -1
+            repite = op in (0xB1, 0xB9)
+            while True:
+                igual = self.a == self._leer(self.hl)
+                self.hl = (self.hl + paso) & 0xFFFF
+                self.bc = (self.bc - 1) & 0xFFFF
+                if not repite or igual or self.bc == 0:
+                    break
+            r = (self.a - self._leer((self.hl - paso) & 0xFFFF)) & 0xFF
+            self.f = ((self.f & FC) | FN | (FZ if r == 0 else 0) | (r & FS)
+                      | (FPV if self.bc else 0))
+            return
         if op in (0x42, 0x52, 0x62, 0x72):               # sbc hl,rr
             otro = {0x42: self.bc, 0x52: self.de,
                     0x62: self.hl, 0x72: self.sp}[op]
@@ -605,6 +618,18 @@ class Z80:
             a = self.a
             self.a = 0
             self._resta(a)
+            return
+        if op in (0x6F, 0x67):                           # rld / rrd
+            hl = self._get_hl()
+            m = self._leer(hl)
+            if op == 0x6F:
+                self._escribir(hl, ((m << 4) | (self.a & 0x0F)) & 0xFF)
+                self.a = (self.a & 0xF0) | (m >> 4)
+            else:
+                self._escribir(hl, ((self.a << 4) | (m >> 4)) & 0xFF)
+                self.a = (self.a & 0xF0) | (m & 0x0F)
+            self._sz(self.a)
+            self.f = (self.f & ~(FPV | FH | FN)) | (FPV if bin(self.a).count("1") % 2 == 0 else 0)
             return
         if op in (0x46, 0x56, 0x5E, 0x4D, 0x45):         # im n / reti / retn
             if op in (0x4D, 0x45):

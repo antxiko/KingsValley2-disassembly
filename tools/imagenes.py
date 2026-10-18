@@ -111,10 +111,51 @@ def mapas(salida, fases=range(1, 61)):
                 piramide(salida, v, k)
 
 
+def cuadro(m, alto=212):
+    """Lo que se ve en este cuadro, con los sprites."""
+    if m.msx2:
+        im = m.vdp.pagina(0, alto)
+        return m.vdp.sprites(im)
+    import vdp
+    return vdp.pinta_vdp(bytes(m.vdp.vram), bytes(m.vdp.regs), 1)
+
+
+def demos(salida, cada=3, por_version=6):
+    """Las demostraciones (estado 2): el juego solo, con el mando grabado de la
+    tabla de su piramide (p12:BA66). La interrupcion (0x402E) se llama una vez
+    por cuadro, como en el MSX; entre una y otra van la presentacion y el titulo."""
+    for v in ("msx2", "msx1"):
+        m = maquina(v)
+        hechas, cuadros, k = 0, [], None
+        for _ in range(60 * 60 * 12):
+            m.llama(0x402E)
+            if m.mem[0xE200] == 2:
+                if k is None:
+                    k = 0
+                    cuadros = []
+                    n = 0
+                n += 1
+                if n == 60:                  # ya con su fase puesta (p12:BA11)
+                    k = m.mem[0xE242]
+                if n % cada == 0:
+                    cuadros.append(cuadro(m))
+            elif k is not None:
+                cuadros[0].save(os.path.join(salida, "demo_%s_f%02d.gif" % (v, k)), save_all=True,
+                                append_images=cuadros[1:], duration=1000 * cada // 60, loop=0,
+                                optimize=True)
+                print("%s demostracion de la fase %d: %d cuadros" % (v, k, len(cuadros)))
+                hechas += 1
+                k = None
+                if hechas == por_version:
+                    break
+
+
 def main(argv):
     salida = argv[1]
     os.makedirs(salida, exist_ok=True)
     que = argv[2] if len(argv) > 2 else "todas"
+    if que in ("todas", "demos"):
+        demos(salida)
     if que in ("todas", "mapas"):
         fases = [int(x) for x in argv[3].split(",")] if len(argv) > 3 else range(1, 61)
         mapas(salida, fases)
