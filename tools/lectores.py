@@ -752,35 +752,13 @@ def graficos_msx2_resto():
                       tr("p01:77FE"), F=2)
     # el banco 12 (p00:41B5)
     v12 = B.Ventana((1, 2, 12))
-    for a, que, lec in ((0xB185, "del menu de grabar", "p01:6787"), (0xB256, "de la fase", "p01:72F2"),
-                        (0xB284, "del menu", "p00:482C"), (0xAF60, "de error de disco", "p02:977E"),
-                        (0xAF7D, "sin ficheros", "p02:8D23"), (0xB585, "de las musicas", "p12:B935"),
+    for a, que, lec in ((0xB585, "de las musicas", "p12:B935"),
                         (0xB5B8, "del puzle", "p12:B746"), (0xB5C7, "del puzle resuelto", "p12:B89A"),
                         (0xB8AF, "del puzle", "p12:B6E9"), (0xB8BE, "del puzle", "p12:B6FE"),
-                        (0xAC01, "DO YOUR BEST", "p01:6963"),
-                        (0xACC3, "CONGRATULATIONS (el final)", "p01:73F8"),
-                        (0xAEDD, "THANKS TO YOUR COURAGE (el final)", "p01:75D1"),
-                        (0xAD12, "ALL YOU HAVE TO DO NOW (el final)", "p01:744D"),
-                        (0xAD58, "PUSH SPACE KEY (el final)", "p01:7569"),
-                        (0xAD69, "DANGER !!! (el final)", "p01:7550"),
-                        (0xAF21, "CONGRATULATIONS !!! (el final)", "p01:7651"),
                         (0xBE67, "de la cinta", "p12:BE78"), (0xBE6E, "de la cinta", "p12:BEB6"),
                         (0xBF0E, "de error de cinta", "p12:BF05"), (0xBF94, "de error de cinta",
                                                                   "p12:BF8B")):
         letrero(v12, a, "letrero_%04X" % a, que, tr(lec))
-    for t, n, que, lec, idx in ((0xAC13, 5, "de cada piramide acabada (de la 1 a la 5: la 6 va al final)", "p01:71AF", "piramide - 1"),
-                                (0xAD76, 9, "del final", "p01:772E", "paso 0xEDCF"),
-                                (0xAF52, 7, "de los errores de disco", "p02:976E",
-                                 "error: p02:975E recibe del 0 al 4; el 5, TOO MANNY FILES, y el 6, "
-                                 "DATATYPEERROR, no los pide nadie")):
-        B.declara(v12, t, t + 2 * n, "letreros_%04X" % t, "%d punteros a los letreros %s (%s)"
-                  % (n, que, idx), tr(lec), F="w8")
-        for k in range(n):
-            letrero(v12, v12.w(t + 2 * k), "letrero_%04X" % v12.w(t + 2 * k), que, tr("p00:51D6"))
-    B.declara(v12, 0xAF37, 0xAF37 + 3 * 9, "estrellas_final", "9 caracteres del final de 3 bytes "
-              "[x][y][caracter], uno cada 8 cuadros", tr("p01:74FD"), F=3)
-    B.declara(v12, 0xB1B6, 0xB1B6 + 32, "sprite_flecha", "el dibujo de la flecha de los menus "
-              "(32 bytes)", tr("p01:67FE"), F=16)
     B.declara(v12, 0xB4F8, 0xB4FC, "sitio_dibujo", "2 x 2 caracteres del sitio escondido",
               tr("p12:B4F5"), F=4)
     a = 0xB548
@@ -1008,6 +986,46 @@ def graficos_msx1():
                   "a la VRAM en los tres tercios" % (n, n // 8), lec, F=8)
 
 
+def banco12_comun():
+    """Lo del banco 12 hasta 0xB400, igual byte a byte en los dos cartuchos: los
+    letreros y sus tablas. Los lectores son los de MSX2 traducidos; si uno no tiene
+    pareja en MSX1, se pone el que lee los letreros (p00:51D6 o p00:4F11)."""
+    v12 = B.Ventana((1, 2, 12))
+    general = {"msx2": "p00:51D6", "msx1": "p00:4F11"}[actual()]
+
+    def lec(x):
+        global _MAPA
+        if actual() == "msx2":
+            return x
+        if _MAPA is None:
+            tr("p00:4000")
+        return _MAPA.get(x.upper().replace("P", "p"), general)
+    for a, que, l in ((0xB185, "del menu de grabar", "p01:6787"), (0xB256, "de la fase", "p01:72F2"),
+                      (0xB284, "del menu", "p00:482C"), (0xAF60, "de error de disco", "p02:977E"),
+                      (0xAF7D, "sin ficheros", "p02:8D23"),
+                      (0xAC01, "DO YOUR BEST", "p01:6963"),
+                      (0xACC3, "CONGRATULATIONS (el final)", "p01:73F8"),
+                      (0xAEDD, "THANKS TO YOUR COURAGE (el final)", "p01:75D1"),
+                      (0xAD12, "ALL YOU HAVE TO DO NOW (el final)", "p01:744D"),
+                      (0xAD58, "PUSH SPACE KEY (el final)", "p01:7569"),
+                      (0xAD69, "DANGER !!! (el final)", "p01:7550"),
+                      (0xAF21, "CONGRATULATIONS !!! (el final)", "p01:7651")):
+        letrero(v12, a, "letrero_%04X" % a, que, lec(l))
+    for t, n, que, l, idx in ((0xAC13, 5, "de cada piramide acabada (de la 1 a la 5: la 6 va al final)", "p01:71AF", "piramide - 1"),
+                              (0xAD76, 9, "del final", "p01:772E", "paso 0xEDCF"),
+                              (0xAF52, 7, "de los errores de disco", "p02:976E",
+                               "error: p02:975E recibe del 0 al 4; el 5, TOO MANNY FILES, y el 6, "
+                               "DATATYPEERROR, no los pide nadie")):
+        B.declara(v12, t, t + 2 * n, "letreros_%04X" % t, "%d punteros a los letreros %s (%s)"
+                  % (n, que, idx), lec(l), F="w8")
+        for k in range(n):
+            letrero(v12, v12.w(t + 2 * k), "letrero_%04X" % v12.w(t + 2 * k), que, general)
+    B.declara(v12, 0xAF37, 0xAF37 + 3 * 9, "estrellas_final", "9 caracteres del final de 3 bytes "
+              "[x][y][caracter], uno cada 8 cuadros", lec("p01:74FD"), F=3)
+    B.declara(v12, 0xB1B6, 0xB1B6 + 32, "sprite_flecha", "el dibujo de la flecha de los menus "
+              "(32 bytes)", lec("p01:67FE"), F=16)
+
+
 def restos():
     """Lo ultimo: tablas que se leen con un indice, sobras y relleno."""
     v = actual()
@@ -1066,6 +1084,14 @@ def restos():
                       "(0x%04X); los fundidos de 0xA792 apuntan a la paleta, esto no lo lee nadie"
                       % (a + 2), "nadie", F="w8")
     else:
+        # el banco 12 es el mismo que el de MSX2 hasta 0xB400; esto solo lo lee el de MSX2
+        B.declara(v12, 0xABC1, 0xAC01, "car_ABC1", "2 caracteres ya de 4 bits por punto (32 bytes "
+                  "cada uno), del cartucho de MSX2 (alli los lee p00:51A2); en este no los lee nadie",
+                  "nadie", F=16)
+        B.declara(v12, 0xB1D6, 0xB256, "dibujo_B1D6", "un dibujo de 16 x 16 de 4 bits por punto "
+                  "(128 bytes), del cartucho de MSX2 (alli lo manda p00:56CE con HMMC); en este no "
+                  "lo lee nadie", "nadie", F=16)
+        B.declara(v12, 0xB2AB, 0xB400, "relleno_B2AB", "341 bytes a 0xFF: relleno", "nadie", F=16)
         w0 = B.Ventana((7, 8, 9))
         B.declara(w0, 0x5E1C, 0x5E24, "pasos_japones", "4 punteros (por 0xE216 - 1, de 3 a 0): "
                   "rachas que van al caracter 1 (0x0008) de los tres tercios, una cada 0x30 "
@@ -1095,4 +1121,5 @@ def todo():
     graficos_msx2()
     graficos_msx2_resto()
     graficos_msx1()
+    banco12_comun()
     restos()

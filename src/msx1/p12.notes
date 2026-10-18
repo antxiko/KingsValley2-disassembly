@@ -450,8 +450,88 @@ D 0xABA1 0xABB1 fuente_ABA1  16 bytes de patrones (2 caracteres) que van a la VR
 F 0xABA1 8
 D 0xABB1 0xABC1 fuente_ABB1  16 bytes de patrones (2 caracteres) que van a la VRAM en los tres tercios; lo leen p00:5A7A (16 bytes)
 F 0xABB1 8
+D 0xABC1 0xAC01 car_ABC1  2 caracteres ya de 4 bits por punto (32 bytes cada uno), del cartucho de MSX2 (alli los lee p00:51A2); en este no los lee nadie; lo leen nadie (64 bytes)
+F 0xABC1 16
+D 0xAC01 0xAC13 letrero_AC01  letrero (DO YOUR BEST): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (18 bytes)
+F 0xAC01 16
+D 0xAC13 0xAC1D letreros_AC13  5 punteros a los letreros de cada piramide acabada (de la 1 a la 5: la 6 va al final) (piramide - 1); lo leen p01:6FAB (10 bytes)
+F 0xAC13 w8
+D 0xAC1D 0xAC2A letrero_AC1D  letrero (de cada piramide acabada (de la 1 a la 5: la 6 va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (13 bytes)
+F 0xAC1D 16
+D 0xAC2A 0xAC4F letrero_AC2A  letrero (de cada piramide acabada (de la 1 a la 5: la 6 va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (37 bytes)
+F 0xAC2A 16
+D 0xAC4F 0xAC7C letrero_AC4F  letrero (de cada piramide acabada (de la 1 a la 5: la 6 va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (45 bytes)
+F 0xAC4F 16
+D 0xAC7C 0xAC9F letrero_AC7C  letrero (de cada piramide acabada (de la 1 a la 5: la 6 va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (35 bytes)
+F 0xAC7C 16
+D 0xAC9F 0xACC3 letrero_AC9F  letrero (de cada piramide acabada (de la 1 a la 5: la 6 va al final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (36 bytes)
+F 0xAC9F 16
+D 0xACC3 0xAD12 letrero_ACC3  letrero (CONGRATULATIONS (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7085 (79 bytes)
+F 0xACC3 16
+D 0xAD12 0xAD58 letrero_AD12  letrero (ALL YOU HAVE TO DO NOW (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (70 bytes)
+F 0xAD12 16
+D 0xAD58 0xAD69 letrero_AD58  letrero (PUSH SPACE KEY (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7221 (17 bytes)
+F 0xAD58 16
+D 0xAD69 0xAD76 letrero_AD69  letrero (DANGER !!! (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7203 (13 bytes)
+F 0xAD69 16
+D 0xAD76 0xAD88 letreros_AD76  9 punteros a los letreros del final (paso 0xEDCF); lo leen p01:7400 (18 bytes)
+F 0xAD76 w8
+D 0xAD88 0xAD92 letrero_AD88  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (10 bytes)
+F 0xAD88 16
+D 0xAD92 0xAD9A letrero_AD92  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (8 bytes)
+F 0xAD92 16
+D 0xAD9A 0xADCB letrero_AD9A  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (49 bytes)
+F 0xAD9A 16
+D 0xADCB 0xAE02 letrero_ADCB  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (55 bytes)
+F 0xADCB 16
+D 0xAE02 0xAE46 letrero_AE02  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (68 bytes)
+F 0xAE02 16
+D 0xAE46 0xAE5E letrero_AE46  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (24 bytes)
+F 0xAE46 16
+D 0xAE5E 0xAE78 letrero_AE5E  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (26 bytes)
+F 0xAE5E 16
+D 0xAE78 0xAEC5 letrero_AE78  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (77 bytes)
+F 0xAE78 16
+D 0xAEC5 0xAEDD letrero_AEC5  letrero (del final): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (24 bytes)
+F 0xAEC5 16
+D 0xAEDD 0xAF21 letrero_AEDD  letrero (THANKS TO YOUR COURAGE (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:7272 (68 bytes)
+F 0xAEDD 16
+D 0xAF21 0xAF37 letrero_AF21  letrero (CONGRATULATIONS !!! (el final)): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (22 bytes)
+F 0xAF21 16
+D 0xAF37 0xAF52 estrellas_final  9 caracteres del final de 3 bytes [x][y][caracter], uno cada 8 cuadros; lo leen p01:719C (27 bytes)
+F 0xAF37 3
+D 0xAF52 0xAF60 letreros_AF52  7 punteros a los letreros de los errores de disco (error: p02:975E recibe del 0 al 4; el 5, TOO MANNY FILES, y el 6, DATATYPEERROR, no los pide nadie); lo leen p02:9EA7 (14 bytes)
+F 0xAF52 w8
+D 0xAF60 0xAF6D letrero_AF60  letrero (de error de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p02:9EB7 (13 bytes)
+F 0xAF60 16
+D 0xAF6D 0xAF7D letrero_AF6D  letrero (de los errores de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (16 bytes)
+F 0xAF6D 16
+D 0xAF7D 0xAF8E letrero_AF7D  letrero (sin ficheros): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p02:892D, p00:4F11 (17 bytes)
+F 0xAF7D 16
+D 0xAF8E 0xAF9A letrero_AF8E  letrero (de los errores de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (12 bytes)
+F 0xAF8E 16
+D 0xAF9A 0xAFAB letrero_AF9A  letrero (de los errores de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (17 bytes)
+F 0xAF9A 16
+D 0xAFAB 0xAFBB letrero_AFAB  letrero (de los errores de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (16 bytes)
+F 0xAFAB 16
+D 0xAFBB 0xAFCD letrero_AFBB  letrero (de los errores de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (18 bytes)
+F 0xAFBB 16
+D 0xAFCD 0xAFDD letrero_AFCD  letrero (de los errores de disco): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:4F11 (16 bytes)
+F 0xAFCD 16
 D 0xAFDD 0xB185 fuente_AFDD  424 bytes de patrones (53 caracteres) que van a la VRAM en los tres tercios; lo leen p00:534B (424 bytes)
 F 0xAFDD 8
+D 0xB185 0xB1B6 letrero_B185  letrero (del menu de grabar): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p01:6591 (49 bytes)
+F 0xB185 16
+D 0xB1B6 0xB1D6 sprite_flecha  el dibujo de la flecha de los menus (32 bytes); lo leen p01:6608 (32 bytes)
+F 0xB1B6 16
+D 0xB1D6 0xB256 dibujo_B1D6  un dibujo de 16 x 16 de 4 bits por punto (128 bytes), del cartucho de MSX2 (alli lo manda p00:56CE con HMMC); en este no lo lee nadie; lo leen nadie (128 bytes)
+F 0xB1D6 16
+D 0xB256 0xB284 letrero_B256  letrero (de la fase): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p02:8DC6 (46 bytes)
+F 0xB256 16
+D 0xB284 0xB2AB letrero_B284  letrero (del menu): [x][y] y caracteres, 0xFE [x][y] otro sitio, 0xFF acaba; lo leen p00:482D (39 bytes)
+F 0xB284 16
+D 0xB2AB 0xB400 relleno_B2AB  341 bytes a 0xFF: relleno; lo leen nadie (341 bytes)
+F 0xB2AB 16
 D 0xB42F 0xB437 tabla_B42F  4 destinos del despachador p00:409E (call en p12:B42C, el indice en A): B437, B462, B46C, B48F; lo leen p12:B42C (8 bytes)
 F 0xB42F w4
 D 0xB6BA 0xB6C6 tabla_B6BA  6 destinos del despachador p00:409E (call en p12:B6B7, el indice en A): B6C6, B6EE, B6FD, B745, B85A, B899; lo leen p12:B6B7 (12 bytes)
@@ -478,10 +558,6 @@ D 0xBBFC 0xBC54 mando_6  el mando grabado de la demostracion de la piramide 6: p
 F 0xBBFC 2
 D 0xBF50 0xC000 relleno_ff  176 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (176 bytes)
 F 0xBF50 16
-D 0xABC1 0xAFDD resto_ABC1  lo apuntan con el banco puesto p01:6FA4 (0xAC13), p01:73FD (0xAD76), p01:7190 (0xAF37), p02:9EA4 (0xAF52), p02:9EB4 (0xAF60), p02:892A (0xAF7D); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p01:6FA4, p01:73FD, p01:7190, p02:9EA4, p02:9EB4, p02:892A (1052 bytes)
-F 0xABC1 16
-D 0xB185 0xB400 resto_B185  lo apuntan con el banco puesto p01:658E (0xB185), p01:6605 (0xB1B6), p02:8DC3 (0xB256), p00:482A (0xB284); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p01:658E, p01:6605, p02:8DC3, p00:482A (635 bytes)
-F 0xB185 16
 D 0xB4F8 0xB4FC resto_B4F8  lo apuntan con el banco puesto p12:B4EF (0xB4F8); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B4EF (4 bytes)
 F 0xB4F8 16
 D 0xB544 0xB6AC resto_B544  lo apuntan con el banco puesto p12:B400 (0xB544), p12:B924 (0xB581), p12:B73F (0xB5B4), p12:B893 (0xB5C3), p12:B6FD (0xB5DC), p12:B7EA (0xB648); el tamano es lo que hay hasta lo siguiente, no sale de recorrerlo; lo leen p12:B400, p12:B924, p12:B73F, p12:B893, p12:B6FD, p12:B7EA (360 bytes)
