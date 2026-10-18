@@ -21,14 +21,21 @@ set throttle off
 proc vuelca {etiqueta} {
     set f [open [file join $::SALIDA "vram-$etiqueta.bin"] wb]
     fconfigure $f -translation binary
-    puts -nonewline $f [debug read_block VRAM 0 16384]
+    # toda la VRAM: 16 KB en MSX1, 128 KB en MSX2
+    puts -nonewline $f [debug read_block VRAM 0 [debug size VRAM]]
     close $f
     set g [open [file join $::SALIDA "vdp-$etiqueta.txt"] w]
-    for {set i 0} {$i < 8} {incr i} {
+    set nr [expr {[debug size "VDP regs"] > 8 ? 47 : 8}]
+    for {set i 0} {$i < $nr} {incr i} {
         puts $g [format "R%d = 0x%02X" $i [debug read "VDP regs" $i]]
     }
+    if {$nr > 8} {
+        for {set i 0} {$i < 16} {incr i} {
+            puts $g [format "P%d = 0x%03X" $i [getcolor $i]]
+        }
+    }
     puts $g [format "segundo = %.4f" [machine_info time]]
-    foreach {nombre d} {paso 0xE200 subpaso 0xE201 fase 0xE241 scroll_l 0xE243 scroll_h 0xE244 personaje 0xE24E jefe 0xE340} {
+    foreach {nombre d} {estado 0xE200 paso 0xE201 piramide 0xE241 fase 0xE242 pantalla 0xE243} {
         puts $g [format "%s = 0x%02X" $nombre [debug read memory $d]]
     }
     close $g
