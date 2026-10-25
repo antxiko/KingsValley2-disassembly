@@ -51,3 +51,30 @@ Qué hay en cada banco:
 - banco 4: el sonido;
 - banco 12: los minijuegos, las demostraciones, el final, la cinta y los letreros;
 - 5, 6, 10, 11 y 13: solo datos (partituras, mapas, tablas de las fases); 7, 8, 9, 14 y 15: los gráficos.
+
+## Código compartido con otros cartuchos de Konami
+
+Este desensamblado se ha comparado, instrucción por instrucción, con
+todos los demás de Konami de la serie. Cuenta un bloque cuando las
+mismas instrucciones, al menos seis desde una etiqueta hasta su `ret`
+o su salto sin condición, están en los dos cartuchos; las direcciones
+no se miran, porque cambian de un cartucho a otro. De los otros 57,
+**48** tienen al menos un bloque en común con este; estos son los
+que más comparten:
+
+| Cartucho | Bloques | Instrucciones | Por ejemplo (aquí = allí) |
+|---|---:|---:|---|
+| [The Pro Yakyuu Gekitotsu Pennant Race](https://antxiko.github.io/PennantRace-disassembly/es/) | 85 | 1.378 | p00:4E20 = `rachas_con_destino` |
+| [Parodius](https://antxiko.github.io/Parodius-disassembly/es/) | 80 | 1.279 | p00:54CD = `rachas_8120` |
+| [Nemesis 3 - The Eve of Destruction](https://antxiko.github.io/Nemesis3-disassembly/es/) | 75 | 1.153 | p00:4129 = `cartucho_en_8000` |
+| [Salamander - Operation X](https://antxiko.github.io/Salamander-disassembly/es/) | 72 | 1.149 | p00:5033 = `caracteres` |
+| [Gekitotsu Pennant Race 2](https://antxiko.github.io/PennantRace2-disassembly/es/) | 70 | 931 | p04:6993 = `orden_eb` |
+| [Contra](https://antxiko.github.io/Contra-disassembly/es/) | 66 | 1.277 | p04:6E07 |
+| [Shalom: Knightmare III](https://antxiko.github.io/Shalom-disassembly/es/) | 54 | 735 | p04:6993 = `orden_eb` |
+| [Nemesis 2](https://antxiko.github.io/Nemesis2-disassembly/es/) | 49 | 702 | p04:6DA2 = `canales_del_scc` |
+| [F-1 Spirit — The Way to Formula 1](https://antxiko.github.io/F1Spirit-disassembly/es/) | 48 | 757 | p04:648D = `NOTA_CRUDA` |
+| [Hai no Majutsushi - Mahjong 2](https://antxiko.github.io/Majutsushi-disassembly/es/) | 45 | 541 | p00:4129 = `cartucho_en_8000` |
+
+La matriz entera, los 58 cartuchos entre sí, está en
+[Las rutinas](https://antxiko.github.io/MSX-disassembly-database/es/LAS-RUTINAS.html) de la base de datos de la
+serie, con el método y el programa que la mide.

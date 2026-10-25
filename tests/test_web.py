@@ -30,6 +30,18 @@ OTROS_JUEGOS = ("Parodius", "Salamander", "Gradius", "Nemesis", "Galious", "Usas
                 "Super Cobra", "Monkey", "Athletic", "Middle Earth", "Pitfall",
                 "Stardust", "Dragon Slayer", "Twinbee", "TwinBee", "F-1 Spirit", "F1 Spirit")
 
+# La seccion del codigo compartido con los otros Konami de la serie los
+# nombra a proposito: la escribe pon_en_webs.py, de MSX-disassembly-database.
+_COMPARTIDO = re.compile(
+    r"(?:^## |<h2[^>]*>)(?:Code shared with other Konami cartridges|"
+    r"C\u00f3digo compartido con otros cartuchos de Konami)"
+    r".*?(?=^## |<h2|</main>|<footer|\Z)", re.S | re.M)
+
+
+def sin_compartido(texto):
+    """El texto sin la seccion del codigo compartido."""
+    return _COMPARTIDO.sub("", texto)
+
 
 def corre(v, *orden):
     return subprocess.run([sys.executable] + list(orden), cwd=RAIZ, capture_output=True,
@@ -71,7 +83,7 @@ class TestWeb(unittest.TestCase):
             if not os.path.exists(f):
                 continue
             with open(f, encoding="utf-8", errors="ignore") as g:
-                txt = g.read()
+                txt = sin_compartido(g.read())
             for j in OTROS_JUEGOS:
                 if j.lower() in txt.lower():
                     malos.append("%s: %s" % (os.path.relpath(f, RAIZ), j))

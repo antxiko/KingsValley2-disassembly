@@ -51,3 +51,30 @@ What there is in each bank:
 - bank 4: the sound;
 - bank 12: the minigames, the demos, the ending, the tape and the messages;
 - 5, 6, 10, 11 and 13: data only (scores, maps, stage tables); 7, 8, 9, 14 and 15: the graphics.
+
+## Code shared with other Konami cartridges
+
+This disassembly has been compared, instruction by instruction, with
+every other Konami one in the series. A block counts when the same
+instructions, at least six of them from a label to its `ret` or its
+unconditional jump, are in both cartridges; the addresses are left
+aside, because they change from one cartridge to the next. Of the
+other 57, **48** have at least one block in common with this one;
+these are the ones that share the most:
+
+| Cartridge | Blocks | Instructions | For example (here = there) |
+|---|---:|---:|---|
+| [The Pro Yakyuu Gekitotsu Pennant Race](https://antxiko.github.io/PennantRace-disassembly/) | 85 | 1,378 | p00:4E20 = `rachas_con_destino` |
+| [Parodius](https://antxiko.github.io/Parodius-disassembly/) | 80 | 1,279 | p00:54CD = `rachas_8120` |
+| [Nemesis 3 - The Eve of Destruction](https://antxiko.github.io/Nemesis3-disassembly/) | 75 | 1,153 | p00:4129 = `cartucho_en_8000` |
+| [Salamander - Operation X](https://antxiko.github.io/Salamander-disassembly/) | 72 | 1,149 | p00:5033 = `caracteres` |
+| [Gekitotsu Pennant Race 2](https://antxiko.github.io/PennantRace2-disassembly/) | 70 | 931 | p04:6993 = `orden_eb` |
+| [Contra](https://antxiko.github.io/Contra-disassembly/) | 66 | 1,277 | p04:6E07 |
+| [Shalom: Knightmare III](https://antxiko.github.io/Shalom-disassembly/) | 54 | 735 | p04:6993 = `orden_eb` |
+| [Nemesis 2](https://antxiko.github.io/Nemesis2-disassembly/) | 49 | 702 | p04:6DA2 = `canales_del_scc` |
+| [F-1 Spirit — The Way to Formula 1](https://antxiko.github.io/F1Spirit-disassembly/) | 48 | 757 | p04:648D = `NOTA_CRUDA` |
+| [Hai no Majutsushi - Mahjong 2](https://antxiko.github.io/Majutsushi-disassembly/) | 45 | 541 | p00:4129 = `cartucho_en_8000` |
+
+The whole matrix, the 58 cartridges against each other, is on
+[The routines](https://antxiko.github.io/MSX-disassembly-database/THE-ROUTINES.html) in the series database, along
+with the method and the program that measures it.
